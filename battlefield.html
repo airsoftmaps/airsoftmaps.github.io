@@ -1,215 +1,2442 @@
 <!DOCTYPE html>
 <html lang="cs">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AIRSOFT MAPS — Bojiště</title>
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>AIRSOFT MAPS — Battlefield</title>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link
+    href="https://fonts.googleapis.com/css2?family=Anton&family=Rajdhani:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+>
+
+
 <style>
-  * { margin:0; padding:0; box-sizing:border-box; }
-  html,body {
-    width:100%; height:100%; background:#050608;
-    font-family:"Rajdhani",sans-serif; color:#eef1f0; overflow:hidden;
-  }
-  body {
-    background:
-      radial-gradient(ellipse at 50% 0%, rgba(255,122,26,0.07), transparent 55%),
-      radial-gradient(ellipse at 50% 50%, #0d1013, #000 85%);
-    height:100vh; display:flex; flex-direction:column; position:relative;
-  }
-  body::before {
-    content:""; position:fixed; inset:0; pointer-events:none; z-index:1;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+
+/* =========================================================
+   CORE
+========================================================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+:root{
+
+    --accent:#ff7a1a;
+
+    --bg:#050608;
+
+    --panel:rgba(8,10,13,.92);
+
+    --text:#eef1f0;
+
+    --muted:#7e8790;
+
+    --border:#2a3036;
+
+    --grid:rgba(255,255,255,.07);
+
+}
+
+
+html,
+body{
+
+    width:100%;
+    height:100%;
+
+    overflow:hidden;
+
+    background:var(--bg);
+
+    color:var(--text);
+
+    font-family:"Rajdhani",sans-serif;
+
+}
+
+
+/* =========================================================
+   THEMES
+========================================================= */
+
+body.theme-light{
+
+    --accent:#e35e00;
+
+    --bg:#e8e9e7;
+
+    --panel:rgba(245,245,243,.94);
+
+    --text:#151719;
+
+    --muted:#666d73;
+
+    --border:#c7c9c8;
+
+    --grid:rgba(0,0,0,.08);
+
+}
+
+body.theme-resident-evil{
+
+    --accent:#c5161d;
+
+    --bg:#050303;
+
+    --panel:rgba(14,6,7,.95);
+
+    --text:#eadede;
+
+    --muted:#877878;
+
+    --border:#3d1719;
+
+    --grid:rgba(197,22,29,.11);
+
+}
+
+body.theme-pubg{
+
+    --accent:#c6a34a;
+
+    --bg:#10100d;
+
+    --panel:rgba(24,23,17,.95);
+
+    --text:#e5dfcf;
+
+    --muted:#9c9789;
+
+    --border:#48422e;
+
+    --grid:rgba(198,163,74,.1);
+
+}
+
+body.theme-fortnite{
+
+    --accent:#7d5cff;
+
+    --bg:#080611;
+
+    --panel:rgba(18,14,32,.95);
+
+    --text:#f2efff;
+
+    --muted:#a39dbc;
+
+    --border:#3a315f;
+
+    --grid:rgba(125,92,255,.11);
+
+}
+
+
+/* =========================================================
+   GLOBAL FX
+========================================================= */
+
+.noise{
+
+    position:fixed;
+
+    inset:0;
+
+    z-index:50;
+
+    pointer-events:none;
+
+    background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
+
     mix-blend-mode:overlay;
-  }
 
-  header {
-    position:relative; z-index:5;
-    display:flex; align-items:center; justify-content:space-between;
-    padding:16px 5vw;
-  }
+}
 
-  .back-btn {
-    background:rgba(255,255,255,.03); border:1px solid #2a2e33; color:#c7ccd1;
-    font-family:"Rajdhani",sans-serif; font-size:12px; letter-spacing:.1em;
-    text-transform:uppercase; padding:8px 16px; border-radius:2px; cursor:pointer;
-    transition:border-color .2s ease, color .2s ease;
-  }
-  .back-btn:hover { border-color:#ff7a1a; color:#ff7a1a; }
+.scanlines{
 
-  .field-title {
-    text-align:center;
-  }
-  .field-title h1 {
-    font-family:"Anton",sans-serif; font-size:clamp(20px,3vw,32px);
-    letter-spacing:.03em; text-transform:uppercase;
-    text-shadow:0 0 24px rgba(255,122,26,.25);
-  }
-  .field-title span { color:#ff7a1a; }
+    position:fixed;
 
-  .top-controls { display:flex; gap:10px; }
-  .dd { position:relative; }
-  .dd-btn {
-    background:rgba(255,255,255,.03); border:1px solid #2a2e33; color:#c7ccd1;
-    font-family:"Rajdhani",sans-serif; font-size:12px; letter-spacing:.1em;
-    text-transform:uppercase; padding:8px 14px; border-radius:2px;
-    cursor:pointer; display:flex; align-items:center; gap:6px;
-    transition:border-color .2s ease, color .2s ease;
-  }
-  .dd-btn:hover { border-color:#ff7a1a; color:#ff7a1a; }
-  .dd-menu {
-    position:absolute; top:calc(100% + 6px); right:0; min-width:170px;
-    background:#0d0f12; border:1px solid #2a2e33; border-radius:2px;
-    box-shadow:0 14px 32px rgba(0,0,0,.5); display:none; z-index:20; overflow:hidden;
-  }
-  .dd.open .dd-menu { display:block; }
-  .dd-menu button {
-    display:block; width:100%; text-align:left; background:none; border:none;
-    color:#c7ccd1; font-family:"Rajdhani",sans-serif; font-size:13px;
-    padding:10px 14px; cursor:pointer;
-  }
-  .dd-menu button:hover { background:rgba(255,122,26,.08); color:#ff7a1a; }
+    inset:0;
 
-  /* ---------- map stage ---------- */
-  .map-toolbar {
-    position:relative; z-index:5;
-    display:flex; justify-content:center; padding-bottom:14px;
-  }
-  .toggle-2d3d {
-    display:flex; border:1px solid #2a2e33; border-radius:2px; overflow:hidden;
-  }
-  .toggle-2d3d button {
-    background:rgba(255,255,255,.03); border:none; color:#c7ccd1;
-    font-family:"Rajdhani",sans-serif; font-size:12px; letter-spacing:.15em;
-    text-transform:uppercase; padding:9px 22px; cursor:pointer;
-    transition:background .2s ease, color .2s ease;
-  }
-  .toggle-2d3d button.active { background:#ff7a1a; color:#0d0f12; font-weight:700; }
+    z-index:51;
 
-  .map-wrap {
-    position:relative; z-index:5;
-    flex:1; margin:0 5vw 4vh;
-    border:1px solid #23262b; border-radius:3px; overflow:hidden;
-    display:flex; align-items:center; justify-content:center;
-    background:#0a0b0d;
-    perspective:1400px;
-  }
+    pointer-events:none;
 
-  .map-img-frame {
-    width:100%; height:100%;
-    transition:transform .7s cubic-bezier(.2,.9,.2,1), box-shadow .7s ease;
+    background:
+        repeating-linear-gradient(
+            0deg,
+            transparent 0px,
+            transparent 3px,
+            rgba(255,255,255,.012) 4px
+        );
+
+}
+
+
+/* =========================================================
+   TOP BAR
+========================================================= */
+
+.topbar{
+
+    position:absolute;
+
+    left:0;
+    right:0;
+    top:0;
+
+    height:68px;
+
+    z-index:20;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    padding:
+        0 24px;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(3,4,5,.98),
+            rgba(3,4,5,.72)
+        );
+
+    border-bottom:1px solid var(--border);
+
+    backdrop-filter:blur(12px);
+
+}
+
+
+/* left */
+
+.top-left{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+}
+
+.back{
+
+    height:36px;
+
+    padding:0 14px;
+
+    background:rgba(255,255,255,.025);
+
+    border:1px solid var(--border);
+
+    color:var(--text);
+
+    font-family:"Rajdhani",sans-serif;
+
+    font-size:11px;
+
+    letter-spacing:.14em;
+
+    text-transform:uppercase;
+
+    cursor:pointer;
+
+}
+
+.back:hover{
+
+    color:var(--accent);
+
+    border-color:var(--accent);
+
+}
+
+
+.field-code{
+
+    font-size:9px;
+
+    color:var(--accent);
+
+    letter-spacing:.35em;
+
+    text-transform:uppercase;
+
+}
+
+.field-title{
+
+    font-family:"Anton",sans-serif;
+
+    font-size:24px;
+
+    letter-spacing:.04em;
+
+}
+
+
+/* right */
+
+.top-right{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+}
+
+
+.top-button{
+
+    height:36px;
+
+    padding:0 12px;
+
+    background:rgba(255,255,255,.025);
+
+    border:1px solid var(--border);
+
+    color:var(--text);
+
+    font-family:"Rajdhani",sans-serif;
+
+    font-size:11px;
+
+    letter-spacing:.12em;
+
+    text-transform:uppercase;
+
+    cursor:pointer;
+
+}
+
+.top-button:hover{
+
+    border-color:var(--accent);
+
+    color:var(--accent);
+
+}
+
+
+/* dropdown */
+
+.control{
+
+    position:relative;
+
+}
+
+.dropdown{
+
+    position:absolute;
+
+    right:0;
+
+    top:44px;
+
+    min-width:180px;
+
+    display:none;
+
+    background:var(--panel);
+
+    border:1px solid var(--border);
+
+    box-shadow:
+        0 20px 50px rgba(0,0,0,.7);
+
+}
+
+.control.open .dropdown{
+
+    display:block;
+
+}
+
+.dropdown button{
+
+    display:block;
+
+    width:100%;
+
+    padding:11px 14px;
+
+    border:0;
+
+    background:none;
+
+    color:var(--text);
+
+    font-family:"Rajdhani",sans-serif;
+
+    text-align:left;
+
+    cursor:pointer;
+
+}
+
+.dropdown button:hover,
+.dropdown button.active{
+
+    background:
+        color-mix(
+            in srgb,
+            var(--accent) 10%,
+            transparent
+        );
+
+    color:var(--accent);
+
+}
+
+
+/* =========================================================
+   MAP AREA
+========================================================= */
+
+.map-stage{
+
+    position:absolute;
+
+    left:0;
+    right:0;
+
+    top:68px;
+
+    bottom:0;
+
+    overflow:hidden;
+
+    background:#030405;
+
+}
+
+
+/* map viewport */
+
+.map-viewport{
+
+    position:absolute;
+
+    inset:0;
+
+    overflow:hidden;
+
+    cursor:grab;
+
+    perspective:1600px;
+
+}
+
+.map-viewport.dragging{
+
+    cursor:grabbing;
+
+}
+
+
+/* image */
+
+.map-world{
+
+    position:absolute;
+
+    left:50%;
+    top:50%;
+
+    width:100%;
+
+    height:100%;
+
+    transform:
+        translate(-50%,-50%)
+        translate(var(--pan-x),var(--pan-y))
+        scale(var(--zoom))
+        rotateX(var(--rotate-x));
+
+    transform-origin:center;
+
+    transition:
+        transform .45s
+        cubic-bezier(.2,.9,.2,1);
+
     transform-style:preserve-3d;
-  }
-  .map-wrap.mode-3d .map-img-frame {
-    transform:rotateX(38deg) scale(1.08);
-    box-shadow:0 60px 80px rgba(0,0,0,.6);
-  }
-  .map-img-frame img {
-    width:100%; height:100%; object-fit:contain; display:block;
-    filter:saturate(1.05) contrast(1.05);
-  }
 
-  .no-map {
-    color:#5c6169; font-size:14px; letter-spacing:.05em; text-align:center;
-  }
+}
 
-  @media (max-width:640px) {
-    header { flex-wrap:wrap; gap:12px; padding:14px 5vw; }
-    .field-title { order:3; width:100%; }
-  }
+
+.map-world.dragging{
+
+    transition:none;
+
+}
+
+
+/*
+   This is where the screenshot gets visually
+   "cleaned up".
+*/
+
+.map-image{
+
+    position:absolute;
+
+    left:50%;
+    top:50%;
+
+    width:100%;
+
+    height:100%;
+
+    transform:
+        translate(-50%,-50%);
+
+    object-fit:cover;
+
+    object-position:center;
+
+    filter:
+        saturate(.72)
+        contrast(1.14)
+        brightness(.68);
+
+    user-select:none;
+
+    pointer-events:none;
+
+}
+
+
+/* Grygov has very large black borders */
+
+.map-world.grygov .map-image{
+
+    transform:
+        translate(-50%,-50%)
+        scale(1.19);
+
+}
+
+
+/* Dalov */
+
+.map-world.dalov .map-image{
+
+    transform:
+        translate(-50%,-50%)
+        scale(1.02);
+
+}
+
+
+/* theme map coloring */
+
+body.theme-resident-evil .map-image{
+
+    filter:
+        saturate(.52)
+        contrast(1.32)
+        brightness(.52)
+        sepia(.12);
+
+}
+
+body.theme-pubg .map-image{
+
+    filter:
+        saturate(.62)
+        contrast(1.15)
+        brightness(.68)
+        sepia(.08);
+
+}
+
+body.theme-fortnite .map-image{
+
+    filter:
+        saturate(1.1)
+        contrast(1.08)
+        brightness(.7);
+
+}
+
+body.theme-light .map-image{
+
+    filter:
+        saturate(.82)
+        contrast(1.05)
+        brightness(.92);
+
+}
+
+
+/* =========================================================
+   TACTICAL GRID
+========================================================= */
+
+.tactical-grid{
+
+    position:absolute;
+
+    inset:-50%;
+
+    pointer-events:none;
+
+    opacity:.75;
+
+    background-image:
+
+        linear-gradient(
+            var(--grid) 1px,
+            transparent 1px
+        ),
+
+        linear-gradient(
+            90deg,
+            var(--grid) 1px,
+            transparent 1px
+        );
+
+    background-size:
+        80px 80px;
+
+}
+
+
+/* =========================================================
+   VIGNETTE
+========================================================= */
+
+.vignette{
+
+    position:absolute;
+
+    inset:0;
+
+    pointer-events:none;
+
+    background:
+
+        radial-gradient(
+            ellipse at center,
+            transparent 42%,
+            rgba(0,0,0,.25) 75%,
+            rgba(0,0,0,.8) 100%
+        );
+
+}
+
+
+/* =========================================================
+   MAP HUD
+========================================================= */
+
+.hud{
+
+    position:absolute;
+
+    z-index:10;
+
+    pointer-events:none;
+
+}
+
+
+/* top left */
+
+.intel-panel{
+
+    left:24px;
+
+    top:22px;
+
+    width:245px;
+
+    padding:15px;
+
+    background:var(--panel);
+
+    border:1px solid var(--border);
+
+    box-shadow:
+        0 15px 45px rgba(0,0,0,.5);
+
+    backdrop-filter:blur(8px);
+
+}
+
+.intel-title{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding-bottom:10px;
+
+    border-bottom:1px solid var(--border);
+
+}
+
+.intel-title strong{
+
+    font-family:"Anton",sans-serif;
+
+    font-size:17px;
+
+    letter-spacing:.06em;
+
+}
+
+.live{
+
+    font-size:8px;
+
+    color:#4cff8c;
+
+    letter-spacing:.18em;
+
+}
+
+.intel-row{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    padding-top:8px;
+
+    font-size:11px;
+
+}
+
+.intel-row span:first-child{
+
+    color:var(--muted);
+
+    text-transform:uppercase;
+
+    letter-spacing:.08em;
+
+}
+
+.intel-row span:last-child{
+
+    color:var(--text);
+
+}
+
+
+/* =========================================================
+   LEGEND
+========================================================= */
+
+.legend{
+
+    left:24px;
+
+    bottom:28px;
+
+    width:245px;
+
+    padding:14px;
+
+    background:var(--panel);
+
+    border:1px solid var(--border);
+
+    backdrop-filter:blur(8px);
+
+}
+
+.legend-title{
+
+    font-size:9px;
+
+    color:var(--accent);
+
+    letter-spacing:.25em;
+
+    text-transform:uppercase;
+
+    margin-bottom:10px;
+
+}
+
+.legend-item{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:9px;
+
+    margin-top:7px;
+
+    font-size:10px;
+
+    color:var(--muted);
+
+    text-transform:uppercase;
+
+    letter-spacing:.08em;
+
+}
+
+.legend-line{
+
+    width:24px;
+
+    height:3px;
+
+}
+
+.legend-line.boundary{
+
+    background:#000;
+
+}
+
+.legend-line.building{
+
+    background:#1265ff;
+
+}
+
+.legend-line.grid{
+
+    height:1px;
+
+    background:var(--accent);
+
+}
+
+
+/* =========================================================
+   NORTH
+========================================================= */
+
+.north{
+
+    position:absolute;
+
+    right:28px;
+
+    top:25px;
+
+    width:48px;
+
+    height:48px;
+
+    border:1px solid var(--border);
+
+    background:var(--panel);
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    flex-direction:column;
+
+    font-size:9px;
+
+    letter-spacing:.15em;
+
+}
+
+.north-arrow{
+
+    color:var(--accent);
+
+    font-size:22px;
+
+    line-height:18px;
+
+}
+
+
+/* =========================================================
+   COORDINATES
+========================================================= */
+
+.coordinates{
+
+    right:28px;
+
+    bottom:25px;
+
+    padding:8px 11px;
+
+    background:var(--panel);
+
+    border:1px solid var(--border);
+
+    color:var(--muted);
+
+    font-size:9px;
+
+    letter-spacing:.14em;
+
+    font-variant-numeric:tabular-nums;
+
+}
+
+
+/* =========================================================
+   MAP CONTROLS
+========================================================= */
+
+.map-controls{
+
+    position:absolute;
+
+    right:24px;
+
+    top:90px;
+
+    z-index:15;
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+.map-control{
+
+    width:42px;
+
+    height:40px;
+
+    background:var(--panel);
+
+    border:1px solid var(--border);
+
+    color:var(--text);
+
+    font-size:18px;
+
+    cursor:pointer;
+
+}
+
+.map-control:hover{
+
+    color:var(--accent);
+
+    border-color:var(--accent);
+
+}
+
+.map-control + .map-control{
+
+    border-top:0;
+
+}
+
+
+/* =========================================================
+   BOTTOM MODE BAR
+========================================================= */
+
+.mode-bar{
+
+    position:absolute;
+
+    left:50%;
+
+    bottom:24px;
+
+    transform:translateX(-50%);
+
+    z-index:15;
+
+    display:flex;
+
+    background:var(--panel);
+
+    border:1px solid var(--border);
+
+    box-shadow:
+        0 15px 40px rgba(0,0,0,.5);
+
+}
+
+.mode-button{
+
+    min-width:80px;
+
+    height:38px;
+
+    border:0;
+
+    border-right:1px solid var(--border);
+
+    background:transparent;
+
+    color:var(--muted);
+
+    font-family:"Rajdhani",sans-serif;
+
+    font-size:11px;
+
+    letter-spacing:.15em;
+
+    cursor:pointer;
+
+}
+
+.mode-button:last-child{
+
+    border-right:0;
+
+}
+
+.mode-button.active{
+
+    background:var(--accent);
+
+    color:#050608;
+
+    font-weight:700;
+
+}
+
+
+/* =========================================================
+   LAYER PANEL
+========================================================= */
+
+.layers{
+
+    position:absolute;
+
+    right:24px;
+
+    bottom:90px;
+
+    z-index:15;
+
+    width:190px;
+
+    background:var(--panel);
+
+    border:1px solid var(--border);
+
+    padding:12px;
+
+}
+
+.layers-title{
+
+    font-size:9px;
+
+    color:var(--accent);
+
+    letter-spacing:.25em;
+
+    margin-bottom:10px;
+
+}
+
+.layer{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    padding:7px 0;
+
+    border-top:1px solid rgba(255,255,255,.05);
+
+    font-size:10px;
+
+    color:var(--muted);
+
+    text-transform:uppercase;
+
+}
+
+.layer input{
+
+    accent-color:var(--accent);
+
+}
+
+
+/* =========================================================
+   3D MODE
+========================================================= */
+
+.map-stage.mode-3d .map-world{
+
+    --rotate-x:38deg;
+
+}
+
+.map-stage.mode-2d .map-world{
+
+    --rotate-x:0deg;
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media(max-width:760px){
+
+    .topbar{
+
+        padding:
+            0 12px;
+
+    }
+
+    .field-code{
+
+        display:none;
+
+    }
+
+    .field-title{
+
+        font-size:19px;
+
+    }
+
+    .top-button{
+
+        padding:0 8px;
+
+    }
+
+    .intel-panel{
+
+        left:12px;
+
+        top:12px;
+
+        width:205px;
+
+    }
+
+    .legend{
+
+        display:none;
+
+    }
+
+    .north{
+
+        right:12px;
+
+        top:85px;
+
+    }
+
+    .map-controls{
+
+        right:12px;
+
+        top:145px;
+
+    }
+
+    .layers{
+
+        display:none;
+
+    }
+
+    .mode-bar{
+
+        bottom:14px;
+
+    }
+
+    .coordinates{
+
+        display:none;
+
+    }
+
+}
+
 </style>
+
 </head>
+
+
 <body>
 
-<header>
-  <button class="back-btn" id="back-btn">← Zpět na výběr</button>
+<div class="noise"></div>
+<div class="scanlines"></div>
 
-  <div class="field-title">
-    <h1 id="field-name">—</h1>
-  </div>
 
-  <div class="top-controls">
-    <div class="dd" id="lang-dd">
-      <button class="dd-btn" id="lang-toggle">🌐 <span id="lang-current">CZ</span></button>
-      <div class="dd-menu">
-        <button data-lang="cs">Čeština</button>
-        <button data-lang="en">English</button>
-      </div>
+<!-- =====================================================
+     TOP BAR
+===================================================== -->
+
+<header class="topbar">
+
+
+    <div class="top-left">
+
+        <button
+            class="back"
+            id="back-button"
+        >
+            ← ZPĚT
+        </button>
+
+        <div>
+
+            <div
+                class="field-code"
+                id="field-code"
+            >
+                FIELD / UNKNOWN
+            </div>
+
+            <div
+                class="field-title"
+                id="field-title"
+            >
+                UNKNOWN
+            </div>
+
+        </div>
+
     </div>
-    <div class="dd" id="style-dd">
-      <button class="dd-btn">🎨 Styl</button>
-      <div class="dd-menu">
-        <button>Tmavý</button>
-        <button>Světlý</button>
-        <button>Resident Evil</button>
-        <button>PUBG</button>
-        <button>Fortnite</button>
-      </div>
+
+
+    <div class="top-right">
+
+
+        <!-- LANGUAGE -->
+
+        <div
+            class="control"
+            id="lang-control"
+        >
+
+            <button
+                class="top-button"
+                id="lang-button"
+            >
+                🌐 CZ
+            </button>
+
+            <div class="dropdown">
+
+                <button data-lang="cs">
+                    Čeština
+                </button>
+
+                <button data-lang="en">
+                    English
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- THEME -->
+
+        <div
+            class="control"
+            id="theme-control"
+        >
+
+            <button class="top-button">
+                🎨 <span id="theme-label">
+                    STYLE
+                </span>
+            </button>
+
+            <div class="dropdown">
+
+                <button data-theme="dark">
+                    ◼ Tmavý
+                </button>
+
+                <button data-theme="light">
+                    ◻ Světlý
+                </button>
+
+                <button data-theme="resident-evil">
+                    ☣ Resident Evil
+                </button>
+
+                <button data-theme="pubg">
+                    ◆ PUBG
+                </button>
+
+                <button data-theme="fortnite">
+                    ✦ Fortnite
+                </button>
+
+            </div>
+
+        </div>
+
+
     </div>
-  </div>
+
 </header>
 
-<div class="map-toolbar">
-  <div class="toggle-2d3d">
-    <button id="btn-2d" class="active">2D</button>
-    <button id="btn-3d">3D</button>
-  </div>
-</div>
 
-<div class="map-wrap" id="map-wrap">
-  <div class="map-img-frame" id="map-frame"></div>
-</div>
+
+<!-- =====================================================
+     MAP
+===================================================== -->
+
+<main
+    class="map-stage mode-2d"
+    id="map-stage"
+>
+
+
+    <div
+        class="map-viewport"
+        id="map-viewport"
+    >
+
+        <div
+            class="map-world"
+            id="map-world"
+        >
+
+            <img
+                id="map-image"
+                class="map-image"
+                draggable="false"
+                alt=""
+            >
+
+        </div>
+
+
+        <div class="tactical-grid"></div>
+
+        <div class="vignette"></div>
+
+    </div>
+
+
+
+    <!-- =================================================
+         INTEL
+    ================================================= -->
+
+    <section class="hud intel-panel">
+
+        <div class="intel-title">
+
+            <strong id="intel-title">
+                FIELD INTEL
+            </strong>
+
+            <span class="live">
+                ● LIVE
+            </span>
+
+        </div>
+
+
+        <div class="intel-row">
+
+            <span>Location</span>
+
+            <span id="info-location">
+                —
+            </span>
+
+        </div>
+
+
+        <div class="intel-row">
+
+            <span>Type</span>
+
+            <span id="info-type">
+                —
+            </span>
+
+        </div>
+
+
+        <div class="intel-row">
+
+            <span>Status</span>
+
+            <span>
+                ACTIVE
+            </span>
+
+        </div>
+
+
+        <div class="intel-row">
+
+            <span>Map</span>
+
+            <span id="info-map">
+                SAT
+            </span>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =================================================
+         NORTH
+    ================================================= -->
+
+    <div class="hud north">
+
+        <div class="north-arrow">
+            ↑
+        </div>
+
+        N
+
+    </div>
+
+
+
+    <!-- =================================================
+         LEGEND
+    ================================================= -->
+
+    <section class="hud legend">
+
+        <div
+            class="legend-title"
+            id="legend-title"
+        >
+            MAP LEGEND
+        </div>
+
+
+        <div class="legend-item">
+
+            <span class="legend-line boundary"></span>
+
+            <span id="legend-boundary">
+                FIELD BOUNDARY
+            </span>
+
+        </div>
+
+
+        <div class="legend-item">
+
+            <span class="legend-line building"></span>
+
+            <span id="legend-building">
+                STRUCTURE
+            </span>
+
+        </div>
+
+
+        <div class="legend-item">
+
+            <span class="legend-line grid"></span>
+
+            <span id="legend-grid">
+                TACTICAL GRID
+            </span>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =================================================
+         LAYERS
+    ================================================= -->
+
+    <section class="layers">
+
+        <div
+            class="layers-title"
+            id="layers-title"
+        >
+            MAP LAYERS
+        </div>
+
+
+        <label class="layer">
+
+            <span id="grid-label">
+                Grid
+            </span>
+
+            <input
+                type="checkbox"
+                id="grid-toggle"
+                checked
+            >
+
+        </label>
+
+
+        <label class="layer">
+
+            <span id="noise-label">
+                Scanlines
+            </span>
+
+            <input
+                type="checkbox"
+                id="scan-toggle"
+                checked
+            >
+
+        </label>
+
+    </section>
+
+
+
+    <!-- =================================================
+         MAP CONTROLS
+    ================================================= -->
+
+    <div class="map-controls">
+
+        <button
+            class="map-control"
+            id="zoom-in"
+        >
+            +
+        </button>
+
+        <button
+            class="map-control"
+            id="zoom-reset"
+        >
+            ◉
+        </button>
+
+        <button
+            class="map-control"
+            id="zoom-out"
+        >
+            −
+        </button>
+
+    </div>
+
+
+
+    <!-- =================================================
+         COORDINATES
+    ================================================= -->
+
+    <div
+        class="coordinates"
+        id="coordinates"
+    >
+        GRID 00 / 00
+    </div>
+
+
+
+    <!-- =================================================
+         2D / 3D
+    ================================================= -->
+
+    <div class="mode-bar">
+
+        <button
+            class="mode-button active"
+            id="mode-2d"
+        >
+            2D
+        </button>
+
+        <button
+            class="mode-button"
+            id="mode-3d"
+        >
+            3D
+        </button>
+
+    </div>
+
+
+</main>
+
+
 
 <script>
-  const FIELDS = {
-    dalov:  { name:"Dalov",  nameEn:"Dalov",  img:"maps/dalov.png" },
-    grygov: { name:"Grygov", nameEn:"Grygov", img:"maps/grygov.png" }
-  };
 
-  const params = new URLSearchParams(window.location.search);
-  const id = params.get("id");
-  const field = FIELDS[id];
+/* =========================================================
+   FIELD DATABASE
+========================================================= */
 
-  const lang = localStorage.getItem("airsoft_lang") || "cs";
-  document.getElementById("lang-current").textContent = lang.toUpperCase();
-  document.getElementById("back-btn").textContent = lang === "en" ? "← Back to selection" : "← Zpět na výběr";
+const FIELDS = {
 
-  const frame = document.getElementById("map-frame");
-  if (field) {
-    document.getElementById("field-name").textContent = lang === "en" ? field.nameEn : field.name;
-    frame.innerHTML = `<img src="${field.img}" alt="${field.name}">`;
-  } else {
-    document.getElementById("field-name").textContent = lang === "en" ? "Unknown field" : "Neznámé hřiště";
-    frame.innerHTML = `<div class="no-map">${lang === "en" ? "Map not found." : "Mapa nenalezena."}</div>`;
-  }
+    grygov:{
 
-  document.getElementById("back-btn").addEventListener("click", () => {
-    window.location.href = "menu.html";
-  });
+        name:"GRYGOV",
 
-  const mapWrap = document.getElementById("map-wrap");
-  const btn2d = document.getElementById("btn-2d");
-  const btn3d = document.getElementById("btn-3d");
-  btn2d.addEventListener("click", () => {
-    mapWrap.classList.remove("mode-3d");
-    btn2d.classList.add("active"); btn3d.classList.remove("active");
-  });
-  btn3d.addEventListener("click", () => {
-    mapWrap.classList.add("mode-3d");
-    btn3d.classList.add("active"); btn2d.classList.remove("active");
-  });
+        location:"AIRSOFT PARK GRYGOV",
 
-  document.querySelectorAll(".dd-btn").forEach(btn => {
-    btn.addEventListener("click", e => {
-      e.stopPropagation();
-      const dd = btn.closest(".dd");
-      const open = dd.classList.contains("open");
-      document.querySelectorAll(".dd.open").forEach(d => d.classList.remove("open"));
-      if (!open) dd.classList.add("open");
+        typeCS:"INDUSTRIAL / CQB",
+
+        typeEN:"INDUSTRIAL / CQB",
+
+        image:"maps/grygov.png",
+
+        className:"grygov"
+
+    },
+
+
+    dalov:{
+
+        name:"DALOV",
+
+        location:"AIRSOFT PARK DALOV",
+
+        typeCS:"SMÍŠENÝ TERÉN",
+
+        typeEN:"MIXED TERRAIN",
+
+        image:"maps/dalov.png",
+
+        className:"dalov"
+
+    }
+
+};
+
+
+/* =========================================================
+   GET FIELD
+========================================================= */
+
+const params =
+    new URLSearchParams(
+        window.location.search
+    );
+
+const fieldId =
+    params.get("id")
+    || "grygov";
+
+const field =
+    FIELDS[fieldId]
+    || FIELDS.grygov;
+
+
+/* =========================================================
+   LANGUAGE
+========================================================= */
+
+let lang =
+    localStorage.getItem("airsoft_lang")
+    || "cs";
+
+
+/* =========================================================
+   THEME
+========================================================= */
+
+let theme =
+    localStorage.getItem("airsoft_theme")
+    || "dark";
+
+
+const THEME_NAMES = {
+
+    dark:{
+        cs:"TMAVÝ",
+        en:"DARK"
+    },
+
+    light:{
+        cs:"SVĚTLÝ",
+        en:"LIGHT"
+    },
+
+    "resident-evil":{
+        cs:"RESIDENT EVIL",
+        en:"RESIDENT EVIL"
+    },
+
+    pubg:{
+        cs:"PUBG",
+        en:"PUBG"
+    },
+
+    fortnite:{
+        cs:"FORTNITE",
+        en:"FORTNITE"
+    }
+
+};
+
+
+/* =========================================================
+   ELEMENTS
+========================================================= */
+
+const mapStage =
+    document.getElementById(
+        "map-stage"
+    );
+
+const mapWorld =
+    document.getElementById(
+        "map-world"
+    );
+
+const mapImage =
+    document.getElementById(
+        "map-image"
+    );
+
+const viewport =
+    document.getElementById(
+        "map-viewport"
+    );
+
+
+/* =========================================================
+   LOAD FIELD
+========================================================= */
+
+mapWorld.classList.add(
+    field.className
+);
+
+mapImage.src =
+    field.image;
+
+mapImage.alt =
+    field.name;
+
+
+/* =========================================================
+   TEXT
+========================================================= */
+
+function updateText(){
+
+    document.documentElement.lang =
+        lang;
+
+
+    document.getElementById(
+        "field-code"
+    ).textContent =
+        `FIELD / ${fieldId.toUpperCase()}`;
+
+
+    document.getElementById(
+        "field-title"
+    ).textContent =
+        field.name;
+
+
+    document.getElementById(
+        "info-location"
+    ).textContent =
+        field.location;
+
+
+    document.getElementById(
+        "info-type"
+    ).textContent =
+        lang === "en"
+            ? field.typeEN
+            : field.typeCS;
+
+
+    document.getElementById(
+        "back-button"
+    ).textContent =
+        lang === "en"
+            ? "← BACK"
+            : "← ZPĚT";
+
+
+    document.getElementById(
+        "lang-button"
+    ).textContent =
+        `🌐 ${lang.toUpperCase()}`;
+
+
+    document.getElementById(
+        "intel-title"
+    ).textContent =
+        lang === "en"
+            ? "FIELD INTEL"
+            : "DATA HŘIŠTĚ";
+
+
+    document.getElementById(
+        "legend-title"
+    ).textContent =
+        lang === "en"
+            ? "MAP LEGEND"
+            : "LEGENDA MAPY";
+
+
+    document.getElementById(
+        "legend-boundary"
+    ).textContent =
+        lang === "en"
+            ? "FIELD BOUNDARY"
+            : "HRANICE HŘIŠTĚ";
+
+
+    document.getElementById(
+        "legend-building"
+    ).textContent =
+        lang === "en"
+            ? "STRUCTURE"
+            : "OBJEKT / BUDOVA";
+
+
+    document.getElementById(
+        "legend-grid"
+    ).textContent =
+        lang === "en"
+            ? "TACTICAL GRID"
+            : "TAKTICKÁ MŘÍŽKA";
+
+
+    document.getElementById(
+        "layers-title"
+    ).textContent =
+        lang === "en"
+            ? "MAP LAYERS"
+            : "VRSTVY MAPY";
+
+
+    document.getElementById(
+        "grid-label"
+    ).textContent =
+        lang === "en"
+            ? "Grid"
+            : "Mřížka";
+
+
+    document.getElementById(
+        "noise-label"
+    ).textContent =
+        lang === "en"
+            ? "Scanlines"
+            : "Scanlines";
+
+
+    document.getElementById(
+        "theme-label"
+    ).textContent =
+        THEME_NAMES[theme][lang];
+
+}
+
+
+/* =========================================================
+   THEME
+========================================================= */
+
+function applyTheme(){
+
+    document.body.classList.remove(
+        "theme-light",
+        "theme-resident-evil",
+        "theme-pubg",
+        "theme-fortnite"
+    );
+
+
+    if(theme !== "dark"){
+
+        document.body.classList.add(
+            `theme-${theme}`
+        );
+
+    }
+
+
+    document
+        .querySelectorAll("[data-theme]")
+        .forEach(button => {
+
+            button.classList.toggle(
+                "active",
+                button.dataset.theme === theme
+            );
+
+        });
+
+
+    updateText();
+
+}
+
+
+applyTheme();
+
+
+/* =========================================================
+   LANGUAGE
+========================================================= */
+
+document
+    .querySelectorAll("[data-lang]")
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            event => {
+
+                event.stopPropagation();
+
+                lang =
+                    button.dataset.lang;
+
+                localStorage.setItem(
+                    "airsoft_lang",
+                    lang
+                );
+
+                updateText();
+
+            }
+        );
+
     });
-  });
-  document.addEventListener("click", () => document.querySelectorAll(".dd.open").forEach(d => d.classList.remove("open")));
+
+
+/* =========================================================
+   THEME BUTTONS
+========================================================= */
+
+document
+    .querySelectorAll("[data-theme]")
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            event => {
+
+                event.stopPropagation();
+
+                theme =
+                    button.dataset.theme;
+
+                localStorage.setItem(
+                    "airsoft_theme",
+                    theme
+                );
+
+                applyTheme();
+
+            }
+        );
+
+    });
+
+
+/* =========================================================
+   DROPDOWNS
+========================================================= */
+
+document
+    .querySelectorAll(".top-button")
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            event => {
+
+                event.stopPropagation();
+
+                const control =
+                    button.closest(
+                        ".control"
+                    );
+
+                const open =
+                    control.classList.contains(
+                        "open"
+                    );
+
+
+                document
+                    .querySelectorAll(
+                        ".control"
+                    )
+                    .forEach(c =>
+                        c.classList.remove(
+                            "open"
+                        )
+                    );
+
+
+                if(!open){
+
+                    control.classList.add(
+                        "open"
+                    );
+
+                }
+
+            }
+        );
+
+    });
+
+
+document.addEventListener(
+    "click",
+    () => {
+
+        document
+            .querySelectorAll(
+                ".control"
+            )
+            .forEach(c =>
+                c.classList.remove(
+                    "open"
+                )
+            );
+
+    }
+);
+
+
+/* =========================================================
+   BACK
+========================================================= */
+
+document
+    .getElementById("back-button")
+    .addEventListener(
+        "click",
+        () => {
+
+            window.location.href =
+                "menu.html";
+
+        }
+    );
+
+
+/* =========================================================
+   ZOOM / PAN
+========================================================= */
+
+let zoom = 1;
+
+let panX = 0;
+
+let panY = 0;
+
+let dragging = false;
+
+let startX = 0;
+
+let startY = 0;
+
+let startPanX = 0;
+
+let startPanY = 0;
+
+
+function updateMap(){
+
+    mapWorld.style.setProperty(
+        "--zoom",
+        zoom
+    );
+
+    mapWorld.style.setProperty(
+        "--pan-x",
+        `${panX}px`
+    );
+
+    mapWorld.style.setProperty(
+        "--pan-y",
+        `${panY}px`
+    );
+
+}
+
+
+function resetMap(){
+
+    zoom = 1;
+
+    panX = 0;
+
+    panY = 0;
+
+    updateMap();
+
+}
+
+
+function changeZoom(amount){
+
+    zoom += amount;
+
+    zoom =
+        Math.max(
+            .75,
+            Math.min(
+                4,
+                zoom
+            )
+        );
+
+    updateMap();
+
+}
+
+
+document
+    .getElementById("zoom-in")
+    .addEventListener(
+        "click",
+        () => changeZoom(.2)
+    );
+
+
+document
+    .getElementById("zoom-out")
+    .addEventListener(
+        "click",
+        () => changeZoom(-.2)
+    );
+
+
+document
+    .getElementById("zoom-reset")
+    .addEventListener(
+        "click",
+        resetMap
+    );
+
+
+/* mouse drag */
+
+viewport.addEventListener(
+    "mousedown",
+    event => {
+
+        if(event.button !== 0)
+            return;
+
+        dragging = true;
+
+        viewport.classList.add(
+            "dragging"
+        );
+
+        mapWorld.classList.add(
+            "dragging"
+        );
+
+        startX = event.clientX;
+
+        startY = event.clientY;
+
+        startPanX = panX;
+
+        startPanY = panY;
+
+    }
+);
+
+
+window.addEventListener(
+    "mousemove",
+    event => {
+
+        if(!dragging)
+            return;
+
+        panX =
+            startPanX
+            +
+            (
+                event.clientX
+                -
+                startX
+            );
+
+        panY =
+            startPanY
+            +
+            (
+                event.clientY
+                -
+                startY
+            );
+
+        updateMap();
+
+    }
+);
+
+
+window.addEventListener(
+    "mouseup",
+    () => {
+
+        dragging = false;
+
+        viewport.classList.remove(
+            "dragging"
+        );
+
+        mapWorld.classList.remove(
+            "dragging"
+        );
+
+    }
+);
+
+
+/* =========================================================
+   MOUSE WHEEL
+========================================================= */
+
+viewport.addEventListener(
+    "wheel",
+    event => {
+
+        event.preventDefault();
+
+        changeZoom(
+            event.deltaY < 0
+                ? .12
+                : -.12
+        );
+
+    },
+    {passive:false}
+);
+
+
+/* =========================================================
+   2D / 3D
+========================================================= */
+
+const mode2d =
+    document.getElementById(
+        "mode-2d"
+    );
+
+const mode3d =
+    document.getElementById(
+        "mode-3d"
+    );
+
+
+mode2d.addEventListener(
+    "click",
+    () => {
+
+        mapStage.classList.remove(
+            "mode-3d"
+        );
+
+        mapStage.classList.add(
+            "mode-2d"
+        );
+
+        mode2d.classList.add(
+            "active"
+        );
+
+        mode3d.classList.remove(
+            "active"
+        );
+
+    }
+);
+
+
+mode3d.addEventListener(
+    "click",
+    () => {
+
+        mapStage.classList.remove(
+            "mode-2d"
+        );
+
+        mapStage.classList.add(
+            "mode-3d"
+        );
+
+        mode3d.classList.add(
+            "active"
+        );
+
+        mode2d.classList.remove(
+            "active"
+        );
+
+    }
+);
+
+
+/* =========================================================
+   LAYERS
+========================================================= */
+
+document
+    .getElementById("grid-toggle")
+    .addEventListener(
+        "change",
+        event => {
+
+            document
+                .querySelector(
+                    ".tactical-grid"
+                )
+                .style.opacity =
+                event.target.checked
+                    ? ".75"
+                    : "0";
+
+        }
+    );
+
+
+document
+    .getElementById("scan-toggle")
+    .addEventListener(
+        "change",
+        event => {
+
+            document
+                .querySelector(
+                    ".scanlines"
+                )
+                .style.display =
+                event.target.checked
+                    ? "block"
+                    : "none";
+
+        }
+    );
+
+
+/* =========================================================
+   COORDINATE HUD
+========================================================= */
+
+viewport.addEventListener(
+    "mousemove",
+    event => {
+
+        const rect =
+            viewport.getBoundingClientRect();
+
+
+        const x =
+            Math.max(
+                0,
+                Math.min(
+                    100,
+                    (
+                        (event.clientX - rect.left)
+                        /
+                        rect.width
+                    )
+                    * 100
+                )
+            );
+
+
+        const y =
+            Math.max(
+                0,
+                Math.min(
+                    100,
+                    (
+                        (event.clientY - rect.top)
+                        /
+                        rect.height
+                    )
+                    * 100
+                )
+            );
+
+
+        const gridX =
+            Math.floor(
+                x / 10
+            );
+
+        const gridY =
+            Math.floor(
+                y / 10
+            );
+
+
+        document.getElementById(
+            "coordinates"
+        ).textContent =
+            `GRID ${String(gridX).padStart(2,"0")} / ${String(gridY).padStart(2,"0")}`;
+
+    }
+);
+
+
+/* =========================================================
+   INIT
+========================================================= */
+
+updateMap();
+
+updateText();
+
 </script>
 
 </body>
