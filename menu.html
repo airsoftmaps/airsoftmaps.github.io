@@ -2,19 +2,28 @@
 <html lang="cs">
 
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
 
 <title>AIRSOFT MAPS — Battlefield Selection</title>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link
+    rel="preconnect"
+    href="https://fonts.googleapis.com"
+>
+
+<link
+    href="https://fonts.googleapis.com/css2?family=Anton&family=Rajdhani:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+>
+
 
 <style>
-
-/* =========================================================
-   BASE
-========================================================= */
 
 *{
     margin:0;
@@ -22,75 +31,80 @@
     box-sizing:border-box;
 }
 
+
 :root{
+
     --accent:#ff7a1a;
-    --accent-soft:rgba(255,122,26,.12);
 
     --bg:#050608;
-    --panel:#0d1013;
-    --panel2:#11151a;
+
+    --panel:#0c1013;
 
     --text:#eef1f0;
+
     --muted:#858d96;
+
     --border:#292e34;
 
-    --danger:#d71920;
 }
+
 
 html,
 body{
-    width:100%;
-    min-height:100%;
-}
 
-body{
+    min-height:100%;
+
     background:var(--bg);
+
     color:var(--text);
 
     font-family:"Rajdhani",sans-serif;
 
-    overflow-x:hidden;
-
-    transition:
-        background .4s ease,
-        color .4s ease;
 }
 
 
-/* =========================================================
-   ATMOSPHERE
-========================================================= */
+body{
+
+    overflow-x:hidden;
+
+}
+
 
 body::before{
+
     content:"";
 
     position:fixed;
+
     inset:0;
 
-    pointer-events:none;
-
     z-index:1;
+
+    pointer-events:none;
 
     background-image:
         url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.045'/%3E%3C/svg%3E");
 
-    mix-blend-mode:overlay;
-
     opacity:.7;
+
 }
 
+
 body::after{
+
     content:"";
 
     position:fixed;
-    inset:0;
 
-    pointer-events:none;
+    inset:0;
 
     z-index:2;
 
+    pointer-events:none;
+
     box-shadow:
         inset 0 0 140px rgba(0,0,0,.9);
+
 }
 
 
@@ -99,7 +113,9 @@ body::after{
 ========================================================= */
 
 .scanlines{
+
     position:fixed;
+
     inset:0;
 
     z-index:3;
@@ -113,6 +129,7 @@ body::after{
             transparent 3px,
             rgba(255,255,255,.012) 4px
         );
+
 }
 
 
@@ -121,6 +138,7 @@ body::after{
 ========================================================= */
 
 header{
+
     position:relative;
 
     z-index:10;
@@ -128,7 +146,9 @@ header{
     height:78px;
 
     display:flex;
+
     align-items:center;
+
     justify-content:space-between;
 
     padding:0 5vw;
@@ -143,52 +163,52 @@ header{
         );
 
     backdrop-filter:blur(12px);
+
 }
 
 
-/* brand */
-
 .brand{
+
     display:flex;
+
     align-items:center;
 
     gap:12px;
+
 }
 
+
 .brand img{
+
     width:40px;
+
     height:40px;
 
     object-fit:contain;
 
-    filter:
-        drop-shadow(
-            0 0 12px
-            color-mix(
-                in srgb,
-                var(--accent) 35%,
-                transparent
-            )
-        );
 }
 
-.brand-text{
-    display:flex;
-    flex-direction:column;
-}
 
 .brand-title{
+
     font-family:"Anton",sans-serif;
 
     font-size:19px;
+
     letter-spacing:.08em;
+
 }
+
 
 .brand-title span{
+
     color:var(--accent);
+
 }
 
+
 .brand-sub{
+
     font-size:9px;
 
     color:var(--muted);
@@ -196,6 +216,7 @@ header{
     letter-spacing:.3em;
 
     text-transform:uppercase;
+
 }
 
 
@@ -204,15 +225,23 @@ header{
 ========================================================= */
 
 .top-controls{
+
     display:flex;
+
     gap:8px;
+
 }
+
 
 .control{
+
     position:relative;
+
 }
 
+
 .control-button{
+
     height:38px;
 
     padding:0 13px;
@@ -233,44 +262,50 @@ header{
 
     cursor:pointer;
 
-    transition:
-        border-color .2s,
-        color .2s,
-        background .2s;
 }
+
 
 .control-button:hover{
+
     border-color:var(--accent);
+
     color:var(--accent);
 
-    background:var(--accent-soft);
 }
 
+
 .dropdown{
+
     position:absolute;
 
     right:0;
+
     top:calc(100% + 8px);
 
     min-width:190px;
 
-    background:rgba(10,12,15,.98);
+    background:#0a0c0f;
 
     border:1px solid var(--border);
 
-    box-shadow:
-        0 20px 50px rgba(0,0,0,.7);
+    box-shadow:0 20px 50px rgba(0,0,0,.7);
 
     display:none;
 
     overflow:hidden;
+
 }
+
 
 .control.open .dropdown{
+
     display:block;
+
 }
 
+
 .dropdown button{
+
     width:100%;
 
     padding:11px 14px;
@@ -288,16 +323,17 @@ header{
     font-size:13px;
 
     cursor:pointer;
+
 }
 
-.dropdown button:hover{
-    background:var(--accent-soft);
-    color:var(--accent);
-}
 
+.dropdown button:hover,
 .dropdown button.active{
+
+    background:rgba(255,122,26,.1);
+
     color:var(--accent);
-    font-weight:700;
+
 }
 
 
@@ -306,6 +342,7 @@ header{
 ========================================================= */
 
 .hero{
+
     position:relative;
 
     z-index:5;
@@ -316,47 +353,43 @@ header{
         7vh
         5vw
         4vh;
+
 }
 
+
 .kicker{
+
     font-size:11px;
 
     color:var(--accent);
 
     letter-spacing:.45em;
 
-    text-transform:uppercase;
-
     margin-bottom:13px;
+
 }
 
+
 .hero h1{
+
     font-family:"Anton",sans-serif;
 
-    font-size:clamp(
-        42px,
-        7vw,
-        82px
-    );
+    font-size:clamp(42px,7vw,82px);
 
     line-height:.95;
 
-    letter-spacing:.025em;
-
-    text-shadow:
-        0 0 35px
-        color-mix(
-            in srgb,
-            var(--accent) 20%,
-            transparent
-        );
 }
+
 
 .hero h1 span{
+
     color:var(--accent);
+
 }
 
+
 .hero p{
+
     margin-top:13px;
 
     color:var(--muted);
@@ -364,6 +397,7 @@ header{
     font-size:14px;
 
     letter-spacing:.08em;
+
 }
 
 
@@ -372,40 +406,21 @@ header{
 ========================================================= */
 
 .search-wrap{
+
     max-width:430px;
 
     margin:30px auto 0;
 
-    position:relative;
 }
 
-.search-wrap::before{
-    content:"⌕";
-
-    position:absolute;
-
-    left:14px;
-    top:50%;
-
-    transform:translateY(-50%);
-
-    color:var(--muted);
-
-    font-size:18px;
-
-    z-index:2;
-}
 
 .search-wrap input{
+
     width:100%;
 
     height:46px;
 
-    padding:
-        0
-        16px
-        0
-        40px;
+    padding:0 16px;
 
     border:1px solid var(--border);
 
@@ -419,15 +434,13 @@ header{
 
     font-size:14px;
 
-    transition:border-color .2s;
 }
+
 
 .search-wrap input:focus{
-    border-color:var(--accent);
-}
 
-.search-wrap input::placeholder{
-    color:#555d66;
+    border-color:var(--accent);
+
 }
 
 
@@ -436,13 +449,14 @@ header{
 ========================================================= */
 
 .field-grid{
+
     position:relative;
 
     z-index:5;
 
     max-width:1200px;
 
-    margin:0 auto;
+    margin:auto;
 
     padding:
         0 5vw
@@ -457,6 +471,7 @@ header{
         );
 
     gap:22px;
+
 }
 
 
@@ -465,15 +480,16 @@ header{
 ========================================================= */
 
 .field-card{
+
     position:relative;
 
-    min-height:320px;
+    min-height:340px;
 
     overflow:hidden;
 
     border:1px solid var(--border);
 
-    background:#0b0d10;
+    background:#080b0d;
 
     cursor:pointer;
 
@@ -481,142 +497,136 @@ header{
         transform .35s cubic-bezier(.2,.9,.2,1),
         border-color .3s,
         box-shadow .3s;
+
 }
 
+
 .field-card:hover{
+
     transform:translateY(-6px);
 
     border-color:var(--accent);
 
     box-shadow:
         0 25px 70px rgba(0,0,0,.65),
-        0 0 35px
-        color-mix(
-            in srgb,
-            var(--accent) 10%,
-            transparent
-        );
+        0 0 35px rgba(255,122,26,.1);
+
 }
 
 
-/* image */
+/* =========================================================
+   TACTICAL MAP
+========================================================= */
 
-.field-image{
+.field-map{
+
     position:absolute;
+
     inset:0;
 
     overflow:hidden;
+
+    background:
+        radial-gradient(
+            circle at 50% 50%,
+            #18211b,
+            #090c0a 75%
+        );
+
 }
 
-.field-image img{
+
+.field-map svg{
+
+    position:absolute;
+
     width:100%;
+
     height:100%;
 
-    object-fit:cover;
-
-    transform:scale(1.13);
-
-    filter:
-        saturate(.7)
-        contrast(1.12)
-        brightness(.72);
+    inset:0;
 
     transition:
-        transform .8s cubic-bezier(.2,.9,.2,1),
-        filter .5s;
-}
+        transform .8s cubic-bezier(.2,.9,.2,1);
 
-.field-card:hover .field-image img{
-    transform:scale(1.2);
-
-    filter:
-        saturate(.9)
-        contrast(1.12)
-        brightness(.82);
 }
 
 
-/* dark overlay */
+.field-card:hover .field-map svg{
 
-.field-image::after{
+    transform:scale(1.08);
+
+}
+
+
+/* map darkening */
+
+.field-map::after{
+
     content:"";
 
     position:absolute;
+
     inset:0;
+
+    pointer-events:none;
 
     background:
         linear-gradient(
             180deg,
-            rgba(0,0,0,.15) 0%,
-            rgba(0,0,0,.3) 35%,
-            rgba(0,0,0,.92) 100%
+            rgba(0,0,0,.05),
+            rgba(0,0,0,.15) 40%,
+            rgba(0,0,0,.92)
         );
+
 }
 
 
-/* tactical grid */
-
-.field-image::before{
-    content:"";
-
-    position:absolute;
-    inset:0;
-
-    z-index:2;
-
-    opacity:.18;
-
-    background:
-        linear-gradient(
-            rgba(255,255,255,.2) 1px,
-            transparent 1px
-        ),
-        linear-gradient(
-            90deg,
-            rgba(255,255,255,.2) 1px,
-            transparent 1px
-        );
-
-    background-size:
-        40px 40px;
-}
-
-
-/* content */
+/* =========================================================
+   CARD CONTENT
+========================================================= */
 
 .field-content{
+
     position:absolute;
 
-    z-index:4;
+    z-index:5;
 
     left:24px;
+
     right:24px;
+
     bottom:22px;
+
 }
 
+
 .field-id{
+
     font-size:10px;
 
     color:var(--accent);
 
     letter-spacing:.35em;
 
-    text-transform:uppercase;
-
     margin-bottom:8px;
+
 }
+
 
 .field-name{
+
     font-family:"Anton",sans-serif;
 
-    font-size:36px;
-
-    letter-spacing:.03em;
+    font-size:38px;
 
     line-height:1;
+
 }
 
+
 .field-meta{
+
     margin-top:10px;
 
     color:#a2a8ae;
@@ -626,24 +636,28 @@ header{
     letter-spacing:.08em;
 
     text-transform:uppercase;
+
 }
 
 
-/* arrow */
-
 .field-arrow{
+
     position:absolute;
 
     right:22px;
+
     bottom:22px;
 
-    z-index:5;
+    z-index:6;
 
     width:42px;
+
     height:42px;
 
     display:flex;
+
     align-items:center;
+
     justify-content:center;
 
     border:1px solid rgba(255,255,255,.18);
@@ -652,24 +666,150 @@ header{
 
     font-size:20px;
 
-    transition:
-        background .2s,
-        border-color .2s,
-        color .2s;
 }
 
+
 .field-card:hover .field-arrow{
+
     background:var(--accent);
+
     border-color:var(--accent);
+
     color:#050608;
+
 }
 
 
 /* =========================================================
-   FOOTER STATUS
+   SVG MAP STYLE
+========================================================= */
+
+.map-ground{
+
+    fill:#1b261d;
+
+}
+
+
+.map-field{
+
+    fill:#27352a;
+
+    stroke:#5d705f;
+
+    stroke-width:2;
+
+}
+
+
+.map-road{
+
+    fill:none;
+
+    stroke:#59605a;
+
+    stroke-width:18;
+
+    opacity:.45;
+
+}
+
+
+.map-road-inner{
+
+    fill:none;
+
+    stroke:#101310;
+
+    stroke-width:8;
+
+    opacity:.7;
+
+}
+
+
+.map-building{
+
+    fill:#4d5551;
+
+    stroke:#b4bbb6;
+
+    stroke-width:2;
+
+}
+
+
+.map-building-dark{
+
+    fill:#303735;
+
+    stroke:#8e9892;
+
+    stroke-width:2;
+
+}
+
+
+.map-small{
+
+    fill:#686f69;
+
+    stroke:#b5bbb6;
+
+    stroke-width:1.5;
+
+}
+
+
+.map-zone{
+
+    fill:none;
+
+    stroke:var(--accent);
+
+    stroke-width:3;
+
+    stroke-dasharray:9 7;
+
+    opacity:.9;
+
+}
+
+
+.map-label{
+
+    fill:#eef1f0;
+
+    font-family:Arial,sans-serif;
+
+    font-size:16px;
+
+    font-weight:bold;
+
+    letter-spacing:2px;
+
+}
+
+
+.map-label-small{
+
+    fill:#aab1ac;
+
+    font-family:Arial,sans-serif;
+
+    font-size:10px;
+
+    letter-spacing:1px;
+
+}
+
+
+/* =========================================================
+   STATUS
 ========================================================= */
 
 .statusbar{
+
     position:fixed;
 
     left:0;
@@ -683,7 +823,9 @@ header{
     padding:0 5vw;
 
     display:flex;
+
     align-items:center;
+
     justify-content:space-between;
 
     border-top:1px solid var(--border);
@@ -696,131 +838,32 @@ header{
 
     letter-spacing:.18em;
 
-    text-transform:uppercase;
 }
+
 
 .status-left{
+
     display:flex;
+
     align-items:center;
+
     gap:8px;
+
 }
 
+
 .status-dot{
+
     width:6px;
+
     height:6px;
 
     border-radius:50%;
 
     background:#4cff8c;
 
-    box-shadow:
-        0 0 8px #4cff8c;
-}
+    box-shadow:0 0 8px #4cff8c;
 
-
-/* =========================================================
-   EMPTY
-========================================================= */
-
-.empty{
-    grid-column:1/-1;
-
-    text-align:center;
-
-    padding:80px;
-
-    color:var(--muted);
-
-    letter-spacing:.12em;
-}
-
-
-/* =========================================================
-   THEMES
-========================================================= */
-
-
-/* LIGHT */
-
-body.theme-light{
-    --accent:#e35e00;
-    --bg:#e8e9e7;
-    --panel:#fff;
-    --panel2:#f3f3f1;
-    --text:#151719;
-    --muted:#666d73;
-    --border:#c7c9c8;
-}
-
-body.theme-light header{
-    background:rgba(235,236,234,.94);
-}
-
-body.theme-light .dropdown{
-    background:#f5f5f3;
-}
-
-body.theme-light .field-card{
-    background:#fff;
-}
-
-
-/* RESIDENT EVIL */
-
-body.theme-resident-evil{
-    --accent:#c5161d;
-    --bg:#050303;
-    --panel:#0e0809;
-    --panel2:#160b0c;
-    --text:#e8dddd;
-    --muted:#877878;
-    --border:#3c1719;
-}
-
-body.theme-resident-evil .hero h1{
-    text-shadow:
-        0 0 30px rgba(197,22,29,.4);
-}
-
-body.theme-resident-evil .field-image img{
-    filter:
-        saturate(.58)
-        contrast(1.3)
-        brightness(.55)
-        sepia(.12);
-}
-
-
-/* PUBG */
-
-body.theme-pubg{
-    --accent:#c6a34a;
-    --bg:#10100d;
-    --panel:#191812;
-    --panel2:#211f17;
-    --text:#e5dfcf;
-    --muted:#9c9789;
-    --border:#48422e;
-}
-
-
-/* FORTNITE */
-
-body.theme-fortnite{
-    --accent:#7d5cff;
-    --bg:#080611;
-    --panel:#131023;
-    --panel2:#19152e;
-    --text:#f2efff;
-    --muted:#a39dbc;
-    --border:#3a315f;
-}
-
-body.theme-fortnite .field-image img{
-    filter:
-        saturate(1.25)
-        contrast(1.08)
-        brightness(.7);
 }
 
 
@@ -831,15 +874,15 @@ body.theme-fortnite .field-image img{
 @media(max-width:700px){
 
     header{
+
         height:auto;
 
         min-height:72px;
 
-        padding:
-            14px
-            5vw;
+        padding:14px 5vw;
 
         gap:12px;
+
     }
 
     .brand-sub{
@@ -850,41 +893,19 @@ body.theme-fortnite .field-image img{
         font-size:16px;
     }
 
-    .top-controls{
-        gap:5px;
-    }
-
-    .control-button{
-        padding:0 9px;
-    }
-
     .hero{
-        padding:
-            5vh
-            5vw
-            4vh;
-    }
-
-    .hero h1{
-        font-size:45px;
+        padding:5vh 5vw 4vh;
     }
 
     .field-grid{
         grid-template-columns:1fr;
-
         padding-bottom:60px;
     }
 
-    .field-card{
-        min-height:270px;
-    }
-
-    .statusbar{
-        font-size:8px;
-    }
 }
 
 </style>
+
 </head>
 
 
@@ -902,7 +923,7 @@ body.theme-fortnite .field-image img{
             alt="Airsoft Maps"
         >
 
-        <div class="brand-text">
+        <div>
 
             <div class="brand-title">
                 AIRSOFT <span>MAPS</span>
@@ -919,13 +940,13 @@ body.theme-fortnite .field-image img{
 
     <div class="top-controls">
 
-        <!-- LANGUAGE -->
-
-        <div class="control" id="lang-control">
+        <div
+            class="control"
+            id="lang-control"
+        >
 
             <button
                 class="control-button"
-                id="lang-button"
             >
                 🌐 <span id="lang-current">CZ</span>
             </button>
@@ -945,14 +966,15 @@ body.theme-fortnite .field-image img{
         </div>
 
 
-        <!-- STYLE -->
-
-        <div class="control" id="theme-control">
+        <div
+            class="control"
+            id="theme-control"
+        >
 
             <button
                 class="control-button"
             >
-                🎨 <span id="theme-name">STYLE</span>
+                🎨 <span id="theme-name">STYL</span>
             </button>
 
             <div class="dropdown">
@@ -1023,8 +1045,11 @@ body.theme-fortnite .field-image img{
 <div class="statusbar">
 
     <div class="status-left">
+
         <span class="status-dot"></span>
+
         SYSTEM ONLINE
+
     </div>
 
     <div>
@@ -1037,7 +1062,7 @@ body.theme-fortnite .field-image img{
 <script>
 
 /* =========================================================
-   DATA
+   BATTLEFIELDS
 ========================================================= */
 
 const BATTLEFIELDS = [
@@ -1046,57 +1071,411 @@ const BATTLEFIELDS = [
         id:"grygov",
 
         name:"Grygov",
+
         nameEn:"Grygov",
 
         location:"Airsoft Park Grygov",
 
         type:"Industrial / CQB",
 
-        typeEn:"Industrial / CQB",
+        typeEn:"Industrial / CQB"
 
-        image:"maps/grygov.png"
     },
 
     {
         id:"dalov",
 
         name:"Dalov",
+
         nameEn:"Dalov",
 
         location:"Airsoft Park Dalov",
 
-        type:"Mixed terrain",
+        type:"Mixed Terrain",
 
-        typeEn:"Mixed terrain",
+        typeEn:"Mixed Terrain"
 
-        image:"maps/dalov.png"
     }
 
 ];
 
 
 /* =========================================================
-   LANGUAGE
+   SVG MAP GENERATORS
+========================================================= */
+
+function grygovMap(){
+
+    return `
+
+    <svg viewBox="0 0 800 500">
+
+        <rect
+            class="map-ground"
+            x="0"
+            y="0"
+            width="800"
+            height="500"
+        />
+
+
+        <!-- FIELD -->
+
+        <polygon
+            class="map-field"
+            points="
+                185,75
+                565,35
+                665,165
+                595,415
+                230,450
+                125,285
+            "
+        />
+
+
+        <!-- ROAD -->
+
+        <path
+            class="map-road"
+            d="
+                M 55 360
+                L 160 300
+                L 330 285
+                L 530 240
+                L 745 210
+            "
+        />
+
+        <path
+            class="map-road-inner"
+            d="
+                M 55 360
+                L 160 300
+                L 330 285
+                L 530 240
+                L 745 210
+            "
+        />
+
+
+        <!-- MAIN BUILDINGS -->
+
+        <rect
+            class="map-building"
+            x="220"
+            y="170"
+            width="65"
+            height="185"
+            rx="3"
+            transform="rotate(-8 252 262)"
+        />
+
+        <rect
+            class="map-building-dark"
+            x="310"
+            y="150"
+            width="65"
+            height="205"
+            rx="3"
+            transform="rotate(-8 342 252)"
+        />
+
+        <rect
+            class="map-building"
+            x="400"
+            y="128"
+            width="70"
+            height="210"
+            rx="3"
+            transform="rotate(-8 435 233)"
+        />
+
+        <rect
+            class="map-building-dark"
+            x="495"
+            y="112"
+            width="68"
+            height="200"
+            rx="3"
+            transform="rotate(-8 529 212)"
+        />
+
+
+        <!-- TOP BUILDING -->
+
+        <rect
+            class="map-small"
+            x="290"
+            y="75"
+            width="100"
+            height="55"
+            transform="rotate(-7 340 102)"
+        />
+
+
+        <!-- SMALL SOUTH BUILDING -->
+
+        <rect
+            class="map-small"
+            x="375"
+            y="360"
+            width="65"
+            height="45"
+            transform="rotate(-8 407 382)"
+        />
+
+
+        <!-- PLAYING AREA -->
+
+        <polygon
+            class="map-zone"
+            points="
+                190,95
+                570,55
+                640,170
+                570,395
+                245,425
+                145,280
+            "
+        />
+
+
+        <!-- LABELS -->
+
+        <text
+            class="map-label"
+            x="210"
+            y="450"
+        >
+            AIRSOFT PARK GRYGOV
+        </text>
+
+        <text
+            class="map-label-small"
+            x="230"
+            y="195"
+        >
+            BUILDING 01
+        </text>
+
+        <text
+            class="map-label-small"
+            x="320"
+            y="175"
+        >
+            BUILDING 02
+        </text>
+
+        <text
+            class="map-label-small"
+            x="410"
+            y="153"
+        >
+            BUILDING 03
+        </text>
+
+        <text
+            class="map-label-small"
+            x="505"
+            y="137"
+        >
+            BUILDING 04
+        </text>
+
+    </svg>
+
+    `;
+
+}
+
+
+function dalovMap(){
+
+    return `
+
+    <svg viewBox="0 0 800 500">
+
+        <rect
+            class="map-ground"
+            x="0"
+            y="0"
+            width="800"
+            height="500"
+        />
+
+
+        <!-- FIELD -->
+
+        <polygon
+            class="map-field"
+            points="
+                230,55
+                500,80
+                610,190
+                565,410
+                300,450
+                155,325
+                170,135
+            "
+        />
+
+
+        <!-- ACCESS ROAD -->
+
+        <path
+            class="map-road"
+            d="
+                M 65 405
+                L 185 335
+                L 315 330
+                L 470 345
+                L 735 420
+            "
+        />
+
+        <path
+            class="map-road-inner"
+            d="
+                M 65 405
+                L 185 335
+                L 315 330
+                L 470 345
+                L 735 420
+            "
+        />
+
+
+        <!-- BUILDINGS -->
+
+        <rect
+            class="map-building"
+            x="220"
+            y="170"
+            width="70"
+            height="185"
+            rx="3"
+            transform="rotate(-7 255 262)"
+        />
+
+        <rect
+            class="map-building-dark"
+            x="320"
+            y="160"
+            width="70"
+            height="195"
+            rx="3"
+            transform="rotate(-7 355 257)"
+        />
+
+        <rect
+            class="map-building"
+            x="420"
+            y="155"
+            width="75"
+            height="205"
+            rx="3"
+            transform="rotate(-7 457 257)"
+        />
+
+
+        <!-- TOP BUILDING -->
+
+        <rect
+            class="map-small"
+            x="250"
+            y="75"
+            width="110"
+            height="70"
+            transform="rotate(-7 305 110)"
+        />
+
+
+        <!-- SOUTH BUILDING -->
+
+        <rect
+            class="map-small"
+            x="365"
+            y="380"
+            width="65"
+            height="48"
+            transform="rotate(-7 397 404)"
+        />
+
+
+        <!-- PLAY AREA -->
+
+        <polygon
+            class="map-zone"
+            points="
+                235,70
+                495,95
+                590,195
+                545,395
+                305,430
+                175,315
+                190,145
+            "
+        />
+
+
+        <text
+            class="map-label"
+            x="210"
+            y="470"
+        >
+            AIRSOFT PARK DALOV
+        </text>
+
+        <text
+            class="map-label-small"
+            x="225"
+            y="195"
+        >
+            BUILDING 01
+        </text>
+
+        <text
+            class="map-label-small"
+            x="325"
+            y="185"
+        >
+            BUILDING 02
+        </text>
+
+        <text
+            class="map-label-small"
+            x="425"
+            y="180"
+        >
+            BUILDING 03
+        </text>
+
+    </svg>
+
+    `;
+
+}
+
+
+/* =========================================================
+   TEXT
 ========================================================= */
 
 const TEXT = {
 
     cs:{
-        kicker:"FIELD DATABASE / 001",
         title:"VYBER <span>BOJIŠTĚ</span>",
         sub:"Zvol hřiště a otevři taktickou mapu",
         search:"Hledat hřiště...",
-        style:"STYL",
-        status:"SYSTEM ONLINE"
+        style:"STYL"
     },
 
     en:{
-        kicker:"FIELD DATABASE / 001",
         title:"SELECT <span>BATTLEFIELD</span>",
         sub:"Select a field and open the tactical map",
         search:"Search battlefield...",
-        style:"STYLE",
-        status:"SYSTEM ONLINE"
+        style:"STYLE"
     }
 
 };
@@ -1107,8 +1486,13 @@ let lang =
     || "cs";
 
 
+let theme =
+    localStorage.getItem("airsoft_theme")
+    || "dark";
+
+
 /* =========================================================
-   THEME
+   THEME NAMES
 ========================================================= */
 
 const THEME_NAMES = {
@@ -1141,10 +1525,9 @@ const THEME_NAMES = {
 };
 
 
-let theme =
-    localStorage.getItem("airsoft_theme")
-    || "dark";
-
+/* =========================================================
+   APPLY THEME
+========================================================= */
 
 function applyTheme(){
 
@@ -1155,6 +1538,7 @@ function applyTheme(){
         "theme-fortnite"
     );
 
+
     if(theme !== "dark"){
 
         document.body.classList.add(
@@ -1162,6 +1546,7 @@ function applyTheme(){
         );
 
     }
+
 
     document
         .querySelectorAll("[data-theme]")
@@ -1174,10 +1559,12 @@ function applyTheme(){
 
         });
 
+
     document.getElementById(
         "theme-name"
     ).textContent =
         THEME_NAMES[theme][lang];
+
 }
 
 
@@ -1189,72 +1576,69 @@ function applyLanguage(){
 
     const t = TEXT[lang];
 
+
     document.getElementById(
         "lang-current"
     ).textContent =
         lang.toUpperCase();
+
 
     document.getElementById(
         "hero-title"
     ).innerHTML =
         t.title;
 
+
     document.getElementById(
         "hero-sub"
     ).textContent =
         t.sub;
+
 
     document.getElementById(
         "field-search"
     ).placeholder =
         t.search;
 
-    document.querySelectorAll(
-        "[data-lang]"
-    ).forEach(button => {
 
-        button.classList.toggle(
-            "active",
-            button.dataset.lang === lang
-        );
+    document
+        .querySelectorAll("[data-lang]")
+        .forEach(button => {
 
-    });
+            button.classList.toggle(
+                "active",
+                button.dataset.lang === lang
+            );
+
+        });
+
 
     applyTheme();
+
 
     renderFields(
         document.getElementById(
             "field-search"
         ).value
     );
-}
 
-
-function setLanguage(newLang){
-
-    lang = newLang;
-
-    localStorage.setItem(
-        "airsoft_lang",
-        lang
-    );
-
-    applyLanguage();
 }
 
 
 /* =========================================================
-   RENDER FIELDS
+   RENDER
 ========================================================= */
 
-function renderFields(search = ""){
+function renderFields(search=""){
 
     const grid =
         document.getElementById(
             "field-grid"
         );
 
-    grid.innerHTML = "";
+
+    grid.innerHTML="";
+
 
     const query =
         search
@@ -1270,25 +1654,11 @@ function renderFields(search = ""){
                     ? field.nameEn
                     : field.name;
 
-            return (
-                name
-                    .toLowerCase()
-                    .includes(query)
-            );
+            return name
+                .toLowerCase()
+                .includes(query);
 
         });
-
-
-    if(!filtered.length){
-
-        grid.innerHTML = `
-            <div class="empty">
-                NO BATTLEFIELD FOUND
-            </div>
-        `;
-
-        return;
-    }
 
 
     filtered.forEach(field => {
@@ -1297,6 +1667,7 @@ function renderFields(search = ""){
             lang === "en"
                 ? field.nameEn
                 : field.name;
+
 
         const type =
             lang === "en"
@@ -1307,18 +1678,22 @@ function renderFields(search = ""){
         const card =
             document.createElement("article");
 
+
         card.className =
             "field-card";
 
 
+        const map =
+            field.id === "grygov"
+                ? grygovMap()
+                : dalovMap();
+
+
         card.innerHTML = `
 
-            <div class="field-image">
+            <div class="field-map">
 
-                <img
-                    src="${field.image}"
-                    alt="${name}"
-                >
+                ${map}
 
             </div>
 
@@ -1364,6 +1739,17 @@ function renderFields(search = ""){
 
     });
 
+
+    if(!filtered.length){
+
+        grid.innerHTML = `
+            <div class="empty">
+                NO BATTLEFIELD FOUND
+            </div>
+        `;
+
+    }
+
 }
 
 
@@ -1381,29 +1767,25 @@ document
 
                 event.stopPropagation();
 
+
                 const control =
                     button.closest(".control");
 
-                const isOpen =
-                    control.classList.contains(
-                        "open"
-                    );
+
+                const wasOpen =
+                    control.classList.contains("open");
 
 
                 document
                     .querySelectorAll(".control")
                     .forEach(c =>
-                        c.classList.remove(
-                            "open"
-                        )
+                        c.classList.remove("open")
                     );
 
 
-                if(!isOpen){
+                if(!wasOpen){
 
-                    control.classList.add(
-                        "open"
-                    );
+                    control.classList.add("open");
 
                 }
 
@@ -1428,7 +1810,7 @@ document.addEventListener(
 
 
 /* =========================================================
-   LANGUAGE BUTTONS
+   LANGUAGE
 ========================================================= */
 
 document
@@ -1441,9 +1823,17 @@ document
 
                 event.stopPropagation();
 
-                setLanguage(
-                    button.dataset.lang
+                lang =
+                    button.dataset.lang;
+
+
+                localStorage.setItem(
+                    "airsoft_lang",
+                    lang
                 );
+
+
+                applyLanguage();
 
             }
         );
@@ -1452,7 +1842,7 @@ document
 
 
 /* =========================================================
-   THEME BUTTONS
+   THEME
 ========================================================= */
 
 document
@@ -1465,13 +1855,16 @@ document
 
                 event.stopPropagation();
 
+
                 theme =
                     button.dataset.theme;
+
 
                 localStorage.setItem(
                     "airsoft_theme",
                     theme
                 );
+
 
                 applyTheme();
 
@@ -1504,7 +1897,6 @@ document
 ========================================================= */
 
 applyLanguage();
-applyTheme();
 
 </script>
 
