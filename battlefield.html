@@ -4,27 +4,14 @@
 <head>
 
 <meta charset="UTF-8">
-
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>AIRSOFT MAPS — Battlefield</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
-
-<link
-    href="https://fonts.googleapis.com/css2?family=Anton&family=Rajdhani:wght@400;500;600;700&display=swap"
-    rel="stylesheet"
->
-
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
-
-/* =========================================================
-   CORE
-========================================================= */
 
 *{
     margin:0;
@@ -32,176 +19,95 @@
     box-sizing:border-box;
 }
 
-:root{
-
-    --accent:#ff7a1a;
-
-    --bg:#050608;
-
-    --panel:rgba(8,10,13,.92);
-
-    --text:#eef1f0;
-
-    --muted:#7e8790;
-
-    --border:#2a3036;
-
-    --grid:rgba(255,255,255,.07);
-
-}
-
-
 html,
 body{
 
     width:100%;
     height:100%;
 
-    overflow:hidden;
+    background:#050608;
 
-    background:var(--bg);
-
-    color:var(--text);
+    color:#eef1f0;
 
     font-family:"Rajdhani",sans-serif;
 
+    overflow:hidden;
 }
-
 
 /* =========================================================
-   THEMES
+   BACKGROUND
 ========================================================= */
 
-body.theme-light{
-
-    --accent:#e35e00;
-
-    --bg:#e8e9e7;
-
-    --panel:rgba(245,245,243,.94);
-
-    --text:#151719;
-
-    --muted:#666d73;
-
-    --border:#c7c9c8;
-
-    --grid:rgba(0,0,0,.08);
-
-}
-
-body.theme-resident-evil{
-
-    --accent:#c5161d;
-
-    --bg:#050303;
-
-    --panel:rgba(14,6,7,.95);
-
-    --text:#eadede;
-
-    --muted:#877878;
-
-    --border:#3d1719;
-
-    --grid:rgba(197,22,29,.11);
-
-}
-
-body.theme-pubg{
-
-    --accent:#c6a34a;
-
-    --bg:#10100d;
-
-    --panel:rgba(24,23,17,.95);
-
-    --text:#e5dfcf;
-
-    --muted:#9c9789;
-
-    --border:#48422e;
-
-    --grid:rgba(198,163,74,.1);
-
-}
-
-body.theme-fortnite{
-
-    --accent:#7d5cff;
-
-    --bg:#080611;
-
-    --panel:rgba(18,14,32,.95);
-
-    --text:#f2efff;
-
-    --muted:#a39dbc;
-
-    --border:#3a315f;
-
-    --grid:rgba(125,92,255,.11);
-
-}
-
-
-/* =========================================================
-   GLOBAL FX
-========================================================= */
-
-.noise{
-
-    position:fixed;
-
-    inset:0;
-
-    z-index:50;
-
-    pointer-events:none;
-
-    background-image:
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
-
-    mix-blend-mode:overlay;
-
-}
-
-.scanlines{
-
-    position:fixed;
-
-    inset:0;
-
-    z-index:51;
-
-    pointer-events:none;
+body{
 
     background:
-        repeating-linear-gradient(
-            0deg,
-            transparent 0px,
-            transparent 3px,
-            rgba(255,255,255,.012) 4px
+        radial-gradient(
+            ellipse at 50% 0%,
+            rgba(255,122,26,.08),
+            transparent 55%
+        ),
+
+        radial-gradient(
+            ellipse at 50% 50%,
+            #101317,
+            #020304 85%
         );
 
+    position:relative;
 }
 
+body::before{
+
+    content:"";
+
+    position:fixed;
+    inset:0;
+
+    pointer-events:none;
+
+    opacity:.18;
+
+    background-image:
+
+        linear-gradient(
+            rgba(255,255,255,.025) 1px,
+            transparent 1px
+        ),
+
+        linear-gradient(
+            90deg,
+            rgba(255,255,255,.025) 1px,
+            transparent 1px
+        );
+
+    background-size:
+        40px 40px;
+
+    z-index:1;
+}
+
+body::after{
+
+    content:"";
+
+    position:fixed;
+    inset:0;
+
+    pointer-events:none;
+
+    box-shadow:
+        inset 0 0 120px rgba(0,0,0,.95);
+
+    z-index:2;
+}
 
 /* =========================================================
-   TOP BAR
+   HEADER
 ========================================================= */
 
-.topbar{
+header{
 
-    position:absolute;
-
-    left:0;
-    right:0;
-    top:0;
-
-    height:68px;
-
-    z-index:20;
+    height:78px;
 
     display:flex;
 
@@ -210,650 +116,177 @@ body.theme-fortnite{
     justify-content:space-between;
 
     padding:
-        0 24px;
+        0 4vw;
+
+    position:relative;
+
+    z-index:10;
+
+    border-bottom:
+        1px solid rgba(255,255,255,.06);
 
     background:
-        linear-gradient(
-            180deg,
-            rgba(3,4,5,.98),
-            rgba(3,4,5,.72)
-        );
+        rgba(3,5,6,.82);
 
-    border-bottom:1px solid var(--border);
-
-    backdrop-filter:blur(12px);
-
+    backdrop-filter:
+        blur(12px);
 }
 
+.back-btn,
+.dd-btn{
 
-/* left */
+    background:
+        rgba(255,255,255,.025);
 
-.top-left{
+    border:
+        1px solid #30353b;
 
-    display:flex;
-
-    align-items:center;
-
-    gap:15px;
-
-}
-
-.back{
-
-    height:36px;
-
-    padding:0 14px;
-
-    background:rgba(255,255,255,.025);
-
-    border:1px solid var(--border);
-
-    color:var(--text);
+    color:#c7ccd1;
 
     font-family:"Rajdhani",sans-serif;
 
-    font-size:11px;
-
-    letter-spacing:.14em;
-
-    text-transform:uppercase;
-
-    cursor:pointer;
-
-}
-
-.back:hover{
-
-    color:var(--accent);
-
-    border-color:var(--accent);
-
-}
-
-
-.field-code{
-
-    font-size:9px;
-
-    color:var(--accent);
-
-    letter-spacing:.35em;
-
-    text-transform:uppercase;
-
-}
-
-.field-title{
-
-    font-family:"Anton",sans-serif;
-
-    font-size:24px;
-
-    letter-spacing:.04em;
-
-}
-
-
-/* right */
-
-.top-right{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:8px;
-
-}
-
-
-.top-button{
-
-    height:36px;
-
-    padding:0 12px;
-
-    background:rgba(255,255,255,.025);
-
-    border:1px solid var(--border);
-
-    color:var(--text);
-
-    font-family:"Rajdhani",sans-serif;
-
-    font-size:11px;
+    font-size:12px;
 
     letter-spacing:.12em;
 
     text-transform:uppercase;
 
+    padding:
+        9px 15px;
+
     cursor:pointer;
 
+    transition:
+        .2s ease;
 }
 
-.top-button:hover{
+.back-btn:hover,
+.dd-btn:hover{
 
-    border-color:var(--accent);
+    border-color:#ff7a1a;
 
-    color:var(--accent);
+    color:#ff7a1a;
 
+    background:
+        rgba(255,122,26,.05);
 }
 
+.field-title{
 
-/* dropdown */
+    position:absolute;
 
-.control{
+    left:50%;
+
+    transform:
+        translateX(-50%);
+
+    text-align:center;
+}
+
+.field-title small{
+
+    display:block;
+
+    color:#697078;
+
+    font-size:9px;
+
+    letter-spacing:.4em;
+
+    margin-bottom:2px;
+}
+
+.field-title h1{
+
+    font-family:"Anton",sans-serif;
+
+    font-size:
+        clamp(24px,3vw,38px);
+
+    letter-spacing:.04em;
+}
+
+.field-title span{
+
+    color:#ff7a1a;
+}
+
+.top-controls{
+
+    display:flex;
+
+    gap:8px;
+}
+
+.dd{
 
     position:relative;
-
 }
 
-.dropdown{
+.dd-menu{
 
     position:absolute;
 
     right:0;
 
-    top:44px;
+    top:
+        calc(100% + 6px);
 
-    min-width:180px;
+    min-width:170px;
+
+    background:#0b0e11;
+
+    border:
+        1px solid #30353b;
+
+    box-shadow:
+        0 15px 40px rgba(0,0,0,.7);
 
     display:none;
 
-    background:var(--panel);
-
-    border:1px solid var(--border);
-
-    box-shadow:
-        0 20px 50px rgba(0,0,0,.7);
-
+    z-index:50;
 }
 
-.control.open .dropdown{
+.dd.open .dd-menu{
 
     display:block;
-
 }
 
-.dropdown button{
-
-    display:block;
+.dd-menu button{
 
     width:100%;
-
-    padding:11px 14px;
 
     border:0;
 
     background:none;
 
-    color:var(--text);
-
-    font-family:"Rajdhani",sans-serif;
+    color:#bfc5ca;
 
     text-align:left;
 
+    padding:
+        11px 15px;
+
+    font-family:"Rajdhani",sans-serif;
+
     cursor:pointer;
-
 }
 
-.dropdown button:hover,
-.dropdown button.active{
+.dd-menu button:hover{
 
     background:
-        color-mix(
-            in srgb,
-            var(--accent) 10%,
-            transparent
-        );
+        rgba(255,122,26,.08);
 
-    color:var(--accent);
-
+    color:#ff7a1a;
 }
-
 
 /* =========================================================
-   MAP AREA
+   MAP CONTROLS
 ========================================================= */
 
-.map-stage{
+.map-toolbar{
 
-    position:absolute;
-
-    left:0;
-    right:0;
-
-    top:68px;
-
-    bottom:0;
-
-    overflow:hidden;
-
-    background:#030405;
-
-}
-
-
-/* map viewport */
-
-.map-viewport{
-
-    position:absolute;
-
-    inset:0;
-
-    overflow:hidden;
-
-    cursor:grab;
-
-    perspective:1600px;
-
-}
-
-.map-viewport.dragging{
-
-    cursor:grabbing;
-
-}
-
-
-/* image */
-
-.map-world{
-
-    position:absolute;
-
-    left:50%;
-    top:50%;
-
-    width:100%;
-
-    height:100%;
-
-    transform:
-        translate(-50%,-50%)
-        translate(var(--pan-x),var(--pan-y))
-        scale(var(--zoom))
-        rotateX(var(--rotate-x));
-
-    transform-origin:center;
-
-    transition:
-        transform .45s
-        cubic-bezier(.2,.9,.2,1);
-
-    transform-style:preserve-3d;
-
-}
-
-
-.map-world.dragging{
-
-    transition:none;
-
-}
-
-
-/*
-   This is where the screenshot gets visually
-   "cleaned up".
-*/
-
-.map-image{
-
-    position:absolute;
-
-    left:50%;
-    top:50%;
-
-    width:100%;
-
-    height:100%;
-
-    transform:
-        translate(-50%,-50%);
-
-    object-fit:cover;
-
-    object-position:center;
-
-    filter:
-        saturate(.72)
-        contrast(1.14)
-        brightness(.68);
-
-    user-select:none;
-
-    pointer-events:none;
-
-}
-
-
-/* Grygov has very large black borders */
-
-.map-world.grygov .map-image{
-
-    transform:
-        translate(-50%,-50%)
-        scale(1.19);
-
-}
-
-
-/* Dalov */
-
-.map-world.dalov .map-image{
-
-    transform:
-        translate(-50%,-50%)
-        scale(1.02);
-
-}
-
-
-/* theme map coloring */
-
-body.theme-resident-evil .map-image{
-
-    filter:
-        saturate(.52)
-        contrast(1.32)
-        brightness(.52)
-        sepia(.12);
-
-}
-
-body.theme-pubg .map-image{
-
-    filter:
-        saturate(.62)
-        contrast(1.15)
-        brightness(.68)
-        sepia(.08);
-
-}
-
-body.theme-fortnite .map-image{
-
-    filter:
-        saturate(1.1)
-        contrast(1.08)
-        brightness(.7);
-
-}
-
-body.theme-light .map-image{
-
-    filter:
-        saturate(.82)
-        contrast(1.05)
-        brightness(.92);
-
-}
-
-
-/* =========================================================
-   TACTICAL GRID
-========================================================= */
-
-.tactical-grid{
-
-    position:absolute;
-
-    inset:-50%;
-
-    pointer-events:none;
-
-    opacity:.75;
-
-    background-image:
-
-        linear-gradient(
-            var(--grid) 1px,
-            transparent 1px
-        ),
-
-        linear-gradient(
-            90deg,
-            var(--grid) 1px,
-            transparent 1px
-        );
-
-    background-size:
-        80px 80px;
-
-}
-
-
-/* =========================================================
-   VIGNETTE
-========================================================= */
-
-.vignette{
-
-    position:absolute;
-
-    inset:0;
-
-    pointer-events:none;
-
-    background:
-
-        radial-gradient(
-            ellipse at center,
-            transparent 42%,
-            rgba(0,0,0,.25) 75%,
-            rgba(0,0,0,.8) 100%
-        );
-
-}
-
-
-/* =========================================================
-   MAP HUD
-========================================================= */
-
-.hud{
-
-    position:absolute;
-
-    z-index:10;
-
-    pointer-events:none;
-
-}
-
-
-/* top left */
-
-.intel-panel{
-
-    left:24px;
-
-    top:22px;
-
-    width:245px;
-
-    padding:15px;
-
-    background:var(--panel);
-
-    border:1px solid var(--border);
-
-    box-shadow:
-        0 15px 45px rgba(0,0,0,.5);
-
-    backdrop-filter:blur(8px);
-
-}
-
-.intel-title{
-
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:center;
-
-    padding-bottom:10px;
-
-    border-bottom:1px solid var(--border);
-
-}
-
-.intel-title strong{
-
-    font-family:"Anton",sans-serif;
-
-    font-size:17px;
-
-    letter-spacing:.06em;
-
-}
-
-.live{
-
-    font-size:8px;
-
-    color:#4cff8c;
-
-    letter-spacing:.18em;
-
-}
-
-.intel-row{
-
-    display:flex;
-
-    justify-content:space-between;
-
-    padding-top:8px;
-
-    font-size:11px;
-
-}
-
-.intel-row span:first-child{
-
-    color:var(--muted);
-
-    text-transform:uppercase;
-
-    letter-spacing:.08em;
-
-}
-
-.intel-row span:last-child{
-
-    color:var(--text);
-
-}
-
-
-/* =========================================================
-   LEGEND
-========================================================= */
-
-.legend{
-
-    left:24px;
-
-    bottom:28px;
-
-    width:245px;
-
-    padding:14px;
-
-    background:var(--panel);
-
-    border:1px solid var(--border);
-
-    backdrop-filter:blur(8px);
-
-}
-
-.legend-title{
-
-    font-size:9px;
-
-    color:var(--accent);
-
-    letter-spacing:.25em;
-
-    text-transform:uppercase;
-
-    margin-bottom:10px;
-
-}
-
-.legend-item{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:9px;
-
-    margin-top:7px;
-
-    font-size:10px;
-
-    color:var(--muted);
-
-    text-transform:uppercase;
-
-    letter-spacing:.08em;
-
-}
-
-.legend-line{
-
-    width:24px;
-
-    height:3px;
-
-}
-
-.legend-line.boundary{
-
-    background:#000;
-
-}
-
-.legend-line.building{
-
-    background:#1265ff;
-
-}
-
-.legend-line.grid{
-
-    height:1px;
-
-    background:var(--accent);
-
-}
-
-
-/* =========================================================
-   NORTH
-========================================================= */
-
-.north{
-
-    position:absolute;
-
-    right:28px;
-
-    top:25px;
-
-    width:48px;
-
-    height:48px;
-
-    border:1px solid var(--border);
-
-    background:var(--panel);
+    height:64px;
 
     display:flex;
 
@@ -861,332 +294,533 @@ body.theme-light .map-image{
 
     justify-content:center;
 
-    flex-direction:column;
+    gap:14px;
 
-    font-size:9px;
+    position:relative;
 
-    letter-spacing:.15em;
-
+    z-index:10;
 }
 
-.north-arrow{
-
-    color:var(--accent);
-
-    font-size:22px;
-
-    line-height:18px;
-
-}
-
-
-/* =========================================================
-   COORDINATES
-========================================================= */
-
-.coordinates{
-
-    right:28px;
-
-    bottom:25px;
-
-    padding:8px 11px;
-
-    background:var(--panel);
-
-    border:1px solid var(--border);
-
-    color:var(--muted);
-
-    font-size:9px;
-
-    letter-spacing:.14em;
-
-    font-variant-numeric:tabular-nums;
-
-}
-
-
-/* =========================================================
-   MAP CONTROLS
-========================================================= */
-
-.map-controls{
-
-    position:absolute;
-
-    right:24px;
-
-    top:90px;
-
-    z-index:15;
+.mode-switch{
 
     display:flex;
 
-    flex-direction:column;
+    border:
+        1px solid #30353b;
 
+    background:
+        rgba(0,0,0,.4);
 }
 
-.map-control{
-
-    width:42px;
-
-    height:40px;
-
-    background:var(--panel);
-
-    border:1px solid var(--border);
-
-    color:var(--text);
-
-    font-size:18px;
-
-    cursor:pointer;
-
-}
-
-.map-control:hover{
-
-    color:var(--accent);
-
-    border-color:var(--accent);
-
-}
-
-.map-control + .map-control{
-
-    border-top:0;
-
-}
-
-
-/* =========================================================
-   BOTTOM MODE BAR
-========================================================= */
-
-.mode-bar{
-
-    position:absolute;
-
-    left:50%;
-
-    bottom:24px;
-
-    transform:translateX(-50%);
-
-    z-index:15;
-
-    display:flex;
-
-    background:var(--panel);
-
-    border:1px solid var(--border);
-
-    box-shadow:
-        0 15px 40px rgba(0,0,0,.5);
-
-}
-
-.mode-button{
-
-    min-width:80px;
-
-    height:38px;
+.mode-switch button{
 
     border:0;
 
-    border-right:1px solid var(--border);
+    background:none;
 
-    background:transparent;
-
-    color:var(--muted);
+    color:#727980;
 
     font-family:"Rajdhani",sans-serif;
 
     font-size:11px;
 
+    font-weight:600;
+
     letter-spacing:.15em;
+
+    padding:
+        9px 18px;
 
     cursor:pointer;
 
+    transition:.2s;
 }
 
-.mode-button:last-child{
+.mode-switch button.active{
 
-    border-right:0;
+    background:#ff7a1a;
 
+    color:#080a0b;
 }
 
-.mode-button.active{
+.view-switch{
 
-    background:var(--accent);
+    display:flex;
 
-    color:#050608;
-
-    font-weight:700;
-
+    border:
+        1px solid #30353b;
 }
 
+.view-switch button{
+
+    border:0;
+
+    background:
+        rgba(255,255,255,.025);
+
+    color:#8a9198;
+
+    font-family:"Rajdhani",sans-serif;
+
+    padding:
+        9px 15px;
+
+    cursor:pointer;
+}
+
+.view-switch button.active{
+
+    color:#111;
+
+    background:#d8dde0;
+}
 
 /* =========================================================
-   LAYER PANEL
+   MAP
 ========================================================= */
 
-.layers{
+.map-wrap{
+
+    position:relative;
+
+    z-index:5;
+
+    margin:
+        0 3vw 3vh;
+
+    height:
+        calc(100vh - 145px);
+
+    border:
+        1px solid #292e33;
+
+    background:
+        #111719;
+
+    overflow:hidden;
+
+    box-shadow:
+        0 20px 80px rgba(0,0,0,.65);
+}
+
+.map-wrap::before{
+
+    content:"TACTICAL OVERVIEW";
 
     position:absolute;
 
-    right:24px;
+    left:18px;
 
-    bottom:90px;
+    top:14px;
 
-    z-index:15;
-
-    width:190px;
-
-    background:var(--panel);
-
-    border:1px solid var(--border);
-
-    padding:12px;
-
-}
-
-.layers-title{
+    z-index:20;
 
     font-size:9px;
 
-    color:var(--accent);
+    letter-spacing:.35em;
+
+    color:#70777d;
+}
+
+.map-wrap::after{
+
+    content:"TRIAGE // AIRSOFT MAP SYSTEM";
+
+    position:absolute;
+
+    right:18px;
+
+    bottom:12px;
+
+    z-index:20;
+
+    font-size:8px;
 
     letter-spacing:.25em;
 
-    margin-bottom:10px;
+    color:#5d646a;
+}
+
+#map-container{
+
+    width:100%;
+
+    height:100%;
+}
+
+#map-container svg{
+
+    width:100%;
+
+    height:100%;
+
+    display:block;
+
+    transition:
+        transform .6s cubic-bezier(.2,.9,.2,1);
+}
+
+/* =========================================================
+   MAP GRAPHICS
+========================================================= */
+
+.terrain{
+
+    fill:#18251d;
+}
+
+.terrain-light{
+
+    fill:#213125;
+}
+
+.terrain-dark{
+
+    fill:#101a15;
+}
+
+.field-boundary{
+
+    fill:
+        rgba(255,122,26,.025);
+
+    stroke:
+        #ff7a1a;
+
+    stroke-width:
+        2;
+
+    stroke-dasharray:
+        8 5;
+}
+
+.road{
+
+    fill:none;
+
+    stroke:#343b39;
+
+    stroke-width:18;
+
+    stroke-linecap:round;
+}
+
+.road-inner{
+
+    fill:none;
+
+    stroke:#1a201f;
+
+    stroke-width:11;
+
+    stroke-linecap:round;
+}
+
+.path{
+
+    fill:none;
+
+    stroke:#4b514c;
+
+    stroke-width:5;
+
+    stroke-dasharray:10 7;
+
+    opacity:.65;
+}
+
+.building{
+
+    fill:#30383a;
+
+    stroke:#768083;
+
+    stroke-width:2;
+}
+
+.building:hover{
+
+    fill:#3c4749;
+
+    stroke:#ff7a1a;
 
 }
 
-.layer{
+.building-roof{
+
+    fill:#242b2d;
+
+    stroke:#555e61;
+
+    stroke-width:1;
+}
+
+.building-label{
+
+    font-family:"Rajdhani",sans-serif;
+
+    font-size:12px;
+
+    font-weight:700;
+
+    letter-spacing:.1em;
+
+    fill:#dfe4e5;
+
+    pointer-events:none;
+
+}
+
+.zone{
+
+    fill:
+        rgba(255,122,26,.08);
+
+    stroke:
+        rgba(255,122,26,.55);
+
+    stroke-width:1.5;
+
+    stroke-dasharray:6 4;
+}
+
+.spawn{
+
+    fill:#121719;
+
+    stroke:#55d6ff;
+
+    stroke-width:2;
+}
+
+.spawn-text{
+
+    fill:#55d6ff;
+
+    font-size:9px;
+
+    font-weight:700;
+
+    letter-spacing:.15em;
+}
+
+.poi{
+
+    fill:#ff7a1a;
+
+}
+
+.poi-text{
+
+    fill:#ff9a55;
+
+    font-size:9px;
+
+    font-weight:700;
+
+    letter-spacing:.1em;
+}
+
+.mode-objective{
+
+    fill:
+        rgba(255,255,255,.025);
+
+    stroke:
+        #737b80;
+
+    stroke-width:1;
+
+}
+
+.mode-objective.active{
+
+    fill:
+        rgba(255,122,26,.12);
+
+    stroke:
+        #ff7a1a;
+}
+
+/* =========================================================
+   MAP UI
+========================================================= */
+
+.map-info{
+
+    position:absolute;
+
+    left:18px;
+
+    bottom:18px;
+
+    z-index:30;
+
+    width:250px;
+
+    background:
+        rgba(5,7,8,.88);
+
+    border:
+        1px solid #30363b;
+
+    padding:15px;
+
+    backdrop-filter:
+        blur(8px);
+}
+
+.map-info-title{
+
+    font-size:10px;
+
+    color:#ff7a1a;
+
+    letter-spacing:.25em;
+
+    margin-bottom:6px;
+}
+
+.map-info-name{
+
+    font-family:"Anton",sans-serif;
+
+    font-size:25px;
+
+    letter-spacing:.03em;
+}
+
+.map-info-text{
+
+    margin-top:5px;
+
+    color:#777f85;
+
+    font-size:11px;
+
+    line-height:1.35;
+}
+
+.legend{
+
+    position:absolute;
+
+    right:18px;
+
+    bottom:18px;
+
+    z-index:30;
+
+    background:
+        rgba(5,7,8,.88);
+
+    border:
+        1px solid #30363b;
+
+    padding:12px 14px;
+
+    font-size:10px;
+
+    color:#899095;
+}
+
+.legend-row{
 
     display:flex;
 
     align-items:center;
 
-    justify-content:space-between;
+    gap:8px;
 
-    padding:7px 0;
-
-    border-top:1px solid rgba(255,255,255,.05);
-
-    font-size:10px;
-
-    color:var(--muted);
-
-    text-transform:uppercase;
-
+    margin:5px 0;
 }
 
-.layer input{
+.legend-dot{
 
-    accent-color:var(--accent);
+    width:8px;
 
+    height:8px;
+
+    border-radius:50%;
+
+    background:#ff7a1a;
 }
 
+.legend-dot.spawn{
 
-/* =========================================================
-   3D MODE
-========================================================= */
+    border-radius:0;
 
-.map-stage.mode-3d .map-world{
-
-    --rotate-x:38deg;
-
+    background:#55d6ff;
 }
-
-.map-stage.mode-2d .map-world{
-
-    --rotate-x:0deg;
-
-}
-
 
 /* =========================================================
    MOBILE
 ========================================================= */
 
-@media(max-width:760px){
+@media(max-width:700px){
 
-    .topbar{
+    header{
+
+        height:105px;
 
         padding:
-            0 12px;
+            10px 4vw;
 
-    }
-
-    .field-code{
-
-        display:none;
-
+        align-items:flex-start;
     }
 
     .field-title{
 
-        font-size:19px;
-
-    }
-
-    .top-button{
-
-        padding:0 8px;
-
-    }
-
-    .intel-panel{
-
-        left:12px;
-
         top:12px;
+    }
 
-        width:205px;
+    .top-controls{
 
+        margin-top:48px;
+    }
+
+    .back-btn{
+
+        margin-top:48px;
+    }
+
+    .map-toolbar{
+
+        height:55px;
+    }
+
+    .map-wrap{
+
+        margin:
+            0 2vw 2vh;
+
+        height:
+            calc(100vh - 160px);
+    }
+
+    .map-info{
+
+        width:180px;
+
+        padding:10px;
+
+        left:10px;
+
+        bottom:10px;
     }
 
     .legend{
 
-        display:none;
+        right:10px;
 
+        bottom:10px;
+
+        padding:8px;
     }
 
-    .north{
-
-        right:12px;
-
-        top:85px;
-
-    }
-
-    .map-controls{
-
-        right:12px;
-
-        top:145px;
-
-    }
-
-    .layers{
+    .map-info-text{
 
         display:none;
-
-    }
-
-    .mode-bar{
-
-        bottom:14px;
-
-    }
-
-    .coordinates{
-
-        display:none;
-
     }
 
 }
@@ -1198,65 +832,47 @@ body.theme-light .map-image{
 
 <body>
 
-<div class="noise"></div>
-<div class="scanlines"></div>
+
+<header>
+
+    <button
+        class="back-btn"
+        id="back-btn">
+
+        ← Zpět na výběr
+
+    </button>
 
 
-<!-- =====================================================
-     TOP BAR
-===================================================== -->
+    <div class="field-title">
 
-<header class="topbar">
+        <small>AIRSOFT MAP SYSTEM</small>
 
+        <h1 id="field-name">
 
-    <div class="top-left">
+            —
 
-        <button
-            class="back"
-            id="back-button"
-        >
-            ← ZPĚT
-        </button>
-
-        <div>
-
-            <div
-                class="field-code"
-                id="field-code"
-            >
-                FIELD / UNKNOWN
-            </div>
-
-            <div
-                class="field-title"
-                id="field-title"
-            >
-                UNKNOWN
-            </div>
-
-        </div>
+        </h1>
 
     </div>
 
 
-    <div class="top-right">
+    <div class="top-controls">
 
-
-        <!-- LANGUAGE -->
 
         <div
-            class="control"
-            id="lang-control"
-        >
+            class="dd"
+            id="lang-dd">
 
             <button
-                class="top-button"
-                id="lang-button"
-            >
+                class="dd-btn"
+                id="lang-toggle">
+
                 🌐 CZ
+
             </button>
 
-            <div class="dropdown">
+            <div class="dd-menu">
 
                 <button data-lang="cs">
                     Čeština
@@ -1271,378 +887,187 @@ body.theme-light .map-image{
         </div>
 
 
-        <!-- THEME -->
-
         <div
-            class="control"
-            id="theme-control"
-        >
+            class="dd"
+            id="style-dd">
 
-            <button class="top-button">
-                🎨 <span id="theme-label">
-                    STYLE
-                </span>
+            <button class="dd-btn">
+
+                🎨 Styl
+
             </button>
 
-            <div class="dropdown">
+            <div class="dd-menu">
 
-                <button data-theme="dark">
-                    ◼ Tmavý
+                <button data-style="dark">
+                    Tmavý
                 </button>
 
-                <button data-theme="light">
-                    ◻ Světlý
+                <button data-style="light">
+                    Světlý
                 </button>
 
-                <button data-theme="resident-evil">
-                    ☣ Resident Evil
+                <button data-style="re">
+                    Resident Evil
                 </button>
 
-                <button data-theme="pubg">
-                    ◆ PUBG
+                <button data-style="pubg">
+                    PUBG
                 </button>
 
-                <button data-theme="fortnite">
-                    ✦ Fortnite
+                <button data-style="fortnite">
+                    Fortnite
                 </button>
 
             </div>
 
         </div>
 
-
     </div>
 
 </header>
 
 
+<div class="map-toolbar">
 
-<!-- =====================================================
-     MAP
-===================================================== -->
 
-<main
-    class="map-stage mode-2d"
-    id="map-stage"
->
-
-
-    <div
-        class="map-viewport"
-        id="map-viewport"
-    >
-
-        <div
-            class="map-world"
-            id="map-world"
-        >
-
-            <img
-                id="map-image"
-                class="map-image"
-                draggable="false"
-                alt=""
-            >
-
-        </div>
-
-
-        <div class="tactical-grid"></div>
-
-        <div class="vignette"></div>
-
-    </div>
-
-
-
-    <!-- =================================================
-         INTEL
-    ================================================= -->
-
-    <section class="hud intel-panel">
-
-        <div class="intel-title">
-
-            <strong id="intel-title">
-                FIELD INTEL
-            </strong>
-
-            <span class="live">
-                ● LIVE
-            </span>
-
-        </div>
-
-
-        <div class="intel-row">
-
-            <span>Location</span>
-
-            <span id="info-location">
-                —
-            </span>
-
-        </div>
-
-
-        <div class="intel-row">
-
-            <span>Type</span>
-
-            <span id="info-type">
-                —
-            </span>
-
-        </div>
-
-
-        <div class="intel-row">
-
-            <span>Status</span>
-
-            <span>
-                ACTIVE
-            </span>
-
-        </div>
-
-
-        <div class="intel-row">
-
-            <span>Map</span>
-
-            <span id="info-map">
-                SAT
-            </span>
-
-        </div>
-
-    </section>
-
-
-
-    <!-- =================================================
-         NORTH
-    ================================================= -->
-
-    <div class="hud north">
-
-        <div class="north-arrow">
-            ↑
-        </div>
-
-        N
-
-    </div>
-
-
-
-    <!-- =================================================
-         LEGEND
-    ================================================= -->
-
-    <section class="hud legend">
-
-        <div
-            class="legend-title"
-            id="legend-title"
-        >
-            MAP LEGEND
-        </div>
-
-
-        <div class="legend-item">
-
-            <span class="legend-line boundary"></span>
-
-            <span id="legend-boundary">
-                FIELD BOUNDARY
-            </span>
-
-        </div>
-
-
-        <div class="legend-item">
-
-            <span class="legend-line building"></span>
-
-            <span id="legend-building">
-                STRUCTURE
-            </span>
-
-        </div>
-
-
-        <div class="legend-item">
-
-            <span class="legend-line grid"></span>
-
-            <span id="legend-grid">
-                TACTICAL GRID
-            </span>
-
-        </div>
-
-    </section>
-
-
-
-    <!-- =================================================
-         LAYERS
-    ================================================= -->
-
-    <section class="layers">
-
-        <div
-            class="layers-title"
-            id="layers-title"
-        >
-            MAP LAYERS
-        </div>
-
-
-        <label class="layer">
-
-            <span id="grid-label">
-                Grid
-            </span>
-
-            <input
-                type="checkbox"
-                id="grid-toggle"
-                checked
-            >
-
-        </label>
-
-
-        <label class="layer">
-
-            <span id="noise-label">
-                Scanlines
-            </span>
-
-            <input
-                type="checkbox"
-                id="scan-toggle"
-                checked
-            >
-
-        </label>
-
-    </section>
-
-
-
-    <!-- =================================================
-         MAP CONTROLS
-    ================================================= -->
-
-    <div class="map-controls">
+    <div class="mode-switch">
 
         <button
-            class="map-control"
-            id="zoom-in"
-        >
-            +
+            class="active"
+            data-mode="overview">
+
+            OVERVIEW
+
         </button>
 
-        <button
-            class="map-control"
-            id="zoom-reset"
-        >
-            ◉
+        <button data-mode="nightfall">
+
+            NIGHTFALL
+
         </button>
 
-        <button
-            class="map-control"
-            id="zoom-out"
-        >
-            −
+        <button data-mode="sunrise">
+
+            SUNRISE
+
+        </button>
+
+        <button data-mode="dawn">
+
+            DAWN
+
         </button>
 
     </div>
 
 
-
-    <!-- =================================================
-         COORDINATES
-    ================================================= -->
-
-    <div
-        class="coordinates"
-        id="coordinates"
-    >
-        GRID 00 / 00
-    </div>
-
-
-
-    <!-- =================================================
-         2D / 3D
-    ================================================= -->
-
-    <div class="mode-bar">
+    <div class="view-switch">
 
         <button
-            class="mode-button active"
-            id="mode-2d"
-        >
+            class="active"
+            id="view2d">
+
             2D
+
         </button>
 
         <button
-            class="mode-button"
-            id="mode-3d"
-        >
+            id="view3d">
+
             3D
+
         </button>
 
     </div>
 
 
-</main>
+</div>
 
+
+<div class="map-wrap">
+
+
+    <div id="map-container"></div>
+
+
+    <div class="map-info">
+
+        <div class="map-info-title">
+
+            CURRENT OPERATION
+
+        </div>
+
+        <div
+            class="map-info-name"
+            id="mode-title">
+
+            OVERVIEW
+
+        </div>
+
+        <div
+            class="map-info-text"
+            id="mode-description">
+
+            Taktický přehled hřiště.
+            Budovy, komunikace a hlavní body zájmu.
+
+        </div>
+
+    </div>
+
+
+    <div class="legend">
+
+        <div class="legend-row">
+
+            <span class="legend-dot"></span>
+
+            OBJECTIVE
+
+        </div>
+
+        <div class="legend-row">
+
+            <span class="legend-dot spawn"></span>
+
+            RESPAWN
+
+        </div>
+
+    </div>
+
+
+</div>
 
 
 <script>
 
 /* =========================================================
-   FIELD DATABASE
+   FIELD DATA
 ========================================================= */
 
 const FIELDS = {
 
-    grygov:{
-
-        name:"GRYGOV",
-
-        location:"AIRSOFT PARK GRYGOV",
-
-        typeCS:"INDUSTRIAL / CQB",
-
-        typeEN:"INDUSTRIAL / CQB",
-
-        image:"maps/grygov.png",
-
-        className:"grygov"
-
-    },
-
-
-    dalov:{
+    dalov: {
 
         name:"DALOV",
 
-        location:"AIRSOFT PARK DALOV",
+        nameEn:"DALOV",
 
-        typeCS:"SMÍŠENÝ TERÉN",
+        map:createDalov()
 
-        typeEN:"MIXED TERRAIN",
+    },
 
-        image:"maps/dalov.png",
+    grygov: {
 
-        className:"dalov"
+        name:"GRYGOV",
+
+        nameEn:"GRYGOV",
+
+        map:createGrygov()
 
     }
 
@@ -1650,7 +1075,790 @@ const FIELDS = {
 
 
 /* =========================================================
-   GET FIELD
+   CREATE DALOV
+========================================================= */
+
+function createDalov(){
+
+return `
+
+<svg
+    viewBox="0 0 1200 760"
+    xmlns="http://www.w3.org/2000/svg">
+
+    <defs>
+
+        <pattern
+            id="gridDalov"
+            width="40"
+            height="40"
+            patternUnits="userSpaceOnUse">
+
+            <path
+                d="M 40 0 L 0 0 0 40"
+                fill="none"
+                stroke="#ffffff"
+                stroke-opacity=".035"
+                stroke-width="1"/>
+
+        </pattern>
+
+    </defs>
+
+
+    <!-- TERRAIN -->
+
+    <rect
+        width="1200"
+        height="760"
+        fill="#111a16"/>
+
+
+    <path
+        class="terrain"
+        d="
+        M0 0
+        H1200
+        V760
+        H0
+        Z"/>
+
+
+    <!-- FIELD -->
+
+    <polygon
+        class="field-boundary"
+        points="
+        235,230
+        680,85
+        835,145
+        970,370
+        770,650
+        420,610
+        170,390
+        "/>
+
+
+    <!-- ROADS -->
+
+    <path
+        class="road"
+        d="
+        M0 510
+        C180 470 300 450 470 430
+        C650 410 810 350 1200 130"/>
+
+    <path
+        class="road-inner"
+        d="
+        M0 510
+        C180 470 300 450 470 430
+        C650 410 810 350 1200 130"/>
+
+
+    <path
+        class="road"
+        d="
+        M450 100
+        C480 220 510 300 600 410
+        C680 510 730 620 800 760"/>
+
+    <path
+        class="road-inner"
+        d="
+        M450 100
+        C480 220 510 300 600 410
+        C680 510 730 620 800 760"/>
+
+
+    <!-- PATHS -->
+
+    <path
+        class="path"
+        d="M280 340 L470 300 L590 390 L730 250"/>
+
+    <path
+        class="path"
+        d="M330 470 L470 430 L570 500 L730 530"/>
+
+
+    <!-- BUILDING 1 -->
+
+    <g>
+
+        <polygon
+            class="building"
+            points="
+            300,290
+            390,245
+            475,275
+            390,330
+            "/>
+
+        <polygon
+            class="building-roof"
+            points="
+            312,292
+            390,255
+            462,278
+            390,315
+            "/>
+
+        <text
+            class="building-label"
+            x="375"
+            y="292"
+            text-anchor="middle">
+
+            BUILDING 01
+
+        </text>
+
+    </g>
+
+
+    <!-- BUILDING 2 -->
+
+    <g>
+
+        <polygon
+            class="building"
+            points="
+            520,205
+            590,170
+            625,300
+            555,330
+            "/>
+
+        <polygon
+            class="building-roof"
+            points="
+            530,210
+            585,183
+            612,295
+            560,317
+            "/>
+
+        <text
+            class="building-label"
+            x="570"
+            y="255"
+            transform="rotate(74 570 255)"
+            text-anchor="middle">
+
+            BUILDING 02
+
+        </text>
+
+    </g>
+
+
+    <!-- BUILDING 3 -->
+
+    <g>
+
+        <polygon
+            class="building"
+            points="
+            625,170
+            700,145
+            750,280
+            675,305
+            "/>
+
+        <polygon
+            class="building-roof"
+            points="
+            635,174
+            695,153
+            740,275
+            680,295
+            "/>
+
+        <text
+            class="building-label"
+            x="685"
+            y="230"
+            transform="rotate(70 685 230)"
+            text-anchor="middle">
+
+            BUILDING 03
+
+        </text>
+
+    </g>
+
+
+    <!-- BUILDING 4 -->
+
+    <g>
+
+        <polygon
+            class="building"
+            points="
+            755,140
+            835,155
+            865,280
+            785,300
+            "/>
+
+        <polygon
+            class="building-roof"
+            points="
+            765,148
+            827,163
+            852,273
+            793,289
+            "/>
+
+        <text
+            class="building-label"
+            x="810"
+            y="220"
+            transform="rotate(77 810 220)"
+            text-anchor="middle">
+
+            BUILDING 04
+
+        </text>
+
+    </g>
+
+
+    <!-- SMALL BUILDING -->
+
+    <polygon
+        class="building"
+        points="
+        500,410
+        550,390
+        575,435
+        525,455
+        "/>
+
+
+    <!-- ZONES -->
+
+    <polygon
+        class="zone"
+        points="
+        255,270
+        430,210
+        480,340
+        300,380
+        "/>
+
+    <polygon
+        class="zone"
+        points="
+        600,130
+        870,125
+        910,310
+        650,335
+        "/>
+
+
+    <!-- SPAWN -->
+
+    <g>
+
+        <circle
+            class="spawn"
+            cx="250"
+            cy="480"
+            r="14"/>
+
+        <text
+            class="spawn-text"
+            x="275"
+            y="484">
+
+            RESPAWN A
+
+        </text>
+
+    </g>
+
+
+    <g>
+
+        <circle
+            class="spawn"
+            cx="850"
+            cy="500"
+            r="14"/>
+
+        <text
+            class="spawn-text"
+            x="875"
+            y="504">
+
+            RESPAWN B
+
+        </text>
+
+    </g>
+
+
+    <!-- OBJECTIVES -->
+
+    <g>
+
+        <circle
+            class="poi"
+            cx="470"
+            cy="430"
+            r="7"/>
+
+        <text
+            class="poi-text"
+            x="485"
+            y="425">
+
+            COMMAND
+
+        </text>
+
+    </g>
+
+
+    <g>
+
+        <circle
+            class="poi"
+            cx="730"
+            cy="350"
+            r="7"/>
+
+        <text
+            class="poi-text"
+            x="745"
+            y="345">
+
+            OBJECTIVE
+
+        </text>
+
+    </g>
+
+
+    <!-- GRID -->
+
+    <rect
+        width="1200"
+        height="760"
+        fill="url(#gridDalov)"/>
+
+
+    <!-- COMPASS -->
+
+    <g transform="translate(1090 90)">
+
+        <circle
+            cx="0"
+            cy="0"
+            r="28"
+            fill="#080b0c"
+            stroke="#454d50"/>
+
+        <text
+            x="0"
+            y="-10"
+            text-anchor="middle"
+            fill="#ff7a1a"
+            font-size="12">
+
+            N
+
+        </text>
+
+        <path
+            d="M0,-5 L-5,8 L0,5 L5,8 Z"
+            fill="#ff7a1a"/>
+
+    </g>
+
+</svg>
+
+`;
+
+}
+
+
+/* =========================================================
+   CREATE GRYGOV
+========================================================= */
+
+function createGrygov(){
+
+return `
+
+<svg
+    viewBox="0 0 1200 760"
+    xmlns="http://www.w3.org/2000/svg">
+
+    <defs>
+
+        <pattern
+            id="gridGrygov"
+            width="40"
+            height="40"
+            patternUnits="userSpaceOnUse">
+
+            <path
+                d="M 40 0 L 0 0 0 40"
+                fill="none"
+                stroke="#ffffff"
+                stroke-opacity=".035"
+                stroke-width="1"/>
+
+        </pattern>
+
+    </defs>
+
+
+    <!-- TERRAIN -->
+
+    <rect
+        width="1200"
+        height="760"
+        fill="#142019"/>
+
+
+    <!-- FIELD -->
+
+    <polygon
+        class="field-boundary"
+        points="
+        250,120
+        520,100
+        610,240
+        560,590
+        380,660
+        180,570
+        120,300
+        "/>
+
+
+    <!-- FIELD SECTORS -->
+
+    <path
+        class="terrain-light"
+        d="
+        M0 0
+        H600
+        L520 160
+        L250 190
+        L0 250
+        Z"/>
+
+    <path
+        class="terrain-dark"
+        d="
+        M600 0
+        H1200
+        V760
+        H570
+        L610 400
+        Z"/>
+
+
+    <!-- ROADS -->
+
+    <path
+        class="road"
+        d="
+        M0 620
+        C160 570 270 530 380 450
+        C470 385 520 280 540 120"/>
+
+    <path
+        class="road-inner"
+        d="
+        M0 620
+        C160 570 270 530 380 450
+        C470 385 520 280 540 120"/>
+
+
+    <!-- BUILDING 1 -->
+
+    <g>
+
+        <polygon
+            class="building"
+            points="
+            275,215
+            390,185
+            410,285
+            295,315
+            "/>
+
+        <polygon
+            class="building-roof"
+            points="
+            285,220
+            380,195
+            398,278
+            302,303
+            "/>
+
+        <text
+            class="building-label"
+            x="345"
+            y="255"
+            text-anchor="middle">
+
+            BUILDING 01
+
+        </text>
+
+    </g>
+
+
+    <!-- BUILDING 2 -->
+
+    <g>
+
+        <polygon
+            class="building"
+            points="
+            220,330
+            285,310
+            315,475
+            250,495
+            "/>
+
+        <text
+            class="building-label"
+            x="270"
+            y="405"
+            transform="rotate(80 270 405)"
+            text-anchor="middle">
+
+            BUILDING 02
+
+        </text>
+
+    </g>
+
+
+    <!-- BUILDING 3 -->
+
+    <g>
+
+        <polygon
+            class="building"
+            points="
+            320,310
+            385,295
+            420,465
+            355,480
+            "/>
+
+        <text
+            class="building-label"
+            x="370"
+            y="390"
+            transform="rotate(78 370 390)"
+            text-anchor="middle">
+
+            BUILDING 03
+
+        </text>
+
+    </g>
+
+
+    <!-- BUILDING 4 -->
+
+    <g>
+
+        <polygon
+            class="building"
+            points="
+            420,285
+            500,265
+            540,450
+            460,470
+            "/>
+
+        <text
+            class="building-label"
+            x="480"
+            y="370"
+            transform="rotate(78 480 370)"
+            text-anchor="middle">
+
+            BUILDING 04
+
+        </text>
+
+    </g>
+
+
+    <!-- SMALL BUILDING -->
+
+    <polygon
+        class="building"
+        points="
+        350,520
+        410,500
+        430,550
+        370,570
+        "/>
+
+
+    <!-- ZONES -->
+
+    <polygon
+        class="zone"
+        points="
+        200,180
+        420,155
+        440,300
+        230,330
+        "/>
+
+
+    <polygon
+        class="zone"
+        points="
+        210,310
+        540,250
+        570,480
+        260,520
+        "/>
+
+
+    <!-- SPAWN -->
+
+    <g>
+
+        <circle
+            class="spawn"
+            cx="170"
+            cy="520"
+            r="14"/>
+
+        <text
+            class="spawn-text"
+            x="195"
+            y="524">
+
+            RESPAWN A
+
+        </text>
+
+    </g>
+
+
+    <g>
+
+        <circle
+            class="spawn"
+            cx="530"
+            cy="550"
+            r="14"/>
+
+        <text
+            class="spawn-text"
+            x="555"
+            y="554">
+
+            RESPAWN B
+
+        </text>
+
+    </g>
+
+
+    <!-- OBJECTIVES -->
+
+    <g>
+
+        <circle
+            class="poi"
+            cx="380"
+            cy="285"
+            r="7"/>
+
+        <text
+            class="poi-text"
+            x="395"
+            y="280">
+
+            COMMAND
+
+        </text>
+
+    </g>
+
+
+    <g>
+
+        <circle
+            class="poi"
+            cx="455"
+            cy="500"
+            r="7"/>
+
+        <text
+            class="poi-text"
+            x="470"
+            y="495">
+
+            OBJECTIVE
+
+        </text>
+
+    </g>
+
+
+    <!-- GRID -->
+
+    <rect
+        width="1200"
+        height="760"
+        fill="url(#gridGrygov)"/>
+
+
+    <!-- COMPASS -->
+
+    <g transform="translate(1090 90)">
+
+        <circle
+            cx="0"
+            cy="0"
+            r="28"
+            fill="#080b0c"
+            stroke="#454d50"/>
+
+        <text
+            x="0"
+            y="-10"
+            text-anchor="middle"
+            fill="#ff7a1a"
+            font-size="12">
+
+            N
+
+        </text>
+
+        <path
+            d="M0,-5 L-5,8 L0,5 L5,8 Z"
+            fill="#ff7a1a"/>
+
+    </g>
+
+</svg>
+
+`;
+
+}
+
+
+/* =========================================================
+   LOAD FIELD
 ========================================================= */
 
 const params =
@@ -1659,12 +1867,22 @@ const params =
     );
 
 const fieldId =
-    params.get("id")
-    || "grygov";
+    params.get("id") || "dalov";
 
 const field =
-    FIELDS[fieldId]
-    || FIELDS.grygov;
+    FIELDS[fieldId] || FIELDS.dalov;
+
+
+document.getElementById(
+    "field-name"
+).textContent =
+    field.name;
+
+
+document.getElementById(
+    "map-container"
+).innerHTML =
+    field.map;
 
 
 /* =========================================================
@@ -1672,354 +1890,282 @@ const field =
 ========================================================= */
 
 let lang =
-    localStorage.getItem("airsoft_lang")
-    || "cs";
+    localStorage.getItem(
+        "airsoft_lang"
+    ) || "cs";
 
 
-/* =========================================================
-   THEME
-========================================================= */
+document.getElementById(
+    "lang-toggle"
+).textContent =
+    "🌐 " + lang.toUpperCase();
 
-let theme =
-    localStorage.getItem("airsoft_theme")
-    || "dark";
 
+document.querySelectorAll(
+    "[data-lang]"
+).forEach(btn => {
 
-const THEME_NAMES = {
+    btn.addEventListener(
+        "click",
+        () => {
 
-    dark:{
-        cs:"TMAVÝ",
-        en:"DARK"
-    },
+            lang =
+                btn.dataset.lang;
 
-    light:{
-        cs:"SVĚTLÝ",
-        en:"LIGHT"
-    },
-
-    "resident-evil":{
-        cs:"RESIDENT EVIL",
-        en:"RESIDENT EVIL"
-    },
-
-    pubg:{
-        cs:"PUBG",
-        en:"PUBG"
-    },
-
-    fortnite:{
-        cs:"FORTNITE",
-        en:"FORTNITE"
-    }
-
-};
-
-
-/* =========================================================
-   ELEMENTS
-========================================================= */
-
-const mapStage =
-    document.getElementById(
-        "map-stage"
-    );
-
-const mapWorld =
-    document.getElementById(
-        "map-world"
-    );
-
-const mapImage =
-    document.getElementById(
-        "map-image"
-    );
-
-const viewport =
-    document.getElementById(
-        "map-viewport"
-    );
-
-
-/* =========================================================
-   LOAD FIELD
-========================================================= */
-
-mapWorld.classList.add(
-    field.className
-);
-
-mapImage.src =
-    field.image;
-
-mapImage.alt =
-    field.name;
-
-
-/* =========================================================
-   TEXT
-========================================================= */
-
-function updateText(){
-
-    document.documentElement.lang =
-        lang;
-
-
-    document.getElementById(
-        "field-code"
-    ).textContent =
-        `FIELD / ${fieldId.toUpperCase()}`;
-
-
-    document.getElementById(
-        "field-title"
-    ).textContent =
-        field.name;
-
-
-    document.getElementById(
-        "info-location"
-    ).textContent =
-        field.location;
-
-
-    document.getElementById(
-        "info-type"
-    ).textContent =
-        lang === "en"
-            ? field.typeEN
-            : field.typeCS;
-
-
-    document.getElementById(
-        "back-button"
-    ).textContent =
-        lang === "en"
-            ? "← BACK"
-            : "← ZPĚT";
-
-
-    document.getElementById(
-        "lang-button"
-    ).textContent =
-        `🌐 ${lang.toUpperCase()}`;
-
-
-    document.getElementById(
-        "intel-title"
-    ).textContent =
-        lang === "en"
-            ? "FIELD INTEL"
-            : "DATA HŘIŠTĚ";
-
-
-    document.getElementById(
-        "legend-title"
-    ).textContent =
-        lang === "en"
-            ? "MAP LEGEND"
-            : "LEGENDA MAPY";
-
-
-    document.getElementById(
-        "legend-boundary"
-    ).textContent =
-        lang === "en"
-            ? "FIELD BOUNDARY"
-            : "HRANICE HŘIŠTĚ";
-
-
-    document.getElementById(
-        "legend-building"
-    ).textContent =
-        lang === "en"
-            ? "STRUCTURE"
-            : "OBJEKT / BUDOVA";
-
-
-    document.getElementById(
-        "legend-grid"
-    ).textContent =
-        lang === "en"
-            ? "TACTICAL GRID"
-            : "TAKTICKÁ MŘÍŽKA";
-
-
-    document.getElementById(
-        "layers-title"
-    ).textContent =
-        lang === "en"
-            ? "MAP LAYERS"
-            : "VRSTVY MAPY";
-
-
-    document.getElementById(
-        "grid-label"
-    ).textContent =
-        lang === "en"
-            ? "Grid"
-            : "Mřížka";
-
-
-    document.getElementById(
-        "noise-label"
-    ).textContent =
-        lang === "en"
-            ? "Scanlines"
-            : "Scanlines";
-
-
-    document.getElementById(
-        "theme-label"
-    ).textContent =
-        THEME_NAMES[theme][lang];
-
-}
-
-
-/* =========================================================
-   THEME
-========================================================= */
-
-function applyTheme(){
-
-    document.body.classList.remove(
-        "theme-light",
-        "theme-resident-evil",
-        "theme-pubg",
-        "theme-fortnite"
-    );
-
-
-    if(theme !== "dark"){
-
-        document.body.classList.add(
-            `theme-${theme}`
-        );
-
-    }
-
-
-    document
-        .querySelectorAll("[data-theme]")
-        .forEach(button => {
-
-            button.classList.toggle(
-                "active",
-                button.dataset.theme === theme
+            localStorage.setItem(
+                "airsoft_lang",
+                lang
             );
 
-        });
+            document.getElementById(
+                "lang-toggle"
+            ).textContent =
+                "🌐 " +
+                lang.toUpperCase();
 
+            document.getElementById(
+                "back-btn"
+            ).textContent =
+                lang === "en"
+                    ? "← Back to selection"
+                    : "← Zpět na výběr";
 
-    updateText();
+        }
+    );
 
-}
-
-
-applyTheme();
-
-
-/* =========================================================
-   LANGUAGE
-========================================================= */
-
-document
-    .querySelectorAll("[data-lang]")
-    .forEach(button => {
-
-        button.addEventListener(
-            "click",
-            event => {
-
-                event.stopPropagation();
-
-                lang =
-                    button.dataset.lang;
-
-                localStorage.setItem(
-                    "airsoft_lang",
-                    lang
-                );
-
-                updateText();
-
-            }
-        );
-
-    });
+});
 
 
 /* =========================================================
-   THEME BUTTONS
+   BACK
 ========================================================= */
 
-document
-    .querySelectorAll("[data-theme]")
-    .forEach(button => {
+document.getElementById(
+    "back-btn"
+).onclick = () => {
 
-        button.addEventListener(
-            "click",
-            event => {
+    window.location.href =
+        "menu.html";
 
-                event.stopPropagation();
-
-                theme =
-                    button.dataset.theme;
-
-                localStorage.setItem(
-                    "airsoft_theme",
-                    theme
-                );
-
-                applyTheme();
-
-            }
-        );
-
-    });
+};
 
 
 /* =========================================================
    DROPDOWNS
 ========================================================= */
 
+document.querySelectorAll(
+    ".dd-btn"
+).forEach(btn => {
+
+    btn.addEventListener(
+        "click",
+        e => {
+
+            e.stopPropagation();
+
+            const dd =
+                btn.closest(".dd");
+
+            document
+                .querySelectorAll(".dd.open")
+                .forEach(x =>
+                    x.classList.remove("open")
+                );
+
+            dd.classList.add("open");
+
+        }
+    );
+
+});
+
+
+document.addEventListener(
+    "click",
+    () => {
+
+        document
+            .querySelectorAll(".dd.open")
+            .forEach(x =>
+                x.classList.remove("open")
+            );
+
+    }
+);
+
+
+/* =========================================================
+   2D / 3D
+========================================================= */
+
+const svg =
+    document.querySelector(
+        "#map-container svg"
+    );
+
+document.getElementById(
+    "view3d"
+).onclick = () => {
+
+    svg.style.transform =
+        "perspective(1200px) rotateX(38deg) scale(1.08)";
+
+    document.getElementById(
+        "view3d"
+    ).classList.add("active");
+
+    document.getElementById(
+        "view2d"
+    ).classList.remove("active");
+
+};
+
+
+document.getElementById(
+    "view2d"
+).onclick = () => {
+
+    svg.style.transform =
+        "none";
+
+    document.getElementById(
+        "view2d"
+    ).classList.add("active");
+
+    document.getElementById(
+        "view3d"
+    ).classList.remove("active");
+
+};
+
+
+/* =========================================================
+   GAME MODES
+========================================================= */
+
+const MODE_DATA = {
+
+    overview:{
+
+        title:"OVERVIEW",
+
+        description:
+            "Taktický přehled hřiště. Budovy, komunikace a hlavní body zájmu."
+
+    },
+
+    nightfall:{
+
+        title:"NIGHTFALL",
+
+        description:
+            "Noční operace. Čtyři frakce, základny, omezené informace a postupné obsazování objektů."
+
+    },
+
+    sunrise:{
+
+        title:"SUNRISE",
+
+        description:
+            "Denní fáze operace. Loot dropy, medici, juggernauti a aktivní přesuny mezi zónami."
+
+    },
+
+    dawn:{
+
+        title:"DAWN",
+
+        description:
+            "Finální fáze. Zóna se zmenšuje a prostor pro přežití se postupně uzavírá."
+
+    }
+
+};
+
+
 document
-    .querySelectorAll(".top-button")
+    .querySelectorAll(
+        "[data-mode]"
+    )
     .forEach(button => {
 
         button.addEventListener(
             "click",
-            event => {
-
-                event.stopPropagation();
-
-                const control =
-                    button.closest(
-                        ".control"
-                    );
-
-                const open =
-                    control.classList.contains(
-                        "open"
-                    );
-
+            () => {
 
                 document
                     .querySelectorAll(
-                        ".control"
+                        "[data-mode]"
                     )
-                    .forEach(c =>
-                        c.classList.remove(
-                            "open"
+                    .forEach(x =>
+                        x.classList.remove(
+                            "active"
                         )
                     );
 
+                button.classList.add(
+                    "active"
+                );
 
-                if(!open){
 
-                    control.classList.add(
-                        "open"
+                const data =
+                    MODE_DATA[
+                        button.dataset.mode
+                    ];
+
+
+                document.getElementById(
+                    "mode-title"
+                ).textContent =
+                    data.title;
+
+
+                document.getElementById(
+                    "mode-description"
+                ).textContent =
+                    data.description;
+
+            }
+        );
+
+    });
+
+
+/* =========================================================
+   STYLE PLACEHOLDER
+========================================================= */
+
+document
+    .querySelectorAll(
+        "[data-style]"
+    )
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                const style =
+                    button.dataset.style;
+
+                localStorage.setItem(
+                    "airsoft_style",
+                    style
+                );
+
+                /*
+                   TADY POZDĚJI
+                   napojíme skutečný
+                   systém skinů celého webu.
+                */
+
+                if(style === "re"){
+
+                    document.body.style.setProperty(
+                        "--unused",
+                        "1"
                     );
 
                 }
@@ -2028,414 +2174,6 @@ document
         );
 
     });
-
-
-document.addEventListener(
-    "click",
-    () => {
-
-        document
-            .querySelectorAll(
-                ".control"
-            )
-            .forEach(c =>
-                c.classList.remove(
-                    "open"
-                )
-            );
-
-    }
-);
-
-
-/* =========================================================
-   BACK
-========================================================= */
-
-document
-    .getElementById("back-button")
-    .addEventListener(
-        "click",
-        () => {
-
-            window.location.href =
-                "menu.html";
-
-        }
-    );
-
-
-/* =========================================================
-   ZOOM / PAN
-========================================================= */
-
-let zoom = 1;
-
-let panX = 0;
-
-let panY = 0;
-
-let dragging = false;
-
-let startX = 0;
-
-let startY = 0;
-
-let startPanX = 0;
-
-let startPanY = 0;
-
-
-function updateMap(){
-
-    mapWorld.style.setProperty(
-        "--zoom",
-        zoom
-    );
-
-    mapWorld.style.setProperty(
-        "--pan-x",
-        `${panX}px`
-    );
-
-    mapWorld.style.setProperty(
-        "--pan-y",
-        `${panY}px`
-    );
-
-}
-
-
-function resetMap(){
-
-    zoom = 1;
-
-    panX = 0;
-
-    panY = 0;
-
-    updateMap();
-
-}
-
-
-function changeZoom(amount){
-
-    zoom += amount;
-
-    zoom =
-        Math.max(
-            .75,
-            Math.min(
-                4,
-                zoom
-            )
-        );
-
-    updateMap();
-
-}
-
-
-document
-    .getElementById("zoom-in")
-    .addEventListener(
-        "click",
-        () => changeZoom(.2)
-    );
-
-
-document
-    .getElementById("zoom-out")
-    .addEventListener(
-        "click",
-        () => changeZoom(-.2)
-    );
-
-
-document
-    .getElementById("zoom-reset")
-    .addEventListener(
-        "click",
-        resetMap
-    );
-
-
-/* mouse drag */
-
-viewport.addEventListener(
-    "mousedown",
-    event => {
-
-        if(event.button !== 0)
-            return;
-
-        dragging = true;
-
-        viewport.classList.add(
-            "dragging"
-        );
-
-        mapWorld.classList.add(
-            "dragging"
-        );
-
-        startX = event.clientX;
-
-        startY = event.clientY;
-
-        startPanX = panX;
-
-        startPanY = panY;
-
-    }
-);
-
-
-window.addEventListener(
-    "mousemove",
-    event => {
-
-        if(!dragging)
-            return;
-
-        panX =
-            startPanX
-            +
-            (
-                event.clientX
-                -
-                startX
-            );
-
-        panY =
-            startPanY
-            +
-            (
-                event.clientY
-                -
-                startY
-            );
-
-        updateMap();
-
-    }
-);
-
-
-window.addEventListener(
-    "mouseup",
-    () => {
-
-        dragging = false;
-
-        viewport.classList.remove(
-            "dragging"
-        );
-
-        mapWorld.classList.remove(
-            "dragging"
-        );
-
-    }
-);
-
-
-/* =========================================================
-   MOUSE WHEEL
-========================================================= */
-
-viewport.addEventListener(
-    "wheel",
-    event => {
-
-        event.preventDefault();
-
-        changeZoom(
-            event.deltaY < 0
-                ? .12
-                : -.12
-        );
-
-    },
-    {passive:false}
-);
-
-
-/* =========================================================
-   2D / 3D
-========================================================= */
-
-const mode2d =
-    document.getElementById(
-        "mode-2d"
-    );
-
-const mode3d =
-    document.getElementById(
-        "mode-3d"
-    );
-
-
-mode2d.addEventListener(
-    "click",
-    () => {
-
-        mapStage.classList.remove(
-            "mode-3d"
-        );
-
-        mapStage.classList.add(
-            "mode-2d"
-        );
-
-        mode2d.classList.add(
-            "active"
-        );
-
-        mode3d.classList.remove(
-            "active"
-        );
-
-    }
-);
-
-
-mode3d.addEventListener(
-    "click",
-    () => {
-
-        mapStage.classList.remove(
-            "mode-2d"
-        );
-
-        mapStage.classList.add(
-            "mode-3d"
-        );
-
-        mode3d.classList.add(
-            "active"
-        );
-
-        mode2d.classList.remove(
-            "active"
-        );
-
-    }
-);
-
-
-/* =========================================================
-   LAYERS
-========================================================= */
-
-document
-    .getElementById("grid-toggle")
-    .addEventListener(
-        "change",
-        event => {
-
-            document
-                .querySelector(
-                    ".tactical-grid"
-                )
-                .style.opacity =
-                event.target.checked
-                    ? ".75"
-                    : "0";
-
-        }
-    );
-
-
-document
-    .getElementById("scan-toggle")
-    .addEventListener(
-        "change",
-        event => {
-
-            document
-                .querySelector(
-                    ".scanlines"
-                )
-                .style.display =
-                event.target.checked
-                    ? "block"
-                    : "none";
-
-        }
-    );
-
-
-/* =========================================================
-   COORDINATE HUD
-========================================================= */
-
-viewport.addEventListener(
-    "mousemove",
-    event => {
-
-        const rect =
-            viewport.getBoundingClientRect();
-
-
-        const x =
-            Math.max(
-                0,
-                Math.min(
-                    100,
-                    (
-                        (event.clientX - rect.left)
-                        /
-                        rect.width
-                    )
-                    * 100
-                )
-            );
-
-
-        const y =
-            Math.max(
-                0,
-                Math.min(
-                    100,
-                    (
-                        (event.clientY - rect.top)
-                        /
-                        rect.height
-                    )
-                    * 100
-                )
-            );
-
-
-        const gridX =
-            Math.floor(
-                x / 10
-            );
-
-        const gridY =
-            Math.floor(
-                y / 10
-            );
-
-
-        document.getElementById(
-            "coordinates"
-        ).textContent =
-            `GRID ${String(gridX).padStart(2,"0")} / ${String(gridY).padStart(2,"0")}`;
-
-    }
-);
-
-
-/* =========================================================
-   INIT
-========================================================= */
-
-updateMap();
-
-updateText();
 
 </script>
 
