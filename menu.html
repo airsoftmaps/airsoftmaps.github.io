@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIRSOFT MAPS — Vyber bojiště</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html,body {
+    width:100%; min-height:100%; background:#050608;
+    font-family:"Rajdhani",sans-serif; color:#eef1f0;
+  }
+
+  body {
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(255,122,26,0.07), transparent 55%),
+      radial-gradient(ellipse at 50% 50%, #0d1013, #000 85%);
+    min-height:100vh;
+    position:relative;
+  }
+  body::before {
+    content:""; position:fixed; inset:0; pointer-events:none; z-index:1;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+    mix-blend-mode:overlay;
+  }
+  body::after {
+    content:""; position:fixed; inset:0; pointer-events:none; z-index:1;
+    box-shadow: inset 0 0 18vw 4vw rgba(0,0,0,0.85);
+  }
+
+  /* ---------- top bar ---------- */
+  header {
+    position:relative; z-index:5;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:20px 5vw;
+  }
+  .brand { display:flex; align-items:center; gap:12px; }
+  .brand img { width:38px; height:38px; object-fit:contain; filter:drop-shadow(0 0 10px rgba(255,122,26,.3)); }
+  .brand span {
+    font-family:"Anton",sans-serif; letter-spacing:.08em; font-size:18px;
+    color:#eef1f0;
+  }
+  .brand span em { color:#ff7a1a; font-style:normal; }
+
+  .top-controls { display:flex; gap:10px; }
+  .dd { position:relative; }
+  .dd-btn {
+    background:rgba(255,255,255,.03); border:1px solid #2a2e33; color:#c7ccd1;
+    font-family:"Rajdhani",sans-serif; font-size:12px; letter-spacing:.1em;
+    text-transform:uppercase; padding:8px 14px; border-radius:2px;
+    cursor:pointer; display:flex; align-items:center; gap:6px;
+    transition:border-color .2s ease, color .2s ease;
+  }
+  .dd-btn:hover { border-color:#ff7a1a; color:#ff7a1a; }
+  .dd-menu {
+    position:absolute; top:calc(100% + 6px); right:0; min-width:170px;
+    background:#0d0f12; border:1px solid #2a2e33; border-radius:2px;
+    box-shadow:0 14px 32px rgba(0,0,0,.5); display:none; z-index:20; overflow:hidden;
+  }
+  .dd.open .dd-menu { display:block; }
+  .dd-menu button {
+    display:block; width:100%; text-align:left; background:none; border:none;
+    color:#c7ccd1; font-family:"Rajdhani",sans-serif; font-size:13px;
+    padding:10px 14px; cursor:pointer;
+  }
+  .dd-menu button:hover { background:rgba(255,122,26,.08); color:#ff7a1a; }
+  .dd-menu button.active { color:#ff7a1a; font-weight:700; }
+
+  /* ---------- hero / search ---------- */
+  .hero {
+    position:relative; z-index:5;
+    text-align:center; padding:2vh 5vw 4vh;
+  }
+  .hero h1 {
+    font-family:"Anton",sans-serif; letter-spacing:.03em;
+    font-size:clamp(30px,5.5vw,58px); text-transform:uppercase;
+    text-shadow:0 0 30px rgba(255,122,26,.25);
+  }
+  .hero h1 em { color:#ff7a1a; font-style:normal; }
+  .hero p { margin-top:8px; color:#8a9099; font-size:14px; letter-spacing:.05em; }
+
+  .search-wrap { max-width:420px; margin:26px auto 0; position:relative; }
+  .search-wrap input {
+    width:100%; background:rgba(255,255,255,.03); border:1px solid #2a2e33;
+    border-radius:2px; padding:12px 16px; color:#eef1f0; font-size:14px;
+    font-family:"Rajdhani",sans-serif; letter-spacing:.03em;
+    transition:border-color .2s ease;
+  }
+  .search-wrap input:focus { outline:none; border-color:#ff7a1a; }
+  .search-wrap input::placeholder { color:#5c6169; }
+
+  /* ---------- battlefield grid ---------- */
+  main {
+    position:relative; z-index:5;
+    max-width:1100px; margin:0 auto; padding:0 5vw 6vh;
+    display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+    gap:18px;
+  }
+
+  .field-card {
+    background:rgba(255,255,255,.025); border:1px solid #23262b;
+    border-radius:3px; padding:20px; cursor:pointer;
+    transition:border-color .25s ease, transform .25s ease, background .25s ease;
+    position:relative; overflow:hidden;
+  }
+  .field-card::before {
+    content:""; position:absolute; inset:0; opacity:0;
+    background:linear-gradient(135deg, rgba(255,122,26,.08), transparent 60%);
+    transition:opacity .25s ease;
+  }
+  .field-card:hover { border-color:#ff7a1a; transform:translateY(-3px); }
+  .field-card:hover::before { opacity:1; }
+
+  .field-card.disabled { opacity:.4; cursor:not-allowed; }
+  .field-card.disabled:hover { border-color:#23262b; transform:none; }
+
+  .field-tag {
+    font-size:10px; letter-spacing:.2em; text-transform:uppercase;
+    color:#ff7a1a; margin-bottom:10px; position:relative;
+  }
+  .field-name {
+    font-family:"Anton",sans-serif; font-size:22px; letter-spacing:.02em;
+    text-transform:uppercase; margin-bottom:8px; position:relative;
+  }
+  .field-meta {
+    font-size:13px; color:#8a9099; line-height:1.6; position:relative;
+  }
+
+  .empty-state {
+    grid-column:1/-1; text-align:center; color:#5c6169;
+    padding:40px 0; font-size:14px; letter-spacing:.05em;
+  }
+
+  @media (max-width:640px) {
+    header { padding:16px 5vw; }
+    .brand span { font-size:15px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <img src="assets/logos/Tymove logo B.png" alt="Airsoft Maps">
+    <span>AIRSOFT <em>MAPS</em></span>
+  </div>
+
+  <div class="top-controls">
+    <div class="dd" id="lang-dd">
+      <button class="dd-btn" id="lang-toggle">🌐 <span id="lang-current">CZ</span></button>
+      <div class="dd-menu">
+        <button data-lang="cs">Čeština</button>
+        <button data-lang="en">English</button>
+      </div>
+    </div>
+    <div class="dd" id="style-dd">
+      <button class="dd-btn" id="style-toggle">🎨 Styl</button>
+      <div class="dd-menu">
+        <button data-theme="dark" class="active">Tmavý</button>
+        <button data-theme="light">Světlý</button>
+        <button data-theme="resident-evil">Resident Evil</button>
+        <button data-theme="pubg">PUBG</button>
+        <button data-theme="fortnite">Fortnite</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <h1 id="hero-title">Vyber <em>bojiště</em></h1>
+  <p id="hero-sub">Zvol hřiště a vydej se na mapu</p>
+  <div class="search-wrap">
+    <input type="text" id="field-search" placeholder="Hledat podle názvu...">
+  </div>
+</section>
+
+<main id="field-grid"></main>
+
+<script>
+  const BATTLEFIELDS = [
+    { id:"cerna-skala", name:"Černá skála", nameEn:"Black Rock", location:"Kladno", size:"8 ha", terrain:"Les / bunkry", terrainEn:"Forest / bunkers", status:"active" },
+    { id:"tovarna-x", name:"Továrna X", nameEn:"Factory X", location:"Ostrava", size:"3 ha", terrain:"Urban / hala", terrainEn:"Urban / warehouse", status:"active" },
+    { id:"vojenske-cviciste", name:"Vojenské cvičiště Brdy", nameEn:"Brdy Military Range", location:"Brdy", size:"20 ha", terrain:"Smíšený terén", terrainEn:"Mixed terrain", status:"coming_soon" }
+  ];
+
+  const TEXT = {
+    cs: { title:"Vyber <em>bojiště</em>", sub:"Zvol hřiště a vydej se na mapu", search:"Hledat podle názvu...", empty:"Žádné hřiště nenalezeno.", soon:"Připravujeme" },
+    en: { title:"Choose your <em>battlefield</em>", sub:"Pick a field and jump into the map", search:"Search by name...", empty:"No battlefields found.", soon:"Coming soon" }
+  };
+
+  let lang = localStorage.getItem("airsoft_lang") || "cs";
+
+  function setLang(l) {
+    lang = l;
+    localStorage.setItem("airsoft_lang", l);
+    document.getElementById("lang-current").textContent = l.toUpperCase();
+    document.querySelectorAll("[data-lang]").forEach(b => b.classList.toggle("active", b.dataset.lang === l));
+    const t = TEXT[l];
+    document.getElementById("hero-title").innerHTML = t.title;
+    document.getElementById("hero-sub").textContent = t.sub;
+    document.getElementById("field-search").placeholder = t.search;
+    renderGrid(document.getElementById("field-search").value);
+  }
+
+  function renderGrid(query) {
+    const grid = document.getElementById("field-grid");
+    grid.innerHTML = "";
+    const q = (query || "").trim().toLowerCase();
+    const t = TEXT[lang];
+
+    const filtered = BATTLEFIELDS.filter(f => (lang === "en" ? f.nameEn : f.name).toLowerCase().includes(q));
+
+    if (filtered.length === 0) {
+      grid.innerHTML = `<div class="empty-state">${t.empty}</div>`;
+      return;
+    }
+
+    filtered.forEach(f => {
+      const name = lang === "en" ? f.nameEn : f.name;
+      const terrain = lang === "en" ? f.terrainEn : f.terrain;
+      const soon = f.status === "coming_soon";
+      const card = document.createElement("div");
+      card.className = "field-card" + (soon ? " disabled" : "");
+      card.innerHTML = `
+        <div class="field-tag">${soon ? t.soon : f.location}</div>
+        <div class="field-name">${name}</div>
+        <div class="field-meta">${f.location} · ${f.size} · ${terrain}</div>
+      `;
+      if (!soon) card.addEventListener("click", () => window.location.href = `battlefield.html?id=${f.id}`);
+      grid.appendChild(card);
+    });
+  }
+
+  // dropdowns
+  document.querySelectorAll(".dd-btn").forEach(btn => {
+    btn.addEventListener("click", e => {
+      e.stopPropagation();
+      const dd = btn.closest(".dd");
+      const open = dd.classList.contains("open");
+      document.querySelectorAll(".dd.open").forEach(d => d.classList.remove("open"));
+      if (!open) dd.classList.add("open");
+    });
+  });
+  document.addEventListener("click", () => document.querySelectorAll(".dd.open").forEach(d => d.classList.remove("open")));
+
+  document.querySelectorAll("[data-lang]").forEach(b => b.addEventListener("click", () => setLang(b.dataset.lang)));
+
+  document.querySelectorAll("[data-theme]").forEach(b => {
+    b.addEventListener("click", () => {
+      document.querySelectorAll("[data-theme]").forEach(x => x.classList.remove("active"));
+      b.classList.add("active");
+      // zatím funkční jen "dark" (tento vzhled) — ostatní styly čekají na reálný redesign RE/PUBG/Fortnite
+    });
+  });
+
+  document.getElementById("field-search").addEventListener("input", e => renderGrid(e.target.value));
+
+  setLang(lang);
+</script>
+
+</body>
+</html>
