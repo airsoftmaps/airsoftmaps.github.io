@@ -1,263 +1,1511 @@
 <!DOCTYPE html>
 <html lang="cs">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AIRSOFT MAPS — Vyber bojiště</title>
+
+<title>AIRSOFT MAPS — Battlefield Selection</title>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+
 <style>
-  * { margin:0; padding:0; box-sizing:border-box; }
-  html,body {
-    width:100%; min-height:100%; background:#050608;
-    font-family:"Rajdhani",sans-serif; color:#eef1f0;
-  }
 
-  body {
-    background:
-      radial-gradient(ellipse at 50% 0%, rgba(255,122,26,0.07), transparent 55%),
-      radial-gradient(ellipse at 50% 50%, #0d1013, #000 85%);
-    min-height:100vh;
-    position:relative;
-  }
-  body::before {
-    content:""; position:fixed; inset:0; pointer-events:none; z-index:1;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+/* =========================================================
+   BASE
+========================================================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+:root{
+    --accent:#ff7a1a;
+    --accent-soft:rgba(255,122,26,.12);
+
+    --bg:#050608;
+    --panel:#0d1013;
+    --panel2:#11151a;
+
+    --text:#eef1f0;
+    --muted:#858d96;
+    --border:#292e34;
+
+    --danger:#d71920;
+}
+
+html,
+body{
+    width:100%;
+    min-height:100%;
+}
+
+body{
+    background:var(--bg);
+    color:var(--text);
+
+    font-family:"Rajdhani",sans-serif;
+
+    overflow-x:hidden;
+
+    transition:
+        background .4s ease,
+        color .4s ease;
+}
+
+
+/* =========================================================
+   ATMOSPHERE
+========================================================= */
+
+body::before{
+    content:"";
+
+    position:fixed;
+    inset:0;
+
+    pointer-events:none;
+
+    z-index:1;
+
+    background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.045'/%3E%3C/svg%3E");
+
     mix-blend-mode:overlay;
-  }
-  body::after {
-    content:""; position:fixed; inset:0; pointer-events:none; z-index:1;
-    box-shadow: inset 0 0 18vw 4vw rgba(0,0,0,0.85);
-  }
 
-  /* ---------- top bar ---------- */
-  header {
-    position:relative; z-index:5;
-    display:flex; align-items:center; justify-content:space-between;
-    padding:20px 5vw;
-  }
-  .brand { display:flex; align-items:center; gap:12px; }
-  .brand img { width:38px; height:38px; object-fit:contain; filter:drop-shadow(0 0 10px rgba(255,122,26,.3)); }
-  .brand span {
-    font-family:"Anton",sans-serif; letter-spacing:.08em; font-size:18px;
-    color:#eef1f0;
-  }
-  .brand span em { color:#ff7a1a; font-style:normal; }
+    opacity:.7;
+}
 
-  .top-controls { display:flex; gap:10px; }
-  .dd { position:relative; }
-  .dd-btn {
-    background:rgba(255,255,255,.03); border:1px solid #2a2e33; color:#c7ccd1;
-    font-family:"Rajdhani",sans-serif; font-size:12px; letter-spacing:.1em;
-    text-transform:uppercase; padding:8px 14px; border-radius:2px;
-    cursor:pointer; display:flex; align-items:center; gap:6px;
-    transition:border-color .2s ease, color .2s ease;
-  }
-  .dd-btn:hover { border-color:#ff7a1a; color:#ff7a1a; }
-  .dd-menu {
-    position:absolute; top:calc(100% + 6px); right:0; min-width:170px;
-    background:#0d0f12; border:1px solid #2a2e33; border-radius:2px;
-    box-shadow:0 14px 32px rgba(0,0,0,.5); display:none; z-index:20; overflow:hidden;
-  }
-  .dd.open .dd-menu { display:block; }
-  .dd-menu button {
-    display:block; width:100%; text-align:left; background:none; border:none;
-    color:#c7ccd1; font-family:"Rajdhani",sans-serif; font-size:13px;
-    padding:10px 14px; cursor:pointer;
-  }
-  .dd-menu button:hover { background:rgba(255,122,26,.08); color:#ff7a1a; }
-  .dd-menu button.active { color:#ff7a1a; font-weight:700; }
+body::after{
+    content:"";
 
-  /* ---------- hero / search ---------- */
-  .hero {
-    position:relative; z-index:5;
-    text-align:center; padding:2vh 5vw 4vh;
-  }
-  .hero h1 {
-    font-family:"Anton",sans-serif; letter-spacing:.03em;
-    font-size:clamp(30px,5.5vw,58px); text-transform:uppercase;
-    text-shadow:0 0 30px rgba(255,122,26,.25);
-  }
-  .hero h1 em { color:#ff7a1a; font-style:normal; }
-  .hero p { margin-top:8px; color:#8a9099; font-size:14px; letter-spacing:.05em; }
+    position:fixed;
+    inset:0;
 
-  .search-wrap { max-width:420px; margin:26px auto 0; position:relative; }
-  .search-wrap input {
-    width:100%; background:rgba(255,255,255,.03); border:1px solid #2a2e33;
-    border-radius:2px; padding:12px 16px; color:#eef1f0; font-size:14px;
-    font-family:"Rajdhani",sans-serif; letter-spacing:.03em;
-    transition:border-color .2s ease;
-  }
-  .search-wrap input:focus { outline:none; border-color:#ff7a1a; }
-  .search-wrap input::placeholder { color:#5c6169; }
+    pointer-events:none;
 
-  /* ---------- battlefield grid ---------- */
-  main {
-    position:relative; z-index:5;
-    max-width:1100px; margin:0 auto; padding:0 5vw 6vh;
-    display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
-    gap:18px;
-  }
+    z-index:2;
 
-  .field-card {
-    background:rgba(255,255,255,.025); border:1px solid #23262b;
-    border-radius:3px; padding:20px; cursor:pointer;
-    transition:border-color .25s ease, transform .25s ease, background .25s ease;
-    position:relative; overflow:hidden;
-  }
-  .field-card::before {
-    content:""; position:absolute; inset:0; opacity:0;
-    background:linear-gradient(135deg, rgba(255,122,26,.08), transparent 60%);
-    transition:opacity .25s ease;
-  }
-  .field-card:hover { border-color:#ff7a1a; transform:translateY(-3px); }
-  .field-card:hover::before { opacity:1; }
+    box-shadow:
+        inset 0 0 140px rgba(0,0,0,.9);
+}
 
-  .field-card.disabled { opacity:.4; cursor:not-allowed; }
-  .field-card.disabled:hover { border-color:#23262b; transform:none; }
 
-  .field-tag {
-    font-size:10px; letter-spacing:.2em; text-transform:uppercase;
-    color:#ff7a1a; margin-bottom:10px; position:relative;
-  }
-  .field-name {
-    font-family:"Anton",sans-serif; font-size:22px; letter-spacing:.02em;
-    text-transform:uppercase; margin-bottom:8px; position:relative;
-  }
-  .field-meta {
-    font-size:13px; color:#8a9099; line-height:1.6; position:relative;
-  }
+/* =========================================================
+   SCANLINES
+========================================================= */
 
-  .empty-state {
-    grid-column:1/-1; text-align:center; color:#5c6169;
-    padding:40px 0; font-size:14px; letter-spacing:.05em;
-  }
+.scanlines{
+    position:fixed;
+    inset:0;
 
-  @media (max-width:640px) {
-    header { padding:16px 5vw; }
-    .brand span { font-size:15px; }
-  }
-</style>
-</head>
-<body>
+    z-index:3;
 
-<header>
-  <div class="brand">
-    <img src="logos/Tymove logo B.png" alt="Airsoft Maps">
-    <span>AIRSOFT <em>MAPS</em></span>
-  </div>
+    pointer-events:none;
 
-  <div class="top-controls">
-    <div class="dd" id="lang-dd">
-      <button class="dd-btn" id="lang-toggle">🌐 <span id="lang-current">CZ</span></button>
-      <div class="dd-menu">
-        <button data-lang="cs">Čeština</button>
-        <button data-lang="en">English</button>
-      </div>
-    </div>
-    <div class="dd" id="style-dd">
-      <button class="dd-btn" id="style-toggle">🎨 Styl</button>
-      <div class="dd-menu">
-        <button data-theme="dark" class="active">Tmavý</button>
-        <button data-theme="light">Světlý</button>
-        <button data-theme="resident-evil">Resident Evil</button>
-        <button data-theme="pubg">PUBG</button>
-        <button data-theme="fortnite">Fortnite</button>
-      </div>
-    </div>
-  </div>
-</header>
+    background:
+        repeating-linear-gradient(
+            0deg,
+            transparent 0px,
+            transparent 3px,
+            rgba(255,255,255,.012) 4px
+        );
+}
 
-<section class="hero">
-  <h1 id="hero-title">Vyber <em>bojiště</em></h1>
-  <p id="hero-sub">Zvol hřiště a vydej se na mapu</p>
-  <div class="search-wrap">
-    <input type="text" id="field-search" placeholder="Hledat podle názvu...">
-  </div>
-</section>
 
-<main id="field-grid"></main>
+/* =========================================================
+   HEADER
+========================================================= */
 
-<script>
-  const BATTLEFIELDS = [
-    { id:"cerna-skala", name:"Černá skála", nameEn:"Black Rock", location:"Kladno", size:"8 ha", terrain:"Les / bunkry", terrainEn:"Forest / bunkers", status:"active" },
-    { id:"tovarna-x", name:"Továrna X", nameEn:"Factory X", location:"Ostrava", size:"3 ha", terrain:"Urban / hala", terrainEn:"Urban / warehouse", status:"active" },
-    { id:"vojenske-cviciste", name:"Vojenské cvičiště Brdy", nameEn:"Brdy Military Range", location:"Brdy", size:"20 ha", terrain:"Smíšený terén", terrainEn:"Mixed terrain", status:"coming_soon" }
-  ];
+header{
+    position:relative;
 
-  const TEXT = {
-    cs: { title:"Vyber <em>bojiště</em>", sub:"Zvol hřiště a vydej se na mapu", search:"Hledat podle názvu...", empty:"Žádné hřiště nenalezeno.", soon:"Připravujeme" },
-    en: { title:"Choose your <em>battlefield</em>", sub:"Pick a field and jump into the map", search:"Search by name...", empty:"No battlefields found.", soon:"Coming soon" }
-  };
+    z-index:10;
 
-  let lang = localStorage.getItem("airsoft_lang") || "cs";
+    height:78px;
 
-  function setLang(l) {
-    lang = l;
-    localStorage.setItem("airsoft_lang", l);
-    document.getElementById("lang-current").textContent = l.toUpperCase();
-    document.querySelectorAll("[data-lang]").forEach(b => b.classList.toggle("active", b.dataset.lang === l));
-    const t = TEXT[l];
-    document.getElementById("hero-title").innerHTML = t.title;
-    document.getElementById("hero-sub").textContent = t.sub;
-    document.getElementById("field-search").placeholder = t.search;
-    renderGrid(document.getElementById("field-search").value);
-  }
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
 
-  function renderGrid(query) {
-    const grid = document.getElementById("field-grid");
-    grid.innerHTML = "";
-    const q = (query || "").trim().toLowerCase();
-    const t = TEXT[lang];
+    padding:0 5vw;
 
-    const filtered = BATTLEFIELDS.filter(f => (lang === "en" ? f.nameEn : f.name).toLowerCase().includes(q));
+    border-bottom:1px solid var(--border);
 
-    if (filtered.length === 0) {
-      grid.innerHTML = `<div class="empty-state">${t.empty}</div>`;
-      return;
+    background:
+        linear-gradient(
+            180deg,
+            rgba(5,6,8,.96),
+            rgba(5,6,8,.78)
+        );
+
+    backdrop-filter:blur(12px);
+}
+
+
+/* brand */
+
+.brand{
+    display:flex;
+    align-items:center;
+
+    gap:12px;
+}
+
+.brand img{
+    width:40px;
+    height:40px;
+
+    object-fit:contain;
+
+    filter:
+        drop-shadow(
+            0 0 12px
+            color-mix(
+                in srgb,
+                var(--accent) 35%,
+                transparent
+            )
+        );
+}
+
+.brand-text{
+    display:flex;
+    flex-direction:column;
+}
+
+.brand-title{
+    font-family:"Anton",sans-serif;
+
+    font-size:19px;
+    letter-spacing:.08em;
+}
+
+.brand-title span{
+    color:var(--accent);
+}
+
+.brand-sub{
+    font-size:9px;
+
+    color:var(--muted);
+
+    letter-spacing:.3em;
+
+    text-transform:uppercase;
+}
+
+
+/* =========================================================
+   CONTROLS
+========================================================= */
+
+.top-controls{
+    display:flex;
+    gap:8px;
+}
+
+.control{
+    position:relative;
+}
+
+.control-button{
+    height:38px;
+
+    padding:0 13px;
+
+    border:1px solid var(--border);
+
+    background:rgba(255,255,255,.025);
+
+    color:var(--text);
+
+    font-family:"Rajdhani",sans-serif;
+
+    font-size:12px;
+
+    letter-spacing:.12em;
+
+    text-transform:uppercase;
+
+    cursor:pointer;
+
+    transition:
+        border-color .2s,
+        color .2s,
+        background .2s;
+}
+
+.control-button:hover{
+    border-color:var(--accent);
+    color:var(--accent);
+
+    background:var(--accent-soft);
+}
+
+.dropdown{
+    position:absolute;
+
+    right:0;
+    top:calc(100% + 8px);
+
+    min-width:190px;
+
+    background:rgba(10,12,15,.98);
+
+    border:1px solid var(--border);
+
+    box-shadow:
+        0 20px 50px rgba(0,0,0,.7);
+
+    display:none;
+
+    overflow:hidden;
+}
+
+.control.open .dropdown{
+    display:block;
+}
+
+.dropdown button{
+    width:100%;
+
+    padding:11px 14px;
+
+    border:0;
+
+    background:none;
+
+    color:var(--text);
+
+    text-align:left;
+
+    font-family:"Rajdhani",sans-serif;
+
+    font-size:13px;
+
+    cursor:pointer;
+}
+
+.dropdown button:hover{
+    background:var(--accent-soft);
+    color:var(--accent);
+}
+
+.dropdown button.active{
+    color:var(--accent);
+    font-weight:700;
+}
+
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.hero{
+    position:relative;
+
+    z-index:5;
+
+    text-align:center;
+
+    padding:
+        7vh
+        5vw
+        4vh;
+}
+
+.kicker{
+    font-size:11px;
+
+    color:var(--accent);
+
+    letter-spacing:.45em;
+
+    text-transform:uppercase;
+
+    margin-bottom:13px;
+}
+
+.hero h1{
+    font-family:"Anton",sans-serif;
+
+    font-size:clamp(
+        42px,
+        7vw,
+        82px
+    );
+
+    line-height:.95;
+
+    letter-spacing:.025em;
+
+    text-shadow:
+        0 0 35px
+        color-mix(
+            in srgb,
+            var(--accent) 20%,
+            transparent
+        );
+}
+
+.hero h1 span{
+    color:var(--accent);
+}
+
+.hero p{
+    margin-top:13px;
+
+    color:var(--muted);
+
+    font-size:14px;
+
+    letter-spacing:.08em;
+}
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+.search-wrap{
+    max-width:430px;
+
+    margin:30px auto 0;
+
+    position:relative;
+}
+
+.search-wrap::before{
+    content:"⌕";
+
+    position:absolute;
+
+    left:14px;
+    top:50%;
+
+    transform:translateY(-50%);
+
+    color:var(--muted);
+
+    font-size:18px;
+
+    z-index:2;
+}
+
+.search-wrap input{
+    width:100%;
+
+    height:46px;
+
+    padding:
+        0
+        16px
+        0
+        40px;
+
+    border:1px solid var(--border);
+
+    background:rgba(255,255,255,.025);
+
+    color:var(--text);
+
+    outline:none;
+
+    font-family:"Rajdhani",sans-serif;
+
+    font-size:14px;
+
+    transition:border-color .2s;
+}
+
+.search-wrap input:focus{
+    border-color:var(--accent);
+}
+
+.search-wrap input::placeholder{
+    color:#555d66;
+}
+
+
+/* =========================================================
+   FIELD GRID
+========================================================= */
+
+.field-grid{
+    position:relative;
+
+    z-index:5;
+
+    max-width:1200px;
+
+    margin:0 auto;
+
+    padding:
+        0 5vw
+        80px;
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(320px,1fr)
+        );
+
+    gap:22px;
+}
+
+
+/* =========================================================
+   FIELD CARD
+========================================================= */
+
+.field-card{
+    position:relative;
+
+    min-height:320px;
+
+    overflow:hidden;
+
+    border:1px solid var(--border);
+
+    background:#0b0d10;
+
+    cursor:pointer;
+
+    transition:
+        transform .35s cubic-bezier(.2,.9,.2,1),
+        border-color .3s,
+        box-shadow .3s;
+}
+
+.field-card:hover{
+    transform:translateY(-6px);
+
+    border-color:var(--accent);
+
+    box-shadow:
+        0 25px 70px rgba(0,0,0,.65),
+        0 0 35px
+        color-mix(
+            in srgb,
+            var(--accent) 10%,
+            transparent
+        );
+}
+
+
+/* image */
+
+.field-image{
+    position:absolute;
+    inset:0;
+
+    overflow:hidden;
+}
+
+.field-image img{
+    width:100%;
+    height:100%;
+
+    object-fit:cover;
+
+    transform:scale(1.13);
+
+    filter:
+        saturate(.7)
+        contrast(1.12)
+        brightness(.72);
+
+    transition:
+        transform .8s cubic-bezier(.2,.9,.2,1),
+        filter .5s;
+}
+
+.field-card:hover .field-image img{
+    transform:scale(1.2);
+
+    filter:
+        saturate(.9)
+        contrast(1.12)
+        brightness(.82);
+}
+
+
+/* dark overlay */
+
+.field-image::after{
+    content:"";
+
+    position:absolute;
+    inset:0;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(0,0,0,.15) 0%,
+            rgba(0,0,0,.3) 35%,
+            rgba(0,0,0,.92) 100%
+        );
+}
+
+
+/* tactical grid */
+
+.field-image::before{
+    content:"";
+
+    position:absolute;
+    inset:0;
+
+    z-index:2;
+
+    opacity:.18;
+
+    background:
+        linear-gradient(
+            rgba(255,255,255,.2) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(255,255,255,.2) 1px,
+            transparent 1px
+        );
+
+    background-size:
+        40px 40px;
+}
+
+
+/* content */
+
+.field-content{
+    position:absolute;
+
+    z-index:4;
+
+    left:24px;
+    right:24px;
+    bottom:22px;
+}
+
+.field-id{
+    font-size:10px;
+
+    color:var(--accent);
+
+    letter-spacing:.35em;
+
+    text-transform:uppercase;
+
+    margin-bottom:8px;
+}
+
+.field-name{
+    font-family:"Anton",sans-serif;
+
+    font-size:36px;
+
+    letter-spacing:.03em;
+
+    line-height:1;
+}
+
+.field-meta{
+    margin-top:10px;
+
+    color:#a2a8ae;
+
+    font-size:12px;
+
+    letter-spacing:.08em;
+
+    text-transform:uppercase;
+}
+
+
+/* arrow */
+
+.field-arrow{
+    position:absolute;
+
+    right:22px;
+    bottom:22px;
+
+    z-index:5;
+
+    width:42px;
+    height:42px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border:1px solid rgba(255,255,255,.18);
+
+    color:var(--text);
+
+    font-size:20px;
+
+    transition:
+        background .2s,
+        border-color .2s,
+        color .2s;
+}
+
+.field-card:hover .field-arrow{
+    background:var(--accent);
+    border-color:var(--accent);
+    color:#050608;
+}
+
+
+/* =========================================================
+   FOOTER STATUS
+========================================================= */
+
+.statusbar{
+    position:fixed;
+
+    left:0;
+    right:0;
+    bottom:0;
+
+    z-index:20;
+
+    height:30px;
+
+    padding:0 5vw;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    border-top:1px solid var(--border);
+
+    background:rgba(4,5,6,.94);
+
+    color:#59616a;
+
+    font-size:9px;
+
+    letter-spacing:.18em;
+
+    text-transform:uppercase;
+}
+
+.status-left{
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.status-dot{
+    width:6px;
+    height:6px;
+
+    border-radius:50%;
+
+    background:#4cff8c;
+
+    box-shadow:
+        0 0 8px #4cff8c;
+}
+
+
+/* =========================================================
+   EMPTY
+========================================================= */
+
+.empty{
+    grid-column:1/-1;
+
+    text-align:center;
+
+    padding:80px;
+
+    color:var(--muted);
+
+    letter-spacing:.12em;
+}
+
+
+/* =========================================================
+   THEMES
+========================================================= */
+
+
+/* LIGHT */
+
+body.theme-light{
+    --accent:#e35e00;
+    --bg:#e8e9e7;
+    --panel:#fff;
+    --panel2:#f3f3f1;
+    --text:#151719;
+    --muted:#666d73;
+    --border:#c7c9c8;
+}
+
+body.theme-light header{
+    background:rgba(235,236,234,.94);
+}
+
+body.theme-light .dropdown{
+    background:#f5f5f3;
+}
+
+body.theme-light .field-card{
+    background:#fff;
+}
+
+
+/* RESIDENT EVIL */
+
+body.theme-resident-evil{
+    --accent:#c5161d;
+    --bg:#050303;
+    --panel:#0e0809;
+    --panel2:#160b0c;
+    --text:#e8dddd;
+    --muted:#877878;
+    --border:#3c1719;
+}
+
+body.theme-resident-evil .hero h1{
+    text-shadow:
+        0 0 30px rgba(197,22,29,.4);
+}
+
+body.theme-resident-evil .field-image img{
+    filter:
+        saturate(.58)
+        contrast(1.3)
+        brightness(.55)
+        sepia(.12);
+}
+
+
+/* PUBG */
+
+body.theme-pubg{
+    --accent:#c6a34a;
+    --bg:#10100d;
+    --panel:#191812;
+    --panel2:#211f17;
+    --text:#e5dfcf;
+    --muted:#9c9789;
+    --border:#48422e;
+}
+
+
+/* FORTNITE */
+
+body.theme-fortnite{
+    --accent:#7d5cff;
+    --bg:#080611;
+    --panel:#131023;
+    --panel2:#19152e;
+    --text:#f2efff;
+    --muted:#a39dbc;
+    --border:#3a315f;
+}
+
+body.theme-fortnite .field-image img{
+    filter:
+        saturate(1.25)
+        contrast(1.08)
+        brightness(.7);
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media(max-width:700px){
+
+    header{
+        height:auto;
+
+        min-height:72px;
+
+        padding:
+            14px
+            5vw;
+
+        gap:12px;
     }
 
-    filtered.forEach(f => {
-      const name = lang === "en" ? f.nameEn : f.name;
-      const terrain = lang === "en" ? f.terrainEn : f.terrain;
-      const soon = f.status === "coming_soon";
-      const card = document.createElement("div");
-      card.className = "field-card" + (soon ? " disabled" : "");
-      card.innerHTML = `
-        <div class="field-tag">${soon ? t.soon : f.location}</div>
-        <div class="field-name">${name}</div>
-        <div class="field-meta">${f.location} · ${f.size} · ${terrain}</div>
-      `;
-      if (!soon) card.addEventListener("click", () => window.location.href = `battlefield.html?id=${f.id}`);
-      grid.appendChild(card);
+    .brand-sub{
+        display:none;
+    }
+
+    .brand-title{
+        font-size:16px;
+    }
+
+    .top-controls{
+        gap:5px;
+    }
+
+    .control-button{
+        padding:0 9px;
+    }
+
+    .hero{
+        padding:
+            5vh
+            5vw
+            4vh;
+    }
+
+    .hero h1{
+        font-size:45px;
+    }
+
+    .field-grid{
+        grid-template-columns:1fr;
+
+        padding-bottom:60px;
+    }
+
+    .field-card{
+        min-height:270px;
+    }
+
+    .statusbar{
+        font-size:8px;
+    }
+}
+
+</style>
+</head>
+
+
+<body>
+
+<div class="scanlines"></div>
+
+
+<header>
+
+    <div class="brand">
+
+        <img
+            src="logos/Tymove logo B.png"
+            alt="Airsoft Maps"
+        >
+
+        <div class="brand-text">
+
+            <div class="brand-title">
+                AIRSOFT <span>MAPS</span>
+            </div>
+
+            <div class="brand-sub">
+                Tactical Battlefield Database
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="top-controls">
+
+        <!-- LANGUAGE -->
+
+        <div class="control" id="lang-control">
+
+            <button
+                class="control-button"
+                id="lang-button"
+            >
+                🌐 <span id="lang-current">CZ</span>
+            </button>
+
+            <div class="dropdown">
+
+                <button data-lang="cs">
+                    Čeština
+                </button>
+
+                <button data-lang="en">
+                    English
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- STYLE -->
+
+        <div class="control" id="theme-control">
+
+            <button
+                class="control-button"
+            >
+                🎨 <span id="theme-name">STYLE</span>
+            </button>
+
+            <div class="dropdown">
+
+                <button data-theme="dark">
+                    ◼ Tmavý
+                </button>
+
+                <button data-theme="light">
+                    ◻ Světlý
+                </button>
+
+                <button data-theme="resident-evil">
+                    ☣ Resident Evil
+                </button>
+
+                <button data-theme="pubg">
+                    ◆ PUBG
+                </button>
+
+                <button data-theme="fortnite">
+                    ✦ Fortnite
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+<section class="hero">
+
+    <div class="kicker">
+        FIELD DATABASE / 001
+    </div>
+
+    <h1 id="hero-title">
+        VYBER <span>BOJIŠTĚ</span>
+    </h1>
+
+    <p id="hero-sub">
+        Zvol hřiště a otevři taktickou mapu
+    </p>
+
+
+    <div class="search-wrap">
+
+        <input
+            id="field-search"
+            type="text"
+            placeholder="Hledat hřiště..."
+        >
+
+    </div>
+
+</section>
+
+
+<main
+    class="field-grid"
+    id="field-grid"
+></main>
+
+
+<div class="statusbar">
+
+    <div class="status-left">
+        <span class="status-dot"></span>
+        SYSTEM ONLINE
+    </div>
+
+    <div>
+        AIRSOFT MAPS // TACTICAL INTELLIGENCE
+    </div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   DATA
+========================================================= */
+
+const BATTLEFIELDS = [
+
+    {
+        id:"grygov",
+
+        name:"Grygov",
+        nameEn:"Grygov",
+
+        location:"Airsoft Park Grygov",
+
+        type:"Industrial / CQB",
+
+        typeEn:"Industrial / CQB",
+
+        image:"maps/grygov.png"
+    },
+
+    {
+        id:"dalov",
+
+        name:"Dalov",
+        nameEn:"Dalov",
+
+        location:"Airsoft Park Dalov",
+
+        type:"Mixed terrain",
+
+        typeEn:"Mixed terrain",
+
+        image:"maps/dalov.png"
+    }
+
+];
+
+
+/* =========================================================
+   LANGUAGE
+========================================================= */
+
+const TEXT = {
+
+    cs:{
+        kicker:"FIELD DATABASE / 001",
+        title:"VYBER <span>BOJIŠTĚ</span>",
+        sub:"Zvol hřiště a otevři taktickou mapu",
+        search:"Hledat hřiště...",
+        style:"STYL",
+        status:"SYSTEM ONLINE"
+    },
+
+    en:{
+        kicker:"FIELD DATABASE / 001",
+        title:"SELECT <span>BATTLEFIELD</span>",
+        sub:"Select a field and open the tactical map",
+        search:"Search battlefield...",
+        style:"STYLE",
+        status:"SYSTEM ONLINE"
+    }
+
+};
+
+
+let lang =
+    localStorage.getItem("airsoft_lang")
+    || "cs";
+
+
+/* =========================================================
+   THEME
+========================================================= */
+
+const THEME_NAMES = {
+
+    dark:{
+        cs:"TMAVÝ",
+        en:"DARK"
+    },
+
+    light:{
+        cs:"SVĚTLÝ",
+        en:"LIGHT"
+    },
+
+    "resident-evil":{
+        cs:"RESIDENT EVIL",
+        en:"RESIDENT EVIL"
+    },
+
+    pubg:{
+        cs:"PUBG",
+        en:"PUBG"
+    },
+
+    fortnite:{
+        cs:"FORTNITE",
+        en:"FORTNITE"
+    }
+
+};
+
+
+let theme =
+    localStorage.getItem("airsoft_theme")
+    || "dark";
+
+
+function applyTheme(){
+
+    document.body.classList.remove(
+        "theme-light",
+        "theme-resident-evil",
+        "theme-pubg",
+        "theme-fortnite"
+    );
+
+    if(theme !== "dark"){
+
+        document.body.classList.add(
+            `theme-${theme}`
+        );
+
+    }
+
+    document
+        .querySelectorAll("[data-theme]")
+        .forEach(button => {
+
+            button.classList.toggle(
+                "active",
+                button.dataset.theme === theme
+            );
+
+        });
+
+    document.getElementById(
+        "theme-name"
+    ).textContent =
+        THEME_NAMES[theme][lang];
+}
+
+
+/* =========================================================
+   LANGUAGE
+========================================================= */
+
+function applyLanguage(){
+
+    const t = TEXT[lang];
+
+    document.getElementById(
+        "lang-current"
+    ).textContent =
+        lang.toUpperCase();
+
+    document.getElementById(
+        "hero-title"
+    ).innerHTML =
+        t.title;
+
+    document.getElementById(
+        "hero-sub"
+    ).textContent =
+        t.sub;
+
+    document.getElementById(
+        "field-search"
+    ).placeholder =
+        t.search;
+
+    document.querySelectorAll(
+        "[data-lang]"
+    ).forEach(button => {
+
+        button.classList.toggle(
+            "active",
+            button.dataset.lang === lang
+        );
+
     });
-  }
 
-  // dropdowns
-  document.querySelectorAll(".dd-btn").forEach(btn => {
-    btn.addEventListener("click", e => {
-      e.stopPropagation();
-      const dd = btn.closest(".dd");
-      const open = dd.classList.contains("open");
-      document.querySelectorAll(".dd.open").forEach(d => d.classList.remove("open"));
-      if (!open) dd.classList.add("open");
+    applyTheme();
+
+    renderFields(
+        document.getElementById(
+            "field-search"
+        ).value
+    );
+}
+
+
+function setLanguage(newLang){
+
+    lang = newLang;
+
+    localStorage.setItem(
+        "airsoft_lang",
+        lang
+    );
+
+    applyLanguage();
+}
+
+
+/* =========================================================
+   RENDER FIELDS
+========================================================= */
+
+function renderFields(search = ""){
+
+    const grid =
+        document.getElementById(
+            "field-grid"
+        );
+
+    grid.innerHTML = "";
+
+    const query =
+        search
+            .trim()
+            .toLowerCase();
+
+
+    const filtered =
+        BATTLEFIELDS.filter(field => {
+
+            const name =
+                lang === "en"
+                    ? field.nameEn
+                    : field.name;
+
+            return (
+                name
+                    .toLowerCase()
+                    .includes(query)
+            );
+
+        });
+
+
+    if(!filtered.length){
+
+        grid.innerHTML = `
+            <div class="empty">
+                NO BATTLEFIELD FOUND
+            </div>
+        `;
+
+        return;
+    }
+
+
+    filtered.forEach(field => {
+
+        const name =
+            lang === "en"
+                ? field.nameEn
+                : field.name;
+
+        const type =
+            lang === "en"
+                ? field.typeEn
+                : field.type;
+
+
+        const card =
+            document.createElement("article");
+
+        card.className =
+            "field-card";
+
+
+        card.innerHTML = `
+
+            <div class="field-image">
+
+                <img
+                    src="${field.image}"
+                    alt="${name}"
+                >
+
+            </div>
+
+
+            <div class="field-content">
+
+                <div class="field-id">
+                    FIELD / ${field.id.toUpperCase()}
+                </div>
+
+                <div class="field-name">
+                    ${name}
+                </div>
+
+                <div class="field-meta">
+                    ${field.location}
+                    &nbsp; // &nbsp;
+                    ${type}
+                </div>
+
+            </div>
+
+
+            <div class="field-arrow">
+                →
+            </div>
+
+        `;
+
+
+        card.addEventListener(
+            "click",
+            () => {
+
+                window.location.href =
+                    `battlefield.html?id=${field.id}`;
+
+            }
+        );
+
+
+        grid.appendChild(card);
+
     });
-  });
-  document.addEventListener("click", () => document.querySelectorAll(".dd.open").forEach(d => d.classList.remove("open")));
 
-  document.querySelectorAll("[data-lang]").forEach(b => b.addEventListener("click", () => setLang(b.dataset.lang)));
+}
 
-  document.querySelectorAll("[data-theme]").forEach(b => {
-    b.addEventListener("click", () => {
-      document.querySelectorAll("[data-theme]").forEach(x => x.classList.remove("active"));
-      b.classList.add("active");
-      // zatím funkční jen "dark" (tento vzhled) — ostatní styly čekají na reálný redesign RE/PUBG/Fortnite
+
+/* =========================================================
+   DROPDOWNS
+========================================================= */
+
+document
+    .querySelectorAll(".control-button")
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            event => {
+
+                event.stopPropagation();
+
+                const control =
+                    button.closest(".control");
+
+                const isOpen =
+                    control.classList.contains(
+                        "open"
+                    );
+
+
+                document
+                    .querySelectorAll(".control")
+                    .forEach(c =>
+                        c.classList.remove(
+                            "open"
+                        )
+                    );
+
+
+                if(!isOpen){
+
+                    control.classList.add(
+                        "open"
+                    );
+
+                }
+
+            }
+        );
+
     });
-  });
 
-  document.getElementById("field-search").addEventListener("input", e => renderGrid(e.target.value));
 
-  setLang(lang);
+document.addEventListener(
+    "click",
+    () => {
+
+        document
+            .querySelectorAll(".control")
+            .forEach(c =>
+                c.classList.remove("open")
+            );
+
+    }
+);
+
+
+/* =========================================================
+   LANGUAGE BUTTONS
+========================================================= */
+
+document
+    .querySelectorAll("[data-lang]")
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            event => {
+
+                event.stopPropagation();
+
+                setLanguage(
+                    button.dataset.lang
+                );
+
+            }
+        );
+
+    });
+
+
+/* =========================================================
+   THEME BUTTONS
+========================================================= */
+
+document
+    .querySelectorAll("[data-theme]")
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            event => {
+
+                event.stopPropagation();
+
+                theme =
+                    button.dataset.theme;
+
+                localStorage.setItem(
+                    "airsoft_theme",
+                    theme
+                );
+
+                applyTheme();
+
+            }
+        );
+
+    });
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+document
+    .getElementById("field-search")
+    .addEventListener(
+        "input",
+        event => {
+
+            renderFields(
+                event.target.value
+            );
+
+        }
+    );
+
+
+/* =========================================================
+   INIT
+========================================================= */
+
+applyLanguage();
+applyTheme();
+
 </script>
 
 </body>
