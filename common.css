@@ -551,3 +551,60 @@ body {
     height: 40px;
   }
 }
+/* ========================================================================
+   MOBILE / GLOBAL — zabránění bílému overscroll pozadí
+   ======================================================================== */
+
+html {
+  background: var(--bg-0);
+  overscroll-behavior: none;
+}
+
+body {
+  min-height: 100dvh;
+  background:
+    radial-gradient(
+      ellipse at 50% 0%,
+      var(--theme-glow),
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse at 50% 50%,
+      var(--bg-1),
+      #000 85%
+    );
+  overscroll-behavior: none;
+}
+
+/* Mobilní Safari/Chrome nesmí vytvořit bílý prostor při tažení stránky */
+@media (max-width: 760px) {
+
+  html,
+  body {
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    background-color: var(--bg-0);
+    overflow-x: hidden;
+  }
+
+  body {
+    min-height: 100dvh;
+  }
+
+}
+@media (max-width: 760px) {
+
+  .am-header,
+  .am-map-toolbar,
+  .am-map-body,
+  .am-explorer {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .am-map-body {
+    overflow: hidden;
+  }
+
+}
