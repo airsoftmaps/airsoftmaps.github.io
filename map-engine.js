@@ -211,178 +211,199 @@ const MapEngine = (function () {
   }
 
   function init(opts) {
-    let mode = "2d";
-    let activeId = null;
-    let playerPos = null;
+  let mode = "2d";
+  let activeId = null;
+  let playerPos = null;
 
-    // Transformace (Zoom / Pan / Rotation)
-    let scale = 1;
-    let rotation = 0;
-    let translateX = 0;
-    let translateY = 0;
-    let isDragging = false;
-    let startX = 0, startY = 0;
+  // Transformace (Zoom / Pan / Rotation)
+  let scale = 1;
+  let rotation = 0;
+  let translateX = 0;
+  let translateY = 0;
+  let isDragging = false;
+  let startX = 0, startY = 0;
 
-    const svg = opts.svg;
-    const parentCanvas = svg.closest(".am-map-canvas");
+  const svg = opts.svg;
+  const parentCanvas = svg.closest(".am-map-canvas");
 
-    // Vytvoreni Viewportu uvnitr SVG
-    svg.innerHTML = "";
-    const viewport = el("g", { class: "am-map-viewport" }, svg);
+  // Vytvoření Viewportu uvnitř SVG
+  svg.innerHTML = "";
+  const viewport = el("g", { class: "am-map-viewport" }, svg);
 
-    // Vytvoreni Tlacidels v Canvasu
-    if (parentCanvas && !parentCanvas.querySelector(".am-map-controls")) {
-      const controls = document.createElement("div");
-      controls.className = "am-map-controls";
-      controls.innerHTML = `
-        <button id="am-zoom-in" title="Přiblížit">+</button>
-        <button id="am-zoom-out" title="Oddálit">-</button>
-        <button id="am-rotate" title="Otočit o 90°">⟲</button>
-        <button id="am-reset" title="Obnovit pohled">⌂</button>
-      `;
-      parentCanvas.appendChild(controls);
+  // Vytvoření Tlačítek v Canvasu
+  if (parentCanvas && !parentCanvas.querySelector(".am-map-controls")) {
+    const controls = document.createElement("div");
+    controls.className = "am-map-controls";
+    controls.innerHTML = `
+      <button id="am-zoom-in" title="Přiblížit">+</button>
+      <button id="am-zoom-out" title="Oddálit">-</button>
+      <button id="am-rotate" title="Otočit o 90°">⟲</button>
+      <button id="am-reset" title="Obnovit pohled">⌂</button>
+    `;
+    parentCanvas.appendChild(controls);
 
-      controls.querySelector("#am-zoom-in").addEventListener("click", () => applyZoom(1.25));
-      controls.querySelector("#am-zoom-out").addEventListener("click", () => applyZoom(0.8));
-      controls.querySelector("#am-rotate").addEventListener("click", () => {
-        rotation = (rotation + 90) % 360;
-        updateTransform();
-      });
-      controls.querySelector("#am-reset").addEventListener("click", resetTransform);
-    }
-
-    function updateTransform() {
-      viewport.setAttribute("transform", `translate(${translateX}, ${translateY}) scale(${scale}) rotate(${rotation})`);
-    }
-
-    function applyZoom(factor) {
-      scale = Math.min(Math.max(0.4, scale * factor), 5);
-      updateTransform();
-    }
-
-    function resetTransform() {
-      scale = 1;
-      rotation = 0;
-      translateX = 0;
-      translateY = 0;
-      updateTransform();
-    }
-
-    // Dragging / Posun Myší & Dotykem
-    svg.addEventListener("mousedown", e => {
-      if (e.target.closest(".am-building, .am-building3d")) return;
-      isDragging = true;
-      startX = e.clientX - translateX;
-      startY = e.clientY - translateY;
-      svg.style.cursor = "grabbing";
+    controls.querySelector("#am-zoom-in").addEventListener("click", () => {
+      const r = svg.getBoundingClientRect();
+      applyZoomAt(1.25, r.left + r.width / 2, r.top + r.height / 2);
     });
-
-    window.addEventListener("mousemove", e => {
-      if (!isDragging) return;
-      translateX = e.clientX - startX;
-      translateY = e.clientY - startY;
+    controls.querySelector("#am-zoom-out").addEventListener("click", () => {
+      const r = svg.getBoundingClientRect();
+      applyZoomAt(0.8, r.left + r.width / 2, r.top + r.height / 2);
+    });
+    controls.querySelector("#am-rotate").addEventListener("click", () => {
+      rotation = (rotation + 90) % 360;
       updateTransform();
     });
-
-    window.addEventListener("mouseup", () => {
-      isDragging = false;
-      svg.style.cursor = "default";
-    });
-
-    // Kolečko myši pro Zoom
-    svg.addEventListener("wheel", e => {
-      e.preventDefault();
-      const zoomFactor = e.deltaY < 0 ? 1.15 : 0.85;
-      applyZoom(zoomFactor);
-    }, { passive: false });
-     /* ==========================================================================
-       DOTYKOVÁ GESTA PRO MOBILY (Pan & Pinch-to-Zoom)
-       ========================================================================== */
-    let touchStartX = 0, touchStartY = 0;
-    let initialPinchDist = null;
-
-    function getPinchDistance(e) {
-      return Math.hypot(
-        e.touches[0].clientX - e.touches[1].clientX,
-        e.touches[0].clientY - e.touches[1].clientY
-      );
-    }
-
-    svg.addEventListener("touchstart", e => {
-      if (e.touches.length === 1) {
-        // Posun 1 prstem
-        isDragging = true;
-        touchStartX = e.touches[0].clientX - translateX;
-        touchStartY = e.touches[0].clientY - translateY;
-      } else if (e.touches.length === 2) {
-        // Zoom 2 prsty
-        isDragging = false;
-        initialPinchDist = getPinchDistance(e);
-      }
-    }, { passive: true });
-
-    svg.addEventListener("touchmove", e => {
-      if (isDragging && e.touches.length === 1) {
-        translateX = e.touches[0].clientX - touchStartX;
-        translateY = e.touches[0].clientY - touchStartY;
-        updateTransform();
-      } else if (e.touches.length === 2 && initialPinchDist) {
-        const newDist = getPinchDistance(e);
-        const zoomFactor = newDist / initialPinchDist;
-        
-        applyZoom(zoomFactor);
-        initialPinchDist = newDist;
-      }
-    }, { passive: true });
-
-    svg.addEventListener("touchend", () => {
-      isDragging = false;
-      initialPinchDist = null;
-    });    
-     
-    function draw() {
-      const lang = opts.getLang();
-      if (mode === "2d") {
-        svg.setAttribute("viewBox", opts.data.viewBoxFlat || "0 0 1360 800");
-        render2D(viewport, opts.data, lang, select, activeId, playerPos);
-      } else {
-        render3D(viewport, opts.data, lang, select, activeId, playerPos);
-        const bbox = viewport.getBBox();
-        const pad = 40;
-        svg.setAttribute("viewBox", `${bbox.x - pad} ${bbox.y - pad} ${bbox.width + pad * 2} ${bbox.height + pad * 2}`);
-      }
-      updateTransform();
-      renderList(opts.listEl, opts.data, lang, activeId, select);
-    }
-
-    function setPlayer(pos) {
-      playerPos = pos;
-      draw();
-    }
-
-    function select(id) {
-      activeId = (activeId === id) ? null : id;
-      draw();
-    }
-
-    opts.mountModeToggle.btn2d.addEventListener("click", () => {
-      mode = "2d";
-      opts.mountModeToggle.btn2d.classList.add("active");
-      opts.mountModeToggle.btn3d.classList.remove("active");
-      resetTransform();
-      draw();
-    });
-    opts.mountModeToggle.btn3d.addEventListener("click", () => {
-      mode = "3d";
-      opts.mountModeToggle.btn3d.classList.add("active");
-      opts.mountModeToggle.btn2d.classList.remove("active");
-      resetTransform();
-      draw();
-    });
-
-    draw();
-    return { redraw: draw, setPlayer };
+    controls.querySelector("#am-reset").addEventListener("click", resetTransform);
   }
+
+  function updateTransform() {
+    viewport.setAttribute("transform", `translate(${translateX}, ${translateY}) scale(${scale}) rotate(${rotation})`);
+  }
+
+  // Matematický výpočet pro zoomování na konkrétní bod (kurzor / prsty)
+  function applyZoomAt(factor, clientX, clientY) {
+    const rect = svg.getBoundingClientRect();
+    const mouseX = clientX - rect.left;
+    const mouseY = clientY - rect.top;
+
+    const newScale = Math.min(Math.max(0.4, scale * factor), 6);
+    const actualFactor = newScale / scale;
+
+    translateX = mouseX - (mouseX - translateX) * actualFactor;
+    translateY = mouseY - (mouseY - translateY) * actualFactor;
+    scale = newScale;
+
+    updateTransform();
+  }
+
+  function resetTransform() {
+    scale = 1;
+    rotation = 0;
+    translateX = 0;
+    translateY = 0;
+    updateTransform();
+  }
+
+  /* --- POSUN MYŠÍ (PC) --- */
+  svg.addEventListener("mousedown", e => {
+    if (e.target.closest(".am-building, .am-building3d")) return;
+    isDragging = true;
+    startX = e.clientX - translateX;
+    startY = e.clientY - translateY;
+    svg.style.cursor = "grabbing";
+  });
+
+  window.addEventListener("mousemove", e => {
+    if (!isDragging) return;
+    translateX = e.clientX - startX;
+    translateY = e.clientY - startY;
+    updateTransform();
+  });
+
+  window.addEventListener("mouseup", () => {
+    isDragging = false;
+    svg.style.cursor = "default";
+  });
+
+  // Zoom kolečkem na kurzor
+  svg.addEventListener("wheel", e => {
+    e.preventDefault();
+    const zoomFactor = e.deltaY < 0 ? 1.15 : 0.85;
+    applyZoomAt(zoomFactor, e.clientX, e.clientY);
+  }, { passive: false });
+
+  /* --- DOTYKOVÁ GESTA (MOBIL) --- */
+  let touchStartX = 0, touchStartY = 0;
+  let initialPinchDist = null;
+
+  function getPinchMetrics(e) {
+    const t1 = e.touches[0];
+    const t2 = e.touches[1];
+    return {
+      dist: Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY),
+      centerX: (t1.clientX + t2.clientX) / 2,
+      centerY: (t1.clientY + t2.clientY) / 2
+    };
+  }
+
+  svg.addEventListener("touchstart", e => {
+    if (e.touches.length === 1) {
+      isDragging = true;
+      touchStartX = e.touches[0].clientX - translateX;
+      touchStartY = e.touches[0].clientY - translateY;
+    } else if (e.touches.length === 2) {
+      isDragging = false;
+      const metrics = getPinchMetrics(e);
+      initialPinchDist = metrics.dist;
+    }
+  }, { passive: true });
+
+  svg.addEventListener("touchmove", e => {
+    if (isDragging && e.touches.length === 1) {
+      // Bleskový 1:1 posun
+      translateX = e.touches[0].clientX - touchStartX;
+      translateY = e.touches[0].clientY - touchStartY;
+      updateTransform();
+    } else if (e.touches.length === 2 && initialPinchDist) {
+      const metrics = getPinchMetrics(e);
+      const zoomFactor = metrics.dist / initialPinchDist;
+
+      // Zoom přímo mezi dva prsty
+      applyZoomAt(zoomFactor, metrics.centerX, metrics.centerY);
+      initialPinchDist = metrics.dist;
+    }
+  }, { passive: true });
+
+  svg.addEventListener("touchend", () => {
+    isDragging = false;
+    initialPinchDist = null;
+  });
+
+  function draw() {
+    const lang = opts.getLang();
+    if (mode === "2d") {
+      svg.setAttribute("viewBox", opts.data.viewBoxFlat || "0 0 1360 800");
+      render2D(viewport, opts.data, lang, select, activeId, playerPos);
+    } else {
+      render3D(viewport, opts.data, lang, select, activeId, playerPos);
+      const bbox = viewport.getBBox();
+      const pad = 40;
+      svg.setAttribute("viewBox", `${bbox.x - pad} ${bbox.y - pad} ${bbox.width + pad * 2} ${bbox.height + pad * 2}`);
+    }
+    updateTransform();
+    renderList(opts.listEl, opts.data, lang, activeId, select);
+  }
+
+  function setPlayer(pos) {
+    playerPos = pos;
+    draw();
+  }
+
+  function select(id) {
+    activeId = (activeId === id) ? null : id;
+    draw();
+  }
+
+  opts.mountModeToggle.btn2d.addEventListener("click", () => {
+    mode = "2d";
+    opts.mountModeToggle.btn2d.classList.add("active");
+    opts.mountModeToggle.btn3d.classList.remove("active");
+    resetTransform();
+    draw();
+  });
+
+  opts.mountModeToggle.btn3d.addEventListener("click", () => {
+    mode = "3d";
+    opts.mountModeToggle.btn3d.classList.add("active");
+    opts.mountModeToggle.btn2d.classList.remove("active");
+    resetTransform();
+    draw();
+  });
+
+  draw();
+  return { redraw: draw, setPlayer };
+}
 
   return { init };
 })();
