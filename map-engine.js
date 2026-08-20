@@ -759,11 +759,15 @@ const MapEngine = (() => {
   let translateX = 0;
   let translateY = 0;
 
-let autoFit = true;
+  let userAdjusted = false;
+  let resizeTimer = null;
 
   let isDragging = false;
+  let isRotating = false;
   let startX = 0;
   let startY = 0;
+  let rotateStartX = 0;
+  let rotateStartRotation = 0;
 
   const svg = opts.svg;
   const parentCanvas = svg.closest(".am-map-canvas");
@@ -801,7 +805,7 @@ let autoFit = true;
     controls.innerHTML = `
       <button type="button" id="am-zoom-in" title="Přiblížit">+</button>
       <button type="button" id="am-zoom-out" title="Oddálit">−</button>
-      <button type="button" id="am-rotate" title="Otočit o 90°">⟲</button>
+      <button type="button" id="am-rotate" title="Otočit o 90° (nebo Alt+tažení myší / dvěma prsty pro plynulé natočení)">⟲</button>
       <button type="button" id="am-reset" title="Obnovit pohled">⌂</button>
     `;
 
@@ -839,6 +843,8 @@ let autoFit = true;
     rotate.addEventListener("click", e => {
       e.stopPropagation();
 
+      userAdjusted = true;
+
       rotation = (rotation + 90) % 360;
 
       updateTransform();
@@ -866,69 +872,38 @@ let autoFit = true;
       `
     );
   }
-function fitMapToWindow() {
 
-  if (!parentCanvas) return;
+  /*
+     KLÍČOVÁ OPRAVA:
+     SVG viewBox se VŽDY nastaví přesně na skutečnou velikost
+     kontejneru v pixelech. Veškeré přiblížení/posun/otočení pak
+     řeší výhradně JS transform na <g class="am-map-viewport">.
+     Dřív se o scale "dělil" jak nativní viewBox (přes
+     preserveAspectRatio), tak tento JS transform zároveň — což
+     mapu efektivně zvětšovalo 2x a "vylévalo" ji mimo obrazovku.
+  */
 
-  const rect = parentCanvas.getBoundingClientRect();
+  function syncViewBox() {
 
-  const padding = 30;
+    if (!parentCanvas) return { w: 0, h: 0 };
 
-  const availableWidth =
-    rect.width - padding * 2;
+    const rect =
+      parentCanvas.getBoundingClientRect();
 
-  const availableHeight =
-    rect.height - padding * 2;
+    const w = Math.max(1, Math.round(rect.width));
+    const h = Math.max(1, Math.round(rect.height));
 
-  let mapWidth;
-  let mapHeight;
+    svg.setAttribute(
+      "viewBox",
+      `0 0 ${w} ${h}`
+    );
 
-  if (mode === "2d") {
-
-    const viewBox =
-      opts.data.viewBoxFlat || "0 0 1000 750";
-
-    const parts =
-      viewBox.split(/\s+/).map(Number);
-
-    mapWidth = parts[2];
-    mapHeight = parts[3];
-
-  } else {
-
-    try {
-
-      const bbox =
-        viewport.getBBox();
-
-      mapWidth = bbox.width;
-      mapHeight = bbox.height;
-
-    } catch (err) {
-
-      mapWidth = 1000;
-      mapHeight = 750;
-    }
+    return { w, h };
   }
 
-  const scaleX =
-    availableWidth / mapWidth;
-
-  const scaleY =
-    availableHeight / mapHeight;
-
-  scale =
-    Math.min(scaleX, scaleY);
-
-  translateX =
-    (rect.width - mapWidth * scale) / 2;
-
-  translateY =
-    (rect.height - mapHeight * scale) / 2;
-
-  updateTransform();
-}
   function applyZoomAt(factor, clientX, clientY) {
+
+    userAdjusted = true;
 
     const rect = svg.getBoundingClientRect();
 
@@ -960,15 +935,15 @@ function fitMapToWindow() {
 
   if (!parentCanvas) return;
 
-  const rect = parentCanvas.getBoundingClientRect();
+  const rect = syncViewBox();
 
   const padding = 30;
 
   const availableWidth =
-    Math.max(100, rect.width - padding * 2);
+    Math.max(100, rect.w - padding * 2);
 
   const availableHeight =
-    Math.max(100, rect.height - padding * 2);
+    Math.max(100, rect.h - padding * 2);
 
   let mapWidth = 1000;
   let mapHeight = 750;
@@ -1050,10 +1025,10 @@ function fitMapToWindow() {
   */
 
   translateX =
-    (rect.width - finalWidth) / 2;
+    (rect.w - finalWidth) / 2;
 
   translateY =
-    (rect.height - finalHeight) / 2;
+    (rect.h - finalHeight) / 2;
 
   updateTransform();
 
@@ -1061,6 +1036,7 @@ function fitMapToWindow() {
 function resetTransform() {
 
   rotation = 0;
+  userAdjusted = false;
 
   fitMapToWindow();
 
@@ -1079,6 +1055,25 @@ function resetTransform() {
       return;
     }
 
+    userAdjusted = true;
+
+    /*
+       Alt + tažení = plynulé otočení mapy (štelování),
+       obyčejné tažení = posun.
+    */
+
+    if (e.altKey) {
+
+      isRotating = true;
+
+      rotateStartX = e.clientX;
+      rotateStartRotation = rotation;
+
+      svg.style.cursor = "ew-resize";
+
+      return;
+    }
+
     isDragging = true;
 
     startX = e.clientX - translateX;
@@ -1088,6 +1083,16 @@ function resetTransform() {
   });
 
   window.addEventListener("mousemove", e => {
+
+    if (isRotating) {
+
+      rotation =
+        rotateStartRotation +
+        (e.clientX - rotateStartX) * 0.4;
+
+      updateTransform();
+      return;
+    }
 
     if (!isDragging) return;
 
@@ -1100,6 +1105,7 @@ function resetTransform() {
   window.addEventListener("mouseup", () => {
 
     isDragging = false;
+    isRotating = false;
 
     svg.style.cursor = "default";
   });
@@ -1133,6 +1139,8 @@ function resetTransform() {
   let touchStartX = 0;
   let touchStartY = 0;
   let initialPinchDist = null;
+  let initialPinchAngle = null;
+  let initialPinchRotation = 0;
 
   function getPinchMetrics(e) {
 
@@ -1145,6 +1153,12 @@ function resetTransform() {
         t1.clientY - t2.clientY
       ),
 
+      angle:
+        Math.atan2(
+          t2.clientY - t1.clientY,
+          t2.clientX - t1.clientX
+        ) * (180 / Math.PI),
+
       centerX:
         (t1.clientX + t2.clientX) / 2,
 
@@ -1156,6 +1170,8 @@ function resetTransform() {
   svg.addEventListener(
     "touchstart",
     e => {
+
+      userAdjusted = true;
 
       if (e.touches.length === 1) {
 
@@ -1176,6 +1192,12 @@ function resetTransform() {
 
         initialPinchDist =
           metrics.dist;
+
+        initialPinchAngle =
+          metrics.angle;
+
+        initialPinchRotation =
+          rotation;
       }
     },
     { passive: true }
@@ -1217,6 +1239,17 @@ function resetTransform() {
 
         initialPinchDist =
           metrics.dist;
+
+        if (initialPinchAngle !== null) {
+
+          const angleDelta =
+            metrics.angle - initialPinchAngle;
+
+          rotation =
+            initialPinchRotation + angleDelta;
+
+          updateTransform();
+        }
       }
     },
     { passive: true }
@@ -1226,6 +1259,7 @@ function resetTransform() {
 
     isDragging = false;
     initialPinchDist = null;
+    initialPinchAngle = null;
 
   });
 
@@ -1237,13 +1271,9 @@ function resetTransform() {
 
     const lang = opts.getLang();
 
-    if (mode === "2d") {
+    syncViewBox();
 
-      svg.setAttribute(
-        "viewBox",
-        opts.data.viewBoxFlat ||
-        "0 0 1360 800"
-      );
+    if (mode === "2d") {
 
       render2D(
         viewport,
@@ -1264,27 +1294,6 @@ function resetTransform() {
         activeId,
         playerPos
       );
-
-      try {
-
-        const bbox =
-          viewport.getBBox();
-
-        const pad = 40;
-
-        svg.setAttribute(
-          "viewBox",
-          `${bbox.x - pad} ${bbox.y - pad} ${bbox.width + pad * 2} ${bbox.height + pad * 2}`
-        );
-
-      } catch (err) {
-
-        console.warn(
-          "MapEngine: nepodařilo se získat 3D bbox.",
-          err
-        );
-
-      }
     }
 
     updateTransform();
@@ -1341,9 +1350,8 @@ function resetTransform() {
       opts.mountModeToggle.btn3d
         .classList.remove("active");
 
-      resetTransform();
-
       draw();
+      resetTransform();
     }
   );
 
@@ -1361,21 +1369,71 @@ function resetTransform() {
       opts.mountModeToggle.btn2d
         .classList.remove("active");
 
-      resetTransform();
-
       draw();
+      resetTransform();
     }
   );
+
+  /* =========================================================
+     ZMĚNA VELIKOSTI OKNA
+     ========================================================= */
+
+  function handleResize() {
+
+    if (userAdjusted) {
+
+      /*
+         Uživatel si mapu ručně nastavil (přiblížil/pootočil) —
+         jen udržíme viewBox v souladu se skutečnou velikostí
+         plátna, ale jeho nastavení nepřepisujeme.
+      */
+
+      syncViewBox();
+      updateTransform();
+
+    } else {
+
+      fitMapToWindow();
+    }
+  }
+
+  window.addEventListener("resize", () => {
+
+    clearTimeout(resizeTimer);
+
+    resizeTimer = setTimeout(handleResize, 120);
+  });
+
+  if (window.ResizeObserver && parentCanvas) {
+
+    const resizeObserver = new ResizeObserver(() => {
+
+      clearTimeout(resizeTimer);
+
+      resizeTimer = setTimeout(handleResize, 120);
+    });
+
+    resizeObserver.observe(parentCanvas);
+  }
 
   /* =========================================================
      START
      ========================================================= */
 
   draw();
-
-requestAnimationFrame(() => {
   fitMapToWindow();
-});
+
+  requestAnimationFrame(() => {
+    if (!userAdjusted) fitMapToWindow();
+  });
+
+  window.addEventListener("load", () => {
+    if (!userAdjusted) fitMapToWindow();
+  });
+
+  setTimeout(() => {
+    if (!userAdjusted) fitMapToWindow();
+  }, 350);
 
 return {
   redraw: draw,
