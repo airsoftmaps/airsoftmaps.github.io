@@ -372,6 +372,18 @@ html[data-theme="dark"] {
   --accent: #ff7a1a;
   --accent-dim: rgba(255,122,26,.15);
   --theme-glow: rgba(255,122,26,.06);
+     --map-outline: #eef1f0;
+  --map-text: #eef1f0;
+  --map-ground-fill: rgba(238,241,240,.015);
+  --map-building-fill: rgba(238,241,240,.06);
+
+  --map-road: #3a3f47;
+  --map-road-inner: #1a1c1f;
+
+  --map-3d-top: #4a5058;
+  --map-3d-right: #2f333a;
+  --map-3d-front: #1c1f24;
+  --map-3d-stroke: #0a0b0d;
 }
 
 /* LIGHT */
@@ -389,6 +401,18 @@ html[data-theme="light"] {
   --accent: #d95f00;
   --accent-dim: rgba(217,95,0,.12);
   --theme-glow: rgba(217,95,0,.08);
+     --map-outline: #25282b;
+  --map-text: #151719;
+  --map-ground-fill: rgba(0,0,0,.015);
+  --map-building-fill: rgba(0,0,0,.055);
+
+  --map-road: #aeb2b5;
+  --map-road-inner: #74797d;
+
+  --map-3d-top: #d7d9d8;
+  --map-3d-right: #b8bcbb;
+  --map-3d-front: #9da2a1;
+  --map-3d-stroke: #4c5154;
 }
 
 /* RESIDENT EVIL */
@@ -406,6 +430,18 @@ html[data-theme="resident-evil"] {
   --accent: #d71920;
   --accent-dim: rgba(215,25,32,.15);
   --theme-glow: rgba(215,25,32,.08);
+     --map-outline: #d8d0cc;
+  --map-text: #e7e2df;
+  --map-ground-fill: rgba(255,255,255,.015);
+  --map-building-fill: rgba(255,255,255,.06);
+
+  --map-road: #4b3d3d;
+  --map-road-inner: #241c1c;
+
+  --map-3d-top: #493535;
+  --map-3d-right: #352626;
+  --map-3d-front: #241a1a;
+  --map-3d-stroke: #120d0d;
 }
 
 /* PUBG */
@@ -423,6 +459,18 @@ html[data-theme="pubg"] {
   --accent: #d7a928;
   --accent-dim: rgba(215,169,40,.14);
   --theme-glow: rgba(215,169,40,.07);
+     --map-outline: #eee9dd;
+  --map-text: #eee9dd;
+  --map-ground-fill: rgba(255,255,255,.015);
+  --map-building-fill: rgba(255,255,255,.055);
+
+  --map-road: #665f50;
+  --map-road-inner: #302c24;
+
+  --map-3d-top: #625a48;
+  --map-3d-right: #4b4537;
+  --map-3d-front: #373329;
+  --map-3d-stroke: #171510;
 }
 
 /* FORTNITE */
@@ -440,6 +488,18 @@ html[data-theme="fortnite"] {
   --accent: #9d5cff;
   --accent-dim: rgba(157,92,255,.15);
   --theme-glow: rgba(157,92,255,.09);
+     --map-outline: #f1edff;
+  --map-text: #f1edff;
+  --map-ground-fill: rgba(255,255,255,.015);
+  --map-building-fill: rgba(255,255,255,.06);
+
+  --map-road: #51466f;
+  --map-road-inner: #292235;
+
+  --map-3d-top: #584b72;
+  --map-3d-right: #403654;
+  --map-3d-front: #2c263d;
+  --map-3d-stroke: #120e1d;
 }
 
 /* Theme glow */
