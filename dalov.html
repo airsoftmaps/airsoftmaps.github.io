@@ -115,7 +115,7 @@
     document.getElementById("sidebar-title").textContent = LABELS[lang].sidebar;
   }
 
-  AM.wireDropdowns();
+AM.wireDropdowns();
 
 applyStaticText(AM.getLang());
 
@@ -138,39 +138,6 @@ AM.wireLangSwitch((lang) => {
   applyStaticText(lang);
   engine.redraw();
 });
-
-AM.wireLangSwitch((lang) => {
-  applyStaticText(lang);
-  engine.redraw();
-});
-  svg,
-  listEl,
-  data: FIELD_DATA,
-  getLang: AM.getLang,
-  mountModeToggle: {
-    btn2d: document.getElementById("btn-2d"),
-    btn3d: document.getElementById("btn-3d")
-  }
-});
-
-AM.wireLangSwitch((lang) => {
-  applyStaticText(lang);
-  engine.redraw();
-});
-
-  document.getElementById("back-btn").addEventListener("click", () => {
-    window.location.href = "menu.html";
-  });
-
-  const engine = MapEngine.init({
-    svg, listEl,
-    data: FIELD_DATA,
-    getLang: AM.getLang,
-    mountModeToggle: {
-      btn2d: document.getElementById("btn-2d"),
-      btn3d: document.getElementById("btn-3d")
-    }
-  });
   const LOCATE_TEXT = {
   cs: { btn:"Moje poloha", on:"Sleduji polohu", outside:"Jsi mimo hřiště",
         denied:"Poloha zamítnuta v prohlížeči", unavailable:"Polohu se nepodařilo zjistit",
