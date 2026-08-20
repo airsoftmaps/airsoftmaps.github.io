@@ -284,3 +284,36 @@ input { font-family: inherit; }
   .am-table-head, .am-row { grid-template-columns: 2fr 1fr; }
   .am-table-head > div:nth-child(3), .am-row > div:nth-child(3) { display: none; }
 }
+/* Zamezí roztahování jakýchkoliv SVG ikon v řádcích tabulky */
+.am-table svg,
+.am-row svg,
+.am-row-name svg,
+.am-row-icon {
+  width: 20px !important;
+  height: 20px !important;
+  min-width: 20px !important;
+  min-height: 20px !important;
+  max-width: 20px !important;
+  max-height: 20px !important;
+  display: inline-block !important;
+  flex-shrink: 0 !important;
+  color: var(--accent);
+  fill: currentColor;
+}
+
+/* Oprava layoutu tabulky na mobilech */
+@media (max-width: 760px) {
+  .am-explorer {
+    padding: 10px;
+  }
+  .am-table-head, .am-row {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px;
+    gap: 4px;
+  }
+  .am-table-head {
+    display: none; /* Na mobilu schováme záhlaví tabulky */
+  }
+}
