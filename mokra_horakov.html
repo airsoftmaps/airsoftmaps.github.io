@@ -139,6 +139,10 @@
 
 applyStaticText(AM.getLang());
 
+document.getElementById("back-btn").addEventListener("click", () => {
+  window.location.href = "menu.html";
+});
+
 const engine = MapEngine.init({
   svg,
   listEl,
@@ -148,6 +152,11 @@ const engine = MapEngine.init({
     btn2d: document.getElementById("btn-2d"),
     btn3d: document.getElementById("btn-3d")
   }
+});
+
+AM.wireLangSwitch((lang) => {
+  applyStaticText(lang);
+  engine.redraw();
 });
 
 AM.wireDropdowns();
