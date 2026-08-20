@@ -362,21 +362,56 @@ input { font-family: inherit; }
   }
 }
 /* ==========================================================================
-   AIRSOFT MAPS — THEMES
-   Complete visual theme system
+   AIRSOFT MAPS — GAME THEMES
+   ==========================================================================
+   Každý theme je kompletní UI skin.
+   Nejde pouze o změnu barev.
    ========================================================================== */
 
 
 /* ==========================================================================
-   BASE THEME VARIABLES
+   BASE THEME TOKENS
    ========================================================================== */
 
 :root {
+
   --theme-glow: rgba(255,122,26,.06);
-  --theme-glow-strong: rgba(255,122,26,.12);
+
+  --theme-bg: #050608;
+  --theme-bg-2: #0d1013;
+
+  --theme-panel: #0d0f12;
+  --theme-panel-2: rgba(255,255,255,.03);
+  --theme-panel-3: rgba(255,255,255,.055);
+
+  --theme-border: #23262b;
+  --theme-border-soft: rgba(255,255,255,.08);
+
+  --theme-accent: #ff7a1a;
+  --theme-accent-2: #ffb36b;
+
+  --theme-text: #eef1f0;
+  --theme-muted: #8a9099;
+  --theme-muted-2: #5c6169;
+
+  --theme-danger: #ff3b30;
+  --theme-success: #3ddc97;
+  --theme-warning: #ffcc00;
+
+  --theme-radius: 2px;
+  --theme-border-width: 1px;
+
+  --theme-shadow:
+    0 10px 30px rgba(0,0,0,.35);
+
+  --theme-panel-shadow:
+    0 6px 20px rgba(0,0,0,.3);
+
+  /* MAP */
 
   --map-outline: #eef1f0;
   --map-text: #eef1f0;
+
   --map-ground-fill: rgba(238,241,240,.015);
   --map-building-fill: rgba(238,241,240,.06);
 
@@ -386,13 +421,7 @@ input { font-family: inherit; }
   --map-3d-top: #4a5058;
   --map-3d-right: #2f333a;
   --map-3d-front: #1c1f24;
-  --map-3d-stroke: var(--map-outline);
-
-  --theme-panel-shadow: 0 8px 25px rgba(0,0,0,.25);
-  --theme-map-shadow: 0 0 0 rgba(0,0,0,0);
-
-  --theme-radius: 3px;
-  --theme-border-width: 1px;
+  --map-3d-stroke: #0a0b0d;
 }
 
 
@@ -419,7 +448,19 @@ html[data-theme="dark"] {
   --accent-dim: rgba(255,122,26,.15);
 
   --theme-glow: rgba(255,122,26,.06);
-  --theme-glow-strong: rgba(255,122,26,.12);
+
+  --theme-bg: #050608;
+  --theme-bg-2: #0d1013;
+  --theme-panel: #0d0f12;
+  --theme-panel-2: rgba(255,255,255,.03);
+
+  --theme-accent: #ff7a1a;
+  --theme-accent-2: #ffb36b;
+
+  --theme-text: #eef1f0;
+  --theme-muted: #8a9099;
+
+  --theme-border: #23262b;
 
   --map-outline: #eef1f0;
   --map-text: #eef1f0;
@@ -432,10 +473,199 @@ html[data-theme="dark"] {
   --map-3d-top: #4a5058;
   --map-3d-right: #2f333a;
   --map-3d-front: #1c1f24;
-  --map-3d-stroke: var(--map-outline);
+  --map-3d-stroke: #0a0b0d;
+}
+
+
+/* ==========================================================================
+   RESIDENT EVIL
+   ========================================================================== */
+
+html[data-theme="resident-evil"] {
+
+  --bg-0: #050303;
+  --bg-1: #0d0606;
+
+  --panel: #100909;
+  --panel-2: rgba(255,255,255,.025);
+
+  --border: #392020;
+  --border-hover: #d71920;
+
+  --text: #e7e2df;
+  --muted: #918683;
+  --muted-2: #5d5351;
+
+  --accent: #d71920;
+  --accent-dim: rgba(215,25,32,.14);
+
+  --theme-glow: rgba(215,25,32,.12);
+
+  --theme-bg: #050303;
+  --theme-bg-2: #0d0606;
+
+  --theme-panel: #100909;
+  --theme-panel-2: rgba(255,255,255,.025);
+  --theme-panel-3: rgba(215,25,32,.055);
+
+  --theme-accent: #d71920;
+  --theme-accent-2: #ff4b50;
+
+  --theme-text: #e7e2df;
+  --theme-muted: #918683;
+
+  --theme-border: #392020;
+
+  --theme-radius: 0px;
+
+  --theme-shadow:
+    0 12px 35px rgba(0,0,0,.65);
 
   --theme-panel-shadow:
-    0 8px 25px rgba(0,0,0,.35);
+    inset 0 0 0 1px rgba(215,25,32,.04),
+    0 10px 30px rgba(0,0,0,.55);
+
+  --map-outline: #d8d0cc;
+  --map-text: #e7e2df;
+
+  --map-ground-fill: rgba(255,255,255,.012);
+  --map-building-fill: rgba(255,255,255,.055);
+
+  --map-road: #4b3d3d;
+  --map-road-inner: #241c1c;
+
+  --map-3d-top: #493535;
+  --map-3d-right: #352626;
+  --map-3d-front: #241a1a;
+  --map-3d-stroke: #120d0d;
+}
+
+
+/* ==========================================================================
+   PUBG
+   ========================================================================== */
+
+html[data-theme="pubg"] {
+
+  --bg-0: #090a08;
+  --bg-1: #15160f;
+
+  --panel: #171812;
+  --panel-2: rgba(255,255,255,.035);
+
+  --border: #403e31;
+  --border-hover: #d2a928;
+
+  --text: #eee9dc;
+  --muted: #99937f;
+  --muted-2: #625e50;
+
+  --accent: #d2a928;
+  --accent-dim: rgba(210,169,40,.13);
+
+  --theme-glow: rgba(210,169,40,.07);
+
+  --theme-bg: #090a08;
+  --theme-bg-2: #15160f;
+
+  --theme-panel: #171812;
+  --theme-panel-2: rgba(255,255,255,.035);
+  --theme-panel-3: rgba(210,169,40,.045);
+
+  --theme-accent: #d2a928;
+  --theme-accent-2: #e9cc65;
+
+  --theme-text: #eee9dc;
+  --theme-muted: #99937f;
+
+  --theme-border: #403e31;
+
+  --theme-radius: 1px;
+
+  --theme-shadow:
+    0 10px 25px rgba(0,0,0,.55);
+
+  --theme-panel-shadow:
+    inset 0 1px rgba(255,255,255,.025),
+    0 8px 24px rgba(0,0,0,.45);
+
+  --map-outline: #eee9dd;
+  --map-text: #eee9dd;
+
+  --map-ground-fill: rgba(255,255,255,.018);
+  --map-building-fill: rgba(255,255,255,.055);
+
+  --map-road: #665f50;
+  --map-road-inner: #302c24;
+
+  --map-3d-top: #625a48;
+  --map-3d-right: #4b4537;
+  --map-3d-front: #373329;
+  --map-3d-stroke: #171510;
+}
+
+
+/* ==========================================================================
+   FORTNITE
+   ========================================================================== */
+
+html[data-theme="fortnite"] {
+
+  --bg-0: #080713;
+  --bg-1: #11152a;
+
+  --panel: #17152c;
+  --panel-2: rgba(255,255,255,.055);
+
+  --border: #403567;
+  --border-hover: #27c2ff;
+
+  --text: #f5f2ff;
+  --muted: #aaa6c7;
+  --muted-2: #716c88;
+
+  --accent: #27c2ff;
+  --accent-dim: rgba(39,194,255,.14);
+
+  --theme-glow:
+    rgba(39,194,255,.11);
+
+  --theme-bg: #080713;
+  --theme-bg-2: #11152a;
+
+  --theme-panel: #17152c;
+  --theme-panel-2: rgba(255,255,255,.055);
+  --theme-panel-3: rgba(157,92,255,.09);
+
+  --theme-accent: #27c2ff;
+  --theme-accent-2: #9d5cff;
+
+  --theme-text: #f5f2ff;
+  --theme-muted: #aaa6c7;
+
+  --theme-border: #403567;
+
+  --theme-radius: 6px;
+
+  --theme-shadow:
+    0 10px 30px rgba(0,0,0,.35);
+
+  --theme-panel-shadow:
+    0 0 22px rgba(39,194,255,.08);
+
+  --map-outline: #f1edff;
+  --map-text: #f1edff;
+
+  --map-ground-fill: rgba(255,255,255,.02);
+  --map-building-fill: rgba(255,255,255,.075);
+
+  --map-road: #51466f;
+  --map-road-inner: #292235;
+
+  --map-3d-top: #584b72;
+  --map-3d-right: #403654;
+  --map-3d-front: #2c263d;
+  --map-3d-stroke: #120e1d;
 }
 
 
@@ -445,24 +675,39 @@ html[data-theme="dark"] {
 
 html[data-theme="light"] {
 
-  --bg-0: #f4f4f2;
+  --bg-0: #f3f3f0;
   --bg-1: #ffffff;
 
   --panel: #ffffff;
   --panel-2: rgba(0,0,0,.035);
 
-  --border: #c9cbc9;
+  --border: #c7cac8;
   --border-hover: #c45100;
 
   --text: #111315;
-  --muted: #5f6469;
+  --muted: #60656a;
   --muted-2: #858a8f;
 
   --accent: #c45100;
   --accent-dim: rgba(196,81,0,.10);
 
   --theme-glow: rgba(196,81,0,.045);
-  --theme-glow-strong: rgba(196,81,0,.10);
+
+  --theme-bg: #f3f3f0;
+  --theme-bg-2: #ffffff;
+
+  --theme-panel: #ffffff;
+  --theme-panel-2: rgba(0,0,0,.035);
+
+  --theme-accent: #c45100;
+  --theme-accent-2: #ed7a32;
+
+  --theme-text: #111315;
+  --theme-muted: #60656a;
+
+  --theme-border: #c7cac8;
+
+  --theme-radius: 2px;
 
   --map-outline: #25282b;
   --map-text: #151719;
@@ -476,168 +721,19 @@ html[data-theme="light"] {
   --map-3d-top: #d7d9d8;
   --map-3d-right: #b8bcbb;
   --map-3d-front: #9da2a1;
-  --map-3d-stroke: var(--map-outline);
-
-  --theme-panel-shadow:
-    0 8px 25px rgba(0,0,0,.12);
-}
-
-
-/* ==========================================================================
-   RESIDENT EVIL
-   R.P.D. / BIOHAZARD TERMINAL
-   ========================================================================== */
-
-html[data-theme="resident-evil"] {
-
-  --bg-0: #030303;
-  --bg-1: #0e0505;
-
-  --panel: #100909;
-  --panel-2: rgba(255,255,255,.025);
-
-  --border: #402020;
-  --border-hover: #d71920;
-
-  --text: #e8e0dc;
-  --muted: #817774;
-  --muted-2: #514846;
-
-  --accent: #d71920;
-  --accent-dim: rgba(215,25,32,.16);
-
-  --theme-glow: rgba(215,25,32,.10);
-  --theme-glow-strong: rgba(215,25,32,.20);
-
-  --map-outline: #d8d0cc;
-  --map-text: #e7e2df;
-
-  --map-ground-fill: rgba(255,255,255,.012);
-  --map-building-fill: rgba(255,255,255,.055);
-
-  --map-road: #493838;
-  --map-road-inner: #211919;
-
-  --map-3d-top: #493535;
-  --map-3d-right: #352626;
-  --map-3d-front: #241a1a;
-  --map-3d-stroke: var(--map-outline);
-
-  --theme-panel-shadow:
-    0 8px 30px rgba(0,0,0,.55);
-
-  --theme-map-shadow:
-    inset 0 0 55px rgba(120,0,0,.10),
-    0 0 25px rgba(120,0,0,.08);
-
-  --theme-radius: 2px;
-}
-
-
-/* ==========================================================================
-   PUBG
-   MILITARY / SURVIVAL COMMAND
-   ========================================================================== */
-
-html[data-theme="pubg"] {
-
-  --bg-0: #080907;
-  --bg-1: #13140f;
-
-  --panel: #171812;
-  --panel-2: rgba(220,210,170,.045);
-
-  --border: #464536;
-  --border-hover: #d6a72c;
-
-  --text: #e9e5d5;
-  --muted: #9b9885;
-  --muted-2: #646153;
-
-  --accent: #d6a72c;
-  --accent-dim: rgba(214,167,44,.15);
-
-  --theme-glow: rgba(214,167,44,.07);
-  --theme-glow-strong: rgba(214,167,44,.13);
-
-  --map-outline: #e8e3d4;
-  --map-text: #eee9dd;
-
-  --map-ground-fill: rgba(255,255,255,.015);
-  --map-building-fill: rgba(255,255,255,.055);
-
-  --map-road: #696352;
-  --map-road-inner: #302c23;
-
-  --map-3d-top: #625a48;
-  --map-3d-right: #4b4537;
-  --map-3d-front: #373329;
-  --map-3d-stroke: var(--map-outline);
-
-  --theme-panel-shadow:
-    0 8px 25px rgba(0,0,0,.40);
-
-  --theme-map-shadow:
-    inset 0 0 40px rgba(0,0,0,.35);
-
-  --theme-radius: 1px;
-}
-
-
-/* ==========================================================================
-   FORTNITE
-   NEON / GAME UI
-   ========================================================================== */
-
-html[data-theme="fortnite"] {
-
-  --bg-0: #070511;
-  --bg-1: #15102b;
-
-  --panel: #17122b;
-  --panel-2: rgba(255,255,255,.055);
-
-  --border: #44336d;
-  --border-hover: #a35cff;
-
-  --text: #f4efff;
-  --muted: #aaa0c4;
-  --muted-2: #716786;
-
-  --accent: #a35cff;
-  --accent-dim: rgba(163,92,255,.17);
-
-  --theme-glow: rgba(163,92,255,.12);
-  --theme-glow-strong: rgba(163,92,255,.25);
-
-  --map-outline: #f4efff;
-  --map-text: #f4efff;
-
-  --map-ground-fill: rgba(255,255,255,.025);
-  --map-building-fill: rgba(255,255,255,.075);
-
-  --map-road: #594b7d;
-  --map-road-inner: #29213d;
-
-  --map-3d-top: #604f82;
-  --map-3d-right: #46385f;
-  --map-3d-front: #30263f;
-  --map-3d-stroke: var(--map-outline);
-
-  --theme-panel-shadow:
-    0 8px 30px rgba(0,0,0,.45);
-
-  --theme-map-shadow:
-    inset 0 0 45px rgba(120,70,255,.10),
-    0 0 25px rgba(140,70,255,.08);
-
-  --theme-radius: 5px;
+  --map-3d-stroke: #4c5154;
 }
 
 
 /* ==========================================================================
    GLOBAL THEME BACKGROUND
    ========================================================================== */
+
+html,
+body {
+  background-color: var(--theme-bg);
+  color: var(--theme-text);
+}
 
 body {
 
@@ -649,32 +745,35 @@ body {
     ),
     radial-gradient(
       ellipse at 50% 50%,
-      var(--bg-1),
-      #000 85%
+      var(--theme-bg-2),
+      var(--theme-bg) 85%
     );
 
-  color: var(--text);
+  color: var(--theme-text);
 }
 
 
 /* ==========================================================================
-   LIGHT BACKGROUND
+   NOISE
    ========================================================================== */
 
-html[data-theme="light"] body {
+html[data-theme="resident-evil"] body::before {
+  opacity: .42;
+  mix-blend-mode: screen;
+}
 
-  background:
-    radial-gradient(
-      ellipse at 50% 0%,
-      rgba(196,81,0,.035),
-      transparent 55%
-    ),
-    #f4f4f2;
+html[data-theme="pubg"] body::before {
+  opacity: .32;
+  mix-blend-mode: overlay;
+}
+
+html[data-theme="fortnite"] body::before {
+  opacity: .12;
+  mix-blend-mode: screen;
 }
 
 html[data-theme="light"] body::before {
-
-  opacity: .12;
+  opacity: .08;
   mix-blend-mode: multiply;
 }
 
@@ -684,19 +783,59 @@ html[data-theme="light"] body::before {
    ========================================================================== */
 
 .am-header {
-  transition:
-    background .25s ease,
-    border-color .25s ease;
+
+  border-bottom:
+    1px solid var(--theme-border);
+
+  background:
+    linear-gradient(
+      180deg,
+      var(--theme-panel-3),
+      transparent
+    );
+
+  box-shadow:
+    var(--theme-panel-shadow);
+}
+
+.am-brand span {
+  color: var(--theme-text);
+}
+
+.am-brand span em {
+  color: var(--theme-accent);
 }
 
 .am-brand img {
-  transition:
-    filter .25s ease,
-    transform .25s ease;
+  filter:
+    drop-shadow(
+      0 0 10px
+      color-mix(
+        in srgb,
+        var(--theme-accent) 35%,
+        transparent
+      )
+    );
 }
 
-.am-brand img:hover {
-  transform: scale(1.04);
+.am-breadcrumb {
+  color: var(--theme-muted);
+}
+
+.am-breadcrumb .sep {
+  color: var(--theme-muted-2);
+}
+
+.am-breadcrumb .current {
+  color: var(--theme-accent);
+}
+
+.am-field-title {
+  color: var(--theme-text);
+}
+
+.am-field-title span {
+  color: var(--theme-accent);
 }
 
 
@@ -707,31 +846,40 @@ html[data-theme="light"] body::before {
 .am-btn,
 .am-locate-btn {
 
-  border-color: var(--border);
-  color: var(--text);
+  background:
+    var(--theme-panel-2);
+
+  border:
+    var(--theme-border-width)
+    solid
+    var(--theme-border);
+
+  color:
+    var(--theme-text);
+
+  border-radius:
+    var(--theme-radius);
 
   box-shadow:
-    0 0 0 rgba(0,0,0,0);
-
-  transition:
-    border-color .2s ease,
-    color .2s ease,
-    background .2s ease,
-    box-shadow .2s ease,
-    transform .15s ease;
+    var(--theme-panel-shadow);
 }
 
 .am-btn:hover,
 .am-locate-btn:hover {
 
-  border-color: var(--accent);
-  color: var(--accent);
+  border-color:
+    var(--theme-accent);
 
-  background:
-    var(--accent-dim);
+  color:
+    var(--theme-accent);
 
   box-shadow:
-    0 0 14px var(--theme-glow-strong);
+    0 0 14px
+    color-mix(
+      in srgb,
+      var(--theme-accent) 18%,
+      transparent
+    );
 }
 
 
@@ -741,155 +889,75 @@ html[data-theme="light"] body::before {
 
 .am-dd-menu {
 
-  background: var(--panel);
-  border-color: var(--border);
+  background:
+    var(--theme-panel);
+
+  border:
+    1px solid
+    var(--theme-border);
+
+  border-radius:
+    var(--theme-radius);
 
   box-shadow:
-    var(--theme-panel-shadow);
+    var(--theme-shadow);
 }
 
 .am-dd-menu button {
-
-  color: var(--text);
-
-  transition:
-    background .15s ease,
-    color .15s ease;
+  color:
+    var(--theme-text);
 }
 
 .am-dd-menu button:hover {
 
-  background: var(--accent-dim);
-  color: var(--accent);
+  background:
+    var(--theme-accent-dim);
+
+  color:
+    var(--theme-accent);
 }
 
 
 /* ==========================================================================
-   MAP MODE TOGGLE
+   FIELD TITLE / SEARCH
    ========================================================================== */
 
-.am-toggle {
+.am-search input {
 
-  border-color: var(--border);
+  background:
+    var(--theme-panel-2);
+
+  border:
+    1px solid
+    var(--theme-border);
+
+  color:
+    var(--theme-text);
+
+  border-radius:
+    var(--theme-radius);
+}
+
+.am-search input:focus {
+
+  border-color:
+    var(--theme-accent);
 
   box-shadow:
-    0 0 0 rgba(0,0,0,0);
+    0 0 0 2px
+    color-mix(
+      in srgb,
+      var(--theme-accent) 12%,
+      transparent
+    );
 }
 
-.am-toggle button {
-
-  background: var(--panel-2);
-  color: var(--text);
-
-  transition:
-    background .2s ease,
-    color .2s ease,
-    box-shadow .2s ease;
+.am-search input::placeholder {
+  color: var(--theme-muted-2);
 }
 
-.am-toggle button.active {
-
-  background: var(--accent);
-  color: #fff;
-
-  box-shadow:
-    0 0 16px var(--theme-glow-strong);
-}
-
-
-/* ==========================================================================
-   MAP CANVAS
-   ========================================================================== */
-
-.am-map-canvas {
-
-  background: var(--bg-0);
-  border-color: var(--border);
-
-  box-shadow:
-    var(--theme-map-shadow);
-
-  border-radius: var(--theme-radius);
-}
-
-
-/* ==========================================================================
-   MAP CONTROLS
-   ========================================================================== */
-
-.am-map-controls button {
-
-  background: var(--panel);
-  border-color: var(--border);
-  color: var(--text);
-
-  box-shadow:
-    var(--theme-panel-shadow);
-
-  transition:
-    border-color .2s ease,
-    color .2s ease,
-    background .2s ease,
-    box-shadow .2s ease;
-}
-
-.am-map-controls button:hover {
-
-  border-color: var(--accent);
-  color: var(--accent);
-  background: var(--accent-dim);
-
-  box-shadow:
-    0 0 15px var(--theme-glow-strong);
-}
-
-
-/* ==========================================================================
-   SIDEBAR
-   ========================================================================== */
-
-.am-sidebar {
-
-  background: var(--panel);
-  border-color: var(--border);
-
-  box-shadow:
-    var(--theme-panel-shadow);
-}
-
-.am-sidebar-title {
-
-  color: var(--muted);
-}
-
-.am-poi {
-
-  color: var(--text);
-  border-color: transparent;
-
-  transition:
-    background .15s ease,
-    border-color .15s ease,
-    color .15s ease;
-}
-
-.am-poi:hover {
-
-  background: var(--accent-dim);
-}
-
-.am-poi.active {
-
-  border-color: var(--accent);
-  background: var(--accent-dim);
-
-  box-shadow:
-    0 0 12px var(--theme-glow);
-}
-
-.am-poi .code {
-
-  color: var(--accent);
+.am-search .icon {
+  color: var(--theme-muted);
 }
 
 
@@ -899,8 +967,14 @@ html[data-theme="light"] body::before {
 
 .am-table {
 
-  border-color: var(--border);
-  background: var(--panel);
+  border-color:
+    var(--theme-border);
+
+  background:
+    var(--theme-panel);
+
+  border-radius:
+    var(--theme-radius);
 
   box-shadow:
     var(--theme-panel-shadow);
@@ -908,48 +982,39 @@ html[data-theme="light"] body::before {
 
 .am-table-head {
 
-  background: var(--panel-2);
-  border-color: var(--border);
-  color: var(--muted);
+  background:
+    var(--theme-panel-2);
+
+  border-color:
+    var(--theme-border);
+
+  color:
+    var(--theme-muted);
 }
 
 .am-row {
 
-  border-color: var(--border);
-  background: transparent;
+  border-color:
+    var(--theme-border);
 
-  transition:
-    background .15s ease,
-    border-color .15s ease;
+  background:
+    transparent;
 }
 
 .am-row:hover {
 
-  background: var(--accent-dim);
+  background:
+    var(--theme-accent-dim);
 }
 
-
-/* ==========================================================================
-   SEARCH
-   ========================================================================== */
-
-.am-search input {
-
-  background: var(--panel-2);
-  border-color: var(--border);
-  color: var(--text);
-
-  transition:
-    border-color .2s ease,
-    box-shadow .2s ease;
+.am-row-name b {
+  color:
+    var(--theme-text);
 }
 
-.am-search input:focus {
-
-  border-color: var(--accent);
-
-  box-shadow:
-    0 0 12px var(--theme-glow);
+.am-row-location {
+  color:
+    var(--theme-muted);
 }
 
 
@@ -957,295 +1022,495 @@ html[data-theme="light"] body::before {
    BADGES
    ========================================================================== */
 
-.am-badge {
-
-  transition:
-    border-color .2s ease,
-    color .2s ease,
-    background .2s ease;
-}
-
 .am-badge.active {
 
-  color: #3ddc97;
-  border-color: #1d5a41;
-  background: rgba(61,220,151,.07);
+  color:
+    var(--theme-success);
+
+  border-color:
+    color-mix(
+      in srgb,
+      var(--theme-success) 45%,
+      transparent
+    );
+
+  background:
+    color-mix(
+      in srgb,
+      var(--theme-success) 8%,
+      transparent
+    );
+}
+
+.am-badge.soon {
+
+  color:
+    var(--theme-muted);
+
+  border-color:
+    var(--theme-border);
+
+  background:
+    var(--theme-panel-2);
 }
 
 
 /* ==========================================================================
-   THEME: RESIDENT EVIL
-   SPECIAL EFFECTS
+   MAP TOOLBAR
    ========================================================================== */
 
-html[data-theme="resident-evil"] .am-map-canvas {
+.am-toggle {
+
+  border-color:
+    var(--theme-border);
+
+  border-radius:
+    var(--theme-radius);
+
+  box-shadow:
+    var(--theme-panel-shadow);
+}
+
+.am-toggle button {
 
   background:
-    radial-gradient(
-      circle at 50% 45%,
-      rgba(120,0,0,.12),
-      transparent 65%
-    ),
-    #050303;
+    var(--theme-panel-2);
+
+  color:
+    var(--theme-text);
+
+  border: none;
 }
+
+.am-toggle button:hover {
+
+  color:
+    var(--theme-accent);
+
+  background:
+    var(--theme-accent-dim);
+}
+
+.am-toggle button.active {
+
+  background:
+    var(--theme-accent);
+
+  color:
+    #090909;
+
+  box-shadow:
+    0 0 18px
+    color-mix(
+      in srgb,
+      var(--theme-accent) 28%,
+      transparent
+    );
+}
+
+
+/* ==========================================================================
+   MAP CANVAS
+   ========================================================================== */
+
+.am-map-canvas {
+
+  background:
+    var(--theme-panel);
+
+  border:
+    1px solid
+    var(--theme-border);
+
+  border-radius:
+    var(--theme-radius);
+
+  box-shadow:
+    var(--theme-panel-shadow);
+
+  touch-action:
+    none !important;
+}
+
+.am-map-canvas svg {
+
+  touch-action:
+    none;
+
+  overflow:
+    hidden;
+}
+
+.am-map-viewport {
+
+  will-change:
+    transform;
+
+  transition:
+    none !important;
+}
+
+
+/* ==========================================================================
+   SIDEBAR
+   ========================================================================== */
+
+.am-sidebar {
+
+  background:
+    var(--theme-panel);
+
+  border:
+    1px solid
+    var(--theme-border);
+
+  border-radius:
+    var(--theme-radius);
+
+  box-shadow:
+    var(--theme-panel-shadow);
+}
+
+.am-sidebar-title {
+
+  color:
+    var(--theme-muted);
+
+  border-bottom:
+    1px solid
+    var(--theme-border);
+}
+
+.am-poi {
+
+  color:
+    var(--theme-text);
+
+  border-color:
+    transparent;
+
+  border-radius:
+    var(--theme-radius);
+}
+
+.am-poi:hover {
+
+  background:
+    var(--theme-accent-dim);
+
+  border-color:
+    color-mix(
+      in srgb,
+      var(--theme-accent) 35%,
+      transparent
+    );
+}
+
+.am-poi.active {
+
+  background:
+    var(--theme-accent-dim);
+
+  border-color:
+    var(--theme-accent);
+
+  color:
+    var(--theme-text);
+
+  box-shadow:
+    inset 3px 0
+    var(--theme-accent);
+}
+
+.am-poi .code {
+
+  color:
+    var(--theme-accent);
+}
+
+
+/* ==========================================================================
+   MAP CONTROLS
+   ========================================================================== */
+
+.am-map-controls {
+
+  z-index:
+    40;
+}
+
+.am-map-controls button {
+
+  background:
+    var(--theme-panel);
+
+  border:
+    1px solid
+    var(--theme-border);
+
+  color:
+    var(--theme-text);
+
+  border-radius:
+    var(--theme-radius);
+
+  box-shadow:
+    var(--theme-shadow);
+}
+
+.am-map-controls button:hover {
+
+  border-color:
+    var(--theme-accent);
+
+  color:
+    var(--theme-accent);
+
+  background:
+    var(--theme-accent-dim);
+
+  box-shadow:
+    0 0 16px
+    color-mix(
+      in srgb,
+      var(--theme-accent) 22%,
+      transparent
+    );
+}
+
+
+/* ==========================================================================
+   PLAYER / GPS
+   ========================================================================== */
+
+.am-locate-btn.active {
+
+  border-color:
+    #4aa3ff;
+
+  color:
+    #4aa3ff;
+
+  box-shadow:
+    0 0 12px
+    rgba(74,163,255,.2);
+}
+
+
+/* ==========================================================================
+   RESIDENT EVIL SPECIAL FX
+   ========================================================================== */
 
 html[data-theme="resident-evil"] .am-header {
 
-  text-shadow:
-    0 0 12px rgba(215,25,32,.12);
-}
-
-html[data-theme="resident-evil"] .am-btn,
-html[data-theme="resident-evil"] .am-locate-btn {
-
   background:
-    rgba(30,5,5,.75);
-
-  border-color:
-    #402020;
+    linear-gradient(
+      180deg,
+      rgba(100,0,0,.13),
+      transparent
+    );
 }
 
-html[data-theme="resident-evil"] .am-btn:hover,
-html[data-theme="resident-evil"] .am-locate-btn:hover {
+html[data-theme="resident-evil"] .am-map-canvas {
 
   box-shadow:
-    0 0 12px rgba(215,25,32,.25);
+    inset 0 0 50px rgba(0,0,0,.55),
+    0 0 25px rgba(215,25,32,.06);
 }
 
 html[data-theme="resident-evil"] .am-toggle button.active {
 
+  background:
+    #b51218;
+
+  color:
+    #fff;
+
   box-shadow:
-    0 0 18px rgba(215,25,32,.30);
+    0 0 18px
+    rgba(215,25,32,.35);
 }
 
-html[data-theme="resident-evil"] .am-map-controls button {
+html[data-theme="resident-evil"] .am-map-controls button:hover {
 
   background:
-    rgba(18,5,5,.92);
-}
+    rgba(215,25,32,.12);
 
-html[data-theme="resident-evil"] .am-row:hover {
-
-  background:
-    linear-gradient(
-      90deg,
-      rgba(215,25,32,.14),
-      transparent
-    );
+  text-shadow:
+    0 0 8px rgba(255,60,60,.7);
 }
 
 
 /* ==========================================================================
-   THEME: PUBG
-   SPECIAL EFFECTS
+   PUBG SPECIAL FX
    ========================================================================== */
+
+html[data-theme="pubg"] .am-header {
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(110,100,50,.08),
+      transparent
+    );
+}
 
 html[data-theme="pubg"] .am-map-canvas {
 
   background:
-    radial-gradient(
-      circle at 50% 50%,
-      rgba(110,100,60,.08),
-      transparent 70%
+    linear-gradient(
+      135deg,
+      rgba(125,115,70,.04),
+      transparent 40%
     ),
-    #090a08;
-}
-
-html[data-theme="pubg"] .am-btn,
-html[data-theme="pubg"] .am-locate-btn {
-
-  background:
-    rgba(25,26,18,.85);
-
-  border-color:
-    #464536;
-}
-
-html[data-theme="pubg"] .am-btn:hover,
-html[data-theme="pubg"] .am-locate-btn:hover {
-
-  box-shadow:
-    0 0 14px rgba(214,167,44,.20);
+    var(--theme-panel);
 }
 
 html[data-theme="pubg"] .am-toggle button.active {
 
+  background:
+    var(--theme-accent);
+
+  color:
+    #15140e;
+
   box-shadow:
-    0 0 16px rgba(214,167,44,.22);
+    0 0 14px
+    rgba(210,169,40,.18);
 }
 
-html[data-theme="pubg"] .am-row:hover {
+html[data-theme="pubg"] .am-map-controls button {
 
-  background:
-    linear-gradient(
-      90deg,
-      rgba(214,167,44,.11),
-      transparent
-    );
+  text-transform:
+    uppercase;
 }
 
 
 /* ==========================================================================
-   THEME: FORTNITE
-   SPECIAL EFFECTS
+   FORTNITE SPECIAL FX
    ========================================================================== */
+
+html[data-theme="fortnite"] .am-header {
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(157,92,255,.08),
+      rgba(39,194,255,.08)
+    );
+}
 
 html[data-theme="fortnite"] .am-map-canvas {
 
   background:
     radial-gradient(
-      circle at 30% 25%,
-      rgba(75,30,160,.14),
-      transparent 40%
+      circle at 30% 20%,
+      rgba(157,92,255,.08),
+      transparent 35%
     ),
     radial-gradient(
-      circle at 75% 75%,
-      rgba(20,120,255,.08),
-      transparent 45%
+      circle at 80% 80%,
+      rgba(39,194,255,.07),
+      transparent 35%
     ),
-    #080613;
+    var(--theme-panel);
 }
 
-html[data-theme="fortnite"] .am-btn,
-html[data-theme="fortnite"] .am-locate-btn {
+html[data-theme="fortnite"] .am-toggle {
 
-  box-shadow:
-    0 0 0 1px rgba(163,92,255,.05),
-    0 0 15px rgba(163,92,255,.08);
-}
-
-html[data-theme="fortnite"] .am-btn:hover,
-html[data-theme="fortnite"] .am-locate-btn:hover {
-
-  box-shadow:
-    0 0 15px rgba(163,92,255,.35),
-    0 0 35px rgba(163,92,255,.12);
+  border-color:
+    #4b3e72;
 }
 
 html[data-theme="fortnite"] .am-toggle button.active {
 
-  box-shadow:
-    0 0 20px rgba(163,92,255,.40);
-}
-
-html[data-theme="fortnite"] .am-row:hover {
-
   background:
     linear-gradient(
-      90deg,
-      rgba(163,92,255,.16),
-      rgba(50,180,255,.05),
-      transparent
+      135deg,
+      #9d5cff,
+      #27c2ff
     );
+
+  color:
+    #ffffff;
+
+  box-shadow:
+    0 0 22px
+    rgba(39,194,255,.25);
 }
 
 html[data-theme="fortnite"] .am-map-controls button:hover {
 
-  box-shadow:
-    0 0 15px rgba(163,92,255,.40),
-    0 0 30px rgba(60,170,255,.12);
+  background:
+    linear-gradient(
+      135deg,
+      rgba(157,92,255,.18),
+      rgba(39,194,255,.18)
+    );
 }
 
 
 /* ==========================================================================
-   LIGHT THEME
+   FORTNITE RARITY SYSTEM
    ========================================================================== */
+
+html[data-theme="fortnite"] {
+
+  --rarity-common: #a8b0bc;
+  --rarity-uncommon: #5dd48a;
+  --rarity-rare: #27c2ff;
+  --rarity-epic: #a05ec5;
+  --rarity-legendary: #ff8a00;
+  --rarity-mythic: #ffd700;
+}
+
+
+/* ==========================================================================
+   LIGHT SPECIAL FX
+   ========================================================================== */
+
+html[data-theme="light"] body {
+
+  background:
+    radial-gradient(
+      ellipse at 50% 0%,
+      rgba(196,81,0,.035),
+      transparent 55%
+    ),
+    #f3f3f0;
+}
 
 html[data-theme="light"] .am-map-canvas {
 
-  background: #ffffff;
+  background:
+    #ffffff;
 
   box-shadow:
-    0 4px 20px rgba(0,0,0,.08);
+    0 8px 24px rgba(0,0,0,.08);
 }
 
 html[data-theme="light"] .am-sidebar {
 
-  box-shadow:
-    0 4px 20px rgba(0,0,0,.06);
-}
-
-html[data-theme="light"] .am-table {
-
-  box-shadow:
-    0 4px 20px rgba(0,0,0,.06);
-}
-
-html[data-theme="light"] .am-btn,
-html[data-theme="light"] .am-locate-btn {
-
   background:
-    rgba(0,0,0,.025);
-}
-
-html[data-theme="light"] .am-toggle button {
-
-  background: #ffffff;
-}
-
-html[data-theme="light"] .am-toggle button.active {
-
-  background: var(--accent);
-  color: #ffffff;
+    #ffffff;
 }
 
 html[data-theme="light"] .am-map-controls button {
 
-  background: #ffffff;
+  background:
+    #ffffff;
+
+  color:
+    var(--theme-text);
 
   box-shadow:
-    0 4px 12px rgba(0,0,0,.15);
+    0 4px 12px rgba(0,0,0,.12);
 }
 
+html[data-theme="light"] .am-toggle button.active {
 
-/* ==========================================================================
-   ACTIVE THEME INDICATOR
-   ========================================================================== */
-
-[data-theme].active {
-
-  color: var(--accent);
-  background: var(--accent-dim);
-}
-
-
-/* ==========================================================================
-   SCROLLBARS
-   ========================================================================== */
-
-* {
-
-  scrollbar-width: thin;
-  scrollbar-color:
-    var(--border)
-    var(--bg-0);
-}
-
-*::-webkit-scrollbar {
-
-  width: 7px;
-  height: 7px;
-}
-
-*::-webkit-scrollbar-track {
-
-  background:
-    var(--bg-0);
-}
-
-*::-webkit-scrollbar-thumb {
-
-  background:
-    var(--border);
-
-  border-radius:
-    2px;
-}
-
-*::-webkit-scrollbar-thumb:hover {
-
-  background:
-    var(--accent);
+  color:
+    #ffffff;
 }
 
 
@@ -1255,45 +1520,161 @@ html[data-theme="light"] .am-map-controls button {
 
 @media (max-width: 760px) {
 
+  html,
+  body {
+
+    width:
+      100%;
+
+    min-width:
+      100%;
+
+    max-width:
+      100%;
+
+    overflow-x:
+      hidden;
+
+    background-color:
+      var(--theme-bg);
+  }
+
+  body {
+
+    min-height:
+      100dvh;
+
+    height:
+      auto;
+
+    overflow-y:
+      auto;
+
+    overscroll-behavior-x:
+      none;
+  }
+
+  .am-header,
+  .am-map-toolbar,
+  .am-map-body,
+  .am-explorer {
+
+    width:
+      100%;
+
+    max-width:
+      100%;
+  }
+
+  .am-map-body {
+
+    margin:
+      0 10px 10px;
+
+    width:
+      calc(100% - 20px);
+
+    display:
+      flex;
+
+    flex-direction:
+      column;
+
+    flex:
+      none;
+
+    min-height:
+      0;
+
+    gap:
+      10px;
+
+    overflow:
+      visible;
+  }
+
   .am-map-canvas {
 
-    border-radius:
-      var(--theme-radius);
+    width:
+      100%;
+
+    height:
+      55vh;
+
+    min-height:
+      55vh;
+
+    flex:
+      none;
+
+    overflow:
+      hidden;
+
+    touch-action:
+      none !important;
   }
 
   .am-sidebar {
 
-    box-shadow:
-      var(--theme-panel-shadow);
+    width:
+      100%;
+
+    max-height:
+      none;
+
+    height:
+      auto;
+
+    overflow:
+      visible;
+
+    flex:
+      none;
+  }
+
+  .am-map-controls {
+
+    position:
+      fixed;
+
+    right:
+      10px;
+
+    bottom:
+      10px;
   }
 
   .am-map-controls button {
 
-    width: 40px;
-    height: 40px;
+    width:
+      40px;
+
+    height:
+      40px;
   }
 
-  html[data-theme="fortnite"] .am-map-canvas {
+  .am-explorer {
 
-    box-shadow:
-      inset 0 0 35px rgba(120,70,255,.10);
+    padding:
+      10px;
+
+    flex:
+      none;
   }
 
-  html[data-theme="resident-evil"] .am-map-canvas {
+  .am-header {
 
-    box-shadow:
-      inset 0 0 45px rgba(120,0,0,.12);
+    flex:
+      none;
+
+    z-index:
+      100;
   }
 
-}
+  .am-dd,
+  .am-dd-menu {
 
-
-/* ==========================================================================
-   MAP VIEWPORT
-   ========================================================================== */
-
-.am-map-viewport {
-
-  will-change: transform;
-  transition: none !important;
+    z-index:
+      1000;
+  }
 }
