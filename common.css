@@ -586,9 +586,6 @@ body {
    Žádné CSS transition, jinak mapa při tažení "plave".
 */
 
-.am-map-viewport {
-  will-change: transform;
-}
 
 /* Aktivní téma v menu */
 
