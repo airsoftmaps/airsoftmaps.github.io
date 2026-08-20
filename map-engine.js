@@ -750,754 +750,472 @@ const MapEngine = (() => {
      ======================================================================== */
 
   function init(opts) {
+  let mode = "2d";
+  let activeId = null;
+  let playerPos = null;
 
-    let mode = "2d";
-    let activeId = null;
-    let playerPos = null;
+  let scale = 1;
+  let rotation = 0;
+  let translateX = 0;
+  let translateY = 0;
 
-    const svg = opts.svg;
+  let isDragging = false;
+  let startX = 0;
+  let startY = 0;
 
-    const canvas =
-      svg.closest(".am-map-canvas");
+  const svg = opts.svg;
+  const parentCanvas = svg.closest(".am-map-canvas");
 
-    svg.innerHTML = "";
+  if (!svg) {
+    console.error("MapEngine: SVG element nebyl nalezen.");
+    return {
+      redraw: () => {},
+      setPlayer: () => {}
+    };
+  }
 
-    const viewport =
-      el(
-        "g",
-        {
-          class: "am-map-viewport"
-        },
-        svg
+  /* =========================================================
+     VIEWPORT
+     ========================================================= */
+
+  svg.innerHTML = "";
+
+  const viewport = el(
+    "g",
+    { class: "am-map-viewport" },
+    svg
+  );
+
+  /* =========================================================
+     OVLÁDÁNÍ MAPY
+     ========================================================= */
+
+  if (parentCanvas && !parentCanvas.querySelector(".am-map-controls")) {
+
+    const controls = document.createElement("div");
+
+    controls.className = "am-map-controls";
+
+    controls.innerHTML = `
+      <button type="button" id="am-zoom-in" title="Přiblížit">+</button>
+      <button type="button" id="am-zoom-out" title="Oddálit">−</button>
+      <button type="button" id="am-rotate" title="Otočit o 90°">⟲</button>
+      <button type="button" id="am-reset" title="Obnovit pohled">⌂</button>
+    `;
+
+    parentCanvas.appendChild(controls);
+
+    const zoomIn = controls.querySelector("#am-zoom-in");
+    const zoomOut = controls.querySelector("#am-zoom-out");
+    const rotate = controls.querySelector("#am-rotate");
+    const reset = controls.querySelector("#am-reset");
+
+    zoomIn.addEventListener("click", e => {
+      e.stopPropagation();
+
+      const r = svg.getBoundingClientRect();
+
+      applyZoomAt(
+        1.25,
+        r.left + r.width / 2,
+        r.top + r.height / 2
       );
+    });
 
-    /* ----------------------------------------------------------------------
-       TRANSFORM MATRIX
-       ---------------------------------------------------------------------- */
+    zoomOut.addEventListener("click", e => {
+      e.stopPropagation();
 
-    let matrix =
-      new DOMMatrix();
+      const r = svg.getBoundingClientRect();
 
-    function applyMatrix() {
-
-      viewport.setAttribute(
-        "transform",
-        `matrix(
-          ${matrix.a},
-          ${matrix.b},
-          ${matrix.c},
-          ${matrix.d},
-          ${matrix.e},
-          ${matrix.f}
-        )`
+      applyZoomAt(
+        0.8,
+        r.left + r.width / 2,
+        r.top + r.height / 2
       );
-    }
+    });
 
-    function getViewBox() {
+    rotate.addEventListener("click", e => {
+      e.stopPropagation();
 
-      const value =
-        svg.getAttribute("viewBox");
+      rotation = (rotation + 90) % 360;
 
-      if (!value) {
-        return {
-          x: 0,
-          y: 0,
-          width: svg.clientWidth,
-          height: svg.clientHeight
-        };
-      }
+      updateTransform();
+    });
 
-      const [
-        x,
-        y,
-        width,
-        height
-      ] = value
-        .trim()
-        .split(/\s+/)
-        .map(Number);
+    reset.addEventListener("click", e => {
+      e.stopPropagation();
 
-      return {
-        x,
-        y,
-        width,
-        height
-      };
-    }
+      resetTransform();
+    });
+  }
 
-    function getViewCenter() {
+  /* =========================================================
+     TRANSFORMACE
+     ========================================================= */
 
-      const vb = getViewBox();
+  function updateTransform() {
 
-      return {
-        x: vb.x + vb.width / 2,
-        y: vb.y + vb.height / 2
-      };
-    }
+    viewport.setAttribute(
+      "transform",
+      `
+        translate(${translateX} ${translateY})
+        scale(${scale})
+        rotate(${rotation})
+      `
+    );
+  }
 
-    function clientToSvg(
-      clientX,
-      clientY
-    ) {
+  function applyZoomAt(factor, clientX, clientY) {
 
-      const point =
-        svg.createSVGPoint();
+    const rect = svg.getBoundingClientRect();
 
-      point.x = clientX;
-      point.y = clientY;
+    const mouseX = clientX - rect.left;
+    const mouseY = clientY - rect.top;
 
-      const ctm =
-        svg.getScreenCTM();
+    const oldScale = scale;
 
-      if (!ctm) {
-        return {
-          x: 0,
-          y: 0
-        };
-      }
+    const newScale = Math.min(
+      Math.max(0.4, oldScale * factor),
+      6
+    );
 
-      return point.matrixTransform(
-        ctm.inverse()
-      );
-    }
+    const actualFactor = newScale / oldScale;
 
-    function zoomAt(
-      factor,
-      clientX,
-      clientY
-    ) {
+    translateX =
+      mouseX -
+      (mouseX - translateX) * actualFactor;
 
-      const point =
-        clientToSvg(
-          clientX,
-          clientY
-        );
+    translateY =
+      mouseY -
+      (mouseY - translateY) * actualFactor;
 
-      const next =
-        Math.max(
-          .35,
-          Math.min(
-            7,
-            factor
-          )
-        );
+    scale = newScale;
 
-      matrix =
-        new DOMMatrix()
-          .translate(
-            point.x,
-            point.y
-          )
-          .scale(next)
-          .translate(
-            -point.x,
-            -point.y
-          )
-          .multiply(matrix);
+    updateTransform();
+  }
 
-      applyMatrix();
-    }
+  function resetTransform() {
 
-    function rotate90() {
+    scale = 1;
+    rotation = 0;
+    translateX = 0;
+    translateY = 0;
 
-      const center =
-        getViewCenter();
+    updateTransform();
+  }
 
-      matrix =
-        new DOMMatrix()
-          .translate(
-            center.x,
-            center.y
-          )
-          .rotate(90)
-          .translate(
-            -center.x,
-            -center.y
-          )
-          .multiply(matrix);
+  /* =========================================================
+     MYŠ
+     ========================================================= */
 
-      applyMatrix();
-    }
-
-    function panBy(
-      dx,
-      dy
-    ) {
-
-      matrix =
-        new DOMMatrix()
-          .translate(dx, dy)
-          .multiply(matrix);
-
-      applyMatrix();
-    }
-
-    function resetTransform() {
-
-      matrix =
-        new DOMMatrix();
-
-      applyMatrix();
-    }
-
-    /* ----------------------------------------------------------------------
-       CONTROLS
-       ---------------------------------------------------------------------- */
+  svg.addEventListener("mousedown", e => {
 
     if (
-      canvas &&
-      !canvas.querySelector(
-        ".am-map-controls"
-      )
+      e.target.closest(".am-building") ||
+      e.target.closest(".am-building3d")
     ) {
-
-      const controls =
-        document.createElement("div");
-
-      controls.className =
-        "am-map-controls";
-
-      controls.innerHTML = `
-        <button type="button"
-                class="am-zoom-in"
-                title="Přiblížit">+</button>
-
-        <button type="button"
-                class="am-zoom-out"
-                title="Oddálit">−</button>
-
-        <button type="button"
-                class="am-rotate"
-                title="Otočit o 90°">⟲</button>
-
-        <button type="button"
-                class="am-reset"
-                title="Obnovit pohled">⌂</button>
-      `;
-
-      canvas.appendChild(controls);
-
-      controls
-        .querySelector(".am-zoom-in")
-        .addEventListener(
-          "click",
-          () => {
-
-            const rect =
-              svg.getBoundingClientRect();
-
-            zoomAt(
-              1.25,
-              rect.left + rect.width / 2,
-              rect.top + rect.height / 2
-            );
-          }
-        );
-
-      controls
-        .querySelector(".am-zoom-out")
-        .addEventListener(
-          "click",
-          () => {
-
-            const rect =
-              svg.getBoundingClientRect();
-
-            zoomAt(
-              .8,
-              rect.left + rect.width / 2,
-              rect.top + rect.height / 2
-            );
-          }
-        );
-
-      controls
-        .querySelector(".am-rotate")
-        .addEventListener(
-          "click",
-          rotate90
-        );
-
-      controls
-        .querySelector(".am-reset")
-        .addEventListener(
-          "click",
-          resetTransform
-        );
+      return;
     }
 
-    /* ----------------------------------------------------------------------
-       WHEEL ZOOM
-       ---------------------------------------------------------------------- */
+    isDragging = true;
 
-    svg.addEventListener(
-      "wheel",
-      event => {
+    startX = e.clientX - translateX;
+    startY = e.clientY - translateY;
 
-        event.preventDefault();
+    svg.style.cursor = "grabbing";
+  });
 
-        zoomAt(
-          event.deltaY < 0
-            ? 1.15
-            : .85,
-          event.clientX,
-          event.clientY
-        );
-      },
-      {
-        passive: false
+  window.addEventListener("mousemove", e => {
+
+    if (!isDragging) return;
+
+    translateX = e.clientX - startX;
+    translateY = e.clientY - startY;
+
+    updateTransform();
+  });
+
+  window.addEventListener("mouseup", () => {
+
+    isDragging = false;
+
+    svg.style.cursor = "default";
+  });
+
+  /* =========================================================
+     KOLEČKO
+     ========================================================= */
+
+  svg.addEventListener(
+    "wheel",
+    e => {
+
+      e.preventDefault();
+
+      const factor =
+        e.deltaY < 0 ? 1.15 : 0.85;
+
+      applyZoomAt(
+        factor,
+        e.clientX,
+        e.clientY
+      );
+    },
+    { passive: false }
+  );
+
+  /* =========================================================
+     TOUCH
+     ========================================================= */
+
+  let touchStartX = 0;
+  let touchStartY = 0;
+  let initialPinchDist = null;
+
+  function getPinchMetrics(e) {
+
+    const t1 = e.touches[0];
+    const t2 = e.touches[1];
+
+    return {
+      dist: Math.hypot(
+        t1.clientX - t2.clientX,
+        t1.clientY - t2.clientY
+      ),
+
+      centerX:
+        (t1.clientX + t2.clientX) / 2,
+
+      centerY:
+        (t1.clientY + t2.clientY) / 2
+    };
+  }
+
+  svg.addEventListener(
+    "touchstart",
+    e => {
+
+      if (e.touches.length === 1) {
+
+        isDragging = true;
+
+        touchStartX =
+          e.touches[0].clientX - translateX;
+
+        touchStartY =
+          e.touches[0].clientY - translateY;
+
+      } else if (e.touches.length === 2) {
+
+        isDragging = false;
+
+        const metrics =
+          getPinchMetrics(e);
+
+        initialPinchDist =
+          metrics.dist;
       }
-    );
+    },
+    { passive: true }
+  );
 
-    /* ----------------------------------------------------------------------
-       POINTER GESTURES
-       ---------------------------------------------------------------------- */
+  svg.addEventListener(
+    "touchmove",
+    e => {
 
-    const pointers =
-      new Map();
+      if (
+        isDragging &&
+        e.touches.length === 1
+      ) {
 
-    let gesture = null;
+        translateX =
+          e.touches[0].clientX - touchStartX;
 
-    function getGesture() {
+        translateY =
+          e.touches[0].clientY - touchStartY;
 
-      const values =
-        [...pointers.values()];
+        updateTransform();
 
-      if (values.length === 1) {
+      } else if (
+        e.touches.length === 2 &&
+        initialPinchDist
+      ) {
 
-        return {
-          type: "pan",
-          x: values[0].x,
-          y: values[0].y
-        };
-      }
+        const metrics =
+          getPinchMetrics(e);
 
-      if (values.length >= 2) {
+        const factor =
+          metrics.dist / initialPinchDist;
 
-        const a = values[0];
-        const b = values[1];
-
-        const center = {
-          x: (a.x + b.x) / 2,
-          y: (a.y + b.y) / 2
-        };
-
-        const dx =
-          a.x - b.x;
-
-        const dy =
-          a.y - b.y;
-
-        return {
-          type: "pinch",
-          center,
-          distance:
-            Math.hypot(dx, dy)
-        };
-      }
-
-      return null;
-    }
-
-    svg.addEventListener(
-      "pointerdown",
-      event => {
-
-        if (
-          event.button !== undefined &&
-          event.button !== 0 &&
-          event.pointerType !== "touch"
-        ) {
-          return;
-        }
-
-        if (
-          event.target.closest(
-            ".am-building, .am-building3d"
-          )
-        ) {
-          return;
-        }
-
-        svg.setPointerCapture(
-          event.pointerId
-        );
-
-        pointers.set(
-          event.pointerId,
-          {
-            x: event.clientX,
-            y: event.clientY
-          }
-        );
-
-        const current =
-          getGesture();
-
-        if (!current) {
-          return;
-        }
-
-        gesture = {
-          ...current,
-          startX: current.x,
-          startY: current.y,
-          moved: false
-        };
-      }
-    );
-
-    svg.addEventListener(
-      "pointermove",
-      event => {
-
-        if (
-          !pointers.has(
-            event.pointerId
-          )
-        ) {
-          return;
-        }
-
-        pointers.set(
-          event.pointerId,
-          {
-            x: event.clientX,
-            y: event.clientY
-          }
+        applyZoomAt(
+          factor,
+          metrics.centerX,
+          metrics.centerY
         );
 
-        const current =
-          getGesture();
-
-        if (!current || !gesture) {
-          return;
-        }
-
-        if (
-          current.type === "pan" &&
-          gesture.type === "pan"
-        ) {
-
-          const previous =
-            clientToSvg(
-              gesture.x,
-              gesture.y
-            );
-
-          const next =
-            clientToSvg(
-              current.x,
-              current.y
-            );
-
-          const dx =
-            next.x - previous.x;
-
-          const dy =
-            next.y - previous.y;
-
-          if (
-            Math.abs(
-              current.x - gesture.startX
-            ) > 5 ||
-            Math.abs(
-              current.y - gesture.startY
-            ) > 5
-          ) {
-            gesture.moved = true;
-          }
-
-          panBy(dx, dy);
-
-          gesture.x =
-            current.x;
-
-          gesture.y =
-            current.y;
-
-          return;
-        }
-
-        if (
-          current.type === "pinch" &&
-          gesture.type === "pinch"
-        ) {
-
-          const oldCenter =
-            clientToSvg(
-              gesture.center.x,
-              gesture.center.y
-            );
-
-          const newCenter =
-            clientToSvg(
-              current.center.x,
-              current.center.y
-            );
-
-          if (
-            gesture.distance > 0 &&
-            current.distance > 0
-          ) {
-
-            const factor =
-              current.distance /
-              gesture.distance;
-
-            const safeFactor =
-              Math.max(
-                .8,
-                Math.min(
-                  1.2,
-                  factor
-                )
-              );
-
-            matrix =
-              new DOMMatrix()
-                .translate(
-                  newCenter.x,
-                  newCenter.y
-                )
-                .scale(
-                  safeFactor
-                )
-                .translate(
-                  -oldCenter.x,
-                  -oldCenter.y
-                )
-                .multiply(matrix);
-          }
-
-          panBy(
-            newCenter.x -
-            oldCenter.x,
-
-            newCenter.y -
-            oldCenter.y
-          );
-
-          applyMatrix();
-
-          gesture.center =
-            current.center;
-
-          gesture.distance =
-            current.distance;
-        }
-      },
-      {
-        passive: false
+        initialPinchDist =
+          metrics.dist;
       }
-    );
+    },
+    { passive: true }
+  );
 
-    function endPointer(event) {
+  svg.addEventListener("touchend", () => {
 
-      pointers.delete(
-        event.pointerId
+    isDragging = false;
+    initialPinchDist = null;
+
+  });
+
+  /* =========================================================
+     VYKRESLENÍ
+     ========================================================= */
+
+  function draw() {
+
+    const lang = opts.getLang();
+
+    if (mode === "2d") {
+
+      svg.setAttribute(
+        "viewBox",
+        opts.data.viewBoxFlat ||
+        "0 0 1360 800"
+      );
+
+      render2D(
+        viewport,
+        opts.data,
+        lang,
+        select,
+        activeId,
+        playerPos
+      );
+
+    } else {
+
+      render3D(
+        viewport,
+        opts.data,
+        lang,
+        select,
+        activeId,
+        playerPos
       );
 
       try {
-        svg.releasePointerCapture(
-          event.pointerId
-        );
-      } catch (_) {}
-
-      if (pointers.size === 0) {
-        gesture = null;
-      } else {
-        gesture =
-          getGesture();
-      }
-    }
-
-    svg.addEventListener(
-      "pointerup",
-      endPointer
-    );
-
-    svg.addEventListener(
-      "pointercancel",
-      endPointer
-    );
-
-    svg.addEventListener(
-      "pointerleave",
-      event => {
-
-        if (
-          event.pointerType === "mouse" &&
-          pointers.has(event.pointerId)
-        ) {
-          endPointer(event);
-        }
-      }
-    );
-
-    /* ----------------------------------------------------------------------
-       RENDER
-       ---------------------------------------------------------------------- */
-
-    function draw() {
-
-      const lang =
-        opts.getLang();
-
-      if (mode === "2d") {
-
-        svg.setAttribute(
-          "viewBox",
-          opts.data.viewBoxFlat ||
-          "0 0 1360 800"
-        );
-
-        svg.setAttribute(
-          "preserveAspectRatio",
-          "xMidYMid meet"
-        );
-
-        render2D(
-          viewport,
-          opts.data,
-          lang,
-          select,
-          activeId,
-          playerPos
-        );
-
-      } else {
-
-        render3D(
-          viewport,
-          opts.data,
-          lang,
-          select,
-          activeId,
-          playerPos
-        );
 
         const bbox =
           viewport.getBBox();
 
         const pad = 40;
 
-        const width =
-          Math.max(
-            1,
-            bbox.width + pad * 2
-          );
-
-        const height =
-          Math.max(
-            1,
-            bbox.height + pad * 2
-          );
-
         svg.setAttribute(
           "viewBox",
-          `${bbox.x - pad} ` +
-          `${bbox.y - pad} ` +
-          `${width} ` +
-          `${height}`
+          `${bbox.x - pad} ${bbox.y - pad} ${bbox.width + pad * 2} ${bbox.height + pad * 2}`
         );
 
-        svg.setAttribute(
-          "preserveAspectRatio",
-          "xMidYMid meet"
+      } catch (err) {
+
+        console.warn(
+          "MapEngine: nepodařilo se získat 3D bbox.",
+          err
         );
+
       }
-
-      applyMatrix();
-
-      renderList(
-        opts.listEl,
-        opts.data,
-        lang,
-        activeId,
-        select
-      );
     }
 
-    function setPlayer(pos) {
+    updateTransform();
 
-      playerPos =
-        pos
-          ? {
-              col: Number(pos.col),
-              row: Number(pos.row)
-            }
-          : null;
+    renderList(
+      opts.listEl,
+      opts.data,
+      lang,
+      activeId,
+      select
+    );
+  }
 
-      draw();
-    }
+  /* =========================================================
+     PLAYER
+     ========================================================= */
 
-    function select(id) {
+  function setPlayer(pos) {
 
-      activeId =
-        activeId === id
-          ? null
-          : id;
-
-      draw();
-    }
-
-    opts.mountModeToggle.btn2d
-      .addEventListener(
-        "click",
-        () => {
-
-          if (mode === "2d") {
-            return;
-          }
-
-          mode = "2d";
-
-          opts.mountModeToggle
-            .btn2d
-            .classList.add("active");
-
-          opts.mountModeToggle
-            .btn3d
-            .classList.remove("active");
-
-          resetTransform();
-          draw();
-        }
-      );
-
-    opts.mountModeToggle.btn3d
-      .addEventListener(
-        "click",
-        () => {
-
-          if (mode === "3d") {
-            return;
-          }
-
-          mode = "3d";
-
-          opts.mountModeToggle
-            .btn3d
-            .classList.add("active");
-
-          opts.mountModeToggle
-            .btn2d
-            .classList.remove("active");
-
-          resetTransform();
-          draw();
-        }
-      );
+    playerPos = pos;
 
     draw();
-
-    return {
-      redraw: draw,
-      setPlayer,
-      reset: resetTransform
-    };
   }
+
+  /* =========================================================
+     VÝBĚR BUDOV
+     ========================================================= */
+
+  function select(id) {
+
+    activeId =
+      activeId === id
+        ? null
+        : id;
+
+    draw();
+  }
+
+  /* =========================================================
+     2D / 3D
+     ========================================================= */
+
+  opts.mountModeToggle.btn2d.addEventListener(
+    "click",
+    e => {
+
+      e.stopPropagation();
+
+      mode = "2d";
+
+      opts.mountModeToggle.btn2d
+        .classList.add("active");
+
+      opts.mountModeToggle.btn3d
+        .classList.remove("active");
+
+      resetTransform();
+
+      draw();
+    }
+  );
+
+  opts.mountModeToggle.btn3d.addEventListener(
+    "click",
+    e => {
+
+      e.stopPropagation();
+
+      mode = "3d";
+
+      opts.mountModeToggle.btn3d
+        .classList.add("active");
+
+      opts.mountModeToggle.btn2d
+        .classList.remove("active");
+
+      resetTransform();
+
+      draw();
+    }
+  );
+
+  /* =========================================================
+     START
+     ========================================================= */
+
+  draw();
+
+  return {
+    redraw: draw,
+    setPlayer
+  };
+}
 
   return {
     init
