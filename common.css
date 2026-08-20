@@ -55,7 +55,7 @@ input { font-family: inherit; }
 /* ---------------------------------------------------------------------- */
 
 .am-header {
-  position: relative; z-index: 5;
+  position: relative; z-index: 100;
   display: flex; align-items: center; justify-content: space-between;
   gap: 16px;
   padding: 16px 5vw;
@@ -97,9 +97,22 @@ input { font-family: inherit; }
 /* Dropdown */
 .am-dd { position: relative; }
 .am-dd-menu {
-  position: absolute; top: calc(100% + 6px); right: 0; min-width: 170px;
-  background: var(--panel); border: 1px solid var(--border); border-radius: 2px;
-  box-shadow: 0 14px 32px rgba(0,0,0,.5); display: none; z-index: 30; overflow: hidden;
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 170px;
+
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+
+  box-shadow: 0 14px 32px rgba(0,0,0,.5);
+
+  display: none;
+  z-index: 1000;
+
+  overflow: hidden;
+  isolation: isolate;
 }
 .am-dd.open .am-dd-menu { display: block; }
 .am-dd-menu button {
@@ -193,7 +206,7 @@ input { font-family: inherit; }
 /* ---------------------------------------------------------------------- */
 
 .am-map-toolbar {
-  position: relative; z-index: 5;
+  position: relative; z-index: 10;
   display: flex; justify-content: center; padding-bottom: 12px;
 }
 .am-toggle {
@@ -1083,4 +1096,14 @@ html[data-theme="light"] .am-map-controls button:hover {
   border-color: var(--accent);
   color: var(--accent);
   background: var(--accent-dim);
+}
+@media (max-width: 760px) {
+  .am-header {
+    z-index: 100;
+  }
+
+  .am-dd,
+  .am-dd-menu {
+    z-index: 1000;
+  }
 }
