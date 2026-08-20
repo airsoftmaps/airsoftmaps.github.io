@@ -141,16 +141,18 @@ const MapEngine = (() => {
         );
 
       el(
-        "polygon",
-        {
-          points: ptsToStr(points),
-          fill: "var(--map-ground-fill)",
-stroke: "var(--map-outline)",
-          "stroke-width": 3,
-          "stroke-linejoin": "round"
-        },
-        ground
-      );
+  "polygon",
+  {
+    points: ptsToStr(points),
+    fill: "none",
+    stroke: mapColor("--map-outline", "#eef1f0"),
+    "stroke-opacity": ".42",
+    "stroke-width": 1.4,
+    "stroke-dasharray": "4 5",
+    "stroke-linejoin": "round"
+  },
+  ground
+);
     }
 
     (data.roads || []).forEach(road => {
