@@ -1404,36 +1404,50 @@ function resetTransform() {
     resizeTimer = setTimeout(handleResize, 120);
   });
 
-  if (window.ResizeObserver && parentCanvas) {
-
-    const resizeObserver = new ResizeObserver(() => {
-
-      clearTimeout(resizeTimer);
-
-      resizeTimer = setTimeout(handleResize, 120);
-    });
-
-    resizeObserver.observe(parentCanvas);
-  }
-
   /* =========================================================
      START
      ========================================================= */
 
   draw();
-  fitMapToWindow();
 
-  requestAnimationFrame(() => {
-    if (!userAdjusted) fitMapToWindow();
+  function revealAfterFit() {
+
+    fitMapToWindow();
+
+    svg.classList.add("am-ready");
+
+    /*
+       ResizeObserver se připojuje až TEĎ, ne hned na startu.
+       Jinak jeho první (okamžitý) callback při .observe() spustí
+       další fitMapToWindow() ještě před tím, než se ustálí layout
+       (fonty, loga) — a uživatel to vidí jako mapu, která se
+       sama od sebe "zvětšuje a sjíždí".
+    */
+
+    if (window.ResizeObserver && parentCanvas) {
+
+      const resizeObserver = new ResizeObserver(() => {
+
+        clearTimeout(resizeTimer);
+
+        resizeTimer = setTimeout(handleResize, 120);
+      });
+
+      resizeObserver.observe(parentCanvas);
+    }
+  }
+
+  const fontsReady =
+    (document.fonts && document.fonts.ready) ||
+    Promise.resolve();
+
+  fontsReady.then(() => {
+
+    // dvojitý rAF = počkej, až prohlížeč skutečně dokončí layout
+    requestAnimationFrame(() => {
+      requestAnimationFrame(revealAfterFit);
+    });
   });
-
-  window.addEventListener("load", () => {
-    if (!userAdjusted) fitMapToWindow();
-  });
-
-  setTimeout(() => {
-    if (!userAdjusted) fitMapToWindow();
-  }, 350);
 
 return {
   redraw: draw,
