@@ -34,9 +34,12 @@
   <div class="am-toggle">
     <button id="btn-2d" class="active">2D</button>
     <button id="btn-3d">3D</button>
+    <button class="am-locate-btn" id="locate-btn" style="margin-left:10px;">
+  <span class="dot"></span><span id="locate-label">Moje poloha</span>
+</button>
   </div>
 </div>
-
+<div class="am-locate-status" id="locate-status"></div>
 <div class="am-map-body">
   <div class="am-map-canvas">
     <svg id="map-svg" xmlns="http://www.w3.org/2000/svg"></svg>
@@ -59,7 +62,11 @@
 
   const FIELD_DATA = {
     viewBoxFlat: "0 0 1360 800",
-
+    geoAnchors: [
+  // { col: 7.9,  row: 1.6,  lat: 49.77991891062086, lng: 17.335764501570708 },  // roh haly B1
+  // { col: 13.05, row: 5.05, lat: 49.77880933063558, lng: 17.33535104100975 }, // roh haly H2
+  // { col: 1.85, row: 1.35, lat: 49.7811680762496, lng: 17.33534345455092 },  // vjezd
+],
     boundary: [
       [1.55, 1.15], [2.0, 0.5], [4.7, 0.05], [9.9, 0.35], [12.5, 0.85],
       [13.1, 1.6], [13.1, 6.05], [11.9, 6.55], [10.85, 6.6], [10.35, 6.95],
@@ -124,6 +131,60 @@
       btn3d: document.getElementById("btn-3d")
     }
   });
+  const LOCATE_TEXT = {
+  cs: { btn:"Moje poloha", on:"Sleduji polohu", outside:"Jsi mimo hřiště",
+        denied:"Poloha zamítnuta v prohlížeči", unavailable:"Polohu se nepodařilo zjistit",
+        noAnchors:"Pro toto hřiště není poloha dostupná" },
+  en: { btn:"My location", on:"Tracking location", outside:"You are outside the field",
+        denied:"Location permission denied", unavailable:"Could not get location",
+        noAnchors:"Location isn't available for this field" }
+};
+
+const locateBtn = document.getElementById("locate-btn");
+const locateLabel = document.getElementById("locate-label");
+const locateStatus = document.getElementById("locate-status");
+let watchId = null, tracking = false;
+
+const hasGeo = FIELD_DATA.geoAnchors && FIELD_DATA.geoAnchors.length >= 3
+  && FIELD_DATA.geoAnchors.every(a => a.lat && a.lng);
+
+if (!hasGeo) {
+  locateBtn.style.display = "none";
+} else {
+  locateBtn.addEventListener("click", () => {
+    const lang = AM.getLang();
+    if (tracking) {
+      AMGeo.stop(watchId); watchId = null; tracking = false;
+      locateBtn.classList.remove("active", "outside");
+      locateLabel.textContent = LOCATE_TEXT[lang].btn;
+      locateStatus.textContent = "";
+      engine.setPlayer(null);
+      return;
+    }
+    tracking = true;
+    locateBtn.classList.add("active");
+    locateLabel.textContent = LOCATE_TEXT[lang].on;
+
+    watchId = AMGeo.watch(FIELD_DATA, (result) => {
+      const t = LOCATE_TEXT[AM.getLang()];
+      if (!result.ok) {
+        locateStatus.textContent = t[result.reason] || t.unavailable;
+        locateBtn.classList.remove("outside");
+        engine.setPlayer(null);
+        return;
+      }
+      if (result.inside) {
+        locateBtn.classList.remove("outside");
+        locateStatus.textContent = "";
+        engine.setPlayer({ col: result.col, row: result.row });
+      } else {
+        locateBtn.classList.add("outside");
+        locateStatus.textContent = t.outside;
+        engine.setPlayer(null);
+      }
+    });
+  });
+}
 </script>
 
 </body>
