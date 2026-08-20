@@ -136,8 +136,8 @@ const MapEngine = (() => {
         "polygon",
         {
           points: ptsToStr(points),
-          fill: "rgba(255,255,255,.015)",
-          stroke: "#eef1f0",
+          fill: mapColor("--map-ground-fill", "rgba(255,255,255,.015)"),
+stroke: mapColor("--map-outline", "#eef1f0"),
           "stroke-width": 3,
           "stroke-linejoin": "round"
         },
@@ -157,7 +157,7 @@ const MapEngine = (() => {
         {
           points: ptsToStr(points),
           fill: "none",
-          stroke: "#3a3f47",
+          stroke: mapColor("--map-road", "#3a3f47"),
           "stroke-width": 10,
           "stroke-linecap": "round",
           "stroke-linejoin": "round"
@@ -170,7 +170,7 @@ const MapEngine = (() => {
         {
           points: ptsToStr(points),
           fill: "none",
-          stroke: "#1a1c1f",
+          stroke: mapColor("--map-road-inner", "#1a1c1f"),
           "stroke-width": 4,
           "stroke-dasharray": "2 10",
           "stroke-linecap": "round"
@@ -260,13 +260,14 @@ const MapEngine = (() => {
           width,
           height,
           fill:
-            active
-              ? "rgba(255,122,26,.28)"
-              : "rgba(238,241,240,.06)",
-          stroke:
-            active
-              ? "#ff7a1a"
-              : "#eef1f0",
+  active
+    ? "rgba(255,122,26,.28)"
+    : mapColor("--map-building-fill", "rgba(238,241,240,.06)"),
+
+stroke:
+  active
+    ? "#ff7a1a"
+    : mapColor("--map-outline", "#eef1f0"),
           "stroke-width":
             active ? 3 : 2,
           rx: 2
@@ -292,9 +293,9 @@ const MapEngine = (() => {
               )
             ),
           fill:
-            active
-              ? "#ff7a1a"
-              : "#eef1f0",
+  active
+    ? "#ff7a1a"
+    : mapColor("--map-text", "#eef1f0"),
           style:
             "pointer-events:none;"
         },
@@ -384,16 +385,24 @@ const MapEngine = (() => {
       );
 
     const topColor =
-      active ? "#ffb066" : "#4a5058";
+  active
+    ? "#ffb066"
+    : mapColor("--map-3d-top", "#4a5058");
 
-    const rightColor =
-      active ? "#e0812a" : "#2f333a";
+const rightColor =
+  active
+    ? "#e0812a"
+    : mapColor("--map-3d-right", "#2f333a");
 
-    const frontColor =
-      active ? "#b5631a" : "#1c1f24";
+const frontColor =
+  active
+    ? "#b5631a"
+    : mapColor("--map-3d-front", "#1c1f24");
 
-    const strokeColor =
-      active ? "#ff7a1a" : "#0a0b0d";
+const strokeColor =
+  active
+    ? "#ff7a1a"
+    : mapColor("--map-3d-stroke", "#0a0b0d");
 
     el(
       "polygon",
@@ -510,7 +519,8 @@ const MapEngine = (() => {
         {
           points: ptsToStr(points),
           fill: "none",
-          stroke: "rgba(238,241,240,.18)",
+          stroke: mapColor("--map-outline", "#eef1f0"),
+"stroke-opacity": ".18",
           "stroke-width": 1.4,
           "stroke-dasharray": "4 5"
         },
@@ -530,7 +540,7 @@ const MapEngine = (() => {
         {
           points: ptsToStr(points),
           fill: "none",
-          stroke: "#33383f",
+          stroke: mapColor("--map-road", "#33383f"),
           "stroke-width": 3
         },
         ground
@@ -665,9 +675,9 @@ const MapEngine = (() => {
             "Anton, sans-serif",
           "font-size": 12,
           fill:
-            active
-              ? "#ff7a1a"
-              : "#eef1f0",
+  active
+    ? "#ff7a1a"
+    : mapColor("--map-text", "#eef1f0"),
           style:
             "pointer-events:none;"
         },
@@ -771,6 +781,10 @@ const MapEngine = (() => {
 
   const svg = opts.svg;
   const parentCanvas = svg.closest(".am-map-canvas");
+     function mapColor(variable, fallback) {
+  const value = getComputedStyle(svg).getPropertyValue(variable).trim();
+  return value || fallback;
+}
 
   if (!svg) {
     console.error("MapEngine: SVG element nebyl nalezen.");
