@@ -770,3 +770,34 @@ body {
   }
 
 }
+/* ========================================================================
+   LIGHT THEME — OVERRIDE
+   ======================================================================== */
+
+html[data-theme="light"] .am-btn,
+html[data-theme="light"] .am-locate-btn,
+html[data-theme="light"] .am-toggle button,
+html[data-theme="light"] .am-dd-menu button {
+  color: var(--text);
+}
+
+html[data-theme="light"] .am-map-controls button {
+  color: var(--text);
+  background: var(--panel);
+}
+
+html[data-theme="light"] .am-table {
+  background: var(--panel);
+}
+
+html[data-theme="light"] .am-row:hover {
+  background: var(--accent-dim);
+}
+
+html[data-theme="light"] .am-map-canvas {
+  background: #f1f2f0;
+}
+
+html[data-theme="light"] .am-sidebar {
+  background: var(--panel);
+}
