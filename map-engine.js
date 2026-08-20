@@ -759,6 +759,8 @@ const MapEngine = (() => {
   let translateX = 0;
   let translateY = 0;
 
+let autoFit = true;
+
   let isDragging = false;
   let startX = 0;
   let startY = 0;
@@ -893,16 +895,115 @@ const MapEngine = (() => {
 
     updateTransform();
   }
+function fitMapToWindow() {
 
-  function resetTransform() {
+  if (!parentCanvas) return;
 
-    scale = 1;
-    rotation = 0;
-    translateX = 0;
-    translateY = 0;
+  const rect = parentCanvas.getBoundingClientRect();
 
-    updateTransform();
+  const padding = 30;
+
+  const availableWidth =
+    Math.max(100, rect.width - padding * 2);
+
+  const availableHeight =
+    Math.max(100, rect.height - padding * 2);
+
+  let mapWidth = 1000;
+  let mapHeight = 750;
+
+  /*
+     2D mapa má rozměry přímo z viewBoxu.
+  */
+
+  if (mode === "2d") {
+
+    const viewBox =
+      opts.data.viewBoxFlat ||
+      "0 0 1360 800";
+
+    const parts =
+      viewBox.split(/\s+/).map(Number);
+
+    mapWidth = parts[2];
+    mapHeight = parts[3];
+
+  } else {
+
+    /*
+       U 3D si vezmeme skutečný bounding box.
+    */
+
+    try {
+
+      const bbox =
+        viewport.getBBox();
+
+      mapWidth = bbox.width;
+      mapHeight = bbox.height;
+
+    } catch (err) {
+
+      mapWidth = 1000;
+      mapHeight = 700;
+
+    }
   }
+
+  const scaleX =
+    availableWidth / mapWidth;
+
+  const scaleY =
+    availableHeight / mapHeight;
+
+  /*
+     Vždy použijeme MENŠÍ hodnotu.
+     Tím pádem mapa nikdy nevyleze z okna.
+  */
+
+  scale =
+    Math.min(scaleX, scaleY);
+
+  /*
+     Trochu rozumnější limity.
+  */
+
+  scale =
+    Math.min(
+      Math.max(scale, 0.15),
+      2
+    );
+
+  /*
+     Počítáme skutečný rozměr mapy po zoomu.
+  */
+
+  const finalWidth =
+    mapWidth * scale;
+
+  const finalHeight =
+    mapHeight * scale;
+
+  /*
+     Vycentrování mapy v okně.
+  */
+
+  translateX =
+    (rect.width - finalWidth) / 2;
+
+  translateY =
+    (rect.height - finalHeight) / 2;
+
+  updateTransform();
+
+}
+function resetTransform() {
+
+  rotation = 0;
+
+  fitMapToWindow();
+
+}
 
   /* =========================================================
      MYŠ
