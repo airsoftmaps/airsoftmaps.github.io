@@ -60,63 +60,63 @@
      ==================================================================== */
 
   const FIELD_DATA = {
-    viewBoxFlat: "0 0 1360 800",
+    // Upravený výřez, aby mapa odpovídala reálnému protáhlému tvaru (nešišatěla)
+    viewBoxFlat: "0 -50 1350 1550",
     
-    // GPS kotvy synchronizované s Google Maps
+    // Nové GPS kotvy nastavené na orientaci Sever = Nahoru
     geoAnchors: [
-      { col: 7.2, row: 5.9, lat: 49.205730, lng: 16.726880 }, // Centrála / Start
-      { col: 1.2, row: 2.3, lat: 49.206980, lng: 16.724800 }, // Základna Solár
-      { col: 7.5, row: 2.5, lat: 49.206950, lng: 16.727020 }  // Zkrácená / Budova
+      { col: 10.5, row: 2.0, lat: 49.208500, lng: 16.728500 }, // Centrála (Severovýchod)
+      { col: 2.0,  row: 7.0, lat: 49.206500, lng: 16.724000 }, // Z. Střelnice (Západ)
+      { col: 12.0, row: 8.5, lat: 49.205500, lng: 16.729500 }  // Z. Solár (Jihovýchod)
     ],
 
+    // Přepracovaný obvod hřiště kopírující černou linku v novém plánku
     boundary: [
-      [0.8, 1.2], [4.5, 0.2], [8.0, 0.2], [11.5, 0.5], 
-      [12.8, 3.8], [12.8, 6.8], [10.5, 6.8], [10.5, 5.2], 
-      [4.2, 5.2], [3.8, 6.2], [2.2, 4.2], [0.8, 1.2]
+      [1.5, 0], [12.5, 0], [12.5, 4], [11.5, 4.5], [12.5, 8.5], 
+      [9.5, 14], [5.0, 14], [1.5, 10], [2.5, 7], [1.5, 0]
     ],
 
-    entrance: { col: 6.8, row: 5.1, angle: 90 },
+    entrance: { col: 11.5, row: 0.5, angle: 90 },
 
     roads: [
-      { points: [[6.8, 5.1], [6.8, 4.2], [5.2, 3.8], [4.5, 3.5], [1.8, 3.2], [1.2, 2.3]] },
-      { points: [[6.8, 4.2], [7.5, 2.8], [7.5, 2.2], [7.0, 1.5], [6.2, 1.1]] },
-      { points: [[6.8, 4.2], [9.8, 3.8], [11.2, 2.8]] },
-      { points: [[4.5, 3.5], [4.2, 1.8], [4.5, 1.1], [5.8, 0.6]] }
+      { points: [[10.5, 3.5], [10, 5], [11.5, 8], [9, 13], [6, 13.5], [2.5, 10], [2.5, 7], [4, 4], [8, 3.5]] },
+      { points: [[8.5, 3.5], [7, 5], [7, 7.5], [7, 10], [6, 12.5]] }
     ],
 
     trees: [
-      [2.5, 1.2], [3.2, 1.5], [5.5, 1.2], [6.2, 1.8], [8.5, 1.2],
-      [9.2, 1.8], [10.2, 2.2], [2.2, 2.8], [3.5, 2.5], [8.8, 3.2]
+      [2,1], [3,2], [10,2], [12,2], [11,5], [12,6], [3,5], [2,9], 
+      [3,11], [7,11], [10,12], [8,14], [5,13]
     ],
 
     buildings: [
-      // Hlavní zázemí a základy
-      { id:"c",   code:"CENT", name:"Centrála (Start)",        nameEn:"HQ (Start)",          rect:[5.8, 5.4, 8.8, 6.6], height:0.8 },
-      { id:"zs",  code:"Z-SOL",name:"Základna Solár",          nameEn:"Solar Base",          rect:[0.8, 2.0, 2.0, 2.9], height:1.0 },
-      { id:"zst", code:"Z-STR",name:"Základna Střelnice",     nameEn:"Shooting Range Base", rect:[10.2, 2.2, 11.8, 3.2], height:1.0 },
-      { id:"os",  code:"OSTR", name:"Ostré střelnice",        nameEn:"Firing Range",        rect:[11.0, 5.4, 12.5, 6.6], height:0.4 },
+      // Sever (Top)
+      { id:"c",   code:"CENT", name:"Centrála (Start)",        nameEn:"HQ (Start)",          rect:[8.5, 0.5, 12.5, 3.5], height:0.8 },
+      { id:"os",  code:"OSTR", name:"Ostré střelnice",        nameEn:"Firing Range",        rect:[1.5, 0.5, 4.5, 3.5], height:0.4 },
+      
+      // Západ (Left) a Východ (Right)
+      { id:"zst", code:"Z-STR",name:"Základna Střelnice",     nameEn:"Shooting Range Base", rect:[1.2, 6.2, 2.8, 7.8], height:1.0 },
+      { id:"zs",  code:"Z-SOL",name:"Základna Solár",          nameEn:"Solar Base",          rect:[11.2, 7.8, 12.5, 9.2], height:1.0 },
 
-      // Klíčové zóny a budovy
-      { id:"zk",  code:"ZKR",  name:"Zkrácená",               nameEn:"Shortened Bldg",      rect:[7.0, 2.3, 8.5, 2.8], height:1.2 },
-      { id:"b",   code:"BAR",  name:"Barák",                  nameEn:"House",               rect:[6.2, 3.8, 7.2, 4.2], height:1.0 },
-      { id:"g",   code:"GAR",  name:"Garáže",                 nameEn:"Garages",             rect:[8.0, 4.2, 8.8, 4.6], height:0.8 },
-      { id:"kop", code:"KOP",  name:"Kopec & Bunkr",          nameEn:"Hill & Bunker",       rect:[4.5, 2.2, 6.0, 2.8], height:1.4 },
-
-      // Taktická místa v prostoru (POIs)
-      { id:"bs",  code:"B-SAI",name:"Bunkr Saigon",           nameEn:"Saigon Bunker",       rect:[4.2, 0.6, 5.0, 0.9], height:0.5 },
-      { id:"osai",code:"O-SAI",name:"Odpaliště Saigon",       nameEn:"Saigon Launchpad",    rect:[3.8, 1.1, 4.8, 1.4], height:0.3 },
-      { id:"oc",  code:"OBL",  name:"Oblouk Cesta",           nameEn:"Arch Road",           rect:[7.2, 0.6, 8.2, 0.9], height:0.2 },
-      { id:"m",   code:"MOST", name:"Můstek",                 nameEn:"Bridge",              rect:[8.5, 1.2, 9.2, 1.5], height:0.4 },
-      { id:"j",   code:"JNG",  name:"Jungle",                 nameEn:"Jungle",              rect:[7.2, 1.6, 8.0, 1.9], height:0.3 },
-      { id:"ukr", code:"UKR",  name:"Úkryt",                  nameEn:"Hideout",             rect:[5.2, 1.6, 5.8, 1.9], height:0.5 },
-      { id:"prj", code:"PRE",  name:"Přejezd",                nameEn:"Crossing",            rect:[2.8, 1.6, 3.5, 1.9], height:0.2 },
-      { id:"osol",code:"O-SOL",name:"Odpaliště Solár",        nameEn:"Solar Launchpad",     rect:[2.2, 2.9, 3.2, 3.2], height:0.3 },
-      { id:"fox", code:"FOX",  name:"Foxhole",                nameEn:"Foxhole",             rect:[4.5, 3.1, 5.2, 3.4], height:0.3 },
-      { id:"sc",  code:"S-CES",name:"Solár Cesta",            nameEn:"Solar Road",          rect:[1.2, 3.6, 2.2, 3.9], height:0.2 },
-      { id:"bsol",code:"B-SOL",name:"Bunkr Solár",            nameEn:"Solar Bunker",        rect:[4.2, 3.8, 5.0, 4.1], height:0.5 },
-      { id:"ou",  code:"O-UDAR",name:"Odpaliště u Baráku",    nameEn:"House Launchpad",     rect:[6.0, 3.2, 7.2, 3.5], height:0.3 },
-      { id:"str", code:"STR",  name:"Stronghold",             nameEn:"Stronghold",          rect:[8.8, 2.3, 9.8, 2.6], height:0.6 },
-      { id:"tch", code:"TECH", name:"Technika",               nameEn:"Vehicles",            rect:[11.0, 3.6, 12.0, 4.0], height:0.4 }
+      // Středové a přidružené objekty
+      { id:"kop", code:"KOP",  name:"Kopec & Bunkr",          nameEn:"Hill & Bunker",       rect:[6.0, 6.5, 8.5, 8.0], height:1.4 },
+      { id:"zk",  code:"ZKR",  name:"Zkrácená",               nameEn:"Shortened Bldg",      rect:[6.0, 5.0, 8.0, 5.8], height:1.2 },
+      { id:"g",   code:"GAR",  name:"Garáže",                 nameEn:"Garages",             rect:[9.5, 3.5, 10.5, 4.5], height:0.8 },
+      { id:"str", code:"STR",  name:"Stronghold",             nameEn:"Stronghold",          rect:[8.5, 5.0, 9.5, 5.5], height:0.6 },
+      { id:"ou",  code:"O-UDAR",name:"Odpaliště u Baráku",    nameEn:"House Launchpad",     rect:[8.0, 6.5, 9.0, 7.5], height:0.3 },
+      { id:"b",   code:"BAR",  name:"Barák",                  nameEn:"House",               rect:[9.0, 5.5, 10.0, 6.5], height:1.0 },
+      
+      // Taktická místa v terénu
+      { id:"fox", code:"FOX",  name:"Foxhole",                nameEn:"Foxhole",             rect:[4.5, 7.0, 5.5, 7.5], height:0.3 },
+      { id:"prj", code:"PRE",  name:"Přejezd",                nameEn:"Crossing",            rect:[3.5, 7.5, 4.5, 8.0], height:0.2 },
+      { id:"ukr", code:"UKR",  name:"Úkryt",                  nameEn:"Hideout",             rect:[5.0, 8.5, 6.0, 9.0], height:0.5 },
+      { id:"osol",code:"O-SOL",name:"Odpaliště Solár",        nameEn:"Solar Launchpad",     rect:[3.0, 8.5, 4.0, 9.0], height:0.3 },
+      { id:"bsol",code:"B-SOL",name:"Bunkr Solár",            nameEn:"Solar Bunker",        rect:[5.5, 9.5, 6.5, 10.0], height:0.5 },
+      { id:"sc",  code:"S-CES",name:"Solár Cesta",            nameEn:"Solar Road",          rect:[1.5, 9.5, 2.5, 10.0], height:0.2 },
+      { id:"j",   code:"JNG",  name:"Jungle",                 nameEn:"Jungle",              rect:[7.0, 9.5, 8.0, 10.0], height:0.3 },
+      { id:"m",   code:"MOST", name:"Můstek",                 nameEn:"Bridge",              rect:[8.5, 10.5, 9.5, 11.0], height:0.4 },
+      { id:"osai",code:"O-SAI",name:"Odpaliště Saigon",       nameEn:"Saigon Launchpad",    rect:[5.5, 11.5, 6.5, 12.0], height:0.3 },
+      { id:"bsai",code:"B-SAI",name:"Bunkr Saigon",           nameEn:"Saigon Bunker",       rect:[4.5, 12.5, 5.5, 13.0], height:0.5 },
+      { id:"oc",  code:"OBL",  name:"Oblouk Cesta",           nameEn:"Arch Road",           rect:[7.5, 12.5, 8.5, 13.0], height:0.2 }
     ]
   };
 
