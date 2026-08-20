@@ -866,7 +866,68 @@ let autoFit = true;
       `
     );
   }
+function fitMapToWindow() {
 
+  if (!parentCanvas) return;
+
+  const rect = parentCanvas.getBoundingClientRect();
+
+  const padding = 30;
+
+  const availableWidth =
+    rect.width - padding * 2;
+
+  const availableHeight =
+    rect.height - padding * 2;
+
+  let mapWidth;
+  let mapHeight;
+
+  if (mode === "2d") {
+
+    const viewBox =
+      opts.data.viewBoxFlat || "0 0 1000 750";
+
+    const parts =
+      viewBox.split(/\s+/).map(Number);
+
+    mapWidth = parts[2];
+    mapHeight = parts[3];
+
+  } else {
+
+    try {
+
+      const bbox =
+        viewport.getBBox();
+
+      mapWidth = bbox.width;
+      mapHeight = bbox.height;
+
+    } catch (err) {
+
+      mapWidth = 1000;
+      mapHeight = 750;
+    }
+  }
+
+  const scaleX =
+    availableWidth / mapWidth;
+
+  const scaleY =
+    availableHeight / mapHeight;
+
+  scale =
+    Math.min(scaleX, scaleY);
+
+  translateX =
+    (rect.width - mapWidth * scale) / 2;
+
+  translateY =
+    (rect.height - mapHeight * scale) / 2;
+
+  updateTransform();
+}
   function applyZoomAt(factor, clientX, clientY) {
 
     const rect = svg.getBoundingClientRect();
@@ -1312,10 +1373,14 @@ function resetTransform() {
 
   draw();
 
-  return {
-    redraw: draw,
-    setPlayer
-  };
+requestAnimationFrame(() => {
+  fitMapToWindow();
+});
+
+return {
+  redraw: draw,
+  setPlayer
+};
 }
 
   return {
