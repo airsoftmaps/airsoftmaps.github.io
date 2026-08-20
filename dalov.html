@@ -50,9 +50,9 @@
   </div>
 </div>
 
-<script src="common.js"></script>
-<script src="geo.js"></script>
-<script src="map-engine.js"></script>
+<script src="common.js?v=3"></script>
+<script src="geo.js?v=3"></script>
+<script src="map-engine.js?v=3"></script>
 <script>
   /* ====================================================================
      FIELD DATA — DALOV
@@ -116,8 +116,24 @@
   }
 
   AM.wireDropdowns();
-  AM.wireLangSwitch((lang) => { applyStaticText(lang); engine.redraw(); });
-  applyStaticText(AM.getLang());
+
+applyStaticText(AM.getLang());
+
+const engine = MapEngine.init({
+  svg,
+  listEl,
+  data: FIELD_DATA,
+  getLang: AM.getLang,
+  mountModeToggle: {
+    btn2d: document.getElementById("btn-2d"),
+    btn3d: document.getElementById("btn-3d")
+  }
+});
+
+AM.wireLangSwitch((lang) => {
+  applyStaticText(lang);
+  engine.redraw();
+});
 
   document.getElementById("back-btn").addEventListener("click", () => {
     window.location.href = "menu.html";
