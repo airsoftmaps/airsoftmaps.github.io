@@ -396,7 +396,7 @@ html[data-theme="dark"] {
   --map-3d-top: #4a5058;
   --map-3d-right: #2f333a;
   --map-3d-front: #1c1f24;
-  --map-3d-stroke: #0a0b0d;
+  --map-3d-stroke: var(--map-outline);
 }
 
 /* LIGHT */
@@ -425,7 +425,7 @@ html[data-theme="light"] {
   --map-3d-top: #d7d9d8;
   --map-3d-right: #b8bcbb;
   --map-3d-front: #9da2a1;
-  --map-3d-stroke: #4c5154;
+  --map-3d-stroke: var(--map-outline);
 }
 
 /* RESIDENT EVIL */
@@ -454,7 +454,7 @@ html[data-theme="resident-evil"] {
   --map-3d-top: #493535;
   --map-3d-right: #352626;
   --map-3d-front: #241a1a;
-  --map-3d-stroke: #120d0d;
+  --map-3d-stroke: var(--map-outline);
 }
 
 /* PUBG */
@@ -483,7 +483,7 @@ html[data-theme="pubg"] {
   --map-3d-top: #625a48;
   --map-3d-right: #4b4537;
   --map-3d-front: #373329;
-  --map-3d-stroke: #171510;
+  --map-3d-stroke: var(--map-outline);
 }
 
 /* FORTNITE */
