@@ -1,14 +1,10 @@
 /* ==========================================================================
-   AIRSOFT MAPS — map-engine.js
-   Obecný engine pro vykreslení 2D půdorysu a 3D izometrického pohledu
-   hřiště z jedněch dat (viz např. dalov.html -> FIELD_DATA).
-   Pro nové hřiště: zkopíruj dalov.html, přepiš FIELD_DATA a obrázek/y.
+   AIRSOFT MAPS — map-engine.js (s podporou Zoomu, Posunu a Rotace)
    ========================================================================== */
 
 const MapEngine = (function () {
 
   const SVG_NS = "http://www.w3.org/2000/svg";
-
   const FLAT = { originX: 70, originY: 60, colW: 88, rowH: 98 };
   const ISO  = { tileW: 108, tileH: 62, heightScale: 42 };
 
@@ -39,17 +35,13 @@ const MapEngine = (function () {
     el("circle", { cx: point.x, cy: point.y, r: 7, fill: "#4aa3ff", stroke: "#eef1f0", "stroke-width": 2 }, g);
   }
 
-  /* ======================================================================
-     RENDER 2D
-     ====================================================================== */
-
-  function render2D(svg, data, lang, onBuildingClick, activeId, playerPos) {
-    svg.innerHTML = "";
-    svg.setAttribute("viewBox", data.viewBoxFlat || "0 0 1360 800");
-
-    const gGround = el("g", { class: "layer-ground" }, svg);
-    const gRoads  = el("g", { class: "layer-roads" }, svg);
-    const gBuild  = el("g", { class: "layer-buildings" }, svg);
+  /* RENDER 2D */
+  function render2D(container, data, lang, onBuildingClick, activeId, playerPos) {
+    container.innerHTML = "";
+    
+    const gGround = el("g", { class: "layer-ground" }, container);
+    const gRoads  = el("g", { class: "layer-roads" }, container);
+    const gBuild  = el("g", { class: "layer-buildings" }, container);
 
     if (data.boundary) {
       const pts = data.boundary.map(([c, r]) => flatPoint(c, r));
@@ -117,15 +109,12 @@ const MapEngine = (function () {
     });
 
     if (playerPos) {
-      const gPlayer = el("g", { class: "layer-player" }, svg);
+      const gPlayer = el("g", { class: "layer-player" }, container);
       drawPlayerDot(gPlayer, flatPoint(playerPos.col, playerPos.row));
     }
   }
 
-  /* ======================================================================
-     RENDER 3D
-     ====================================================================== */
-
+  /* RENDER 3D */
   function buildBlock(g, c1, r1, c2, r2, height, id, isActive, onClick) {
     const AA = { c: c1, r: r1 }, BA = { c: c2, r: r1 }, BB = { c: c2, r: r2 }, AB = { c: c1, r: r2 };
 
@@ -148,14 +137,14 @@ const MapEngine = (function () {
     return gb;
   }
 
-  function render3D(svg, data, lang, onBuildingClick, activeId, playerPos) {
-    svg.innerHTML = "";
+  function render3D(container, data, lang, onBuildingClick, activeId, playerPos) {
+    container.innerHTML = "";
 
-    const gGround = el("g", { class: "layer-ground" }, svg);
-    const gTrees1 = el("g", { class: "layer-trees-back" }, svg);
-    const gBuild  = el("g", { class: "layer-buildings" }, svg);
-    const gTrees2 = el("g", { class: "layer-trees-front" }, svg);
-    const gLabels = el("g", { class: "layer-labels" }, svg);
+    const gGround = el("g", { class: "layer-ground" }, container);
+    const gTrees1 = el("g", { class: "layer-trees-back" }, container);
+    const gBuild  = el("g", { class: "layer-buildings" }, container);
+    const gTrees2 = el("g", { class: "layer-trees-front" }, container);
+    const gLabels = el("g", { class: "layer-labels" }, container);
 
     if (data.boundary) {
       const pts = data.boundary.map(([c, r]) => isoPoint(c, r, 0));
@@ -204,13 +193,9 @@ const MapEngine = (function () {
     });
 
     if (playerPos) {
-      const gPlayer = el("g", { class: "layer-player" }, svg);
+      const gPlayer = el("g", { class: "layer-player" }, container);
       drawPlayerDot(gPlayer, isoPoint(playerPos.col, playerPos.row, 0.05));
     }
-
-    const bbox = svg.getBBox();
-    const pad = 40;
-    svg.setAttribute("viewBox", `${bbox.x - pad} ${bbox.y - pad} ${bbox.width + pad * 2} ${bbox.height + pad * 2}`);
   }
 
   function renderList(listEl, data, lang, activeId, onSelect) {
@@ -230,10 +215,99 @@ const MapEngine = (function () {
     let activeId = null;
     let playerPos = null;
 
+    // Transformace (Zoom / Pan / Rotation)
+    let scale = 1;
+    let rotation = 0;
+    let translateX = 0;
+    let translateY = 0;
+    let isDragging = false;
+    let startX = 0, startY = 0;
+
+    const svg = opts.svg;
+    const parentCanvas = svg.closest(".am-map-canvas");
+
+    // Vytvoreni Viewportu uvnitr SVG
+    svg.innerHTML = "";
+    const viewport = el("g", { class: "am-map-viewport" }, svg);
+
+    // Vytvoreni Tlacidels v Canvasu
+    if (parentCanvas && !parentCanvas.querySelector(".am-map-controls")) {
+      const controls = document.createElement("div");
+      controls.className = "am-map-controls";
+      controls.innerHTML = `
+        <button id="am-zoom-in" title="Přiblížit">+</button>
+        <button id="am-zoom-out" title="Oddálit">-</button>
+        <button id="am-rotate" title="Otočit o 90°">⟲</button>
+        <button id="am-reset" title="Obnovit pohled">⌂</button>
+      `;
+      parentCanvas.appendChild(controls);
+
+      controls.querySelector("#am-zoom-in").addEventListener("click", () => applyZoom(1.25));
+      controls.querySelector("#am-zoom-out").addEventListener("click", () => applyZoom(0.8));
+      controls.querySelector("#am-rotate").addEventListener("click", () => {
+        rotation = (rotation + 90) % 360;
+        updateTransform();
+      });
+      controls.querySelector("#am-reset").addEventListener("click", resetTransform);
+    }
+
+    function updateTransform() {
+      viewport.setAttribute("transform", `translate(${translateX}, ${translateY}) scale(${scale}) rotate(${rotation})`);
+    }
+
+    function applyZoom(factor) {
+      scale = Math.min(Math.max(0.4, scale * factor), 5);
+      updateTransform();
+    }
+
+    function resetTransform() {
+      scale = 1;
+      rotation = 0;
+      translateX = 0;
+      translateY = 0;
+      updateTransform();
+    }
+
+    // Dragging / Posun Myší & Dotykem
+    svg.addEventListener("mousedown", e => {
+      if (e.target.closest(".am-building, .am-building3d")) return;
+      isDragging = true;
+      startX = e.clientX - translateX;
+      startY = e.clientY - translateY;
+      svg.style.cursor = "grabbing";
+    });
+
+    window.addEventListener("mousemove", e => {
+      if (!isDragging) return;
+      translateX = e.clientX - startX;
+      translateY = e.clientY - startY;
+      updateTransform();
+    });
+
+    window.addEventListener("mouseup", () => {
+      isDragging = false;
+      svg.style.cursor = "default";
+    });
+
+    // Kolečko myši pro Zoom
+    svg.addEventListener("wheel", e => {
+      e.preventDefault();
+      const zoomFactor = e.deltaY < 0 ? 1.15 : 0.85;
+      applyZoom(zoomFactor);
+    }, { passive: false });
+
     function draw() {
       const lang = opts.getLang();
-      if (mode === "2d") render2D(opts.svg, opts.data, lang, select, activeId, playerPos);
-      else render3D(opts.svg, opts.data, lang, select, activeId, playerPos);
+      if (mode === "2d") {
+        svg.setAttribute("viewBox", opts.data.viewBoxFlat || "0 0 1360 800");
+        render2D(viewport, opts.data, lang, select, activeId, playerPos);
+      } else {
+        render3D(viewport, opts.data, lang, select, activeId, playerPos);
+        const bbox = viewport.getBBox();
+        const pad = 40;
+        svg.setAttribute("viewBox", `${bbox.x - pad} ${bbox.y - pad} ${bbox.width + pad * 2} ${bbox.height + pad * 2}`);
+      }
+      updateTransform();
       renderList(opts.listEl, opts.data, lang, activeId, select);
     }
 
@@ -251,12 +325,14 @@ const MapEngine = (function () {
       mode = "2d";
       opts.mountModeToggle.btn2d.classList.add("active");
       opts.mountModeToggle.btn3d.classList.remove("active");
+      resetTransform();
       draw();
     });
     opts.mountModeToggle.btn3d.addEventListener("click", () => {
       mode = "3d";
       opts.mountModeToggle.btn3d.classList.add("active");
       opts.mountModeToggle.btn2d.classList.remove("active");
+      resetTransform();
       draw();
     });
 
