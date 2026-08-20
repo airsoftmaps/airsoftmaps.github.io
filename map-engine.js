@@ -10,11 +10,11 @@ const MapEngine = (() => {
   const SVG_NS = "http://www.w3.org/2000/svg";
 
   const FLAT = {
-    originX: 70,
-    originY: 60,
-    colW: 88,
-    rowH: 98
-  };
+  originX: 70,
+  originY: 60,
+  colW: 88,
+  rowH: 98
+};
 
   const ISO = {
     tileW: 108,
