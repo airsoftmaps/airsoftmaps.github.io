@@ -257,6 +257,10 @@ input { font-family: inherit; }
   position: absolute; bottom: 16px; right: 16px;
   display: flex; flex-direction: column; gap: 6px; z-index: 10;
 }
+.am-map-viewport {
+  will-change: transform;
+  transition: none !important; /* Vypne jakoukoliv animaci při tažení prstem */
+}
 .am-map-controls button {
   width: 36px; height: 36px;
   background: var(--panel); border: 1px solid var(--border);
