@@ -603,8 +603,40 @@ body {
     max-width: 100%;
   }
 
+}
+/* ========================================================================
+   MOBILE SCROLL / OVERSCROLL
+   ======================================================================== */
+
+html,
+body {
+  background-color: var(--bg-0);
+}
+
+/* Stránka může normálně scrollovat */
+body {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+/* Nedovolíme pouze horizontální únik */
+@media (max-width: 760px) {
+
+  html {
+    width: 100%;
+    min-width: 100%;
+    background-color: var(--bg-0);
+  }
+
+  body {
+    width: 100%;
+    min-width: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
   .am-map-body {
-    overflow: hidden;
+    overflow: visible;
   }
 
 }
