@@ -771,33 +771,256 @@ body {
 
 }
 /* ========================================================================
-   LIGHT THEME — OVERRIDE
+   LIGHT THEME — COMPLETE UI OVERRIDE
    ======================================================================== */
 
+html[data-theme="light"] {
+  --bg-0: #f4f4f2;
+  --bg-1: #ffffff;
+
+  --panel: #ffffff;
+  --panel-2: rgba(0, 0, 0, .035);
+
+  --border: #c9cbc9;
+  --border-hover: #c45100;
+
+  --text: #111315;
+  --muted: #5f6469;
+  --muted-2: #858a8f;
+
+  --accent: #c45100;
+  --accent-dim: rgba(196, 81, 0, .10);
+
+  --theme-glow: rgba(196, 81, 0, .045);
+}
+
+/* ------------------------------------------------------------------------
+   CELÁ STRÁNKA
+   ------------------------------------------------------------------------ */
+
+html[data-theme="light"],
+html[data-theme="light"] body {
+  background: #f4f4f2;
+  color: var(--text);
+}
+
+/*
+   Vypneme černou radiální vinětu.
+   Ta vzniká z původního:
+   radial-gradient(... var(--bg-1), #000 85%)
+*/
+
+html[data-theme="light"] body {
+  background:
+    radial-gradient(
+      ellipse at 50% 0%,
+      rgba(196, 81, 0, .035),
+      transparent 55%
+    ),
+    #f4f4f2;
+}
+
+/* Noise overlay v light režimu výrazně zeslabíme */
+
+html[data-theme="light"] body::before {
+  opacity: .15;
+  mix-blend-mode: multiply;
+}
+
+/* ------------------------------------------------------------------------
+   HEADER
+   ------------------------------------------------------------------------ */
+
+html[data-theme="light"] .am-brand span {
+  color: var(--text);
+}
+
+html[data-theme="light"] .am-brand span em {
+  color: var(--accent);
+}
+
+html[data-theme="light"] .am-brand img {
+  filter: drop-shadow(0 0 8px rgba(196, 81, 0, .18));
+}
+
+html[data-theme="light"] .am-breadcrumb {
+  color: var(--muted);
+}
+
+html[data-theme="light"] .am-breadcrumb .sep {
+  color: var(--muted-2);
+}
+
+html[data-theme="light"] .am-breadcrumb .current {
+  color: var(--accent);
+}
+
+html[data-theme="light"] .am-field-title {
+  color: var(--text);
+}
+
+html[data-theme="light"] .am-field-title span {
+  color: var(--accent);
+}
+
+/* ------------------------------------------------------------------------
+   HORNÍ PŘEPÍNAČE
+   ------------------------------------------------------------------------ */
+
 html[data-theme="light"] .am-btn,
-html[data-theme="light"] .am-locate-btn,
-html[data-theme="light"] .am-toggle button,
+html[data-theme="light"] .am-locate-btn {
+  background: rgba(0, 0, 0, .025);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+html[data-theme="light"] .am-btn:hover,
+html[data-theme="light"] .am-locate-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* Dropdown */
+
+html[data-theme="light"] .am-dd-menu {
+  background: #ffffff;
+  border-color: var(--border);
+  box-shadow: 0 14px 32px rgba(0, 0, 0, .14);
+}
+
 html[data-theme="light"] .am-dd-menu button {
   color: var(--text);
 }
 
-html[data-theme="light"] .am-map-controls button {
-  color: var(--text);
-  background: var(--panel);
+html[data-theme="light"] .am-dd-menu button:hover {
+  background: var(--accent-dim);
+  color: var(--accent);
 }
 
+/* ------------------------------------------------------------------------
+   NADPIS + VYHLEDÁVÁNÍ
+   ------------------------------------------------------------------------ */
+
+html[data-theme="light"] .am-search input {
+  background: #ffffff;
+  border-color: var(--border);
+  color: var(--text);
+}
+
+html[data-theme="light"] .am-search input::placeholder {
+  color: var(--muted-2);
+}
+
+html[data-theme="light"] .am-search .icon {
+  color: var(--muted);
+}
+
+html[data-theme="light"] .am-search input:focus {
+  border-color: var(--accent);
+}
+
+/* ------------------------------------------------------------------------
+   TABULKA HŘIŠŤ
+   ------------------------------------------------------------------------ */
+
 html[data-theme="light"] .am-table {
-  background: var(--panel);
+  border-color: var(--border);
+  background: #ffffff;
+}
+
+html[data-theme="light"] .am-table-head {
+  background: rgba(0, 0, 0, .025);
+  border-color: var(--border);
+  color: var(--muted);
+}
+
+html[data-theme="light"] .am-row {
+  border-color: var(--border);
+  background: #ffffff;
 }
 
 html[data-theme="light"] .am-row:hover {
-  background: var(--accent-dim);
+  background: rgba(196, 81, 0, .045);
 }
 
+html[data-theme="light"] .am-row-name {
+  color: var(--text);
+}
+
+html[data-theme="light"] .am-row-name b {
+  color: var(--text);
+}
+
+html[data-theme="light"] .am-row-location {
+  color: var(--muted);
+}
+
+/* ------------------------------------------------------------------------
+   MAPA
+   ------------------------------------------------------------------------ */
+
 html[data-theme="light"] .am-map-canvas {
-  background: #f1f2f0;
+  background: #ffffff;
+  border-color: var(--border);
 }
 
 html[data-theme="light"] .am-sidebar {
-  background: var(--panel);
+  background: #ffffff;
+  border-color: var(--border);
+}
+
+html[data-theme="light"] .am-sidebar-title {
+  color: var(--muted);
+}
+
+html[data-theme="light"] .am-poi {
+  color: var(--text);
+}
+
+html[data-theme="light"] .am-poi:hover {
+  background: rgba(196, 81, 0, .045);
+}
+
+html[data-theme="light"] .am-poi.active {
+  background: var(--accent-dim);
+  border-color: var(--accent);
+}
+
+html[data-theme="light"] .am-poi .code {
+  color: var(--accent);
+}
+
+/* ------------------------------------------------------------------------
+   PŘEPÍNAČE REŽIMŮ MAPY
+   ------------------------------------------------------------------------ */
+
+html[data-theme="light"] .am-toggle {
+  border-color: var(--border);
+}
+
+html[data-theme="light"] .am-toggle button {
+  background: #ffffff;
+  color: var(--text);
+}
+
+html[data-theme="light"] .am-toggle button.active {
+  background: var(--accent);
+  color: #ffffff;
+}
+
+/* ------------------------------------------------------------------------
+   MAP CONTROLS
+   ------------------------------------------------------------------------ */
+
+html[data-theme="light"] .am-map-controls button {
+  background: #ffffff;
+  border-color: var(--border);
+  color: var(--text);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, .15);
+}
+
+html[data-theme="light"] .am-map-controls button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-dim);
 }
