@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIRSOFT MAPS — Mokrá Horákov</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="common.css">
+</head>
+<body>
+
+<header class="am-header">
+  <a class="am-brand" href="menu.html">
+    <img src="logos/Tymove logo B.png" alt="Airsoft Maps">
+    <span>AIRSOFT <em>MAPS</em></span>
+  </a>
+
+  <div class="am-field-title">AIRSOFT PARK — <span>MOKRÁ HORÁKOV</span></div>
+
+  <div class="am-controls">
+    <button class="am-btn" id="back-btn">← <span id="back-label">Zpět na hřiště</span></button>
+    <div class="am-dd" id="lang-dd">
+      <button class="am-btn">🌐 <span id="lang-current">CZ</span></button>
+      <div class="am-dd-menu">
+        <button data-lang="cs">Čeština</button>
+        <button data-lang="en">English</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="am-map-toolbar">
+  <div class="am-toggle">
+    <button id="btn-2d" class="active">2D</button>
+    <button id="btn-3d">3D</button>
+    <button class="am-locate-btn" id="locate-btn" style="margin-left:10px;">
+      <span class="dot"></span><span id="locate-label">Moje poloha</span>
+    </button>
+  </div>
+</div>
+<div class="am-locate-status" id="locate-status"></div>
+
+<div class="am-map-body">
+  <div class="am-map-canvas">
+    <svg id="map-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+  </div>
+  <div class="am-sidebar">
+    <div class="am-sidebar-title" id="sidebar-title">Místa na hřišti</div>
+    <div id="poi-list"></div>
+  </div>
+</div>
+
+<script src="common.js"></script>
+<script src="geo.js"></script>
+<script src="map-engine.js"></script>
+<script>
+  /* ====================================================================
+     FIELD DATA — MOKRÁ HORÁKOV
+     ==================================================================== */
+
+  const FIELD_DATA = {
+    viewBoxFlat: "0 0 1360 800",
+    
+    // GPS kotvy synchronizované s Google Maps
+    geoAnchors: [
+      { col: 7.2, row: 5.9, lat: 49.205730, lng: 16.726880 }, // Centrála / Start
+      { col: 1.2, row: 2.3, lat: 49.206980, lng: 16.724800 }, // Základna Solár
+      { col: 7.5, row: 2.5, lat: 49.206950, lng: 16.727020 }  // Zkrácená / Budova
+    ],
+
+    boundary: [
+      [0.8, 1.2], [4.5, 0.2], [8.0, 0.2], [11.5, 0.5], 
+      [12.8, 3.8], [12.8, 6.8], [10.5, 6.8], [10.5, 5.2], 
+      [4.2, 5.2], [3.8, 6.2], [2.2, 4.2], [0.8, 1.2]
+    ],
+
+    entrance: { col: 6.8, row: 5.1, angle: 90 },
+
+    roads: [
+      { points: [[6.8, 5.1], [6.8, 4.2], [5.2, 3.8], [4.5, 3.5], [1.8, 3.2], [1.2, 2.3]] },
+      { points: [[6.8, 4.2], [7.5, 2.8], [7.5, 2.2], [7.0, 1.5], [6.2, 1.1]] },
+      { points: [[6.8, 4.2], [9.8, 3.8], [11.2, 2.8]] },
+      { points: [[4.5, 3.5], [4.2, 1.8], [4.5, 1.1], [5.8, 0.6]] }
+    ],
+
+    trees: [
+      [2.5, 1.2], [3.2, 1.5], [5.5, 1.2], [6.2, 1.8], [8.5, 1.2],
+      [9.2, 1.8], [10.2, 2.2], [2.2, 2.8], [3.5, 2.5], [8.8, 3.2]
+    ],
+
+    buildings: [
+      // Hlavní zázemí a základy
+      { id:"c",   code:"CENT", name:"Centrála (Start)",        nameEn:"HQ (Start)",          rect:[5.8, 5.4, 8.8, 6.6], height:0.8 },
+      { id:"zs",  code:"Z-SOL",name:"Základna Solár",          nameEn:"Solar Base",          rect:[0.8, 2.0, 2.0, 2.9], height:1.0 },
+      { id:"zst", code:"Z-STR",name:"Základna Střelnice",     nameEn:"Shooting Range Base", rect:[10.2, 2.2, 11.8, 3.2], height:1.0 },
+      { id:"os",  code:"OSTR", name:"Ostré střelnice",        nameEn:"Firing Range",        rect:[11.0, 5.4, 12.5, 6.6], height:0.4 },
+
+      // Klíčové zóny a budovy
+      { id:"zk",  code:"ZKR",  name:"Zkrácená",               nameEn:"Shortened Bldg",      rect:[7.0, 2.3, 8.5, 2.8], height:1.2 },
+      { id:"b",   code:"BAR",  name:"Barák",                  nameEn:"House",               rect:[6.2, 3.8, 7.2, 4.2], height:1.0 },
+      { id:"g",   code:"GAR",  name:"Garáže",                 nameEn:"Garages",             rect:[8.0, 4.2, 8.8, 4.6], height:0.8 },
+      { id:"kop", code:"KOP",  name:"Kopec & Bunkr",          nameEn:"Hill & Bunker",       rect:[4.5, 2.2, 6.0, 2.8], height:1.4 },
+
+      // Taktická místa v prostoru (POIs)
+      { id:"bs",  code:"B-SAI",name:"Bunkr Saigon",           nameEn:"Saigon Bunker",       rect:[4.2, 0.6, 5.0, 0.9], height:0.5 },
+      { id:"osai",code:"O-SAI",name:"Odpaliště Saigon",       nameEn:"Saigon Launchpad",    rect:[3.8, 1.1, 4.8, 1.4], height:0.3 },
+      { id:"oc",  code:"OBL",  name:"Oblouk Cesta",           nameEn:"Arch Road",           rect:[7.2, 0.6, 8.2, 0.9], height:0.2 },
+      { id:"m",   code:"MOST", name:"Můstek",                 nameEn:"Bridge",              rect:[8.5, 1.2, 9.2, 1.5], height:0.4 },
+      { id:"j",   code:"JNG",  name:"Jungle",                 nameEn:"Jungle",              rect:[7.2, 1.6, 8.0, 1.9], height:0.3 },
+      { id:"ukr", code:"UKR",  name:"Úkryt",                  nameEn:"Hideout",             rect:[5.2, 1.6, 5.8, 1.9], height:0.5 },
+      { id:"prj", code:"PRE",  name:"Přejezd",                nameEn:"Crossing",            rect:[2.8, 1.6, 3.5, 1.9], height:0.2 },
+      { id:"osol",code:"O-SOL",name:"Odpaliště Solár",        nameEn:"Solar Launchpad",     rect:[2.2, 2.9, 3.2, 3.2], height:0.3 },
+      { id:"fox", code:"FOX",  name:"Foxhole",                nameEn:"Foxhole",             rect:[4.5, 3.1, 5.2, 3.4], height:0.3 },
+      { id:"sc",  code:"S-CES",name:"Solár Cesta",            nameEn:"Solar Road",          rect:[1.2, 3.6, 2.2, 3.9], height:0.2 },
+      { id:"bsol",code:"B-SOL",name:"Bunkr Solár",            nameEn:"Solar Bunker",        rect:[4.2, 3.8, 5.0, 4.1], height:0.5 },
+      { id:"ou",  code:"O-UDAR",name:"Odpaliště u Baráku",    nameEn:"House Launchpad",     rect:[6.0, 3.2, 7.2, 3.5], height:0.3 },
+      { id:"str", code:"STR",  name:"Stronghold",             nameEn:"Stronghold",          rect:[8.8, 2.3, 9.8, 2.6], height:0.6 },
+      { id:"tch", code:"TECH", name:"Technika",               nameEn:"Vehicles",            rect:[11.0, 3.6, 12.0, 4.0], height:0.4 }
+    ]
+  };
+
+  const svg = document.getElementById("map-svg");
+  const listEl = document.getElementById("poi-list");
+
+  const LABELS = {
+    cs: { back:"Zpět na hřiště", sidebar:"Místa na hřišti" },
+    en: { back:"Back to fields", sidebar:"Points of interest" }
+  };
+
+  function applyStaticText(lang) {
+    document.getElementById("back-label").textContent = LABELS[lang].back;
+    document.getElementById("sidebar-title").textContent = LABELS[lang].sidebar;
+  }
+
+  AM.wireDropdowns();
+  AM.wireLangSwitch((lang) => { applyStaticText(lang); engine.redraw(); });
+  applyStaticText(AM.getLang());
+
+  document.getElementById("back-btn").addEventListener("click", () => {
+    window.location.href = "menu.html";
+  });
+
+  const engine = MapEngine.init({
+    svg, listEl,
+    data: FIELD_DATA,
+    getLang: AM.getLang,
+    mountModeToggle: {
+      btn2d: document.getElementById("btn-2d"),
+      btn3d: document.getElementById("btn-3d")
+    }
+  });
+
+  const LOCATE_TEXT = {
+    cs: { btn:"Moje poloha", on:"Sleduji polohu", outside:"Jsi mimo hřiště",
+          denied:"Poloha zamítnuta v prohlížeči", unavailable:"Polohu se nepodařilo zjistit",
+          noAnchors:"Pro toto hřiště není poloha dostupná" },
+    en: { btn:"My location", on:"Tracking location", outside:"You are outside the field",
+          denied:"Location permission denied", unavailable:"Could not get location",
+          noAnchors:"Location isn't available for this field" }
+  };
+
+  const locateBtn = document.getElementById("locate-btn");
+  const locateLabel = document.getElementById("locate-label");
+  const locateStatus = document.getElementById("locate-status");
+  let watchId = null, tracking = false;
+
+  const hasGeo = FIELD_DATA.geoAnchors && FIELD_DATA.geoAnchors.length >= 3
+    && FIELD_DATA.geoAnchors.every(a => a.lat && a.lng);
+
+  if (!hasGeo) {
+    locateBtn.style.display = "none";
+  } else {
+    locateBtn.addEventListener("click", () => {
+      const lang = AM.getLang();
+      if (tracking) {
+        AMGeo.stop(watchId); watchId = null; tracking = false;
+        locateBtn.classList.remove("active", "outside");
+        locateLabel.textContent = LOCATE_TEXT[lang].btn;
+        locateStatus.textContent = "";
+        engine.setPlayer(null);
+        return;
+      }
+      tracking = true;
+      locateBtn.classList.add("active");
+      locateLabel.textContent = LOCATE_TEXT[lang].on;
+
+      watchId = AMGeo.watch(FIELD_DATA, (result) => {
+        const t = LOCATE_TEXT[AM.getLang()];
+        if (!result.ok) {
+          locateStatus.textContent = t[result.reason] || t.unavailable;
+          locateBtn.classList.remove("outside");
+          engine.setPlayer(null);
+          return;
+        }
+        if (result.inside) {
+          locateBtn.classList.remove("outside");
+          locateStatus.textContent = "";
+          engine.setPlayer({ col: result.col, row: result.row });
+        } else {
+          locateBtn.classList.add("outside");
+          locateStatus.textContent = t.outside;
+          engine.setPlayer(null);
+        }
+      });
+    });
+  }
+</script>
+
+</body>
+</html>
