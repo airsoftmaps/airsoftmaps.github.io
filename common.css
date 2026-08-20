@@ -1,6 +1,6 @@
 /* ==========================================================================
    AIRSOFT MAPS — common.css
-   Sdílený vizuální jazyk a Responzivní Layout bez scrollování stránky
+   Sdílený vizuální jazyk a Responzivní Layout
    ========================================================================== */
 
 :root {
@@ -21,17 +21,12 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-/* Zamčení obrazovky na 100vh bez scrollování celého webu */
 html, body {
   width: 100%;
-  height: 100vh;
-  max-height: 100vh;
-  overflow: hidden;
+  min-height: 100vh;
   background: var(--bg-0);
   color: var(--text);
   font-family: var(--font-body);
-  display: flex;
-  flex-direction: column;
 }
 
 body {
@@ -39,6 +34,8 @@ body {
     radial-gradient(ellipse at 50% 0%, rgba(255,122,26,.06), transparent 55%),
     radial-gradient(ellipse at 50% 50%, var(--bg-1), #000 85%);
   position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 body::before {
@@ -59,8 +56,8 @@ input { font-family: inherit; }
   position: relative; z-index: 5;
   display: flex; align-items: center; justify-content: space-between;
   gap: 16px;
-  padding: 12px 24px;
-  flex-shrink: 0;
+  padding: 16px 5vw;
+  flex-wrap: wrap;
 }
 
 .am-brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
@@ -71,13 +68,20 @@ input { font-family: inherit; }
 }
 .am-brand span em { color: var(--accent); font-style: normal; }
 
+.am-breadcrumb {
+  font-size: 12px; letter-spacing: .1em; color: var(--muted);
+  text-transform: uppercase; display: flex; align-items: center; gap: 8px;
+}
+.am-breadcrumb .sep { color: var(--muted-2); }
+.am-breadcrumb .current { color: var(--accent); }
+
 .am-field-title {
   font-family: var(--font-display); font-size: clamp(16px, 2vw, 22px);
   letter-spacing: .03em; text-transform: uppercase; text-align: center;
 }
 .am-field-title span { color: var(--accent); }
 
-.am-controls { display: flex; gap: 10px; align-items: center; }
+.am-controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 
 .am-btn {
   background: var(--panel-2); border: 1px solid var(--border); color: #c7ccd1;
@@ -103,13 +107,92 @@ input { font-family: inherit; }
 .am-dd-menu button:hover { background: rgba(255,122,26,.08); color: var(--accent); }
 
 /* ---------------------------------------------------------------------- */
-/* Map Toolbar                                                            */
+/* Explorer-style list (menu.html)                                         */
+/* ---------------------------------------------------------------------- */
+
+.am-explorer {
+  position: relative; z-index: 5;
+  max-width: 980px; width: 100%; margin: 0 auto; padding: 0 5vw 6vh;
+  flex: 1;
+}
+
+.am-toolbar-row {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; margin-bottom: 18px; flex-wrap: wrap;
+}
+
+.am-search {
+  position: relative; flex: 1; min-width: 220px; max-width: 360px;
+}
+.am-search input {
+  width: 100%; background: var(--panel-2); border: 1px solid var(--border);
+  border-radius: 2px; padding: 10px 14px 10px 34px; color: var(--text);
+  font-size: 14px; transition: border-color .2s ease;
+}
+.am-search input:focus { outline: none; border-color: var(--accent); }
+.am-search input::placeholder { color: var(--muted-2); }
+.am-search .icon {
+  position: absolute; left: 11px; top: 50%; transform: translateY(-50%);
+  color: var(--muted); font-size: 13px; pointer-events: none;
+}
+
+.am-table { border: 1px solid var(--border); border-radius: 3px; overflow: hidden; }
+
+.am-table-head {
+  display: grid; grid-template-columns: 2.2fr 1.2fr 1fr;
+  background: rgba(255,255,255,.02);
+  border-bottom: 1px solid var(--border);
+  font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--muted);
+}
+.am-table-head > div { padding: 10px 16px; }
+
+.am-row {
+  display: grid; grid-template-columns: 2.2fr 1.2fr 1fr; align-items: center;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer; transition: background .15s ease;
+  position: relative;
+}
+.am-row:last-child { border-bottom: none; }
+.am-row:hover { background: rgba(255,122,26,.06); }
+.am-row.disabled { cursor: not-allowed; opacity: .45; }
+.am-row.disabled:hover { background: none; }
+
+.am-row > div { padding: 13px 16px; font-size: 14px; }
+
+.am-row-name { display: flex; align-items: center; gap: 10px; }
+
+/* OPRAVA: Omezení velikosti ikon v řádcích tabulky */
+.am-row-icon, .am-row-name svg {
+  width: 20px !important;
+  height: 20px !important;
+  max-width: 20px !important;
+  max-height: 20px !important;
+  flex-shrink: 0;
+  color: var(--accent);
+  fill: currentColor;
+}
+
+.am-row-name b { font-weight: 700; letter-spacing: .01em; }
+.am-row-location { color: var(--muted); }
+
+.am-badge {
+  display: inline-block; font-size: 10px; letter-spacing: .1em;
+  text-transform: uppercase; padding: 4px 9px; border-radius: 20px;
+  border: 1px solid;
+}
+.am-badge.active { color: #3ddc97; border-color: #1d5a41; background: rgba(61,220,151,.07); }
+.am-badge.soon { color: var(--muted); border-color: var(--border); background: rgba(255,255,255,.02); }
+
+.am-empty { text-align: center; color: var(--muted-2); padding: 40px 0; font-size: 14px; }
+
+/* ---------------------------------------------------------------------- */
+/* Stránky hřišť (Field Pages)                                            */
 /* ---------------------------------------------------------------------- */
 
 .am-map-toolbar {
   position: relative; z-index: 5;
-  display: flex; justify-content: center; padding-bottom: 8px;
-  flex-shrink: 0;
+  display: flex; justify-content: center; padding-bottom: 12px;
 }
 .am-toggle {
   display: flex; border: 1px solid var(--border); border-radius: 2px; overflow: hidden;
@@ -117,66 +200,37 @@ input { font-family: inherit; }
 .am-toggle button {
   background: var(--panel-2); border: none; color: #c7ccd1;
   font-size: 12px; letter-spacing: .15em; text-transform: uppercase;
-  padding: 7px 18px; transition: background .2s ease, color .2s ease;
+  padding: 8px 20px; transition: background .2s ease, color .2s ease;
 }
 .am-toggle button.active { background: var(--accent); color: #0d0f12; font-weight: 700; }
 
-.am-locate-status {
-  font-size: 11px; color: var(--muted); letter-spacing: .05em;
-  text-align: center; padding-bottom: 4px; flex-shrink: 0;
-}
-
-/* ---------------------------------------------------------------------- */
-/* Map Main Body Layout                                                   */
-/* ---------------------------------------------------------------------- */
-
 .am-map-body {
   position: relative; z-index: 5;
-  flex: 1;
-  display: flex;
-  gap: 12px;
-  padding: 0 16px 16px 16px;
-  min-height: 0; /* Klíčové pro správné zobrazení bez scrollování */
+  flex: 1; margin: 0 5vw 3vh;
+  display: flex; gap: 16px; min-height: 500px;
 }
 
 .am-map-canvas {
-  flex: 1;
-  border: 1px solid var(--border);
-  border-radius: 3px;
-  background: #08090b;
-  position: relative;
-  overflow: hidden;
+  flex: 1; border: 1px solid var(--border); border-radius: 3px;
+  background: #08090b; position: relative; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
   touch-action: none;
-  height: 100%;
 }
 .am-map-canvas svg { width: 100%; height: 100%; display: block; }
 
-/* Postranní panel s body na hřišti */
 .am-sidebar {
-  width: 260px;
-  flex-shrink: 0;
-  border: 1px solid var(--border);
-  border-radius: 3px;
-  background: var(--panel);
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  overflow: hidden;
+  width: 260px; flex-shrink: 0;
+  border: 1px solid var(--border); border-radius: 3px;
+  background: var(--panel); overflow-y: auto; padding: 8px;
+  max-height: 75vh;
 }
 .am-sidebar-title {
   font-size: 11px; letter-spacing: .15em; text-transform: uppercase;
-  color: var(--muted); padding: 12px 14px; border-bottom: 1px solid var(--border);
-  background: rgba(255,255,255,.01);
+  color: var(--muted); padding: 8px 10px 10px;
 }
-#poi-list {
-  flex: 1;
-  overflow-y: auto; /* Pouze seznam bodů skroluje */
-  padding: 6px;
-}
-
 .am-poi {
   display: flex; align-items: center; gap: 9px;
-  padding: 8px 10px; border-radius: 2px; cursor: pointer;
+  padding: 9px 10px; border-radius: 2px; cursor: pointer;
   border: 1px solid transparent; transition: background .15s ease, border-color .15s ease;
   font-size: 13px;
 }
@@ -184,13 +238,10 @@ input { font-family: inherit; }
 .am-poi.active { border-color: var(--accent); background: rgba(255,122,26,.1); }
 .am-poi .code {
   font-family: var(--font-display); font-size: 11px; color: var(--accent);
-  width: 38px; flex-shrink: 0;
+  width: 32px; flex-shrink: 0;
 }
 
-/* ---------------------------------------------------------------------- */
-/* Zoom, Rotace & GPS prvky                                               */
-/* ---------------------------------------------------------------------- */
-
+/* Zoom, Rotace & GPS prvky */
 .am-map-controls {
   position: absolute; bottom: 16px; right: 16px;
   display: flex; flex-direction: column; gap: 6px; z-index: 10;
@@ -209,12 +260,17 @@ input { font-family: inherit; }
 .am-locate-btn {
   background: var(--panel-2); border: 1px solid var(--border); color: #c7ccd1;
   font-size: 12px; letter-spacing: .1em; text-transform: uppercase;
-  padding: 7px 14px; border-radius: 2px; cursor: pointer;
+  padding: 8px 14px; border-radius: 2px; cursor: pointer;
   display: flex; align-items: center; gap: 7px;
 }
 .am-locate-btn.active { border-color: #4aa3ff; color: #4aa3ff; }
 .am-locate-btn .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted-2); }
 .am-locate-btn.active .dot { background: #4aa3ff; }
+
+.am-locate-status {
+  font-size: 11px; color: var(--muted); letter-spacing: .05em;
+  text-align: center; padding: 0 5vw 6px; position: relative; z-index: 5;
+}
 
 .am-player-pulse {
   fill: rgba(74,163,255,.35); transform-origin: center; transform-box: fill-box;
@@ -222,8 +278,9 @@ input { font-family: inherit; }
 }
 @keyframes am-pulse { 0% { r: 7; opacity: .9; } 100% { r: 26; opacity: 0; } }
 
-/* Responzivita pro mobilní telefony */
 @media (max-width: 760px) {
   .am-map-body { flex-direction: column; }
-  .am-sidebar { width: 100%; height: 140px; }
+  .am-sidebar { width: 100%; max-height: 180px; }
+  .am-table-head, .am-row { grid-template-columns: 2fr 1fr; }
+  .am-table-head > div:nth-child(3), .am-row > div:nth-child(3) { display: none; }
 }
