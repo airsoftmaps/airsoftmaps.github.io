@@ -144,8 +144,8 @@ const MapEngine = (() => {
         "polygon",
         {
           points: ptsToStr(points),
-          fill: mapColor("--map-ground-fill", "rgba(255,255,255,.015)"),
-stroke: mapColor("--map-outline", "#eef1f0"),
+          fill: "var(--map-ground-fill)",
+stroke: "var(--map-outline)",
           "stroke-width": 3,
           "stroke-linejoin": "round"
         },
@@ -165,7 +165,7 @@ stroke: mapColor("--map-outline", "#eef1f0"),
         {
           points: ptsToStr(points),
           fill: "none",
-          stroke: mapColor("--map-road", "#3a3f47"),
+          stroke: "var(--map-road)",
           "stroke-width": 10,
           "stroke-linecap": "round",
           "stroke-linejoin": "round"
@@ -178,7 +178,7 @@ stroke: mapColor("--map-outline", "#eef1f0"),
         {
           points: ptsToStr(points),
           fill: "none",
-          stroke: mapColor("--map-road-inner", "#1a1c1f"),
+          stroke: "var(--map-road-inner)",
           "stroke-width": 4,
           "stroke-dasharray": "2 10",
           "stroke-linecap": "round"
@@ -269,13 +269,13 @@ stroke: mapColor("--map-outline", "#eef1f0"),
           height,
           fill:
   active
-    ? "rgba(255,122,26,.28)"
-    : mapColor("--map-building-fill", "rgba(238,241,240,.06)"),
+    ? "var(--accent-dim)"
+    : "var(--map-building-fill)",
 
 stroke:
   active
-    ? "#ff7a1a"
-    : mapColor("--map-outline", "#eef1f0"),
+    ? "var(--accent)"
+    : "var(--map-outline)",
           "stroke-width":
             active ? 3 : 2,
           rx: 2
@@ -302,8 +302,8 @@ stroke:
             ),
           fill:
   active
-    ? "#ff7a1a"
-    : mapColor("--map-text", "#eef1f0"),
+    ? "var(--accent)"
+    : "var(--map-text)",
           style:
             "pointer-events:none;"
         },
@@ -393,25 +393,16 @@ stroke:
       );
 
     const topColor =
-  active
-    ? "#ffb066"
-    : mapColor("--map-3d-top", "#4a5058");
+  active ? "var(--accent)" : "var(--map-3d-top)";
 
 const rightColor =
-  active
-    ? "#e0812a"
-    : mapColor("--map-3d-right", "#2f333a");
+  active ? "var(--accent)" : "var(--map-3d-right)";
 
 const frontColor =
-  active
-    ? "#b5631a"
-    : mapColor("--map-3d-front", "#1c1f24");
+  active ? "var(--accent)" : "var(--map-3d-front)";
 
 const strokeColor =
-  active
-    ? "#ff7a1a"
-    : mapColor("--map-3d-stroke", "#0a0b0d");
-
+  active ? "var(--accent)" : "var(--map-3d-stroke)";
     el(
       "polygon",
       {
@@ -548,7 +539,7 @@ const strokeColor =
         {
           points: ptsToStr(points),
           fill: "none",
-          stroke: mapColor("--map-road", "#33383f"),
+          stroke: "var(--map-road)",
           "stroke-width": 3
         },
         ground
