@@ -211,10 +211,21 @@ input { font-family: inherit; }
 }
 
 .am-map-canvas {
-  flex: 1; border: 1px solid var(--border); border-radius: 3px;
-  background: #08090b; position: relative; overflow: hidden;
-  display: flex; align-items: center; justify-content: center;
-  touch-action: none;
+  flex: 1; 
+  border: 1px solid var(--border); 
+  border-radius: 3px;
+  background: #08090b; 
+  position: relative; 
+  overflow: hidden;
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+  
+  /* Klíčové vlastnosti pro plynulé gesta na mobilu */
+  touch-action: none !important;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
 .am-map-canvas svg { width: 100%; height: 100%; display: block; }
 
