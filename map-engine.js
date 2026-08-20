@@ -19,13 +19,9 @@ const MapEngine = (function () {
     return e;
   }
 
-  /* ---------------- 2D projekce ---------------- */
-
   function flatPoint(col, row) {
     return { x: FLAT.originX + col * FLAT.colW, y: FLAT.originY + row * FLAT.rowH };
   }
-
-  /* ---------------- 3D (izometrická) projekce ---------------- */
 
   function isoPoint(col, row, height) {
     const x = (col - row) * (ISO.tileW / 2);
@@ -37,11 +33,17 @@ const MapEngine = (function () {
     return pts.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(" ");
   }
 
+  function drawPlayerDot(parent, point) {
+    const g = el("g", { class: "am-player-dot" }, parent);
+    el("circle", { cx: point.x, cy: point.y, class: "am-player-pulse", r: 10 }, g);
+    el("circle", { cx: point.x, cy: point.y, r: 7, fill: "#4aa3ff", stroke: "#eef1f0", "stroke-width": 2 }, g);
+  }
+
   /* ======================================================================
      RENDER 2D
      ====================================================================== */
 
-  function render2D(svg, data, lang, onBuildingClick, activeId) {
+  function render2D(svg, data, lang, onBuildingClick, activeId, playerPos) {
     svg.innerHTML = "";
     svg.setAttribute("viewBox", data.viewBoxFlat || "0 0 1360 800");
 
@@ -49,7 +51,6 @@ const MapEngine = (function () {
     const gRoads  = el("g", { class: "layer-roads" }, svg);
     const gBuild  = el("g", { class: "layer-buildings" }, svg);
 
-    // hranice hřiště
     if (data.boundary) {
       const pts = data.boundary.map(([c, r]) => flatPoint(c, r));
       el("polygon", {
@@ -61,35 +62,24 @@ const MapEngine = (function () {
       }, gGround);
     }
 
-    // cesty
     (data.roads || []).forEach(road => {
       const pts = road.points.map(([c, r]) => flatPoint(c, r));
       el("polyline", {
-        points: ptsToStr(pts),
-        fill: "none",
-        stroke: "#3a3f47",
-        "stroke-width": 10,
-        "stroke-linecap": "round",
-        "stroke-linejoin": "round"
+        points: ptsToStr(pts), fill: "none", stroke: "#3a3f47",
+        "stroke-width": 10, "stroke-linecap": "round", "stroke-linejoin": "round"
       }, gRoads);
       el("polyline", {
-        points: ptsToStr(pts),
-        fill: "none",
-        stroke: "#1a1c1f",
-        "stroke-width": 4,
-        "stroke-dasharray": "2 10",
-        "stroke-linecap": "round"
+        points: ptsToStr(pts), fill: "none", stroke: "#1a1c1f",
+        "stroke-width": 4, "stroke-dasharray": "2 10", "stroke-linecap": "round"
       }, gRoads);
     });
 
-    // vstupní šipka
     if (data.entrance) {
       const p = flatPoint(data.entrance.col, data.entrance.row);
       const g = el("g", { transform: `translate(${p.x},${p.y}) rotate(${data.entrance.angle || 0})` }, gGround);
       el("path", { d: "M-14,0 L10,0 M2,-8 L10,0 L2,8", stroke: "#ff7a1a", "stroke-width": 3, fill: "none", "stroke-linecap": "round", "stroke-linejoin": "round" }, g);
     }
 
-    // budovy
     data.buildings.forEach(b => {
       const [c1, r1, c2, r2] = b.rect;
       const p1 = flatPoint(c1, r1);
@@ -125,10 +115,15 @@ const MapEngine = (function () {
       g.style.cursor = "pointer";
       g.addEventListener("click", () => onBuildingClick(b.id));
     });
+
+    if (playerPos) {
+      const gPlayer = el("g", { class: "layer-player" }, svg);
+      drawPlayerDot(gPlayer, flatPoint(playerPos.col, playerPos.row));
+    }
   }
 
   /* ======================================================================
-     RENDER 3D (izometrické bloky + stromy)
+     RENDER 3D
      ====================================================================== */
 
   function buildBlock(g, c1, r1, c2, r2, height, id, isActive, onClick) {
@@ -153,7 +148,7 @@ const MapEngine = (function () {
     return gb;
   }
 
-  function render3D(svg, data, lang, onBuildingClick, activeId) {
+  function render3D(svg, data, lang, onBuildingClick, activeId, playerPos) {
     svg.innerHTML = "";
 
     const gGround = el("g", { class: "layer-ground" }, svg);
@@ -165,11 +160,8 @@ const MapEngine = (function () {
     if (data.boundary) {
       const pts = data.boundary.map(([c, r]) => isoPoint(c, r, 0));
       el("polygon", {
-        points: ptsToStr(pts),
-        fill: "none",
-        stroke: "rgba(238,241,240,.18)",
-        "stroke-width": 1.4,
-        "stroke-dasharray": "4 5"
+        points: ptsToStr(pts), fill: "none", stroke: "rgba(238,241,240,.18)",
+        "stroke-width": 1.4, "stroke-dasharray": "4 5"
       }, gGround);
     }
 
@@ -211,14 +203,15 @@ const MapEngine = (function () {
       }, gLabels).textContent = b.code;
     });
 
+    if (playerPos) {
+      const gPlayer = el("g", { class: "layer-player" }, svg);
+      drawPlayerDot(gPlayer, isoPoint(playerPos.col, playerPos.row, 0.05));
+    }
+
     const bbox = svg.getBBox();
     const pad = 40;
     svg.setAttribute("viewBox", `${bbox.x - pad} ${bbox.y - pad} ${bbox.width + pad * 2} ${bbox.height + pad * 2}`);
   }
-
-  /* ======================================================================
-     Sidebar list
-     ====================================================================== */
 
   function renderList(listEl, data, lang, activeId, onSelect) {
     listEl.innerHTML = "";
@@ -232,19 +225,21 @@ const MapEngine = (function () {
     });
   }
 
-  /* ======================================================================
-     Public API
-     ====================================================================== */
-
   function init(opts) {
     let mode = "2d";
     let activeId = null;
+    let playerPos = null;
 
     function draw() {
       const lang = opts.getLang();
-      if (mode === "2d") render2D(opts.svg, opts.data, lang, select, activeId);
-      else render3D(opts.svg, opts.data, lang, select, activeId);
+      if (mode === "2d") render2D(opts.svg, opts.data, lang, select, activeId, playerPos);
+      else render3D(opts.svg, opts.data, lang, select, activeId, playerPos);
       renderList(opts.listEl, opts.data, lang, activeId, select);
+    }
+
+    function setPlayer(pos) {
+      playerPos = pos;
+      draw();
     }
 
     function select(id) {
@@ -266,7 +261,7 @@ const MapEngine = (function () {
     });
 
     draw();
-    return { redraw: draw };
+    return { redraw: draw, setPlayer };
   }
 
   return { init };
