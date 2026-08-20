@@ -9,6 +9,14 @@ const MapEngine = (() => {
 
   const SVG_NS = "http://www.w3.org/2000/svg";
 
+     function mapColor(variable, fallback) {
+    const value = getComputedStyle(document.documentElement)
+      .getPropertyValue(variable)
+      .trim();
+
+    return value || fallback;
+  }
+   
   const FLAT = {
   originX: 70,
   originY: 60,
@@ -781,10 +789,7 @@ const strokeColor =
 
   const svg = opts.svg;
   const parentCanvas = svg.closest(".am-map-canvas");
-     function mapColor(variable, fallback) {
-  const value = getComputedStyle(svg).getPropertyValue(variable).trim();
-  return value || fallback;
-}
+     
 
   if (!svg) {
     console.error("MapEngine: SVG element nebyl nalezen.");
