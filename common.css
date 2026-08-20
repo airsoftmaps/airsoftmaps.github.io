@@ -244,3 +244,37 @@ input { font-family: inherit; }
   .am-table-head, .am-row { grid-template-columns: 2fr 1fr; }
   .am-table-head > div:nth-child(3), .am-row > div:nth-child(3) { display: none; }
 }
+/* ---------------------------------------------------------------------- */
+/* Player location dot                                                     */
+/* ---------------------------------------------------------------------- */
+
+.am-player-pulse {
+  fill: rgba(74,163,255,.35);
+  transform-origin: center;
+  transform-box: fill-box;
+  animation: am-pulse 1.8s ease-out infinite;
+}
+@keyframes am-pulse {
+  0%   { r: 7;  opacity: .9; }
+  100% { r: 26; opacity: 0; }
+}
+
+.am-locate-btn {
+  background: var(--panel-2); border: 1px solid var(--border); color: #c7ccd1;
+  font-size: 12px; letter-spacing: .1em; text-transform: uppercase;
+  padding: 8px 14px; border-radius: 2px; cursor: pointer;
+  display: flex; align-items: center; gap: 7px;
+  transition: border-color .2s ease, color .2s ease;
+}
+.am-locate-btn:hover { border-color: var(--border-hover); color: var(--accent); }
+.am-locate-btn.active { border-color: #4aa3ff; color: #4aa3ff; }
+.am-locate-btn .dot {
+  width: 8px; height: 8px; border-radius: 50%; background: var(--muted-2); flex-shrink: 0;
+}
+.am-locate-btn.active .dot { background: #4aa3ff; }
+.am-locate-btn.outside .dot { background: #e8b93d; }
+
+.am-locate-status {
+  font-size: 11px; color: var(--muted); letter-spacing: .05em;
+  text-align: center; padding: 0 5vw 6px; position: relative; z-index: 5;
+}
