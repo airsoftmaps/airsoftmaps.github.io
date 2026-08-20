@@ -6,7 +6,8 @@
 <title>AIRSOFT MAPS — Hřiště</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="common.css">
+<!-- Načtení CSS s verzí v=2 přímo v hlavě dokumentu -->
+<link rel="stylesheet" href="common.css?v=2">
 </head>
 <body>
 
@@ -62,13 +63,13 @@
 <script src="common.js"></script>
 <script>
   const BATTLEFIELDS = [
-    { id: "dalov",  href: "dalov.html",  name: "Airsoft park Dalov",  nameEn: "Airsoft park Dalov",  location: "Dalov",  status: "active" },
-    { id: "grygov", href: "null", name: "Airsoft park Grygov", nameEn: "Airsoft park Grygov", location: "Grygov", status: "coming_soon" },
-    { id: "mokra_horakov", href: "mokra_horakov.html", name: "Airsoft park Mokrá Horákov", nameEn: "Airsoft park Mokra-Horakov", location: "Mokra-Horákov", status: "active" },
-    { id: "battle_ostrava", href: "null", name: "Battle Aréna Ostrava", nameEn: "Battle arena Ostrava", location: "Ostrava", status: "coming_soon" },
-    { id: "doubrava", href: "null", name: "Airsoft Park Doubrava", nameEn: "Airsoft park Doubrava", location: "Doubrava", status: "coming_soon" },
-    { id: "paskov", href: "null", name: "Action Aréna Paskov", nameEn: "Action arena Paskov", location: "Paskov", status: "coming_soon" },
-    { id: "respawn", href: "null", name: "Aréál Respawn z.s.", nameEn: "Respawn z.s. Area", location: "Frýdek-Místek", status: "coming_soon" },
+    { id: "dalov",          href: "dalov.html",          name: "Airsoft park Dalov",         nameEn: "Airsoft park Dalov",         location: "Dalov",        status: "active" },
+    { id: "grygov",         href: "null",                name: "Airsoft park Grygov",        nameEn: "Airsoft park Grygov",        location: "Grygov",       status: "coming_soon" },
+    { id: "mokra_horakov", href: "mokra_horakov.html",  name: "Airsoft park Mokrá Horákov", nameEn: "Airsoft park Mokra-Horakov", location: "Mokra-Horákov",status: "active" },
+    { id: "battle_ostrava", href: "null",                name: "Battle Aréna Ostrava",       nameEn: "Battle arena Ostrava",       location: "Ostrava",      status: "coming_soon" },
+    { id: "doubrava",       href: "null",                name: "Airsoft Park Doubrava",      nameEn: "Airsoft park Doubrava",      location: "Doubrava",     status: "coming_soon" },
+    { id: "paskov",         href: "null",                name: "Action Aréna Paskov",        nameEn: "Action arena Paskov",        location: "Paskov",       status: "coming_soon" },
+    { id: "respawn",        href: "null",                name: "Aréál Respawn z.s.",         nameEn: "Respawn z.s. Area",          location: "Frýdek-Místek",status: "coming_soon" },
   ];
 
   const TEXT = {
@@ -106,7 +107,7 @@
       row.className = "am-row" + (soon ? " disabled" : "");
       row.innerHTML = `
         <div class="am-row-name">
-          <svg class="am-row-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+          <svg class="am-row-icon" width="20" height="20" style="width:20px; height:20px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
             <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/>
           </svg>
           <b>${name}</b>
@@ -128,4 +129,3 @@
 
 </body>
 </html>
-<link rel="stylesheet" href="common.css?v=2">
