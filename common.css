@@ -1,6 +1,6 @@
 /* ==========================================================================
    AIRSOFT MAPS — common.css
-   Sdílený vizuální jazyk pro menu.html a všechny stránky hřišť.
+   Sdílený vizuální jazyk a Responzivní Layout bez scrollování stránky
    ========================================================================== */
 
 :root {
@@ -21,22 +21,24 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
+/* Zamčení obrazovky na 100vh bez scrollování celého webu */
 html, body {
   width: 100%;
-  min-height: 100%;
+  height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
   background: var(--bg-0);
   color: var(--text);
   font-family: var(--font-body);
+  display: flex;
+  flex-direction: column;
 }
 
 body {
   background:
     radial-gradient(ellipse at 50% 0%, rgba(255,122,26,.06), transparent 55%),
     radial-gradient(ellipse at 50% 50%, var(--bg-1), #000 85%);
-  min-height: 100vh;
   position: relative;
-  display: flex;
-  flex-direction: column;
 }
 
 body::before {
@@ -50,15 +52,15 @@ button { font-family: inherit; cursor: pointer; }
 input { font-family: inherit; }
 
 /* ---------------------------------------------------------------------- */
-/* Header — used on every page (menu + field pages)                        */
+/* Header                                                                 */
 /* ---------------------------------------------------------------------- */
 
 .am-header {
   position: relative; z-index: 5;
   display: flex; align-items: center; justify-content: space-between;
   gap: 16px;
-  padding: 16px 5vw;
-  flex-wrap: wrap;
+  padding: 12px 24px;
+  flex-shrink: 0;
 }
 
 .am-brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
@@ -69,14 +71,13 @@ input { font-family: inherit; }
 }
 .am-brand span em { color: var(--accent); font-style: normal; }
 
-.am-breadcrumb {
-  font-size: 12px; letter-spacing: .1em; color: var(--muted);
-  text-transform: uppercase; display: flex; align-items: center; gap: 8px;
+.am-field-title {
+  font-family: var(--font-display); font-size: clamp(16px, 2vw, 22px);
+  letter-spacing: .03em; text-transform: uppercase; text-align: center;
 }
-.am-breadcrumb .sep { color: var(--muted-2); }
-.am-breadcrumb .current { color: var(--accent); }
+.am-field-title span { color: var(--accent); }
 
-.am-controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.am-controls { display: flex; gap: 10px; align-items: center; }
 
 .am-btn {
   background: var(--panel-2); border: 1px solid var(--border); color: #c7ccd1;
@@ -87,7 +88,7 @@ input { font-family: inherit; }
 }
 .am-btn:hover { border-color: var(--border-hover); color: var(--accent); }
 
-/* ---- dropdown ---- */
+/* Dropdown */
 .am-dd { position: relative; }
 .am-dd-menu {
   position: absolute; top: calc(100% + 6px); right: 0; min-width: 170px;
@@ -100,93 +101,15 @@ input { font-family: inherit; }
   color: #c7ccd1; font-size: 13px; padding: 10px 14px; cursor: pointer;
 }
 .am-dd-menu button:hover { background: rgba(255,122,26,.08); color: var(--accent); }
-.am-dd-menu button.active { color: var(--accent); font-weight: 700; }
 
 /* ---------------------------------------------------------------------- */
-/* Explorer-style list (menu.html)                                         */
+/* Map Toolbar                                                            */
 /* ---------------------------------------------------------------------- */
-
-.am-explorer {
-  position: relative; z-index: 5;
-  max-width: 980px; width: 100%; margin: 0 auto; padding: 0 5vw 6vh;
-  flex: 1;
-}
-
-.am-toolbar-row {
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 16px; margin-bottom: 18px; flex-wrap: wrap;
-}
-
-.am-search {
-  position: relative; flex: 1; min-width: 220px; max-width: 360px;
-}
-.am-search input {
-  width: 100%; background: var(--panel-2); border: 1px solid var(--border);
-  border-radius: 2px; padding: 10px 14px 10px 34px; color: var(--text);
-  font-size: 14px; transition: border-color .2s ease;
-}
-.am-search input:focus { outline: none; border-color: var(--accent); }
-.am-search input::placeholder { color: var(--muted-2); }
-.am-search .icon {
-  position: absolute; left: 11px; top: 50%; transform: translateY(-50%);
-  color: var(--muted); font-size: 13px; pointer-events: none;
-}
-
-.am-table { border: 1px solid var(--border); border-radius: 3px; overflow: hidden; }
-
-.am-table-head {
-  display: grid; grid-template-columns: 2.2fr 1.2fr 1fr;
-  background: rgba(255,255,255,.02);
-  border-bottom: 1px solid var(--border);
-  font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
-  color: var(--muted);
-}
-.am-table-head > div { padding: 10px 16px; }
-
-.am-row {
-  display: grid; grid-template-columns: 2.2fr 1.2fr 1fr; align-items: center;
-  border-bottom: 1px solid var(--border);
-  cursor: pointer; transition: background .15s ease;
-  position: relative;
-}
-.am-row:last-child { border-bottom: none; }
-.am-row:hover { background: rgba(255,122,26,.06); }
-.am-row.disabled { cursor: not-allowed; opacity: .45; }
-.am-row.disabled:hover { background: none; }
-
-.am-row > div { padding: 13px 16px; font-size: 14px; }
-
-.am-row-name { display: flex; align-items: center; gap: 10px; }
-.am-row-icon {
-  width: 20px; height: 20px; flex-shrink: 0; color: var(--accent);
-}
-.am-row-name b { font-weight: 700; letter-spacing: .01em; }
-
-.am-row-location { color: var(--muted); }
-
-.am-badge {
-  display: inline-block; font-size: 10px; letter-spacing: .1em;
-  text-transform: uppercase; padding: 4px 9px; border-radius: 20px;
-  border: 1px solid;
-}
-.am-badge.active { color: #3ddc97; border-color: #1d5a41; background: rgba(61,220,151,.07); }
-.am-badge.soon { color: var(--muted); border-color: var(--border); background: rgba(255,255,255,.02); }
-
-.am-empty { text-align: center; color: var(--muted-2); padding: 40px 0; font-size: 14px; }
-
-/* ---------------------------------------------------------------------- */
-/* Field (battlefield) page shell                                          */
-/* ---------------------------------------------------------------------- */
-
-.am-field-title {
-  font-family: var(--font-display); font-size: clamp(18px, 2.6vw, 26px);
-  letter-spacing: .03em; text-transform: uppercase; text-align: center;
-}
-.am-field-title span { color: var(--accent); }
 
 .am-map-toolbar {
   position: relative; z-index: 5;
-  display: flex; justify-content: center; padding-bottom: 14px;
+  display: flex; justify-content: center; padding-bottom: 8px;
+  flex-shrink: 0;
 }
 .am-toggle {
   display: flex; border: 1px solid var(--border); border-radius: 2px; overflow: hidden;
@@ -194,130 +117,113 @@ input { font-family: inherit; }
 .am-toggle button {
   background: var(--panel-2); border: none; color: #c7ccd1;
   font-size: 12px; letter-spacing: .15em; text-transform: uppercase;
-  padding: 9px 22px; transition: background .2s ease, color .2s ease;
+  padding: 7px 18px; transition: background .2s ease, color .2s ease;
 }
 .am-toggle button.active { background: var(--accent); color: #0d0f12; font-weight: 700; }
 
+.am-locate-status {
+  font-size: 11px; color: var(--muted); letter-spacing: .05em;
+  text-align: center; padding-bottom: 4px; flex-shrink: 0;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Map Main Body Layout                                                   */
+/* ---------------------------------------------------------------------- */
+
 .am-map-body {
   position: relative; z-index: 5;
-  flex: 1; margin: 0 5vw 3vh; min-height: 0;
-  display: flex; gap: 16px;
+  flex: 1;
+  display: flex;
+  gap: 12px;
+  padding: 0 16px 16px 16px;
+  min-height: 0; /* Klíčové pro správné zobrazení bez scrollování */
 }
 
 .am-map-canvas {
-  flex: 1; border: 1px solid var(--border); border-radius: 3px;
-  background: #08090b; position: relative; overflow: hidden;
-  display: flex; align-items: center; justify-content: center;
-  min-height: 0;
+  flex: 1;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: #08090b;
+  position: relative;
+  overflow: hidden;
+  touch-action: none;
+  height: 100%;
 }
 .am-map-canvas svg { width: 100%; height: 100%; display: block; }
 
+/* Postranní panel s body na hřišti */
 .am-sidebar {
-  width: 240px; flex-shrink: 0;
-  border: 1px solid var(--border); border-radius: 3px;
-  background: var(--panel-2); overflow-y: auto; padding: 8px;
+  width: 260px;
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: var(--panel);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
 }
 .am-sidebar-title {
   font-size: 11px; letter-spacing: .15em; text-transform: uppercase;
-  color: var(--muted); padding: 8px 10px 10px;
+  color: var(--muted); padding: 12px 14px; border-bottom: 1px solid var(--border);
+  background: rgba(255,255,255,.01);
 }
+#poi-list {
+  flex: 1;
+  overflow-y: auto; /* Pouze seznam bodů skroluje */
+  padding: 6px;
+}
+
 .am-poi {
   display: flex; align-items: center; gap: 9px;
-  padding: 9px 10px; border-radius: 2px; cursor: pointer;
+  padding: 8px 10px; border-radius: 2px; cursor: pointer;
   border: 1px solid transparent; transition: background .15s ease, border-color .15s ease;
   font-size: 13px;
 }
 .am-poi:hover { background: rgba(255,122,26,.07); }
 .am-poi.active { border-color: var(--accent); background: rgba(255,122,26,.1); }
-.am-poi .dot {
-  width: 9px; height: 9px; border-radius: 50%; background: var(--accent);
-  flex-shrink: 0;
-}
 .am-poi .code {
   font-family: var(--font-display); font-size: 11px; color: var(--accent);
-  width: 24px; flex-shrink: 0;
+  width: 38px; flex-shrink: 0;
 }
 
-@media (max-width: 760px) {
-  .am-map-body { flex-direction: column; }
-  .am-sidebar { width: 100%; max-height: 160px; }
-  .am-table-head, .am-row { grid-template-columns: 2fr 1fr; }
-  .am-table-head > div:nth-child(3), .am-row > div:nth-child(3) { display: none; }
-}
 /* ---------------------------------------------------------------------- */
-/* Player location dot                                                     */
+/* Zoom, Rotace & GPS prvky                                               */
 /* ---------------------------------------------------------------------- */
 
-.am-player-pulse {
-  fill: rgba(74,163,255,.35);
-  transform-origin: center;
-  transform-box: fill-box;
-  animation: am-pulse 1.8s ease-out infinite;
+.am-map-controls {
+  position: absolute; bottom: 16px; right: 16px;
+  display: flex; flex-direction: column; gap: 6px; z-index: 10;
 }
-@keyframes am-pulse {
-  0%   { r: 7;  opacity: .9; }
-  100% { r: 26; opacity: 0; }
+.am-map-controls button {
+  width: 36px; height: 36px;
+  background: var(--panel); border: 1px solid var(--border);
+  color: var(--text); font-size: 16px; font-weight: bold; border-radius: 3px;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,.4); transition: border-color .2s, color .2s, background .2s;
+}
+.am-map-controls button:hover {
+  border-color: var(--accent); color: var(--accent); background: rgba(255,122,26,.1);
 }
 
 .am-locate-btn {
   background: var(--panel-2); border: 1px solid var(--border); color: #c7ccd1;
   font-size: 12px; letter-spacing: .1em; text-transform: uppercase;
-  padding: 8px 14px; border-radius: 2px; cursor: pointer;
+  padding: 7px 14px; border-radius: 2px; cursor: pointer;
   display: flex; align-items: center; gap: 7px;
-  transition: border-color .2s ease, color .2s ease;
 }
-.am-locate-btn:hover { border-color: var(--border-hover); color: var(--accent); }
 .am-locate-btn.active { border-color: #4aa3ff; color: #4aa3ff; }
-.am-locate-btn .dot {
-  width: 8px; height: 8px; border-radius: 50%; background: var(--muted-2); flex-shrink: 0;
-}
+.am-locate-btn .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted-2); }
 .am-locate-btn.active .dot { background: #4aa3ff; }
-.am-locate-btn.outside .dot { background: #e8b93d; }
 
-.am-locate-status {
-  font-size: 11px; color: var(--muted); letter-spacing: .05em;
-  text-align: center; padding: 0 5vw 6px; position: relative; z-index: 5;
+.am-player-pulse {
+  fill: rgba(74,163,255,.35); transform-origin: center; transform-box: fill-box;
+  animation: am-pulse 1.8s ease-out infinite;
 }
-/* Ovládací prvky pro Zoom a Rotaci */
-.am-map-canvas {
-  touch-action: none; /* Zabranuje scrollovani stranky pri posunu mapy */
-}
+@keyframes am-pulse { 0% { r: 7; opacity: .9; } 100% { r: 26; opacity: 0; } }
 
-.am-map-controls {
-  position: absolute;
-  bottom: 16px;
-  right: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  z-index: 10;
-}
-
-.am-map-controls button {
-  width: 36px;
-  height: 36px;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  color: var(--text);
-  font-size: 16px;
-  font-weight: bold;
-  border-radius: 3px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 12px rgba(0,0,0,.4);
-  transition: border-color .2s, color .2s, background .2s;
-}
-
-.am-map-controls button:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-  background: rgba(255,122,26,.1);
-}
-
-.am-map-viewport {
-  width: 100%;
-  height: 100%;
-  transform-origin: center center;
-  transition: transform 0.1s ease-out;
+/* Responzivita pro mobilní telefony */
+@media (max-width: 760px) {
+  .am-map-body { flex-direction: column; }
+  .am-sidebar { width: 100%; height: 140px; }
 }
