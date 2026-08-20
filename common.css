@@ -278,3 +278,46 @@ input { font-family: inherit; }
   font-size: 11px; color: var(--muted); letter-spacing: .05em;
   text-align: center; padding: 0 5vw 6px; position: relative; z-index: 5;
 }
+/* Ovládací prvky pro Zoom a Rotaci */
+.am-map-canvas {
+  touch-action: none; /* Zabranuje scrollovani stranky pri posunu mapy */
+}
+
+.am-map-controls {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  z-index: 10;
+}
+
+.am-map-controls button {
+  width: 36px;
+  height: 36px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,.4);
+  transition: border-color .2s, color .2s, background .2s;
+}
+
+.am-map-controls button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(255,122,26,.1);
+}
+
+.am-map-viewport {
+  width: 100%;
+  height: 100%;
+  transform-origin: center center;
+  transition: transform 0.1s ease-out;
+}
