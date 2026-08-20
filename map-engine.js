@@ -295,7 +295,51 @@ const MapEngine = (function () {
       const zoomFactor = e.deltaY < 0 ? 1.15 : 0.85;
       applyZoom(zoomFactor);
     }, { passive: false });
+     /* ==========================================================================
+       DOTYKOVÁ GESTA PRO MOBILY (Pan & Pinch-to-Zoom)
+       ========================================================================== */
+    let touchStartX = 0, touchStartY = 0;
+    let initialPinchDist = null;
 
+    function getPinchDistance(e) {
+      return Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+    }
+
+    svg.addEventListener("touchstart", e => {
+      if (e.touches.length === 1) {
+        // Posun 1 prstem
+        isDragging = true;
+        touchStartX = e.touches[0].clientX - translateX;
+        touchStartY = e.touches[0].clientY - translateY;
+      } else if (e.touches.length === 2) {
+        // Zoom 2 prsty
+        isDragging = false;
+        initialPinchDist = getPinchDistance(e);
+      }
+    }, { passive: true });
+
+    svg.addEventListener("touchmove", e => {
+      if (isDragging && e.touches.length === 1) {
+        translateX = e.touches[0].clientX - touchStartX;
+        translateY = e.touches[0].clientY - touchStartY;
+        updateTransform();
+      } else if (e.touches.length === 2 && initialPinchDist) {
+        const newDist = getPinchDistance(e);
+        const zoomFactor = newDist / initialPinchDist;
+        
+        applyZoom(zoomFactor);
+        initialPinchDist = newDist;
+      }
+    }, { passive: true });
+
+    svg.addEventListener("touchend", () => {
+      isDragging = false;
+      initialPinchDist = null;
+    });    
+     
     function draw() {
       const lang = opts.getLang();
       if (mode === "2d") {
