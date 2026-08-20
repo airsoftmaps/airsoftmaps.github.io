@@ -555,26 +555,6 @@ body {
    MOBILE / GLOBAL — zabránění bílému overscroll pozadí
    ======================================================================== */
 
-html {
-  background: var(--bg-0);
-  overscroll-behavior: none;
-}
-
-body {
-  min-height: 100dvh;
-  background:
-    radial-gradient(
-      ellipse at 50% 0%,
-      var(--theme-glow),
-      transparent 55%
-    ),
-    radial-gradient(
-      ellipse at 50% 50%,
-      var(--bg-1),
-      #000 85%
-    );
-  overscroll-behavior: none;
-}
 
 /* Mobilní Safari/Chrome nesmí vytvořit bílý prostor při tažení stránky */
 @media (max-width: 760px) {
@@ -637,6 +617,156 @@ body {
 
   .am-map-body {
     overflow: visible;
+  }
+
+}
+/* ========================================================================
+   MOBILE — FINAL SCROLL FIX
+   ======================================================================== */
+
+html {
+  width: 100%;
+  min-height: 100%;
+  background: var(--bg-0);
+  overflow-x: hidden;
+}
+
+body {
+  width: 100%;
+  min-width: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+
+  margin: 0;
+  padding: 0;
+
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  background:
+    radial-gradient(
+      ellipse at 50% 0%,
+      var(--theme-glow),
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse at 50% 50%,
+      var(--bg-1),
+      #000 85%
+    );
+}
+
+/* ------------------------------------------------
+   MOBIL
+   ------------------------------------------------ */
+
+@media (max-width: 760px) {
+
+  
+  body {
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    /*
+      Důležité:
+      stránka má mít skutečnou výšku podle obsahu,
+      ne pouze výšku displeje.
+    */
+    height: auto;
+    min-height: 100dvh;
+
+    overscroll-behavior-x: none;
+  }
+
+  /* ------------------------------------------------
+     HLAVNÍ OBSAH MAPY
+     ------------------------------------------------ */
+
+  .am-map-body {
+    width: auto;
+    max-width: none;
+
+    margin: 0 10px 10px;
+
+    display: flex;
+    flex-direction: column;
+
+    /*
+      ZRUŠÍME flex natahování na výšku displeje.
+      Obsah pak může normálně vytvořit delší stránku.
+    */
+    flex: none;
+
+    min-height: 0;
+
+    overflow: visible;
+  }
+
+  /* ------------------------------------------------
+     MAPA
+     ------------------------------------------------ */
+
+  .am-map-canvas {
+    width: 100%;
+
+    /*
+      Mapa má vlastní prostor,
+      ale neurčuje výšku celé stránky.
+    */
+    flex: none;
+
+    min-height: 55vh;
+    height: 55vh;
+
+    overflow: hidden;
+
+    /*
+      Tohle nechává gesta mapy fungovat.
+    */
+    touch-action: none;
+  }
+
+  /* ------------------------------------------------
+     SEZNAM BUDOV / POI
+     ------------------------------------------------ */
+
+  .am-sidebar {
+    width: 100%;
+
+    /*
+      Sidebar už nesmí být omezený na výšku,
+      která by nám schovala obsah.
+    */
+    max-height: none;
+    height: auto;
+
+    overflow: visible;
+
+    flex: none;
+  }
+
+  /* ------------------------------------------------
+     MENU / SEZNAM HŘIŠŤ
+     ------------------------------------------------ */
+
+  .am-explorer {
+    width: 100%;
+    max-width: none;
+
+    flex: none;
+
+    padding: 10px;
+  }
+
+  /* ------------------------------------------------
+     HEADER
+     ------------------------------------------------ */
+
+  .am-header {
+    width: 100%;
+    max-width: none;
+
+    flex: none;
   }
 
 }
