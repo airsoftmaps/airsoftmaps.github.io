@@ -402,7 +402,9 @@ const frontColor =
   active ? "var(--accent)" : "var(--map-3d-front)";
 
 const strokeColor =
-  active ? "var(--accent)" : "var(--map-3d-stroke)";
+  active
+    ? "var(--accent)"
+    : "var(--map-outline)";
     el(
       "polygon",
       {
@@ -955,12 +957,14 @@ function fitMapToWindow() {
   const availableHeight =
     Math.max(100, rect.h - padding * 2);
 
+  let mapX = 0;
+  let mapY = 0;
   let mapWidth = 1000;
   let mapHeight = 750;
 
-  /*
-     2D mapa má rozměry přímo z viewBoxu.
-  */
+  /* =========================================================
+     2D
+     ========================================================= */
 
   if (mode === "2d") {
 
@@ -971,30 +975,59 @@ function fitMapToWindow() {
     const parts =
       viewBox.split(/\s+/).map(Number);
 
-    mapWidth = parts[2];
-    mapHeight = parts[3];
+    mapX = parts[0] || 0;
+    mapY = parts[1] || 0;
+    mapWidth = parts[2] || 1360;
+    mapHeight = parts[3] || 800;
 
-  } else {
+  }
 
-    /*
-       U 3D si vezmeme skutečný bounding box.
-    */
+  /* =========================================================
+     3D
+     ========================================================= */
+
+  else {
 
     try {
 
       const bbox =
         viewport.getBBox();
 
+      mapX = bbox.x;
+      mapY = bbox.y;
       mapWidth = bbox.width;
       mapHeight = bbox.height;
 
     } catch (err) {
 
+      mapX = 0;
+      mapY = 0;
       mapWidth = 1000;
       mapHeight = 700;
 
     }
   }
+
+  /* Bezpečnostní fallback */
+
+  if (
+    !Number.isFinite(mapX) ||
+    !Number.isFinite(mapY) ||
+    !Number.isFinite(mapWidth) ||
+    !Number.isFinite(mapHeight) ||
+    mapWidth <= 0 ||
+    mapHeight <= 0
+  ) {
+
+    mapX = 0;
+    mapY = 0;
+    mapWidth = 1000;
+    mapHeight = 700;
+  }
+
+  /* =========================================================
+     VÝPOČET SCALE
+     ========================================================= */
 
   const scaleX =
     availableWidth / mapWidth;
@@ -1002,17 +1035,8 @@ function fitMapToWindow() {
   const scaleY =
     availableHeight / mapHeight;
 
-  /*
-     Vždy použijeme MENŠÍ hodnotu.
-     Tím pádem mapa nikdy nevyleze z okna.
-  */
-
   scale =
     Math.min(scaleX, scaleY);
-
-  /*
-     Trochu rozumnější limity.
-  */
 
   scale =
     Math.min(
@@ -1020,28 +1044,35 @@ function fitMapToWindow() {
       2
     );
 
-  /*
-     Počítáme skutečný rozměr mapy po zoomu.
-  */
+  /* =========================================================
+     SKUTEČNÉ CENTROVÁNÍ
+     
+     Důležité:
+     mapX/mapY mohou být záporné.
+     Proto nestačí pouze width/height.
+     ========================================================= */
 
-  const finalWidth =
-    mapWidth * scale;
+  const mapCenterX =
+    mapX + mapWidth / 2;
 
-  const finalHeight =
-    mapHeight * scale;
-
-  /*
-     Vycentrování mapy v okně.
-  */
+  const mapCenterY =
+    mapY + mapHeight / 2;
 
   translateX =
-    (rect.w - finalWidth) / 2;
+    rect.w / 2 -
+    mapCenterX * scale;
 
   translateY =
-    (rect.h - finalHeight) / 2;
+    rect.h / 2 -
+    mapCenterY * scale;
+
+  /*
+     Při automatickém fitu vždy začínáme bez rotace.
+     */
+
+  rotation = 0;
 
   updateTransform();
-
 }
 function resetTransform() {
 
