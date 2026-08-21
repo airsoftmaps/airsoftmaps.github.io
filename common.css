@@ -62,7 +62,39 @@ input { font-family: inherit; }
   flex-wrap: wrap;
 }
 
-.am-brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+.am-brand{
+    display:flex;
+    align-items:center;
+    text-decoration:none;
+}
+
+.am-brand-logo{
+
+    display:block;
+
+    width:150px;
+    height:auto;
+
+    max-height:58px;
+
+    object-fit:contain;
+
+    filter:
+        drop-shadow(
+            0 0 10px
+            rgba(255,122,26,.18)
+        );
+}
+
+@media(max-width:760px){
+
+    .am-brand-logo{
+
+        width:125px;
+        max-height:50px;
+    }
+
+}
 .am-brand img { width: 32px; height: 32px; object-fit: contain; filter: drop-shadow(0 0 10px rgba(255,122,26,.3)); }
 .am-brand span {
   font-family: var(--font-display); letter-spacing: .06em; font-size: 16px;
