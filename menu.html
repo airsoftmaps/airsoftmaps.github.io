@@ -13,7 +13,7 @@
 
 <header class="am-header">
   <a class="am-brand" href="menu.html">
-    <img src="logos/Tymove logo B.png" alt="Airsoft Maps">
+    <img src="logos/¨logoam.png" alt="Airsoft Maps">
     <span>AIRSOFT <em>MAPS</em></span>
   </a>
 
@@ -42,15 +42,53 @@
   </div>
 </header>
 
-<div class="am-explorer">
+<main class="am-explorer">
+
+  <div class="am-menu-heading">
+    <div class="am-menu-kicker">
+      <span class="am-kicker-line"></span>
+      <span data-i18n="menuKicker">BATTLEFIELD DATABASE</span>
+      <span class="am-kicker-line"></span>
+    </div>
+
+    <h1 data-i18n="menuTitle">HŘIŠTĚ</h1>
+
+    <p class="am-menu-subtitle" data-i18n="menuSubtitle">
+      Vyber bojiště a vstup do mapy
+    </p>
+  </div>
+
   <div class="am-toolbar-row">
+
     <div class="am-search">
       <span class="icon">⌕</span>
-      <input type="text" id="field-search" placeholder="Hledat podle názvu...">
+      <input
+        type="text"
+        id="field-search"
+        placeholder="Hledat podle názvu..."
+      >
     </div>
+
+    <div class="am-field-count">
+      <span id="field-count">0</span>
+      <span data-i18n="available">BATTLEFIELDS</span>
+    </div>
+
   </div>
 
   <div class="am-table">
+
+    <div class="am-table-head">
+      <div data-i18n="colName">Název</div>
+      <div data-i18n="colLocation">Lokalita</div>
+      <div data-i18n="colStatus">Stav</div>
+    </div>
+
+    <div id="field-rows"></div>
+
+  </div>
+
+</main>
     <div class="am-table-head">
       <div data-i18n="colName">Název</div>
       <div data-i18n="colLocation">Lokalita</div>
@@ -72,10 +110,37 @@
     { id: "respawn",        href: "null",                name: "Aréál Respawn z.s.",         nameEn: "Respawn z.s. Area",          location: "Frýdek-Místek",status: "coming_soon" },
   ];
 
-  const TEXT = {
-    cs: { crumb: "Hřiště", search: "Hledat podle názvu...", colName: "Název", colLocation: "Lokalita", colStatus: "Stav", active: "Aktivní", soon: "Připravujeme", empty: "Žádné hřiště nenalezeno.", style: "Styl" },
-    en: { crumb: "Battlefields", search: "Search by name...", colName: "Name", colLocation: "Location", colStatus: "Status", active: "Active", soon: "Coming soon", empty: "No battlefields found.", style: "Style" }
-  };
+ const TEXT = {
+  cs: {
+    crumb: "Hřiště",
+    menuKicker: "DATABÁZE BOJIŠŤ",
+    menuTitle: "HŘIŠTĚ",
+    menuSubtitle: "Vyber bojiště a vstup do mapy",
+    available: "HŘIŠŤ",
+    search: "Hledat podle názvu...",
+    colName: "Název",
+    colLocation: "Lokalita",
+    colStatus: "Stav",
+    active: "Aktivní",
+    soon: "Připravujeme",
+    empty: "Žádné hřiště nenalezeno."
+  },
+
+  en: {
+    crumb: "Battlefields",
+    menuKicker: "BATTLEFIELD DATABASE",
+    menuTitle: "BATTLEFIELDS",
+    menuSubtitle: "Select a battlefield and enter the map",
+    available: "BATTLEFIELDS",
+    search: "Search by name...",
+    colName: "Name",
+    colLocation: "Location",
+    colStatus: "Status",
+    active: "Active",
+    soon: "Coming soon",
+    empty: "No battlefields found."
+  }
+};
 
   const rowsEl = document.getElementById("field-rows");
   const searchEl = document.getElementById("field-search");
