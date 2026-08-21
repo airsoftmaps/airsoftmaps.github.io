@@ -68,39 +68,82 @@ input { font-family: inherit; }
     text-decoration:none;
 }
 
-.am-brand-logo{
+/* ========================================================================
+   AIRSOFT MAPS — HEADER LOGO
+   ======================================================================== */
 
-    display:block;
+.am-brand {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  text-decoration: none;
 
-    width:150px;
-    height:auto;
+  width: auto;
+  height: auto;
 
-    max-height:58px;
-
-    object-fit:contain;
-
-    filter:
-        drop-shadow(
-            0 0 10px
-            rgba(255,122,26,.18)
-        );
+  flex-shrink: 0;
 }
 
-@media(max-width:760px){
+.am-brand-logo {
+  display: block;
 
-    .am-brand-logo{
+  /*
+     Logo má originál 1023 × 683.
+     Neomezujeme ho výškou, protože tím bychom
+     zbytečně zabíjeli jeho velikost.
+  */
+  width: 190px;
+  height: auto;
 
-        width:125px;
-        max-height:50px;
-    }
+  object-fit: contain;
+  object-position: center;
+
+  flex-shrink: 0;
+
+  filter:
+    drop-shadow(0 0 10px rgba(255,122,26,.18))
+    drop-shadow(0 0 24px rgba(255,122,26,.08));
+}
+
+
+/* ------------------------------------------------------------------------
+   DESKTOP
+   ------------------------------------------------------------------------ */
+
+@media (min-width: 1200px) {
+
+  .am-brand-logo {
+    width: 220px;
+  }
 
 }
-.am-brand img { width: 32px; height: 32px; object-fit: contain; filter: drop-shadow(0 0 10px rgba(255,122,26,.3)); }
-.am-brand span {
-  font-family: var(--font-display); letter-spacing: .06em; font-size: 16px;
-  color: var(--text); text-transform: uppercase;
+
+
+/* ------------------------------------------------------------------------
+   TABLET
+   ------------------------------------------------------------------------ */
+
+@media (max-width: 900px) {
+
+  .am-brand-logo {
+    width: 180px;
+  }
+
 }
-.am-brand span em { color: var(--accent); font-style: normal; }
+
+
+/* ------------------------------------------------------------------------
+   MOBILE
+   ------------------------------------------------------------------------ */
+
+@media (max-width: 760px) {
+
+  .am-brand-logo {
+    width: 150px;
+  }
+
+}
+
 
 .am-breadcrumb {
   font-size: 12px; letter-spacing: .1em; color: var(--muted);
