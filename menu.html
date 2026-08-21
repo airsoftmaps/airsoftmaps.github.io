@@ -159,7 +159,11 @@
     });
 
     const filtered = BATTLEFIELDS.filter(f => (lang === "en" ? f.nameEn : f.name).toLowerCase().includes(q));
+const countEl = document.getElementById("field-count");
 
+if (countEl) {
+  countEl.textContent = String(filtered.length).padStart(2, "0");
+}
     if (filtered.length === 0) {
       rowsEl.innerHTML = `<div class="am-empty">${t.empty}</div>`;
       return;
