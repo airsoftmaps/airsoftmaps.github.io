@@ -302,62 +302,136 @@ body{
 
 
 /* =========================================================
-   TITLE
+   AIRSOFT MAPS LOGO
 ========================================================= */
 
 #title-wrap{
     opacity:0;
+    transform:scale(.92);
+    filter:blur(8px);
 
-    transform:scale(1.15);
-
-    filter:blur(6px);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
 }
 
 #card-title.show #title-wrap{
     opacity:1;
-
     transform:scale(1);
-
     filter:blur(0);
 
     transition:
-        opacity .5s ease,
-        transform .7s cubic-bezier(.2,.9,.2,1),
-        filter .5s ease;
+        opacity .6s ease,
+        transform .9s cubic-bezier(.2,.9,.2,1),
+        filter .6s ease;
 }
 
-#title{
-    font-family:"Anton",sans-serif;
 
-    font-size:
-        clamp(48px,10vw,110px);
+/* ---------------------------------------------------------
+   HLAVNÍ LOGO
+--------------------------------------------------------- */
 
-    letter-spacing:.03em;
+.am-intro-logo{
 
-    color:#eef1f0;
+    display:block;
 
-    text-shadow:
-        0 0 40px rgba(255,122,26,.35);
+    width:
+        min(
+            620px,
+            72vw
+        );
 
-    line-height:.95;
+    height:auto;
+
+    max-height:42vh;
+
+    object-fit:contain;
+
+    filter:
+        drop-shadow(
+            0 0 18px
+            rgba(255,122,26,.18)
+        )
+        drop-shadow(
+            0 0 55px
+            rgba(255,122,26,.08)
+        );
+
+    transform:translateY(8px);
+
+    transition:
+        transform 1s cubic-bezier(.2,.9,.2,1),
+        filter .8s ease;
 }
 
-#title span{
-    color:#ff7a1a;
+#card-title.show .am-intro-logo{
+    transform:translateY(0);
 }
+
+
+/* ---------------------------------------------------------
+   TAGLINE
+--------------------------------------------------------- */
 
 #tagline{
-    margin-top:10px;
+
+    margin-top:24px;
 
     font-size:14px;
 
-    letter-spacing:.5em;
+    letter-spacing:.55em;
 
     text-transform:uppercase;
 
     color:#9aa2ab;
+
+    padding-left:.55em;
+
+    opacity:0;
+
+    transform:translateY(8px);
+
+    transition:
+        opacity .7s ease .45s,
+        transform .7s ease .45s;
 }
 
+#card-title.show #tagline{
+
+    opacity:1;
+
+    transform:translateY(0);
+}
+
+
+/* ---------------------------------------------------------
+   MOBILE
+--------------------------------------------------------- */
+
+@media(max-width:640px){
+
+    .am-intro-logo{
+
+        width:78vw;
+
+        max-width:480px;
+
+        max-height:32vh;
+    }
+
+    #tagline{
+
+        font-size:10px;
+
+        letter-spacing:.35em;
+
+        padding-left:.35em;
+
+        margin-top:18px;
+    }
+
+}
 
 /* =========================================================
    CONTINUE
