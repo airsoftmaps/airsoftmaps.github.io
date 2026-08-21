@@ -2033,3 +2033,327 @@ html[data-theme="fortnite"] [data-theme="fortnite"] {
   }
 
 }
+/* ==========================================================================
+   AIRSOFT MAPS — ADAPTIVE GAME MENU
+   ========================================================================== */
+
+
+/* --------------------------------------------------------------------------
+   BASE MENU
+   -------------------------------------------------------------------------- */
+
+.am-menu-heading {
+  text-align: center;
+  padding: 42px 20px 30px;
+}
+
+.am-menu-kicker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .28em;
+  text-transform: uppercase;
+}
+
+.am-kicker-line {
+  width: 45px;
+  height: 1px;
+  background: var(--border);
+}
+
+.am-menu-heading h1 {
+  margin-top: 12px;
+
+  font-family: var(--font-display);
+  font-size: clamp(34px, 6vw, 58px);
+  line-height: .95;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+
+  color: var(--text);
+}
+
+.am-menu-subtitle {
+  margin-top: 12px;
+
+  color: var(--muted);
+  font-size: 13px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.am-field-count {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+.am-field-count span:first-child {
+  color: var(--accent);
+  font-family: var(--font-display);
+  font-size: 18px;
+}
+
+
+/* ==========================================================================
+   RESIDENT EVIL
+   ========================================================================== */
+
+html[data-theme="resident-evil"] .am-menu-heading {
+  padding-top: 55px;
+  padding-bottom: 38px;
+}
+
+html[data-theme="resident-evil"] .am-menu-kicker {
+  color: #746765;
+  letter-spacing: .32em;
+}
+
+html[data-theme="resident-evil"] .am-kicker-line {
+  background: #512121;
+}
+
+html[data-theme="resident-evil"] .am-menu-heading h1 {
+  font-family: Georgia, serif;
+  font-weight: 400;
+  letter-spacing: .14em;
+
+  text-shadow:
+    0 0 20px rgba(180,0,0,.15);
+}
+
+html[data-theme="resident-evil"] .am-menu-subtitle {
+  color: #746765;
+  letter-spacing: .18em;
+}
+
+html[data-theme="resident-evil"] .am-field-count {
+  font-family: monospace;
+}
+
+html[data-theme="resident-evil"] .am-field-count span:first-child {
+  color: #d71920;
+}
+
+html[data-theme="resident-evil"] .am-table {
+  position: relative;
+}
+
+
+/* Database numbering */
+
+html[data-theme="resident-evil"] .am-row {
+  counter-increment: battlefield;
+}
+
+html[data-theme="resident-evil"] #field-rows {
+  counter-reset: battlefield;
+}
+
+html[data-theme="resident-evil"] .am-row::before {
+  content: "0" counter(battlefield);
+
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  font-family: monospace;
+  font-size: 9px;
+  color: #624848;
+
+  letter-spacing: .08em;
+}
+
+html[data-theme="resident-evil"] .am-row > div:first-child {
+  padding-left: 58px;
+}
+
+
+/* ==========================================================================
+   PUBG
+   ========================================================================== */
+
+html[data-theme="pubg"] .am-menu-heading {
+  text-align: left;
+  padding-top: 34px;
+}
+
+html[data-theme="pubg"] .am-menu-kicker {
+  justify-content: flex-start;
+  color: #777c66;
+  letter-spacing: .22em;
+}
+
+html[data-theme="pubg"] .am-menu-kicker .am-kicker-line:first-child {
+  display: none;
+}
+
+html[data-theme="pubg"] .am-menu-heading h1 {
+  margin-top: 8px;
+
+  font-family: "Rajdhani", sans-serif;
+  font-size: clamp(42px, 7vw, 70px);
+  font-weight: 700;
+  letter-spacing: .08em;
+}
+
+html[data-theme="pubg"] .am-menu-subtitle {
+  margin-top: 2px;
+  color: #777c66;
+}
+
+html[data-theme="pubg"] .am-toolbar-row {
+  border-top: 1px solid #353a2b;
+  border-bottom: 1px solid #353a2b;
+  padding: 12px 0;
+}
+
+html[data-theme="pubg"] .am-field-count {
+  font-family: monospace;
+}
+
+html[data-theme="pubg"] .am-field-count span:first-child {
+  color: #d7d34b;
+}
+
+
+/* ==========================================================================
+   FORTNITE
+   ========================================================================== */
+
+html[data-theme="fortnite"] .am-menu-heading {
+  padding-top: 48px;
+  transform: rotate(-1deg);
+}
+
+html[data-theme="fortnite"] .am-menu-kicker {
+  color: #27c2ff;
+  font-family: "Rajdhani", sans-serif;
+  font-weight: 700;
+  letter-spacing: .16em;
+}
+
+html[data-theme="fortnite"] .am-kicker-line {
+  height: 3px;
+  background: #9d5cff;
+}
+
+html[data-theme="fortnite"] .am-menu-heading h1 {
+  font-family: "Anton", sans-serif;
+  font-size: clamp(44px, 8vw, 78px);
+  letter-spacing: .01em;
+
+  color: #fff;
+
+  text-shadow:
+    4px 4px 0 #9d5cff,
+    8px 8px 0 rgba(39,194,255,.35);
+}
+
+html[data-theme="fortnite"] .am-menu-subtitle {
+  color: #c7bce5;
+  font-weight: 600;
+}
+
+html[data-theme="fortnite"] .am-field-count {
+  background: #211b3b;
+  padding: 8px 12px;
+  border-radius: 4px;
+  box-shadow: 0 3px 0 #0a0913;
+}
+
+html[data-theme="fortnite"] .am-field-count span:first-child {
+  color: #fcfd00;
+}
+
+
+/* ==========================================================================
+   DARK
+   ========================================================================== */
+
+html[data-theme="dark"] .am-menu-heading h1 {
+  text-shadow: 0 0 25px rgba(255,122,26,.08);
+}
+
+
+/* ==========================================================================
+   LIGHT
+   ========================================================================== */
+
+html[data-theme="light"] .am-menu-heading h1 {
+  color: #111315;
+}
+
+html[data-theme="light"] .am-kicker-line {
+  background: #c9cbc9;
+}
+
+
+/* ==========================================================================
+   MOBILE
+   ========================================================================== */
+
+@media (max-width: 760px) {
+
+  .am-menu-heading {
+    padding: 28px 10px 22px;
+  }
+
+  .am-menu-kicker {
+    gap: 8px;
+    font-size: 8px;
+    letter-spacing: .18em;
+  }
+
+  .am-kicker-line {
+    width: 25px;
+  }
+
+  .am-menu-heading h1 {
+    font-size: 40px;
+  }
+
+  .am-menu-subtitle {
+    font-size: 11px;
+  }
+
+  .am-toolbar-row {
+    align-items: stretch;
+  }
+
+  .am-search {
+    max-width: none;
+  }
+
+  .am-field-count {
+    justify-content: center;
+  }
+
+  html[data-theme="pubg"] .am-menu-heading {
+    text-align: left;
+  }
+
+  html[data-theme="fortnite"] .am-menu-heading {
+    padding-top: 32px;
+  }
+
+  html[data-theme="resident-evil"] .am-row::before {
+    left: 10px;
+  }
+
+  html[data-theme="resident-evil"] .am-row > div:first-child {
+    padding-left: 40px;
+  }
+}
