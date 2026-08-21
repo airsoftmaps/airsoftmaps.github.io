@@ -55,10 +55,18 @@ input { font-family: inherit; }
 /* ---------------------------------------------------------------------- */
 
 .am-header {
-  position: relative; z-index: 100;
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 16px;
-  padding: 16px 5vw;
+  position: relative;
+  z-index: 100;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 28px;
+
+  padding: 22px 5vw;
+  min-height: 92px;
+
   flex-wrap: wrap;
 }
 
@@ -146,7 +154,7 @@ input { font-family: inherit; }
 
 
 .am-breadcrumb {
-  font-size: 12px; letter-spacing: .1em; color: var(--muted);
+  font-size: 14px; letter-spacing: .14em; color: var(--muted);
   text-transform: uppercase; display: flex; align-items: center; gap: 8px;
 }
 .am-breadcrumb .sep { color: var(--muted-2); }
@@ -162,8 +170,8 @@ input { font-family: inherit; }
 
 .am-btn {
   background: var(--panel-2); border: 1px solid var(--border); color: #c7ccd1;
-  font-size: 12px; letter-spacing: .1em; text-transform: uppercase;
-  padding: 8px 14px; border-radius: 2px; cursor: pointer;
+  font-size: 13px; letter-spacing: .12em; text-transform: uppercase;
+  padding: 11px 17px; min-height: 42px; border-radius: 2px; cursor: pointer;
   transition: border-color .2s ease, color .2s ease;
   display: flex; align-items: center; gap: 6px; white-space: nowrap;
 }
@@ -216,8 +224,8 @@ input { font-family: inherit; }
 }
 .am-search input {
   width: 100%; background: var(--panel-2); border: 1px solid var(--border);
-  border-radius: 2px; padding: 10px 14px 10px 34px; color: var(--text);
-  font-size: 14px; transition: border-color .2s ease;
+  border-radius: 2px; padding: 13px 16px 13px 40px; color: var(--text);
+  font-size: 15px; min-height: 44px; transition: border-color .2s ease;
 }
 .am-search input:focus { outline: none; border-color: var(--accent); }
 .am-search input::placeholder { color: var(--muted-2); }
@@ -248,7 +256,7 @@ input { font-family: inherit; }
 .am-row.disabled { cursor: not-allowed; opacity: .45; }
 .am-row.disabled:hover { background: none; }
 
-.am-row > div { padding: 13px 16px; font-size: 14px; }
+.am-row > div { padding: 18px 20px; font-size: 16px; }
 
 .am-row-name { display: flex; align-items: center; gap: 10px; }
 
@@ -263,7 +271,7 @@ input { font-family: inherit; }
   fill: currentColor;
 }
 
-.am-row-name b { font-weight: 700; letter-spacing: .01em; }
+.am-row-name b { font-size: 17px; font-weight: 700; letter-spacing: .02em; }
 .am-row-location { color: var(--muted); }
 
 .am-badge {
