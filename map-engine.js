@@ -1,46 +1,26 @@
 /* ==========================================================================
    AIRSOFT MAPS — map-engine.js
-
    2D / 3D mapa
    Zoom / Pan / Rotation
    Mouse + Touch + Stylus přes Pointer Events
-
-   MOBIL:
-   ☝ 1 prst  = pan
-   🤏 2 prsty = zoom
-   🔄 2 prsty = rotace
-   🤏🔄 2 prsty = pan + zoom + rotace
-
-   DESKTOP:
-   🖱 drag = pan
-   🖱 wheel = zoom
-   ALT + drag = plynulá rotace
    ========================================================================== */
 
 const MapEngine = (() => {
 
   const SVG_NS = "http://www.w3.org/2000/svg";
 
-  /* ========================================================================
-     ZÁKLADNÍ GEOMETRIE
-     ======================================================================== */
-
   const FLAT = {
-    originX: 70,
-    originY: 60,
-    colW: 88,
-    rowH: 98
-  };
+  originX: 70,
+  originY: 60,
+  colW: 88,
+  rowH: 98
+};
 
   const ISO = {
     tileW: 108,
     tileH: 62,
     heightScale: 42
   };
-
-  /* ========================================================================
-     SVG HELPER
-     ======================================================================== */
 
   function el(name, attrs = {}, parent) {
 
@@ -58,10 +38,6 @@ const MapEngine = (() => {
     return node;
   }
 
-  /* ========================================================================
-     BODY MAPY
-     ======================================================================== */
-
   function flatPoint(col, row) {
 
     return {
@@ -73,13 +49,9 @@ const MapEngine = (() => {
   function isoPoint(col, row, height = 0) {
 
     return {
-      x:
-        (col - row) *
-        (ISO.tileW / 2),
-
+      x: (col - row) * (ISO.tileW / 2),
       y:
-        (col + row) *
-        (ISO.tileH / 2) -
+        (col + row) * (ISO.tileH / 2) -
         height * ISO.heightScale
     };
   }
@@ -92,10 +64,6 @@ const MapEngine = (() => {
       )
       .join(" ");
   }
-
-  /* ========================================================================
-     PLAYER DOT
-     ======================================================================== */
 
   function drawPlayerDot(parent, point) {
 
@@ -149,29 +117,13 @@ const MapEngine = (() => {
     container.innerHTML = "";
 
     const ground =
-      el(
-        "g",
-        { class: "layer-ground" },
-        container
-      );
+      el("g", { class: "layer-ground" }, container);
 
     const roads =
-      el(
-        "g",
-        { class: "layer-roads" },
-        container
-      );
+      el("g", { class: "layer-roads" }, container);
 
     const buildings =
-      el(
-        "g",
-        { class: "layer-buildings" },
-        container
-      );
-
-    /* ----------------------------------------------------------------------
-       HRANICE
-       ---------------------------------------------------------------------- */
+      el("g", { class: "layer-buildings" }, container);
 
     if (data.boundary) {
 
@@ -192,10 +144,6 @@ const MapEngine = (() => {
         ground
       );
     }
-
-    /* ----------------------------------------------------------------------
-       CESTY
-       ---------------------------------------------------------------------- */
 
     (data.roads || []).forEach(road => {
 
@@ -231,10 +179,6 @@ const MapEngine = (() => {
       );
     });
 
-    /* ----------------------------------------------------------------------
-       VSTUP
-       ---------------------------------------------------------------------- */
-
     if (data.entrance) {
 
       const p =
@@ -243,23 +187,21 @@ const MapEngine = (() => {
           data.entrance.row
         );
 
-      const g =
-        el(
-          "g",
-          {
-            transform:
-              `translate(${p.x},${p.y}) ` +
-              `rotate(${data.entrance.angle || 0})`,
-            "pointer-events": "none"
-          },
-          ground
-        );
+      const g = el(
+        "g",
+        {
+          transform:
+            `translate(${p.x},${p.y}) ` +
+            `rotate(${data.entrance.angle || 0})`,
+          "pointer-events": "none"
+        },
+        ground
+      );
 
       el(
         "path",
         {
-          d:
-            "M-14,0 L10,0 M2,-8 L10,0 L2,8",
+          d: "M-14,0 L10,0 M2,-8 L10,0 L2,8",
           stroke: "#ff7a1a",
           "stroke-width": 3,
           fill: "none",
@@ -270,18 +212,10 @@ const MapEngine = (() => {
       );
     }
 
-    /* ----------------------------------------------------------------------
-       BUDOVY
-       ---------------------------------------------------------------------- */
-
     (data.buildings || []).forEach(building => {
 
-      const [
-        c1,
-        r1,
-        c2,
-        r2
-      ] = building.rect;
+      const [c1, r1, c2, r2] =
+        building.rect;
 
       const p1 =
         flatPoint(c1, r1);
@@ -325,20 +259,16 @@ const MapEngine = (() => {
           y: p1.y,
           width,
           height,
-
           fill:
             active
               ? "rgba(255,122,26,.28)"
               : "rgba(238,241,240,.06)",
-
           stroke:
             active
               ? "#ff7a1a"
               : "#eef1f0",
-
           "stroke-width":
             active ? 3 : 2,
-
           rx: 2
         },
         group
@@ -350,8 +280,8 @@ const MapEngine = (() => {
           x: cx,
           y: cy + 5,
           "text-anchor": "middle",
-          "font-family": "Anton, sans-serif",
-
+          "font-family":
+            "Anton, sans-serif",
           "font-size":
             Math.max(
               11,
@@ -361,12 +291,10 @@ const MapEngine = (() => {
                 (building.code.length * 1.3)
               )
             ),
-
           fill:
             active
               ? "#ff7a1a"
               : "#eef1f0",
-
           style:
             "pointer-events:none;"
         },
@@ -379,19 +307,11 @@ const MapEngine = (() => {
       group.addEventListener(
         "click",
         e => {
-
           e.stopPropagation();
-
-          onBuildingClick(
-            building.id
-          );
+          onBuildingClick(building.id);
         }
       );
     });
-
-    /* ----------------------------------------------------------------------
-       PLAYER
-       ---------------------------------------------------------------------- */
 
     if (playerPos) {
 
@@ -403,7 +323,6 @@ const MapEngine = (() => {
           },
           container
         ),
-
         flatPoint(
           playerPos.col,
           playerPos.row
@@ -413,7 +332,7 @@ const MapEngine = (() => {
   }
 
   /* ========================================================================
-     3D BUILDING
+     3D
      ======================================================================== */
 
   function buildBlock(
@@ -428,74 +347,31 @@ const MapEngine = (() => {
     onClick
   ) {
 
-    const AA = {
-      c: c1,
-      r: r1
-    };
-
-    const BA = {
-      c: c2,
-      r: r1
-    };
-
-    const BB = {
-      c: c2,
-      r: r2
-    };
-
-    const AB = {
-      c: c1,
-      r: r2
-    };
+    const AA = { c: c1, r: r1 };
+    const BA = { c: c2, r: r1 };
+    const BB = { c: c2, r: r2 };
+    const AB = { c: c1, r: r2 };
 
     const topAA =
-      isoPoint(
-        AA.c,
-        AA.r,
-        height
-      );
+      isoPoint(AA.c, AA.r, height);
 
     const topBA =
-      isoPoint(
-        BA.c,
-        BA.r,
-        height
-      );
+      isoPoint(BA.c, BA.r, height);
 
     const topBB =
-      isoPoint(
-        BB.c,
-        BB.r,
-        height
-      );
+      isoPoint(BB.c, BB.r, height);
 
     const topAB =
-      isoPoint(
-        AB.c,
-        AB.r,
-        height
-      );
+      isoPoint(AB.c, AB.r, height);
 
     const baseBA =
-      isoPoint(
-        BA.c,
-        BA.r,
-        0
-      );
+      isoPoint(BA.c, BA.r, 0);
 
     const baseBB =
-      isoPoint(
-        BB.c,
-        BB.r,
-        0
-      );
+      isoPoint(BB.c, BB.r, 0);
 
     const baseAB =
-      isoPoint(
-        AB.c,
-        AB.r,
-        0
-      );
+      isoPoint(AB.c, AB.r, 0);
 
     const group =
       el(
@@ -508,38 +384,26 @@ const MapEngine = (() => {
       );
 
     const topColor =
-      active
-        ? "#ffb066"
-        : "#4a5058";
+      active ? "#ffb066" : "#4a5058";
 
     const rightColor =
-      active
-        ? "#e0812a"
-        : "#2f333a";
+      active ? "#e0812a" : "#2f333a";
 
     const frontColor =
-      active
-        ? "#b5631a"
-        : "#1c1f24";
+      active ? "#b5631a" : "#1c1f24";
 
     const strokeColor =
-      active
-        ? "#ff7a1a"
-        : "#0a0b0d";
-
-    /* TOP */
+      active ? "#ff7a1a" : "#0a0b0d";
 
     el(
       "polygon",
       {
-        points:
-          ptsToStr([
-            topAA,
-            topBA,
-            topBB,
-            topAB
-          ]),
-
+        points: ptsToStr([
+          topAA,
+          topBA,
+          topBB,
+          topAB
+        ]),
         fill: topColor,
         stroke: strokeColor,
         "stroke-width": 1
@@ -547,19 +411,15 @@ const MapEngine = (() => {
       group
     );
 
-    /* RIGHT */
-
     el(
       "polygon",
       {
-        points:
-          ptsToStr([
-            topBA,
-            topBB,
-            baseBB,
-            baseBA
-          ]),
-
+        points: ptsToStr([
+          topBA,
+          topBB,
+          baseBB,
+          baseBA
+        ]),
         fill: rightColor,
         stroke: strokeColor,
         "stroke-width": 1
@@ -567,19 +427,15 @@ const MapEngine = (() => {
       group
     );
 
-    /* FRONT */
-
     el(
       "polygon",
       {
-        points:
-          ptsToStr([
-            topBB,
-            topAB,
-            baseAB,
-            baseBB
-          ]),
-
+        points: ptsToStr([
+          topBB,
+          topAB,
+          baseAB,
+          baseBB
+        ]),
         fill: frontColor,
         stroke: strokeColor,
         "stroke-width": 1
@@ -592,19 +448,13 @@ const MapEngine = (() => {
     group.addEventListener(
       "click",
       e => {
-
         e.stopPropagation();
-
         onClick(id);
       }
     );
 
     return group;
   }
-
-  /* ========================================================================
-     3D
-     ======================================================================== */
 
   function render3D(
     container,
@@ -618,11 +468,7 @@ const MapEngine = (() => {
     container.innerHTML = "";
 
     const ground =
-      el(
-        "g",
-        { class: "layer-ground" },
-        container
-      );
+      el("g", { class: "layer-ground" }, container);
 
     const treesBack =
       el(
@@ -652,10 +498,6 @@ const MapEngine = (() => {
         container
       );
 
-    /* ----------------------------------------------------------------------
-       HRANICE
-       ---------------------------------------------------------------------- */
-
     if (data.boundary) {
 
       const points =
@@ -676,10 +518,6 @@ const MapEngine = (() => {
       );
     }
 
-    /* ----------------------------------------------------------------------
-       CESTY
-       ---------------------------------------------------------------------- */
-
     (data.roads || []).forEach(road => {
 
       const points =
@@ -698,10 +536,6 @@ const MapEngine = (() => {
         ground
       );
     });
-
-    /* ----------------------------------------------------------------------
-       STROMY
-       ---------------------------------------------------------------------- */
 
     (data.trees || []).forEach(
       ([c, r], index) => {
@@ -726,11 +560,7 @@ const MapEngine = (() => {
           );
 
         const group =
-          el(
-            "g",
-            {},
-            layer
-          );
+          el("g", {}, layer);
 
         el(
           "line",
@@ -750,9 +580,7 @@ const MapEngine = (() => {
           {
             cx: top.x,
             cy: top.y - 6,
-            r:
-              9 +
-              (index % 3) * 1.5,
+            r: 9 + (index % 3) * 1.5,
             fill: "#2f6b3f",
             opacity: .9
           },
@@ -773,13 +601,9 @@ const MapEngine = (() => {
       }
     );
 
-    /* ----------------------------------------------------------------------
-       SORT BUILDINGS
-       ---------------------------------------------------------------------- */
-
     const sorted =
-      [...(data.buildings || [])]
-        .sort((a, b) => {
+      [...(data.buildings || [])].sort(
+        (a, b) => {
 
           const ca =
             a.rect[0] +
@@ -794,11 +618,8 @@ const MapEngine = (() => {
             b.rect[3];
 
           return ca - cb;
-        });
-
-    /* ----------------------------------------------------------------------
-       BUILDINGS
-       ---------------------------------------------------------------------- */
+        }
+      );
 
     sorted.forEach(building => {
 
@@ -843,12 +664,10 @@ const MapEngine = (() => {
           "font-family":
             "Anton, sans-serif",
           "font-size": 12,
-
           fill:
             active
               ? "#ff7a1a"
               : "#eef1f0",
-
           style:
             "pointer-events:none;"
         },
@@ -856,10 +675,6 @@ const MapEngine = (() => {
       ).textContent =
         building.code;
     });
-
-    /* ----------------------------------------------------------------------
-       PLAYER
-       ---------------------------------------------------------------------- */
 
     if (playerPos) {
 
@@ -871,7 +686,6 @@ const MapEngine = (() => {
           },
           container
         ),
-
         isoPoint(
           playerPos.col,
           playerPos.row,
@@ -923,10 +737,7 @@ const MapEngine = (() => {
 
         item.addEventListener(
           "click",
-          () =>
-            onSelect(
-              building.id
-            )
+          () => onSelect(building.id)
         );
 
         listEl.appendChild(item);
@@ -939,1252 +750,789 @@ const MapEngine = (() => {
      ======================================================================== */
 
   function init(opts) {
+  let mode = "2d";
+  let activeId = null;
+  let playerPos = null;
 
-    let mode = "2d";
-    let activeId = null;
-    let playerPos = null;
+  let scale = 1;
+  let rotation = 0;
+  let translateX = 0;
+  let translateY = 0;
 
-    let scale = 1;
-    let rotation = 0;
+  let userAdjusted = false;
+  let resizeTimer = null;
 
-    let translateX = 0;
-    let translateY = 0;
+  let isDragging = false;
+  let isRotating = false;
+  let startX = 0;
+  let startY = 0;
+  let rotateStartX = 0;
+  let rotateStartRotation = 0;
 
-    let userAdjusted = false;
-    let resizeTimer = null;
+  const svg = opts.svg;
+  const parentCanvas = svg.closest(".am-map-canvas");
 
-    const svg = opts.svg;
+  if (!svg) {
+    console.error("MapEngine: SVG element nebyl nalezen.");
+    return {
+      redraw: () => {},
+      setPlayer: () => {}
+    };
+  }
 
-    const parentCanvas =
-      svg
-        ? svg.closest(".am-map-canvas")
-        : null;
+  /* =========================================================
+     VIEWPORT
+     ========================================================= */
 
-    if (!svg) {
+  svg.innerHTML = "";
 
-      console.error(
-        "MapEngine: SVG element nebyl nalezen."
+  const viewport = el(
+    "g",
+    { class: "am-map-viewport" },
+    svg
+  );
+
+  /* =========================================================
+     OVLÁDÁNÍ MAPY
+     ========================================================= */
+
+  if (parentCanvas && !parentCanvas.querySelector(".am-map-controls")) {
+
+    const controls = document.createElement("div");
+
+    controls.className = "am-map-controls";
+
+    controls.innerHTML = `
+      <button type="button" id="am-zoom-in" title="Přiblížit">+</button>
+      <button type="button" id="am-zoom-out" title="Oddálit">−</button>
+      <button type="button" id="am-rotate" title="Otočit o 90° (nebo Alt+tažení myší / dvěma prsty pro plynulé natočení)">⟲</button>
+      <button type="button" id="am-reset" title="Obnovit pohled">⌂</button>
+    `;
+
+    parentCanvas.appendChild(controls);
+
+    const zoomIn = controls.querySelector("#am-zoom-in");
+    const zoomOut = controls.querySelector("#am-zoom-out");
+    const rotate = controls.querySelector("#am-rotate");
+    const reset = controls.querySelector("#am-reset");
+
+    zoomIn.addEventListener("click", e => {
+      e.stopPropagation();
+
+      const r = svg.getBoundingClientRect();
+
+      applyZoomAt(
+        1.25,
+        r.left + r.width / 2,
+        r.top + r.height / 2
       );
+    });
 
-      return {
-        redraw: () => {},
-        setPlayer: () => {}
-      };
-    }
+    zoomOut.addEventListener("click", e => {
+      e.stopPropagation();
 
-    /* ======================================================================
-       MOBILNÍ CHOVÁNÍ
-       ====================================================================== */
+      const r = svg.getBoundingClientRect();
 
-    /*
-       Kriticky důležité:
-
-       Browser nesmí během manipulace s mapou
-       interpretovat gesto jako scroll / browser zoom.
-
-       Pointer Events + touch-action:none
-       nám umožní řídit gesto kompletně sami.
-    */
-
-    svg.style.touchAction = "none";
-    svg.style.userSelect = "none";
-    svg.style.webkitUserSelect = "none";
-    svg.style.webkitTouchCallout = "none";
-
-    /* ======================================================================
-       VIEWPORT
-       ====================================================================== */
-
-    svg.innerHTML = "";
-
-    const viewport =
-      el(
-        "g",
-        {
-          class: "am-map-viewport"
-        },
-        svg
+      applyZoomAt(
+        0.8,
+        r.left + r.width / 2,
+        r.top + r.height / 2
       );
+    });
 
-    /* ======================================================================
-       OVLÁDACÍ TLAČÍTKA
-       ====================================================================== */
-
-    if (
-      parentCanvas &&
-      !parentCanvas.querySelector(
-        ".am-map-controls"
-      )
-    ) {
-
-      const controls =
-        document.createElement("div");
-
-      controls.className =
-        "am-map-controls";
-
-      controls.innerHTML = `
-        <button
-          type="button"
-          id="am-zoom-in"
-          title="Přiblížit"
-        >+</button>
-
-        <button
-          type="button"
-          id="am-zoom-out"
-          title="Oddálit"
-        >−</button>
-
-        <button
-          type="button"
-          id="am-rotate"
-          title="Otočit o 90°"
-        >⟲</button>
-
-        <button
-          type="button"
-          id="am-reset"
-          title="Obnovit pohled"
-        >⌂</button>
-      `;
-
-      parentCanvas.appendChild(
-        controls
-      );
-
-      const zoomIn =
-        controls.querySelector(
-          "#am-zoom-in"
-        );
-
-      const zoomOut =
-        controls.querySelector(
-          "#am-zoom-out"
-        );
-
-      const rotate =
-        controls.querySelector(
-          "#am-rotate"
-        );
-
-      const reset =
-        controls.querySelector(
-          "#am-reset"
-        );
-
-      zoomIn.addEventListener(
-        "click",
-        e => {
-
-          e.stopPropagation();
-
-          const r =
-            svg.getBoundingClientRect();
-
-          applyZoomAt(
-            1.25,
-            r.left + r.width / 2,
-            r.top + r.height / 2
-          );
-        }
-      );
-
-      zoomOut.addEventListener(
-        "click",
-        e => {
-
-          e.stopPropagation();
-
-          const r =
-            svg.getBoundingClientRect();
-
-          applyZoomAt(
-            0.8,
-            r.left + r.width / 2,
-            r.top + r.height / 2
-          );
-        }
-      );
-
-      rotate.addEventListener(
-        "click",
-        e => {
-
-          e.stopPropagation();
-
-          userAdjusted = true;
-
-          rotation =
-            (rotation + 90) % 360;
-
-          updateTransform();
-        }
-      );
-
-      reset.addEventListener(
-        "click",
-        e => {
-
-          e.stopPropagation();
-
-          resetTransform();
-        }
-      );
-    }
-
-    /* ======================================================================
-       TRANSFORMACE
-       ====================================================================== */
-
-    function updateTransform() {
-
-      viewport.setAttribute(
-        "transform",
-        `
-          translate(${translateX} ${translateY})
-          scale(${scale})
-          rotate(${rotation})
-        `
-      );
-    }
-
-    /* ======================================================================
-       VIEWBOX
-       ====================================================================== */
-
-    function syncViewBox() {
-
-      if (!parentCanvas) {
-
-        return {
-          w: 0,
-          h: 0
-        };
-      }
-
-      const rect =
-        parentCanvas.getBoundingClientRect();
-
-      const w =
-        Math.max(
-          1,
-          Math.round(rect.width)
-        );
-
-      const h =
-        Math.max(
-          1,
-          Math.round(rect.height)
-        );
-
-      svg.setAttribute(
-        "viewBox",
-        `0 0 ${w} ${h}`
-      );
-
-      return {
-        w,
-        h
-      };
-    }
-
-    /* ======================================================================
-       ZOOM
-       ====================================================================== */
-
-    function applyZoomAt(
-      factor,
-      clientX,
-      clientY
-    ) {
+    rotate.addEventListener("click", e => {
+      e.stopPropagation();
 
       userAdjusted = true;
 
-      const rect =
-        svg.getBoundingClientRect();
-
-      const mouseX =
-        clientX - rect.left;
-
-      const mouseY =
-        clientY - rect.top;
-
-      const oldScale =
-        scale;
-
-      const newScale =
-        Math.min(
-          Math.max(
-            0.4,
-            oldScale * factor
-          ),
-          6
-        );
-
-      const actualFactor =
-        newScale / oldScale;
-
-      translateX =
-        mouseX -
-        (mouseX - translateX) *
-        actualFactor;
-
-      translateY =
-        mouseY -
-        (mouseY - translateY) *
-        actualFactor;
-
-      scale =
-        newScale;
+      rotation = (rotation + 90) % 360;
 
       updateTransform();
-    }
+    });
 
-    /* ======================================================================
-       FIT MAP
-       ====================================================================== */
+    reset.addEventListener("click", e => {
+      e.stopPropagation();
 
-    function fitMapToWindow() {
+      resetTransform();
+    });
+  }
 
-      if (!parentCanvas) return;
+  /* =========================================================
+     TRANSFORMACE
+     ========================================================= */
 
-      const rect =
-        syncViewBox();
+  function updateTransform() {
 
-      const padding = 30;
+    viewport.setAttribute(
+      "transform",
+      `
+        translate(${translateX} ${translateY})
+        scale(${scale})
+        rotate(${rotation})
+      `
+    );
+  }
 
-      const availableWidth =
-        Math.max(
-          100,
-          rect.w - padding * 2
-        );
+  /*
+     KLÍČOVÁ OPRAVA:
+     SVG viewBox se VŽDY nastaví přesně na skutečnou velikost
+     kontejneru v pixelech. Veškeré přiblížení/posun/otočení pak
+     řeší výhradně JS transform na <g class="am-map-viewport">.
+     Dřív se o scale "dělil" jak nativní viewBox (přes
+     preserveAspectRatio), tak tento JS transform zároveň — což
+     mapu efektivně zvětšovalo 2x a "vylévalo" ji mimo obrazovku.
+  */
 
-      const availableHeight =
-        Math.max(
-          100,
-          rect.h - padding * 2
-        );
+  function syncViewBox() {
 
-      let mapWidth = 1000;
-      let mapHeight = 750;
+    if (!parentCanvas) return { w: 0, h: 0 };
 
-      /* --------------------------------------------------------------------
-         2D
-         -------------------------------------------------------------------- */
+    const rect =
+      parentCanvas.getBoundingClientRect();
 
-      if (mode === "2d") {
+    const w = Math.max(1, Math.round(rect.width));
+    const h = Math.max(1, Math.round(rect.height));
 
-        const viewBox =
-          opts.data.viewBoxFlat ||
-          "0 0 1360 800";
+    svg.setAttribute(
+      "viewBox",
+      `0 0 ${w} ${h}`
+    );
 
-        const parts =
-          viewBox
-            .split(/\s+/)
-            .map(Number);
+    return { w, h };
+  }
 
-        mapWidth =
-          parts[2] || 1360;
+  function applyZoomAt(factor, clientX, clientY) {
 
-        mapHeight =
-          parts[3] || 800;
-      }
+    userAdjusted = true;
 
-      /* --------------------------------------------------------------------
-         3D
-         -------------------------------------------------------------------- */
+    const rect = svg.getBoundingClientRect();
 
-      else {
+    const mouseX = clientX - rect.left;
+    const mouseY = clientY - rect.top;
 
-        try {
+    const oldScale = scale;
 
-          const bbox =
-            viewport.getBBox();
+    const newScale = Math.min(
+      Math.max(0.4, oldScale * factor),
+      6
+    );
 
-          mapWidth =
-            bbox.width;
+    const actualFactor = newScale / oldScale;
 
-          mapHeight =
-            bbox.height;
+    translateX =
+      mouseX -
+      (mouseX - translateX) * actualFactor;
 
-        } catch (err) {
+    translateY =
+      mouseY -
+      (mouseY - translateY) * actualFactor;
 
-          mapWidth = 1000;
-          mapHeight = 700;
-        }
-      }
+    scale = newScale;
 
-      if (
-        !Number.isFinite(mapWidth) ||
-        !Number.isFinite(mapHeight) ||
-        mapWidth <= 0 ||
-        mapHeight <= 0
-      ) {
+    updateTransform();
+  }
+function fitMapToWindow() {
 
-        mapWidth = 1000;
-        mapHeight = 700;
-      }
+  if (!parentCanvas) return;
 
-      const scaleX =
-        availableWidth /
-        mapWidth;
+  const rect = syncViewBox();
 
-      const scaleY =
-        availableHeight /
-        mapHeight;
+  const padding = 30;
 
-      scale =
-        Math.min(
-          scaleX,
-          scaleY
-        );
+  const availableWidth =
+    Math.max(100, rect.w - padding * 2);
 
-      scale =
-        Math.min(
-          Math.max(
-            scale,
-            0.15
-          ),
-          2
-        );
+  const availableHeight =
+    Math.max(100, rect.h - padding * 2);
 
-      const finalWidth =
-        mapWidth * scale;
+  let mapWidth = 1000;
+  let mapHeight = 750;
 
-      const finalHeight =
-        mapHeight * scale;
+  /*
+     2D mapa má rozměry přímo z viewBoxu.
+  */
 
-      translateX =
-        (rect.w - finalWidth) / 2;
+  if (mode === "2d") {
 
-      translateY =
-        (rect.h - finalHeight) / 2;
+    const viewBox =
+      opts.data.viewBoxFlat ||
+      "0 0 1360 800";
 
-      rotation = 0;
+    const parts =
+      viewBox.split(/\s+/).map(Number);
 
-      updateTransform();
-    }
+    mapWidth = parts[2];
+    mapHeight = parts[3];
 
-    function resetTransform() {
-
-      rotation = 0;
-
-      userAdjusted = false;
-
-      fitMapToWindow();
-    }
-
-    /* ======================================================================
-       DESKTOP + POINTER EVENTS
-       ====================================================================== */
+  } else {
 
     /*
-       Všechny vstupy:
-
-       mouse
-       touch
-       stylus
-
-       jdou přes Pointer Events.
-
-       To je výrazně čistší než kombinace
-       mousedown + touchstart + touchmove.
+       U 3D si vezmeme skutečný bounding box.
     */
 
-    const pointers =
-      new Map();
+    try {
 
-    let gestureMode =
-      "none";
+      const bbox =
+        viewport.getBBox();
 
-    let panStartX = 0;
-    let panStartY = 0;
+      mapWidth = bbox.width;
+      mapHeight = bbox.height;
 
-    let rotateStartX = 0;
-    let rotateStartRotation = 0;
+    } catch (err) {
 
-    let lastPinchDistance = null;
-    let lastPinchAngle = null;
-    let lastPinchCenterX = 0;
-    let lastPinchCenterY = 0;
+      mapWidth = 1000;
+      mapHeight = 700;
 
-    /* ----------------------------------------------------------------------
-       POINTER HELPERS
-       ---------------------------------------------------------------------- */
+    }
+  }
 
-    function getPointerArray() {
+  const scaleX =
+    availableWidth / mapWidth;
 
-      return Array.from(
-        pointers.values()
-      );
+  const scaleY =
+    availableHeight / mapHeight;
+
+  /*
+     Vždy použijeme MENŠÍ hodnotu.
+     Tím pádem mapa nikdy nevyleze z okna.
+  */
+
+  scale =
+    Math.min(scaleX, scaleY);
+
+  /*
+     Trochu rozumnější limity.
+  */
+
+  scale =
+    Math.min(
+      Math.max(scale, 0.15),
+      2
+    );
+
+  /*
+     Počítáme skutečný rozměr mapy po zoomu.
+  */
+
+  const finalWidth =
+    mapWidth * scale;
+
+  const finalHeight =
+    mapHeight * scale;
+
+  /*
+     Vycentrování mapy v okně.
+  */
+
+  translateX =
+    (rect.w - finalWidth) / 2;
+
+  translateY =
+    (rect.h - finalHeight) / 2;
+
+  updateTransform();
+
+}
+function resetTransform() {
+
+  rotation = 0;
+  userAdjusted = false;
+
+  fitMapToWindow();
+
+}
+
+  /* =========================================================
+     MYŠ
+     ========================================================= */
+
+  svg.addEventListener("mousedown", e => {
+
+    if (
+      e.target.closest(".am-building") ||
+      e.target.closest(".am-building3d")
+    ) {
+      return;
     }
 
-    function getTwoPointerMetrics() {
+    userAdjusted = true;
 
-      const pts =
-        getPointerArray();
+    /*
+       Alt + tažení = plynulé otočení mapy (štelování),
+       obyčejné tažení = posun.
+    */
 
-      if (pts.length < 2) {
-        return null;
-      }
+    if (e.altKey) {
 
-      const p1 = pts[0];
-      const p2 = pts[1];
+      isRotating = true;
 
-      const dx =
-        p2.x - p1.x;
+      rotateStartX = e.clientX;
+      rotateStartRotation = rotation;
 
-      const dy =
-        p2.y - p1.y;
+      svg.style.cursor = "ew-resize";
 
-      return {
-
-        distance:
-          Math.hypot(dx, dy),
-
-        angle:
-          Math.atan2(
-            dy,
-            dx
-          ) *
-          180 /
-          Math.PI,
-
-        centerX:
-          (p1.x + p2.x) / 2,
-
-        centerY:
-          (p1.y + p2.y) / 2
-      };
+      return;
     }
 
-    function normalizeAngleDelta(delta) {
+    isDragging = true;
 
-      while (delta > 180) {
-        delta -= 360;
-      }
+    startX = e.clientX - translateX;
+    startY = e.clientY - translateY;
 
-      while (delta < -180) {
-        delta += 360;
-      }
+    svg.style.cursor = "grabbing";
+  });
 
-      return delta;
-    }
+  window.addEventListener("mousemove", e => {
 
-    /* ----------------------------------------------------------------------
-       POINTER DOWN
-       ---------------------------------------------------------------------- */
+    if (isRotating) {
 
-    svg.addEventListener(
-      "pointerdown",
-      e => {
-
-        /*
-           Myš:
-           povolíme pouze levé tlačítko.
-
-           Touch/stylus:
-           button bývá 0.
-        */
-
-        if (
-          e.pointerType === "mouse" &&
-          e.button !== 0
-        ) {
-          return;
-        }
-
-        /*
-           Pokud se dotkne budovy,
-           necháme událost na budově.
-        */
-
-        if (
-          e.target.closest(
-            ".am-building"
-          ) ||
-          e.target.closest(
-            ".am-building3d"
-          )
-        ) {
-          return;
-        }
-
-        e.preventDefault();
-
-        userAdjusted = true;
-
-        pointers.set(
-          e.pointerId,
-          {
-            id: e.pointerId,
-            x: e.clientX,
-            y: e.clientY,
-            type: e.pointerType
-          }
-        );
-
-        try {
-          svg.setPointerCapture(
-            e.pointerId
-          );
-        } catch (_) {}
-
-        /* ================================================================
-           1 POINTER
-           ================================================================ */
-
-        if (pointers.size === 1) {
-
-          gestureMode =
-            e.altKey &&
-            e.pointerType === "mouse"
-              ? "rotate"
-              : "pan";
-
-          panStartX =
-            e.clientX -
-            translateX;
-
-          panStartY =
-            e.clientY -
-            translateY;
-
-          rotateStartX =
-            e.clientX;
-
-          rotateStartRotation =
-            rotation;
-
-          svg.style.cursor =
-            gestureMode === "rotate"
-              ? "ew-resize"
-              : "grabbing";
-
-          return;
-        }
-
-        /* ================================================================
-           2 POINTERS
-           ================================================================ */
-
-        if (pointers.size === 2) {
-
-          gestureMode =
-            "pinch";
-
-          const metrics =
-            getTwoPointerMetrics();
-
-          if (metrics) {
-
-            lastPinchDistance =
-              metrics.distance;
-
-            lastPinchAngle =
-              metrics.angle;
-
-            lastPinchCenterX =
-              metrics.centerX;
-
-            lastPinchCenterY =
-              metrics.centerY;
-          }
-
-          svg.style.cursor =
-            "grabbing";
-        }
-      },
-      {
-        passive: false
-      }
-    );
-
-    /* ----------------------------------------------------------------------
-       POINTER MOVE
-       ---------------------------------------------------------------------- */
-
-    svg.addEventListener(
-      "pointermove",
-      e => {
-
-        const pointer =
-          pointers.get(
-            e.pointerId
-          );
-
-        if (!pointer) {
-          return;
-        }
-
-        e.preventDefault();
-
-        pointer.x =
-          e.clientX;
-
-        pointer.y =
-          e.clientY;
-
-        /* ================================================================
-           1 POINTER
-           ================================================================ */
-
-        if (
-          pointers.size === 1 &&
-          gestureMode === "pan"
-        ) {
-
-          translateX =
-            e.clientX -
-            panStartX;
-
-          translateY =
-            e.clientY -
-            panStartY;
-
-          updateTransform();
-
-          return;
-        }
-
-        /* ================================================================
-           ALT ROTACE
-           ================================================================ */
-
-        if (
-          pointers.size === 1 &&
-          gestureMode === "rotate"
-        ) {
-
-          rotation =
-            rotateStartRotation +
-            (
-              e.clientX -
-              rotateStartX
-            ) *
-            0.4;
-
-          updateTransform();
-
-          return;
-        }
-
-        /* ================================================================
-           2 POINTERS
-           ================================================================ */
-
-        if (
-          pointers.size === 2 &&
-          gestureMode === "pinch"
-        ) {
-
-          const metrics =
-            getTwoPointerMetrics();
-
-          if (!metrics) {
-            return;
-          }
-
-          /* --------------------------------------------------------------
-             PAN
-             -------------------------------------------------------------- */
-
-          const centerDeltaX =
-            metrics.centerX -
-            lastPinchCenterX;
-
-          const centerDeltaY =
-            metrics.centerY -
-            lastPinchCenterY;
-
-          translateX +=
-            centerDeltaX;
-
-          translateY +=
-            centerDeltaY;
-
-          /* --------------------------------------------------------------
-             ZOOM
-             -------------------------------------------------------------- */
-
-          if (
-            lastPinchDistance &&
-            lastPinchDistance > 0
-          ) {
-
-            const factor =
-              metrics.distance /
-              lastPinchDistance;
-
-            applyZoomAt(
-              factor,
-              metrics.centerX,
-              metrics.centerY
-            );
-          }
-
-          /* --------------------------------------------------------------
-             ROTACE
-             -------------------------------------------------------------- */
-
-          if (
-            lastPinchAngle !== null
-          ) {
-
-            const angleDelta =
-              normalizeAngleDelta(
-                metrics.angle -
-                lastPinchAngle
-              );
-
-            rotation +=
-              angleDelta;
-          }
-
-          /* --------------------------------------------------------------
-             ULOŽIT STAV PRO DALŠÍ FRAME
-             -------------------------------------------------------------- */
-
-          lastPinchDistance =
-            metrics.distance;
-
-          lastPinchAngle =
-            metrics.angle;
-
-          lastPinchCenterX =
-            metrics.centerX;
-
-          lastPinchCenterY =
-            metrics.centerY;
-
-          updateTransform();
-        }
-      },
-      {
-        passive: false
-      }
-    );
-
-    /* ----------------------------------------------------------------------
-       POINTER UP
-       ---------------------------------------------------------------------- */
-
-    function releasePointer(e) {
-
-      pointers.delete(
-        e.pointerId
-      );
-
-      try {
-
-        if (
-          svg.hasPointerCapture(
-            e.pointerId
-          )
-        ) {
-
-          svg.releasePointerCapture(
-            e.pointerId
-          );
-        }
-
-      } catch (_) {}
-
-      /* ================================================================
-         ŽÁDNÝ POINTER
-         ================================================================ */
-
-      if (pointers.size === 0) {
-
-        gestureMode =
-          "none";
-
-        lastPinchDistance =
-          null;
-
-        lastPinchAngle =
-          null;
-
-        svg.style.cursor =
-          "default";
-
-        return;
-      }
-
-      /* ================================================================
-         ZŮSTAL 1 POINTER
-         ================================================================ */
-
-      if (pointers.size === 1) {
-
-        const remaining =
-          getPointerArray()[0];
-
-        /*
-           Velmi důležité:
-
-           Po skončení pinche nezačneme
-           počítat pan ze starých souřadnic.
-
-           Nastavíme nový začátek přesně
-           na aktuální pozici prstu.
-
-           Díky tomu mapa NEODSkočí.
-        */
-
-        gestureMode =
-          "pan";
-
-        panStartX =
-          remaining.x -
-          translateX;
-
-        panStartY =
-          remaining.y -
-          translateY;
-
-        lastPinchDistance =
-          null;
-
-        lastPinchAngle =
-          null;
-
-        lastPinchCenterX =
-          remaining.x;
-
-        lastPinchCenterY =
-          remaining.y;
-
-        svg.style.cursor =
-          "grabbing";
-
-        return;
-      }
-
-      /* ================================================================
-         ZŮSTALY 2 POINTERY
-         ================================================================ */
-
-      if (pointers.size === 2) {
-
-        gestureMode =
-          "pinch";
-
-        const metrics =
-          getTwoPointerMetrics();
-
-        if (metrics) {
-
-          lastPinchDistance =
-            metrics.distance;
-
-          lastPinchAngle =
-            metrics.angle;
-
-          lastPinchCenterX =
-            metrics.centerX;
-
-          lastPinchCenterY =
-            metrics.centerY;
-        }
-      }
-    }
-
-    svg.addEventListener(
-      "pointerup",
-      releasePointer,
-      {
-        passive: true
-      }
-    );
-
-    svg.addEventListener(
-      "pointercancel",
-      releasePointer,
-      {
-        passive: true
-      }
-    );
-
-    svg.addEventListener(
-      "pointerleave",
-      e => {
-
-        /*
-           U touch/stylus nic nerušíme.
-
-           Pointer Capture zajišťuje,
-           že gesto pokračuje i mimo SVG.
-        */
-
-        if (
-          e.pointerType === "mouse" &&
-          pointers.has(e.pointerId)
-        ) {
-          return;
-        }
-      }
-    );
-
-    /* ======================================================================
-       KOLEČKO
-       ====================================================================== */
-
-    svg.addEventListener(
-      "wheel",
-      e => {
-
-        e.preventDefault();
-
-        const factor =
-          e.deltaY < 0
-            ? 1.15
-            : 0.85;
-
-        applyZoomAt(
-          factor,
-          e.clientX,
-          e.clientY
-        );
-      },
-      {
-        passive: false
-      }
-    );
-
-    /* ======================================================================
-       VYKRESLENÍ
-       ====================================================================== */
-
-    function draw() {
-
-      const lang =
-        opts.getLang();
-
-      syncViewBox();
-
-      if (mode === "2d") {
-
-        render2D(
-          viewport,
-          opts.data,
-          lang,
-          select,
-          activeId,
-          playerPos
-        );
-
-      } else {
-
-        render3D(
-          viewport,
-          opts.data,
-          lang,
-          select,
-          activeId,
-          playerPos
-        );
-      }
+      rotation =
+        rotateStartRotation +
+        (e.clientX - rotateStartX) * 0.4;
 
       updateTransform();
-
-      renderList(
-        opts.listEl,
-        opts.data,
-        lang,
-        activeId,
-        select
-      );
+      return;
     }
 
-    /* ======================================================================
-       PLAYER
-       ====================================================================== */
+    if (!isDragging) return;
 
-    function setPlayer(pos) {
+    translateX = e.clientX - startX;
+    translateY = e.clientY - startY;
 
-      playerPos =
-        pos;
+    updateTransform();
+  });
 
-      draw();
-    }
+  window.addEventListener("mouseup", () => {
 
-    /* ======================================================================
-       VÝBĚR BUDOVY
-       ====================================================================== */
+    isDragging = false;
+    isRotating = false;
 
-    function select(id) {
+    svg.style.cursor = "default";
+  });
 
-      activeId =
-        activeId === id
-          ? null
-          : id;
+  /* =========================================================
+     KOLEČKO
+     ========================================================= */
 
-      draw();
-    }
+  svg.addEventListener(
+    "wheel",
+    e => {
 
-    /* ======================================================================
-       2D / 3D
-       ====================================================================== */
+      e.preventDefault();
 
-    opts.mountModeToggle.btn2d
-      .addEventListener(
-        "click",
-        e => {
+      const factor =
+        e.deltaY < 0 ? 1.15 : 0.85;
 
-          e.stopPropagation();
-
-          mode =
-            "2d";
-
-          opts.mountModeToggle.btn2d
-            .classList.add(
-              "active"
-            );
-
-          opts.mountModeToggle.btn3d
-            .classList.remove(
-              "active"
-            );
-
-          draw();
-
-          resetTransform();
-        }
+      applyZoomAt(
+        factor,
+        e.clientX,
+        e.clientY
       );
+    },
+    { passive: false }
+  );
 
-    opts.mountModeToggle.btn3d
-      .addEventListener(
-        "click",
-        e => {
+  /* =========================================================
+     TOUCH
+     ========================================================= */
 
-          e.stopPropagation();
+  let touchStartX = 0;
+  let touchStartY = 0;
+  let initialPinchDist = null;
+  let initialPinchAngle = null;
+  let initialPinchRotation = 0;
+  let lastPinchCenterX = 0;
+  let lastPinchCenterY = 0;
 
-          mode =
-            "3d";
+  function getPinchMetrics(e) {
 
-          opts.mountModeToggle.btn3d
-            .classList.add(
-              "active"
-            );
+    const t1 = e.touches[0];
+    const t2 = e.touches[1];
 
-          opts.mountModeToggle.btn2d
-            .classList.remove(
-              "active"
-            );
+    return {
+      dist: Math.hypot(
+        t1.clientX - t2.clientX,
+        t1.clientY - t2.clientY
+      ),
 
-          draw();
+      angle:
+        Math.atan2(
+          t2.clientY - t1.clientY,
+          t2.clientX - t1.clientX
+        ) * (180 / Math.PI),
 
-          resetTransform();
-        }
-      );
+      centerX:
+        (t1.clientX + t2.clientX) / 2,
 
-    /* ======================================================================
-       RESIZE
-       ====================================================================== */
+      centerY:
+        (t1.clientY + t2.clientY) / 2
+    };
+  }
 
-    function handleResize() {
+  svg.addEventListener(
+    "touchstart",
+    e => {
 
-      if (userAdjusted) {
+      userAdjusted = true;
 
-        syncViewBox();
+      if (e.touches.length === 1) {
+
+        isDragging = true;
+
+        touchStartX =
+          e.touches[0].clientX - translateX;
+
+        touchStartY =
+          e.touches[0].clientY - translateY;
+
+      } else if (e.touches.length === 2) {
+
+        isDragging = false;
+
+        const metrics =
+          getPinchMetrics(e);
+
+        initialPinchDist =
+          metrics.dist;
+
+        initialPinchAngle =
+          metrics.angle;
+
+        initialPinchRotation =
+          rotation;
+
+        lastPinchCenterX =
+          metrics.centerX;
+
+        lastPinchCenterY =
+          metrics.centerY;
+      }
+    },
+    { passive: true }
+  );
+
+  svg.addEventListener(
+    "touchmove",
+    e => {
+
+      if (
+        isDragging &&
+        e.touches.length === 1
+      ) {
+
+        translateX =
+          e.touches[0].clientX - touchStartX;
+
+        translateY =
+          e.touches[0].clientY - touchStartY;
 
         updateTransform();
 
-      } else {
-
-        fitMapToWindow();
-      }
-    }
-
-    window.addEventListener(
-      "resize",
-      () => {
-
-        clearTimeout(
-          resizeTimer
-        );
-
-        resizeTimer =
-          setTimeout(
-            handleResize,
-            120
-          );
-      }
-    );
-
-    /* ======================================================================
-       START
-       ====================================================================== */
-
-    draw();
-
-    function revealAfterFit() {
-
-      fitMapToWindow();
-
-      svg.classList.add(
-        "am-ready"
-      );
-
-      if (
-        window.ResizeObserver &&
-        parentCanvas
+      } else if (
+        e.touches.length === 2 &&
+        initialPinchDist
       ) {
 
-        const resizeObserver =
-          new ResizeObserver(
-            () => {
+        const metrics =
+          getPinchMetrics(e);
 
-              clearTimeout(
-                resizeTimer
-              );
+        /*
+           Nejdřív posun podle pohybu středu mezi prsty (aby šlo
+           mapu tahat i dvěma prsty najednou), pak teprve zoom
+           kolem toho stejného středu.
+        */
 
-              resizeTimer =
-                setTimeout(
-                  handleResize,
-                  120
-                );
-            }
-          );
+        translateX +=
+          metrics.centerX - lastPinchCenterX;
 
-        resizeObserver.observe(
-          parentCanvas
+        translateY +=
+          metrics.centerY - lastPinchCenterY;
+
+        const factor =
+          metrics.dist / initialPinchDist;
+
+        applyZoomAt(
+          factor,
+          metrics.centerX,
+          metrics.centerY
         );
+
+        initialPinchDist =
+          metrics.dist;
+
+        lastPinchCenterX =
+          metrics.centerX;
+
+        lastPinchCenterY =
+          metrics.centerY;
+
+        if (initialPinchAngle !== null) {
+
+          const angleDelta =
+            metrics.angle - initialPinchAngle;
+
+          rotation =
+            initialPinchRotation + angleDelta;
+
+          updateTransform();
+        }
       }
+    },
+    { passive: true }
+  );
+
+  svg.addEventListener("touchend", e => {
+
+    const remaining = e.touches.length;
+
+    if (remaining === 0) {
+
+      isDragging = false;
+      initialPinchDist = null;
+      initialPinchAngle = null;
+
+    } else if (remaining === 1) {
+
+      /*
+         Ze 2 prstů zbyl 1 (typicky konec pinche) — NEresetovat
+         gesto do prázdna, ale rovnou navázat posunem tím prstem,
+         co zůstal na obrazovce, bez skoku.
+      */
+
+      isDragging = true;
+      initialPinchDist = null;
+      initialPinchAngle = null;
+
+      touchStartX =
+        e.touches[0].clientX - translateX;
+
+      touchStartY =
+        e.touches[0].clientY - translateY;
+
+    } else if (remaining === 2) {
+
+      // ze 3 prstů zbyly 2 — nastartuj pinch znovu od aktuální vzdálenosti
+      isDragging = false;
+
+      const metrics =
+        getPinchMetrics(e);
+
+      initialPinchDist =
+        metrics.dist;
+
+      initialPinchAngle =
+        metrics.angle;
+
+      initialPinchRotation =
+        rotation;
+
+      lastPinchCenterX =
+        metrics.centerX;
+
+      lastPinchCenterY =
+        metrics.centerY;
+    }
+  });
+
+  svg.addEventListener("touchcancel", () => {
+
+    isDragging = false;
+    initialPinchDist = null;
+    initialPinchAngle = null;
+
+  });
+
+  /* =========================================================
+     VYKRESLENÍ
+     ========================================================= */
+
+  function draw() {
+
+    const lang = opts.getLang();
+
+    syncViewBox();
+
+    if (mode === "2d") {
+
+      render2D(
+        viewport,
+        opts.data,
+        lang,
+        select,
+        activeId,
+        playerPos
+      );
+
+    } else {
+
+      render3D(
+        viewport,
+        opts.data,
+        lang,
+        select,
+        activeId,
+        playerPos
+      );
     }
 
-    const fontsReady =
-      (
-        document.fonts &&
-        document.fonts.ready
-      ) ||
-      Promise.resolve();
+    updateTransform();
 
-    fontsReady.then(
-      () => {
-
-        requestAnimationFrame(
-          () => {
-
-            requestAnimationFrame(
-              revealAfterFit
-            );
-          }
-        );
-      }
+    renderList(
+      opts.listEl,
+      opts.data,
+      lang,
+      activeId,
+      select
     );
-
-    /* ======================================================================
-       PUBLIC API
-       ====================================================================== */
-
-    return {
-      redraw: draw,
-      setPlayer
-    };
   }
+
+  /* =========================================================
+     PLAYER
+     ========================================================= */
+
+  function setPlayer(pos) {
+
+    playerPos = pos;
+
+    draw();
+  }
+
+  /* =========================================================
+     VÝBĚR BUDOV
+     ========================================================= */
+
+  function select(id) {
+
+    activeId =
+      activeId === id
+        ? null
+        : id;
+
+    draw();
+  }
+
+  /* =========================================================
+     2D / 3D
+     ========================================================= */
+
+  opts.mountModeToggle.btn2d.addEventListener(
+    "click",
+    e => {
+
+      e.stopPropagation();
+
+      mode = "2d";
+
+      opts.mountModeToggle.btn2d
+        .classList.add("active");
+
+      opts.mountModeToggle.btn3d
+        .classList.remove("active");
+
+      draw();
+      resetTransform();
+    }
+  );
+
+  opts.mountModeToggle.btn3d.addEventListener(
+    "click",
+    e => {
+
+      e.stopPropagation();
+
+      mode = "3d";
+
+      opts.mountModeToggle.btn3d
+        .classList.add("active");
+
+      opts.mountModeToggle.btn2d
+        .classList.remove("active");
+
+      draw();
+      resetTransform();
+    }
+  );
+
+  /* =========================================================
+     ZMĚNA VELIKOSTI OKNA
+     ========================================================= */
+
+  function handleResize() {
+
+    if (userAdjusted) {
+
+      /*
+         Uživatel si mapu ručně nastavil (přiblížil/pootočil) —
+         jen udržíme viewBox v souladu se skutečnou velikostí
+         plátna, ale jeho nastavení nepřepisujeme.
+      */
+
+      syncViewBox();
+      updateTransform();
+
+    } else {
+
+      fitMapToWindow();
+    }
+  }
+
+  window.addEventListener("resize", () => {
+
+    clearTimeout(resizeTimer);
+
+    resizeTimer = setTimeout(handleResize, 120);
+  });
+
+  /* =========================================================
+     START
+     ========================================================= */
+
+  draw();
+
+  function revealAfterFit() {
+
+    fitMapToWindow();
+
+    svg.classList.add("am-ready");
+
+    /*
+       ResizeObserver se připojuje až TEĎ, ne hned na startu.
+       Jinak jeho první (okamžitý) callback při .observe() spustí
+       další fitMapToWindow() ještě před tím, než se ustálí layout
+       (fonty, loga) — a uživatel to vidí jako mapu, která se
+       sama od sebe "zvětšuje a sjíždí".
+    */
+
+    if (window.ResizeObserver && parentCanvas) {
+
+      const resizeObserver = new ResizeObserver(() => {
+
+        clearTimeout(resizeTimer);
+
+        resizeTimer = setTimeout(handleResize, 120);
+      });
+
+      resizeObserver.observe(parentCanvas);
+    }
+  }
+
+  const fontsReady =
+    (document.fonts && document.fonts.ready) ||
+    Promise.resolve();
+
+  fontsReady.then(() => {
+
+    // dvojitý rAF = počkej, až prohlížeč skutečně dokončí layout
+    requestAnimationFrame(() => {
+      requestAnimationFrame(revealAfterFit);
+    });
+  });
+
+return {
+  redraw: draw,
+  setPlayer
+};
+}
 
   return {
     init
