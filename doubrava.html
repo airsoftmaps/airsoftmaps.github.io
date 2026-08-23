@@ -63,12 +63,11 @@
   const FIELD_DATA = {
     viewBoxFlat: "0 0 1320 920",
 
-    // Zatím máme jen 1 ověřený GPS bod (Registrace/parkoviště).
-    // Pro funkční "Moje poloha" doplň ještě aspoň 2 další kotvy
-    // (např. Spawn Sever a Barikáda) — tlačítko se do té doby
-    // automaticky schovává (hasGeo vyžaduje min. 3 kotvy).
+    // 3 ověřené GPS kotvy — "Moje poloha" je teď funkční.
     geoAnchors: [
-      { col: 6.3, row: 8.0, lat: 49.8157436, lng: 18.2393608 } // Registrace / parkoviště
+      { col: 6.3,  row: 8.0,  lat: 49.8157436, lng: 18.2393608 }, // Registrace / parkoviště
+      { col: 4.2,  row: 0.25, lat: 49.817550,  lng: 18.238444 },  // Spawn Sever
+      { col: 10.7, row: 4.75, lat: 49.816538,  lng: 18.241398 }   // Město (pravý horní roh)
     ],
 
     boundary: [
