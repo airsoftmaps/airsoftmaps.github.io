@@ -2500,3 +2500,19 @@ html[data-theme="light"] .am-kicker-line {
     max-height: 58px !important;
   }
 }
+/* ==========================================================================
+   MOBILE — FIELD STATUS BADGES
+   ========================================================================== */
+
+@media (max-width: 760px) {
+
+  .am-row .am-badge {
+    display: inline-flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: static !important;
+    width: auto !important;
+    height: auto !important;
+  }
+
+}
