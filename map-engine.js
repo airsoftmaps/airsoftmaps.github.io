@@ -9,6 +9,14 @@ const MapEngine = (() => {
 
   const SVG_NS = "http://www.w3.org/2000/svg";
 
+     function mapColor(variable, fallback) {
+    const value = getComputedStyle(document.documentElement)
+      .getPropertyValue(variable)
+      .trim();
+
+    return value || fallback;
+  }
+   
   const FLAT = {
   originX: 70,
   originY: 60,
@@ -133,16 +141,18 @@ const MapEngine = (() => {
         );
 
       el(
-        "polygon",
-        {
-          points: ptsToStr(points),
-          fill: "rgba(255,255,255,.015)",
-          stroke: "#eef1f0",
-          "stroke-width": 3,
-          "stroke-linejoin": "round"
-        },
-        ground
-      );
+  "polygon",
+  {
+    points: ptsToStr(points),
+    fill: "none",
+    stroke: mapColor("--map-outline", "#eef1f0"),
+    "stroke-opacity": ".42",
+    "stroke-width": 1.4,
+    "stroke-dasharray": "4 5",
+    "stroke-linejoin": "round"
+  },
+  ground
+);
     }
 
     (data.roads || []).forEach(road => {
@@ -157,7 +167,7 @@ const MapEngine = (() => {
         {
           points: ptsToStr(points),
           fill: "none",
-          stroke: "#3a3f47",
+          stroke: "var(--map-road)",
           "stroke-width": 10,
           "stroke-linecap": "round",
           "stroke-linejoin": "round"
@@ -170,7 +180,7 @@ const MapEngine = (() => {
         {
           points: ptsToStr(points),
           fill: "none",
-          stroke: "#1a1c1f",
+          stroke: "var(--map-road-inner)",
           "stroke-width": 4,
           "stroke-dasharray": "2 10",
           "stroke-linecap": "round"
@@ -260,13 +270,14 @@ const MapEngine = (() => {
           width,
           height,
           fill:
-            active
-              ? "rgba(255,122,26,.28)"
-              : "rgba(238,241,240,.06)",
-          stroke:
-            active
-              ? "#ff7a1a"
-              : "#eef1f0",
+  active
+    ? "var(--accent-dim)"
+    : "var(--map-building-fill)",
+
+stroke:
+  active
+    ? "var(--accent)"
+    : "var(--map-outline)",
           "stroke-width":
             active ? 3 : 2,
           rx: 2
@@ -292,9 +303,9 @@ const MapEngine = (() => {
               )
             ),
           fill:
-            active
-              ? "#ff7a1a"
-              : "#eef1f0",
+  active
+    ? "var(--accent)"
+    : "var(--map-text)",
           style:
             "pointer-events:none;"
         },
@@ -384,17 +395,18 @@ const MapEngine = (() => {
       );
 
     const topColor =
-      active ? "#ffb066" : "#4a5058";
+  active ? "var(--accent)" : "var(--map-3d-top)";
 
-    const rightColor =
-      active ? "#e0812a" : "#2f333a";
+const rightColor =
+  active ? "var(--accent)" : "var(--map-3d-right)";
 
-    const frontColor =
-      active ? "#b5631a" : "#1c1f24";
+const frontColor =
+  active ? "var(--accent)" : "var(--map-3d-front)";
 
-    const strokeColor =
-      active ? "#ff7a1a" : "#0a0b0d";
-
+const strokeColor =
+  active
+    ? "var(--accent)"
+    : "var(--map-outline)";
     el(
       "polygon",
       {
@@ -510,7 +522,8 @@ const MapEngine = (() => {
         {
           points: ptsToStr(points),
           fill: "none",
-          stroke: "rgba(238,241,240,.18)",
+          stroke: mapColor("--map-outline", "#eef1f0"),
+"stroke-opacity": ".18",
           "stroke-width": 1.4,
           "stroke-dasharray": "4 5"
         },
@@ -530,7 +543,7 @@ const MapEngine = (() => {
         {
           points: ptsToStr(points),
           fill: "none",
-          stroke: "#33383f",
+          stroke: "var(--map-road)",
           "stroke-width": 3
         },
         ground
@@ -665,9 +678,9 @@ const MapEngine = (() => {
             "Anton, sans-serif",
           "font-size": 12,
           fill:
-            active
-              ? "#ff7a1a"
-              : "#eef1f0",
+  active
+    ? "#ff7a1a"
+    : mapColor("--map-text", "#eef1f0"),
           style:
             "pointer-events:none;"
         },
@@ -771,6 +784,7 @@ const MapEngine = (() => {
 
   const svg = opts.svg;
   const parentCanvas = svg.closest(".am-map-canvas");
+     
 
   if (!svg) {
     console.error("MapEngine: SVG element nebyl nalezen.");
@@ -945,12 +959,14 @@ function fitMapToWindow() {
   const availableHeight =
     Math.max(100, rect.h - padding * 2);
 
+  let mapX = 0;
+  let mapY = 0;
   let mapWidth = 1000;
   let mapHeight = 750;
 
-  /*
-     2D mapa má rozměry přímo z viewBoxu.
-  */
+  /* =========================================================
+     2D
+     ========================================================= */
 
   if (mode === "2d") {
 
@@ -961,30 +977,59 @@ function fitMapToWindow() {
     const parts =
       viewBox.split(/\s+/).map(Number);
 
-    mapWidth = parts[2];
-    mapHeight = parts[3];
+    mapX = parts[0] || 0;
+    mapY = parts[1] || 0;
+    mapWidth = parts[2] || 1360;
+    mapHeight = parts[3] || 800;
 
-  } else {
+  }
 
-    /*
-       U 3D si vezmeme skutečný bounding box.
-    */
+  /* =========================================================
+     3D
+     ========================================================= */
+
+  else {
 
     try {
 
       const bbox =
         viewport.getBBox();
 
+      mapX = bbox.x;
+      mapY = bbox.y;
       mapWidth = bbox.width;
       mapHeight = bbox.height;
 
     } catch (err) {
 
+      mapX = 0;
+      mapY = 0;
       mapWidth = 1000;
       mapHeight = 700;
 
     }
   }
+
+  /* Bezpečnostní fallback */
+
+  if (
+    !Number.isFinite(mapX) ||
+    !Number.isFinite(mapY) ||
+    !Number.isFinite(mapWidth) ||
+    !Number.isFinite(mapHeight) ||
+    mapWidth <= 0 ||
+    mapHeight <= 0
+  ) {
+
+    mapX = 0;
+    mapY = 0;
+    mapWidth = 1000;
+    mapHeight = 700;
+  }
+
+  /* =========================================================
+     VÝPOČET SCALE
+     ========================================================= */
 
   const scaleX =
     availableWidth / mapWidth;
@@ -992,17 +1037,8 @@ function fitMapToWindow() {
   const scaleY =
     availableHeight / mapHeight;
 
-  /*
-     Vždy použijeme MENŠÍ hodnotu.
-     Tím pádem mapa nikdy nevyleze z okna.
-  */
-
   scale =
     Math.min(scaleX, scaleY);
-
-  /*
-     Trochu rozumnější limity.
-  */
 
   scale =
     Math.min(
@@ -1010,28 +1046,35 @@ function fitMapToWindow() {
       2
     );
 
-  /*
-     Počítáme skutečný rozměr mapy po zoomu.
-  */
+  /* =========================================================
+     SKUTEČNÉ CENTROVÁNÍ
+     
+     Důležité:
+     mapX/mapY mohou být záporné.
+     Proto nestačí pouze width/height.
+     ========================================================= */
 
-  const finalWidth =
-    mapWidth * scale;
+  const mapCenterX =
+    mapX + mapWidth / 2;
 
-  const finalHeight =
-    mapHeight * scale;
-
-  /*
-     Vycentrování mapy v okně.
-  */
+  const mapCenterY =
+    mapY + mapHeight / 2;
 
   translateX =
-    (rect.w - finalWidth) / 2;
+    rect.w / 2 -
+    mapCenterX * scale;
 
   translateY =
-    (rect.h - finalHeight) / 2;
+    rect.h / 2 -
+    mapCenterY * scale;
+
+  /*
+     Při automatickém fitu vždy začínáme bez rotace.
+     */
+
+  rotation = 0;
 
   updateTransform();
-
 }
 function resetTransform() {
 
@@ -1141,8 +1184,6 @@ function resetTransform() {
   let initialPinchDist = null;
   let initialPinchAngle = null;
   let initialPinchRotation = 0;
-  let lastPinchCenterX = 0;
-  let lastPinchCenterY = 0;
 
   function getPinchMetrics(e) {
 
@@ -1200,12 +1241,6 @@ function resetTransform() {
 
         initialPinchRotation =
           rotation;
-
-        lastPinchCenterX =
-          metrics.centerX;
-
-        lastPinchCenterY =
-          metrics.centerY;
       }
     },
     { passive: true }
@@ -1236,18 +1271,6 @@ function resetTransform() {
         const metrics =
           getPinchMetrics(e);
 
-        /*
-           Nejdřív posun podle pohybu středu mezi prsty (aby šlo
-           mapu tahat i dvěma prsty najednou), pak teprve zoom
-           kolem toho stejného středu.
-        */
-
-        translateX +=
-          metrics.centerX - lastPinchCenterX;
-
-        translateY +=
-          metrics.centerY - lastPinchCenterY;
-
         const factor =
           metrics.dist / initialPinchDist;
 
@@ -1259,12 +1282,6 @@ function resetTransform() {
 
         initialPinchDist =
           metrics.dist;
-
-        lastPinchCenterX =
-          metrics.centerX;
-
-        lastPinchCenterY =
-          metrics.centerY;
 
         if (initialPinchAngle !== null) {
 
@@ -1281,60 +1298,7 @@ function resetTransform() {
     { passive: true }
   );
 
-  svg.addEventListener("touchend", e => {
-
-    const remaining = e.touches.length;
-
-    if (remaining === 0) {
-
-      isDragging = false;
-      initialPinchDist = null;
-      initialPinchAngle = null;
-
-    } else if (remaining === 1) {
-
-      /*
-         Ze 2 prstů zbyl 1 (typicky konec pinche) — NEresetovat
-         gesto do prázdna, ale rovnou navázat posunem tím prstem,
-         co zůstal na obrazovce, bez skoku.
-      */
-
-      isDragging = true;
-      initialPinchDist = null;
-      initialPinchAngle = null;
-
-      touchStartX =
-        e.touches[0].clientX - translateX;
-
-      touchStartY =
-        e.touches[0].clientY - translateY;
-
-    } else if (remaining === 2) {
-
-      // ze 3 prstů zbyly 2 — nastartuj pinch znovu od aktuální vzdálenosti
-      isDragging = false;
-
-      const metrics =
-        getPinchMetrics(e);
-
-      initialPinchDist =
-        metrics.dist;
-
-      initialPinchAngle =
-        metrics.angle;
-
-      initialPinchRotation =
-        rotation;
-
-      lastPinchCenterX =
-        metrics.centerX;
-
-      lastPinchCenterY =
-        metrics.centerY;
-    }
-  });
-
-  svg.addEventListener("touchcancel", () => {
+  svg.addEventListener("touchend", () => {
 
     isDragging = false;
     initialPinchDist = null;
