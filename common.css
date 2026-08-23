@@ -21,12 +21,9 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-html {
-  background: var(--bg-0);
-}
-
 html, body {
   width: 100%;
+  height: 100%;
   min-height: 100vh;
   min-height: 100dvh;
   background: var(--bg-0);
@@ -2499,20 +2496,4 @@ html[data-theme="light"] .am-kicker-line {
     height: auto !important;
     max-height: 58px !important;
   }
-}
-/* ==========================================================================
-   MOBILE — FIELD STATUS BADGES
-   ========================================================================== */
-
-@media (max-width: 760px) {
-
-  .am-row .am-badge {
-    display: inline-flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    position: static !important;
-    width: auto !important;
-    height: auto !important;
-  }
-
 }
