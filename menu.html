@@ -99,14 +99,7 @@
   </div>
 
 </main>
-    <div class="am-table-head">
-      <div data-i18n="colName">Název</div>
-      <div data-i18n="colLocation">Lokalita</div>
-      <div data-i18n="colStatus">Stav</div>
-    </div>
-    <div id="field-rows"></div>
-  </div>
-</div>
+   
 
 <script src="common.js?v=3"></script>
 <script>
@@ -212,6 +205,87 @@ if ("serviceWorker" in navigator) {
       .catch(err => console.error("Service Worker:", err));
   });
 }
+</script>
+  <div class="pwa-install" id="pwa-install">
+
+  <img
+    class="pwa-install-icon"
+    src="loga/tmavekulate.png"
+    alt=""
+  >
+
+  <div class="pwa-install-text">
+    <div class="pwa-install-title">
+      Přidat Airsoft Maps
+    </div>
+
+    <div class="pwa-install-sub">
+      Měj mapy hřišť po ruce na ploše telefonu.
+    </div>
+  </div>
+
+  <button class="pwa-install-btn" id="pwa-install-btn">
+    Přidat
+  </button>
+
+  <button class="pwa-install-close" id="pwa-install-close">
+    ×
+  </button>
+
+</div>
+  <script>
+let deferredPrompt = null;
+
+const pwaInstall = document.getElementById("pwa-install");
+const pwaInstallBtn = document.getElementById("pwa-install-btn");
+const pwaInstallClose = document.getElementById("pwa-install-close");
+
+const isStandalone =
+  window.matchMedia("(display-mode: standalone)").matches ||
+  window.navigator.standalone === true;
+
+const isMobile =
+  /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+if (isMobile && !isStandalone) {
+
+  window.addEventListener("beforeinstallprompt", event => {
+
+    event.preventDefault();
+
+    deferredPrompt = event;
+
+    pwaInstall.classList.add("show");
+
+  });
+
+}
+
+pwaInstallBtn.addEventListener("click", async () => {
+
+  if (!deferredPrompt) return;
+
+  deferredPrompt.prompt();
+
+  const result = await deferredPrompt.userChoice;
+
+  deferredPrompt = null;
+
+  pwaInstall.classList.remove("show");
+
+});
+
+pwaInstallClose.addEventListener("click", () => {
+
+  pwaInstall.classList.remove("show");
+
+});
+
+window.addEventListener("appinstalled", () => {
+
+  pwaInstall.classList.remove("show");
+
+});
 </script>
 </body>
 </html>
