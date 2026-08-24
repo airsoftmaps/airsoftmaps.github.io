@@ -299,7 +299,51 @@ body{
 #card-sponsors.show #sponsor-grid img:nth-child(5){
     transition-delay:.5s;
 }
+/* =========================================================
+   AIRSOFT MAPS — LOGO BACKGROUND
+========================================================= */
 
+#card-title{
+    position:fixed;
+    inset:0;
+
+    width:100%;
+    height:100%;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    background:
+        linear-gradient(
+            90deg,
+            #f4f4f4 0%,
+            #f4f4f4 50%,
+            #0d1013 50%,
+            #0d1013 100%
+        );
+
+    overflow:hidden;
+}
+
+/* jemné sjednocení hranice mezi světlou a tmavou částí */
+#card-title::after{
+    content:"";
+
+    position:absolute;
+    inset:0;
+
+    pointer-events:none;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(255,255,255,.04),
+            transparent 12%,
+            transparent 88%,
+            rgba(0,0,0,.08)
+        );
+}
 
 /* =========================================================
    AIRSOFT MAPS LOGO
@@ -336,11 +380,7 @@ body{
 
     display:block;
 
-    width:
-        min(
-            620px,
-            72vw
-        );
+    width:min(900px, 86vw);
 
     height:auto;
 
@@ -348,21 +388,16 @@ body{
 
     object-fit:contain;
 
-    filter:
-        drop-shadow(
-            0 0 18px
-            rgba(255,122,26,.18)
-        )
-        drop-shadow(
-            0 0 55px
-            rgba(255,122,26,.08)
-        );
+    filter:none;
 
     transform:translateY(8px);
 
     transition:
-        transform 1s cubic-bezier(.2,.9,.2,1),
-        filter .8s ease;
+        transform 1s cubic-bezier(.2,.9,.2,1);
+}
+
+#card-title.show .am-intro-logo{
+    transform:translateY(0);
 }
 
 #card-title.show .am-intro-logo{
@@ -370,39 +405,6 @@ body{
 }
 
 
-/* ---------------------------------------------------------
-   TAGLINE
---------------------------------------------------------- */
-
-#tagline{
-
-    margin-top:24px;
-
-    font-size:14px;
-
-    letter-spacing:.55em;
-
-    text-transform:uppercase;
-
-    color:#9aa2ab;
-
-    padding-left:.55em;
-
-    opacity:0;
-
-    transform:translateY(8px);
-
-    transition:
-        opacity .7s ease .45s,
-        transform .7s ease .45s;
-}
-
-#card-title.show #tagline{
-
-    opacity:1;
-
-    transform:translateY(0);
-}
 
 
 /* ---------------------------------------------------------
@@ -420,16 +422,6 @@ body{
         max-height:32vh;
     }
 
-    #tagline{
-
-        font-size:10px;
-
-        letter-spacing:.35em;
-
-        padding-left:.35em;
-
-        margin-top:18px;
-    }
 
 }
 
@@ -644,10 +636,6 @@ body{
             src="loga/velke.png"
             alt="AIRSOFT MAPS"
         >
-
-        <div id="tagline">
-            Vyber. Boj. Přežij.
-        </div>
 
     </div>
 
