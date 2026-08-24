@@ -252,7 +252,7 @@ if (/Windows/i.test(ua)) {
   os = "Linux";
 }
 
-const deviceInfo = `${isMobile ? "📱 Telefon" : "💻 PC"} · ${browser} · ${os}`;
+const deviceInfo = `${isMobile ? "Telefon" : "PC"} · ${browser} · ${os}`;
 
     const { error } = await supabaseClient.from("feedback").insert({
       type: selectedType,
