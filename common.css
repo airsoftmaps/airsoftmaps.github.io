@@ -405,11 +405,9 @@ input { font-family: inherit; }
 }
 @keyframes am-pulse { 0% { r: 7; opacity: .9; } 100% { r: 26; opacity: 0; } }
 
-@media (max-width: 760px) {
+@@media (max-width: 760px) {
   .am-map-body { flex-direction: column; }
   .am-sidebar { width: 100%; max-height: 180px; }
-  .am-table-head, .am-row { grid-template-columns: 2fr 1fr; }
-  .am-table-head > div:nth-child(3), .am-row > div:nth-child(3) { display: none; }
 }
 /* Zamezí roztahování jakýchkoliv SVG ikon v řádcích tabulky */
 .am-table svg,
