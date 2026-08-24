@@ -1141,15 +1141,30 @@ body {
   }
 
   .am-row {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 10px;
-    gap: 4px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "name name"
+      "location badge";
+    align-items: center;
+    padding: 12px 14px;
+    row-gap: 4px;
+    column-gap: 10px;
   }
 
-  .am-row > div {
-    padding: 4px 6px;
+  .am-row > div:nth-child(1) { grid-area: name; padding: 0; }
+  .am-row > div:nth-child(2) { grid-area: location; padding: 0; font-size: 13px; }
+  .am-row > div:nth-child(3) { grid-area: badge; padding: 0; justify-self: end; }
+
+  .am-row-name b { font-size: 15px; }
+
+  .am-badge { font-size: 9px; padding: 3px 8px; }
+
+  .am-row-icon, .am-row-name svg {
+    width: 17px !important;
+    height: 17px !important;
+    max-width: 17px !important;
+    max-height: 17px !important;
   }
 }
 /* ========================================================================
