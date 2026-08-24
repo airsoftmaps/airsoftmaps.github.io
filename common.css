@@ -2580,15 +2580,15 @@ html[data-theme="light"] .am-kicker-line {
 ========================================================= */
 
 .am-copyright {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 8px;
+  width: 100%;
+  box-sizing: border-box;
 
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 7px;
+
+  padding: 14px 20px 18px;
 
   color: var(--muted-2);
 
@@ -2601,8 +2601,6 @@ html[data-theme="light"] .am-kicker-line {
   pointer-events: none;
 
   opacity: .65;
-
-  z-index: 100;
 }
 
 .am-copyright-symbol {
@@ -2620,12 +2618,11 @@ html[data-theme="light"] .am-kicker-line {
   line-height: 1;
 }
 
-@media(max-width:640px){
-
+@media (max-width: 640px) {
   .am-copyright {
     font-size: 9px;
     gap: 5px;
-    bottom: 5px;
+    padding: 12px 10px 16px;
     letter-spacing: .04em;
   }
 
@@ -2634,7 +2631,6 @@ html[data-theme="light"] .am-kicker-line {
     height: 14px;
     font-size: 8px;
   }
-
 }
 .am-footer{
     width:100%;
