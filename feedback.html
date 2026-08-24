@@ -235,10 +235,11 @@
     submitBtn.textContent = "Odeslat";
 
     if (error) {
-      msgEl.textContent = "Něco se pokazilo, zkus to prosím znovu.";
-      msgEl.classList.add("err");
-      return;
-    }
+  console.error("SUPABASE FEEDBACK ERROR:", error);
+  msgEl.textContent = error.message || "Něco se pokazilo.";
+  msgEl.classList.add("err");
+  return;
+}
 
     msgEl.textContent = "Díky! Zpráva byla odeslána.";
     msgEl.classList.add("ok");
