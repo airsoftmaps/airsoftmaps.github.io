@@ -227,6 +227,17 @@
     });
 
     const filtered = BATTLEFIELDS.filter(f => (lang === "en" ? f.nameEn : f.name).toLowerCase().includes(q));
+
+    filtered.sort((a, b) => {
+      if (a.status !== b.status) {
+        return a.status === "active" ? -1 : 1;
+      }
+      const nameA = lang === "en" ? a.nameEn : a.name;
+      const nameB = lang === "en" ? b.nameEn : b.name;
+      return nameA.localeCompare(nameB, lang === "en" ? "en" : "cs");
+    });
+
+const countEl = document.getElementById("field-count");
 const countEl = document.getElementById("field-count");
 
 if (countEl) {
