@@ -175,7 +175,7 @@
   const SUPABASE_URL = "https://zebxstyuyaneuwcaxugf.supabase.co";
   const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplYnhzdHl1eWFuZXV3Y2F4dWdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc1MjY3NTksImV4cCI6MjEwMzEwMjc1OX0.EsCbgnaX6wFUNhh9EHfZGtfT_P4LHGwQpDLhhSpy3SU";
 
-  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   document.getElementById("back-btn").addEventListener("click", () => {
     window.location.href = "menu.html";
@@ -211,7 +211,7 @@
     submitBtn.disabled = true;
     submitBtn.textContent = "Odesílám...";
 
-    const { error } = await supabase.from("feedback").insert({
+       const { error } = await supabaseClient.from("feedback").insert({
       type: selectedType,
       field: field || null,
       message,
