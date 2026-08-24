@@ -2648,3 +2648,58 @@ html[data-theme="light"] .am-kicker-line {
 
     opacity:.7;
 }
+/* ==========================================================================
+   MOBILE HEADER — logo do rohu, název na střed, silnější glow
+   ========================================================================== */
+
+@media (max-width: 760px) {
+
+  .am-header {
+    position: relative;
+    flex-direction: column;
+    align-items: center;
+    padding: 46px 12px 14px;
+    gap: 12px;
+  }
+
+  .am-brand {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+  }
+
+  .am-header .am-brand-logo {
+    width: 42px !important;
+    max-width: 42px !important;
+    height: auto !important;
+    max-height: 42px !important;
+  }
+
+  .am-breadcrumb,
+  .am-field-title {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+    font-size: 15px;
+    letter-spacing: .16em;
+  }
+
+  .am-breadcrumb .sep,
+  .am-breadcrumb .current {
+    display: none;
+  }
+
+  .am-controls {
+    width: 100%;
+    justify-content: center;
+  }
+
+}
+
+@media (max-width: 760px) {
+  html[data-theme="dark"] .am-header .am-brand-logo {
+    filter:
+      drop-shadow(0 0 14px rgba(255,122,26,.45))
+      drop-shadow(0 0 34px rgba(255,122,26,.25));
+  }
+}
