@@ -241,15 +241,18 @@
   }
 
   async function loadFeedback() {
-        const { data, error } = await supabaseClient
+    const { data, error } = await supabaseClient
       .from("feedback")
       .select("*")
       .order("created_at", { ascending: false });
 
-    if (!error) {
-      rows = data;
-      renderList();
+    if (error) {
+      console.error("Načtení zpráv selhalo:", error);
+      return;
     }
+
+    rows = data;
+    renderList();
   }
 
   function renderList() {
@@ -266,11 +269,14 @@
       <div class="ad-item" data-id="${r.id}">
         <div class="ad-item-top">
           <div>
+          <div>
             <span class="ad-tag ${r.type}">${r.type}</span>
+            <span class="ad-meta">· stav: ${r.status}</span>
             ${r.field ? `<span class="ad-meta">· ${r.field}</span>` : ""}
           </div>
-          <span class="ad-meta">${new Date(r.created_at).toLocaleString("cs-CZ")}</span>
+                    <span class="ad-meta">${new Date(r.created_at).toLocaleString("cs-CZ")}</span>
         </div>
+        ${r.device_info ? `<div class="ad-meta" style="margin-bottom:8px;">📱 ${escapeHtml(r.device_info)}</div>` : ""}
         <div class="ad-message">${escapeHtml(r.message)}</div>
         ${r.email ? `<div class="ad-email">✉ ${escapeHtml(r.email)}</div>` : ""}
         <textarea class="ad-reply" placeholder="Odpověď (nepovinné, jen pro tvou evidenci)...">${r.reply ? escapeHtml(r.reply) : ""}</textarea>
@@ -293,12 +299,26 @@
     const item = document.querySelector(`.ad-item[data-id="${id}"]`);
     const reply = item.querySelector(".ad-reply").value;
 
-    await supabaseClient.from("feedback").update({ reply, status: "seen" }).eq("id", id);
+    const { error } = await supabaseClient.from("feedback").update({ reply, status: "seen" }).eq("id", id);
+
+    if (error) {
+      console.error("Uložení odpovědi selhalo:", error);
+      alert("Uložení se nepovedlo: " + error.message);
+      return;
+    }
+
     await loadFeedback();
   };
 
   window.setStatus = async function(id, status) {
-    await supabaseClient.from("feedback").update({ status }).eq("id", id);
+    const { error } = await supabaseClient.from("feedback").update({ status }).eq("id", id);
+
+    if (error) {
+      console.error("Změna stavu selhala:", error);
+      alert("Změna stavu se nepovedla: " + error.message);
+      return;
+    }
+
     await loadFeedback();
   };
 
