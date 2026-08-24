@@ -84,14 +84,23 @@
     box-sizing: border-box;
   }
 
-  .fb-select {
-    color-scheme: dark;
-  }
+.fb-select {
+  width: 100%;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 15px;
+  padding: 10px 12px;
+  box-sizing: border-box;
+  appearance: auto;
+}
 
-  .fb-select option {
-    background: var(--panel-2);
-    color: var(--text);
-  }
+.fb-select option {
+  background: var(--panel-2);
+  color: var(--text);
+}
 
   .fb-textarea {
     min-height: 120px;
