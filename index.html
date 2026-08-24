@@ -430,12 +430,14 @@ body{
 ========================================================= */
 
 #continue-hint{
-    position:absolute;
+    position:fixed;
 
     bottom:16vh;
 
     left:0;
     right:0;
+
+    z-index:35;
 
     text-align:center;
 
@@ -446,6 +448,8 @@ body{
     color:#6b7280;
 
     opacity:0;
+
+    pointer-events:none;
 
     animation:
         blink 1.6s ease-in-out infinite;
