@@ -4,7 +4,22 @@
    ========================================================================== */
 
 const AM = {};
+AM.applyLogo = function () {
+  const theme = AM.getTheme();
 
+  const lightThemes = [
+    "light",
+    "fortnite"
+  ];
+
+  const logo = lightThemes.includes(theme)
+    ? "loga/bilekulate.png"
+    : "loga/tmavekulate.png";
+
+  document.querySelectorAll(".am-brand-logo").forEach(img => {
+    img.src = logo;
+  });
+};
 AM.getLang = function () {
   return localStorage.getItem("am_lang") || "cs";
 };
@@ -40,6 +55,7 @@ AM.applyTheme = function (theme) {
   document.querySelectorAll("[data-theme]").forEach(btn => {
     btn.classList.toggle("active", btn.dataset.theme === theme);
   });
+   AM.applyLogo();
 };
 
 AM.wireDropdowns = function () {
