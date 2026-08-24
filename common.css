@@ -2636,3 +2636,19 @@ html[data-theme="light"] .am-kicker-line {
   }
 
 }
+.am-footer{
+    width:100%;
+    box-sizing:border-box;
+    text-align:center;
+
+    padding:18px 20px 22px;
+
+    font-family:var(--font-body);
+    font-size:11px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+
+    color:var(--muted-2);
+
+    opacity:.7;
+}
