@@ -3,16 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>AIRSOFT MAPS — Admin: Zpětná vazba</title>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="common.css?v=3">
+
 <style>
   .ad-wrap {
-    max-width: 900px;
+    max-width: 1000px;
     margin: 40px auto;
     padding: 0 20px 60px;
   }
+
+  /* LOGIN */
 
   .ad-login {
     max-width: 360px;
@@ -35,7 +40,8 @@
     margin-bottom: 12px;
   }
 
-  .ad-login button, .ad-logout {
+  .ad-login button,
+  .ad-logout {
     width: 100%;
     padding: 11px;
     border-radius: 8px;
@@ -47,23 +53,35 @@
     cursor: pointer;
   }
 
-  .ad-err { color: #ff5a5a; font-family: var(--font-body); margin-top: 10px; }
+  .ad-err {
+    color: #ff5a5a;
+    font-family: var(--font-body);
+    margin-top: 10px;
+  }
+
+  /* FILTERS */
 
   .ad-filters {
     display: flex;
     gap: 8px;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
     flex-wrap: wrap;
   }
 
   .ad-filter {
-    padding: 6px 14px;
+    padding: 7px 15px;
     border: 1px solid var(--border);
     border-radius: 999px;
     color: var(--muted);
     cursor: pointer;
     font-family: var(--font-body);
     font-size: 14px;
+    transition: .15s;
+  }
+
+  .ad-filter:hover {
+    border-color: var(--accent);
+    color: var(--text);
   }
 
   .ad-filter.active {
@@ -72,51 +90,161 @@
     background: var(--accent-dim);
   }
 
+  /* TICKET */
+
   .ad-item {
     background: var(--panel);
     border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 18px;
-    margin-bottom: 14px;
+    border-radius: 12px;
+    margin-bottom: 18px;
+    overflow: hidden;
   }
 
-  .ad-item-top {
+  .ad-item-head {
+    padding: 16px 18px;
+    border-bottom: 1px solid var(--border);
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
+    justify-content: space-between;
+    gap: 12px;
     flex-wrap: wrap;
-    gap: 8px;
+  }
+
+  .ad-head-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
   }
 
   .ad-tag {
     font-family: var(--font-body);
     font-size: 12px;
     font-weight: 700;
-    padding: 3px 9px;
+    padding: 4px 10px;
     border-radius: 999px;
     text-transform: uppercase;
   }
 
-  .ad-tag.bug { background: rgba(255,90,90,.15); color: #ff5a5a; }
-  .ad-tag.wish { background: rgba(255,196,0,.15); color: #ffc400; }
-  .ad-tag.other { background: rgba(120,170,255,.15); color: #78aaff; }
+  .ad-tag.bug {
+    background: rgba(255,90,90,.15);
+    color: #ff5a5a;
+  }
 
-  .ad-meta { color: var(--muted-2); font-size: 13px; font-family: var(--font-body); }
+  .ad-tag.wish {
+    background: rgba(255,196,0,.15);
+    color: #ffc400;
+  }
+
+  .ad-tag.other {
+    background: rgba(120,170,255,.15);
+    color: #78aaff;
+  }
+
+  .ad-status {
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--panel-2);
+    color: var(--muted);
+  }
+
+  .ad-status.new {
+    color: var(--accent);
+  }
+
+  .ad-status.seen {
+    color: #78aaff;
+  }
+
+  .ad-status.resolved {
+    color: #4ad07a;
+  }
+
+  .ad-date {
+    color: var(--muted-2);
+    font-family: var(--font-body);
+    font-size: 13px;
+  }
+
+  /* META GRID */
+
+  .ad-meta-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border-bottom: 1px solid var(--border);
+  }
+
+  .ad-meta-box {
+    padding: 13px 18px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .ad-meta-box:nth-child(odd) {
+    border-right: 1px solid var(--border);
+  }
+
+  .ad-meta-label {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .6px;
+    color: var(--muted-2);
+    margin-bottom: 4px;
+  }
+
+  .ad-meta-value {
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--text);
+    word-break: break-word;
+  }
+
+  .ad-meta-value.email {
+    color: var(--accent);
+  }
+
+  .ad-meta-value.empty {
+    color: var(--muted-2);
+  }
+
+  /* MESSAGE */
+
+  .ad-section {
+    padding: 18px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .ad-section-title {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .7px;
+    color: var(--muted-2);
+    margin-bottom: 9px;
+  }
 
   .ad-message {
     color: var(--text);
     font-family: var(--font-body);
     font-size: 15px;
+    line-height: 1.55;
     white-space: pre-wrap;
-    margin-bottom: 10px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 13px 14px;
   }
 
-  .ad-email {
-    color: var(--accent);
-    font-family: var(--font-body);
-    font-size: 13px;
-    margin-bottom: 10px;
+  /* REPLY */
+
+  .ad-reply-section {
+    padding: 18px;
+    border-bottom: 1px solid var(--border);
   }
 
   .ad-reply {
@@ -126,207 +254,686 @@
     border-radius: 8px;
     color: var(--text);
     font-family: var(--font-body);
-    padding: 8px 10px;
+    font-size: 14px;
+    line-height: 1.5;
+    padding: 11px 12px;
     box-sizing: border-box;
-    min-height: 60px;
-    margin-bottom: 8px;
+    min-height: 90px;
+    resize: vertical;
   }
 
-  .ad-row-actions {
+  .ad-reply:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+
+  /* ACTIONS */
+
+  .ad-actions {
+    padding: 14px 18px;
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
   }
 
-  .ad-row-actions button {
-    padding: 7px 14px;
+  .ad-actions button {
+    padding: 8px 14px;
     border-radius: 8px;
     border: 1px solid var(--border);
     background: var(--panel-2);
     color: var(--text);
     font-family: var(--font-body);
+    font-weight: 600;
     cursor: pointer;
     font-size: 13px;
+    transition: .15s;
   }
 
-  .ad-row-actions button.primary {
+  .ad-actions button:hover {
+    border-color: var(--accent);
+  }
+
+  .ad-actions button.primary {
     border-color: var(--accent);
     color: var(--accent);
   }
 
-  .ad-empty { color: var(--muted); font-family: var(--font-body); text-align: center; margin-top: 40px; }
+  .ad-actions button.success {
+    border-color: #4ad07a;
+    color: #4ad07a;
+  }
+
+  /* EMPTY */
+
+  .ad-empty {
+    color: var(--muted);
+    font-family: var(--font-body);
+    text-align: center;
+    margin-top: 50px;
+  }
+
+  /* MOBILE */
+
+  @media (max-width: 650px) {
+
+    .ad-wrap {
+      margin-top: 25px;
+      padding: 0 12px 40px;
+    }
+
+    .ad-item-head {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .ad-meta-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .ad-meta-box:nth-child(odd) {
+      border-right: none;
+    }
+
+    .ad-meta-box:last-child {
+      border-bottom: none;
+    }
+
+    .ad-actions {
+      flex-direction: column;
+    }
+
+    .ad-actions button {
+      width: 100%;
+    }
+  }
 </style>
 </head>
+
 <body>
 
 <header class="am-header">
+
   <a class="am-brand" href="menu.html">
     <img class="am-brand-logo" src="logos/logoam.png" alt="Airsoft Maps">
   </a>
-  <div class="am-field-title">ADMIN — ZPĚTNÁ VAZBA</div>
-  <div class="am-controls">
-    <button class="am-btn" id="logout-btn" style="display:none;">Odhlásit</button>
+
+  <div class="am-field-title">
+    ADMIN — ZPĚTNÁ VAZBA
   </div>
+
+  <div class="am-controls">
+    <button class="am-btn" id="logout-btn" style="display:none;">
+      Odhlásit
+    </button>
+  </div>
+
 </header>
 
+
+<!-- LOGIN -->
+
 <div id="login-screen" class="ad-login">
-  <label class="fb-label" style="font-family:var(--font-body); display:block; margin-bottom:8px;">E-mail</label>
-  <input id="login-email" type="email" placeholder="tvuj@email.cz">
-  <label class="fb-label" style="font-family:var(--font-body); display:block; margin-bottom:8px;">Heslo</label>
-  <input id="login-password" type="password" placeholder="Heslo">
-  <button id="login-btn">Přihlásit</button>
+
+  <label
+    class="fb-label"
+    style="font-family:var(--font-body); display:block; margin-bottom:8px;"
+  >
+    E-mail
+  </label>
+
+  <input
+    id="login-email"
+    type="email"
+    placeholder="tvuj@email.cz"
+  >
+
+  <label
+    class="fb-label"
+    style="font-family:var(--font-body); display:block; margin-bottom:8px;"
+  >
+    Heslo
+  </label>
+
+  <input
+    id="login-password"
+    type="password"
+    placeholder="Heslo"
+  >
+
+  <button id="login-btn">
+    Přihlásit
+  </button>
+
   <div class="ad-err" id="login-err"></div>
+
 </div>
+
+
+<!-- ADMIN -->
 
 <div class="ad-wrap" id="admin-screen" style="display:none;">
+
   <div class="ad-filters">
-    <div class="ad-filter active" data-status="all">Vše</div>
-    <div class="ad-filter" data-status="new">Nové</div>
-    <div class="ad-filter" data-status="seen">Přečtené</div>
-    <div class="ad-filter" data-status="resolved">Vyřešené</div>
+
+    <div class="ad-filter active" data-status="all">
+      Vše
+    </div>
+
+    <div class="ad-filter" data-status="new">
+      Nové
+    </div>
+
+    <div class="ad-filter" data-status="seen">
+      Přečtené
+    </div>
+
+    <div class="ad-filter" data-status="resolved">
+      Vyřešené
+    </div>
+
   </div>
+
   <div id="list"></div>
+
 </div>
 
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
-  const SUPABASE_URL = "https://zebxstyuyaneuwcaxugf.supabase.co";
-  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplYnhzdHl1eWFuZXV3Y2F4dWdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc1MjY3NTksImV4cCI6MjEwMzEwMjc1OX0.EsCbgnaX6wFUNhh9EHfZGtfT_P4LHGwQpDLhhSpy3SU";
 
- const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const SUPABASE_URL =
+  "https://zebxstyuyaneuwcaxugf.supabase.co";
 
-  const loginScreen = document.getElementById("login-screen");
-  const adminScreen = document.getElementById("admin-screen");
-  const logoutBtn = document.getElementById("logout-btn");
-  const listEl = document.getElementById("list");
+const SUPABASE_ANON_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IjA";
 
-  let currentFilter = "all";
-  let rows = [];
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+  );
 
-  document.getElementById("login-btn").addEventListener("click", async () => {
-    const email = document.getElementById("login-email").value.trim();
-    const password = document.getElementById("login-password").value;
-    const errEl = document.getElementById("login-err");
+
+const loginScreen =
+  document.getElementById("login-screen");
+
+const adminScreen =
+  document.getElementById("admin-screen");
+
+const logoutBtn =
+  document.getElementById("logout-btn");
+
+const listEl =
+  document.getElementById("list");
+
+
+let currentFilter = "all";
+let rows = [];
+
+
+/* LOGIN */
+
+document
+  .getElementById("login-btn")
+  .addEventListener("click", async () => {
+
+    const email =
+      document.getElementById("login-email").value.trim();
+
+    const password =
+      document.getElementById("login-password").value;
+
+    const errEl =
+      document.getElementById("login-err");
+
     errEl.textContent = "";
 
-        const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+    const { error } =
+      await supabaseClient.auth.signInWithPassword({
+        email,
+        password
+      });
 
     if (error) {
-      errEl.textContent = "Špatný e-mail nebo heslo.";
+      errEl.textContent =
+        "Špatný e-mail nebo heslo.";
       return;
     }
 
     showAdmin();
+
   });
 
-  logoutBtn.addEventListener("click", async () => {
+
+/* LOGOUT */
+
+logoutBtn.addEventListener(
+  "click",
+  async () => {
+
     await supabaseClient.auth.signOut();
+
     location.reload();
-  });
 
-  document.querySelectorAll(".ad-filter").forEach(el => {
-    el.addEventListener("click", () => {
-      document.querySelectorAll(".ad-filter").forEach(o => o.classList.remove("active"));
-      el.classList.add("active");
-      currentFilter = el.dataset.status;
-      renderList();
-    });
-  });
-
-  async function showAdmin() {
-    loginScreen.style.display = "none";
-    adminScreen.style.display = "block";
-    logoutBtn.style.display = "inline-block";
-    await loadFeedback();
   }
+);
 
-  async function loadFeedback() {
-    const { data, error } = await supabaseClient
+
+/* FILTERS */
+
+document
+  .querySelectorAll(".ad-filter")
+  .forEach(el => {
+
+    el.addEventListener("click", () => {
+
+      document
+        .querySelectorAll(".ad-filter")
+        .forEach(o =>
+          o.classList.remove("active")
+        );
+
+      el.classList.add("active");
+
+      currentFilter =
+        el.dataset.status;
+
+      renderList();
+
+    });
+
+  });
+
+
+/* ADMIN */
+
+async function showAdmin() {
+
+  loginScreen.style.display = "none";
+
+  adminScreen.style.display = "block";
+
+  logoutBtn.style.display =
+    "inline-block";
+
+  await loadFeedback();
+
+}
+
+
+/* LOAD */
+
+async function loadFeedback() {
+
+  const { data, error } =
+    await supabaseClient
       .from("feedback")
       .select("*")
-      .order("created_at", { ascending: false });
+      .order("created_at", {
+        ascending: false
+      });
 
-    if (error) {
-      console.error("Načtení zpráv selhalo:", error);
-      return;
-    }
+  if (error) {
 
-    rows = data;
-    renderList();
+    console.error(
+      "Načtení zpráv selhalo:",
+      error
+    );
+
+    return;
   }
 
-  function renderList() {
-    const filtered = currentFilter === "all"
+  rows = data;
+
+  renderList();
+
+}
+
+
+/* RENDER */
+
+function renderList() {
+
+  const filtered =
+    currentFilter === "all"
       ? rows
-      : rows.filter(r => r.status === currentFilter);
+      : rows.filter(
+          r => r.status === currentFilter
+        );
 
-    if (filtered.length === 0) {
-      listEl.innerHTML = `<div class="ad-empty">Žádné zprávy.</div>`;
-      return;
-    }
 
-    listEl.innerHTML = filtered.map(r => `
-      <div class="ad-item" data-id="${r.id}">
-        <div class="ad-item-top">
-          <div>
-          <div>
-            <span class="ad-tag ${r.type}">${r.type}</span>
-            <span class="ad-meta">· stav: ${r.status}</span>
-            ${r.field ? `<span class="ad-meta">· ${r.field}</span>` : ""}
+  if (filtered.length === 0) {
+
+    listEl.innerHTML =
+      `<div class="ad-empty">
+        Žádné zprávy.
+      </div>`;
+
+    return;
+
+  }
+
+
+  listEl.innerHTML =
+    filtered.map(r => {
+
+      const typeLabel =
+        r.type === "bug"
+          ? "Chyba"
+          : r.type === "wish"
+            ? "Nápad"
+            : "Jiné";
+
+
+      const statusLabel =
+        r.status === "new"
+          ? "Nové"
+          : r.status === "seen"
+            ? "Přečtené"
+            : r.status === "resolved"
+              ? "Vyřešené"
+              : r.status;
+
+
+      const fieldLabel =
+        r.field
+          ? r.field === "mokra_horakov"
+            ? "Mokrá Horákov"
+            : r.field === "menu"
+              ? "Menu / obecně"
+              : r.field === "jine"
+                ? "Jiné"
+                : r.field.charAt(0).toUpperCase() +
+                  r.field.slice(1)
+          : "Neuvedeno";
+
+
+      return `
+
+        <div class="ad-item" data-id="${r.id}">
+
+          <!-- HEADER -->
+
+          <div class="ad-item-head">
+
+            <div class="ad-head-left">
+
+              <span class="ad-tag ${r.type}">
+                ${typeLabel}
+              </span>
+
+              <span class="ad-status ${r.status}">
+                ${statusLabel}
+              </span>
+
+            </div>
+
+            <div class="ad-date">
+              ${new Date(r.created_at)
+                .toLocaleString("cs-CZ")}
+            </div>
+
           </div>
-                    <span class="ad-meta">${new Date(r.created_at).toLocaleString("cs-CZ")}</span>
+
+
+          <!-- META -->
+
+          <div class="ad-meta-grid">
+
+            <div class="ad-meta-box">
+
+              <div class="ad-meta-label">
+                Hřiště / stránka
+              </div>
+
+              <div class="ad-meta-value ${
+                r.field ? "" : "empty"
+              }">
+
+                ${escapeHtml(fieldLabel)}
+
+              </div>
+
+            </div>
+
+
+            <div class="ad-meta-box">
+
+              <div class="ad-meta-label">
+                Zařízení
+              </div>
+
+              <div class="ad-meta-value ${
+                r.device_info ? "" : "empty"
+              }">
+
+                ${r.device_info
+                  ? escapeHtml(r.device_info)
+                  : "Neuvedeno"}
+
+              </div>
+
+            </div>
+
+
+            <div class="ad-meta-box">
+
+              <div class="ad-meta-label">
+                E-mail
+              </div>
+
+              <div class="ad-meta-value email ${
+                r.email ? "" : "empty"
+              }">
+
+                ${r.email
+                  ? escapeHtml(r.email)
+                  : "Neuveden"}
+
+              </div>
+
+            </div>
+
+
+            <div class="ad-meta-box">
+
+              <div class="ad-meta-label">
+                ID hlášení
+              </div>
+
+              <div class="ad-meta-value">
+
+                ${escapeHtml(r.id)}
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- MESSAGE -->
+
+          <div class="ad-section">
+
+            <div class="ad-section-title">
+              Zpráva uživatele
+            </div>
+
+            <div class="ad-message">
+
+              ${escapeHtml(r.message)}
+
+            </div>
+
+          </div>
+
+
+          <!-- REPLY -->
+
+          <div class="ad-reply-section">
+
+            <div class="ad-section-title">
+              Interní odpověď / poznámka
+            </div>
+
+            <textarea
+              class="ad-reply"
+              placeholder="Sem si můžeš napsat odpověď nebo poznámku..."
+            >${r.reply ? escapeHtml(r.reply) : ""}</textarea>
+
+          </div>
+
+
+          <!-- ACTIONS -->
+
+          <div class="ad-actions">
+
+            <button
+              class="primary"
+              onclick="saveReply('${r.id}')"
+            >
+              Uložit odpověď
+            </button>
+
+            <button
+              onclick="setStatus('${r.id}', 'seen')"
+            >
+              Označit jako přečtené
+            </button>
+
+            <button
+              class="success"
+              onclick="setStatus('${r.id}', 'resolved')"
+            >
+              Označit jako vyřešené
+            </button>
+
+          </div>
+
         </div>
-        ${r.device_info ? `<div class="ad-meta" style="margin-bottom:8px;">${escapeHtml(r.device_info)}</div>` : ""}
-        ${r.email ? `<div class="ad-email">✉ ${escapeHtml(r.email)}</div>` : ""}
-        <textarea class="ad-reply" placeholder="Odpověď (nepovinné, jen pro tvou evidenci)...">${r.reply ? escapeHtml(r.reply) : ""}</textarea>
-        <div class="ad-row-actions">
-          <button class="primary" onclick="saveReply('${r.id}')">Uložit odpověď</button>
-          <button onclick="setStatus('${r.id}', 'seen')">Označit jako přečtené</button>
-          <button onclick="setStatus('${r.id}', 'resolved')">Označit jako vyřešené</button>
-        </div>
-      </div>
-    `).join("");
-  }
 
-  function escapeHtml(str) {
-    const div = document.createElement("div");
-    div.textContent = str;
-    return div.innerHTML;
-  }
+      `;
 
-  window.saveReply = async function(id) {
-    const item = document.querySelector(`.ad-item[data-id="${id}"]`);
-    const reply = item.querySelector(".ad-reply").value;
+    }).join("");
 
-    const { error } = await supabaseClient.from("feedback").update({ reply, status: "seen" }).eq("id", id);
+}
+
+
+/* ESCAPE */
+
+function escapeHtml(str) {
+
+  const div =
+    document.createElement("div");
+
+  div.textContent = str;
+
+  return div.innerHTML;
+
+}
+
+
+/* SAVE REPLY */
+
+window.saveReply =
+  async function(id) {
+
+    const item =
+      document.querySelector(
+        `.ad-item[data-id="${id}"]`
+      );
+
+    const reply =
+      item
+        .querySelector(".ad-reply")
+        .value;
+
+
+    const { error } =
+      await supabaseClient
+        .from("feedback")
+        .update({
+          reply,
+          status: "seen"
+        })
+        .eq("id", id);
+
 
     if (error) {
-      console.error("Uložení odpovědi selhalo:", error);
-      alert("Uložení se nepovedlo: " + error.message);
+
+      console.error(
+        "Uložení odpovědi selhalo:",
+        error
+      );
+
+      alert(
+        "Uložení se nepovedlo: " +
+        error.message
+      );
+
       return;
+
     }
 
+
     await loadFeedback();
+
   };
 
-  window.setStatus = async function(id, status) {
-    const { error } = await supabaseClient.from("feedback").update({ status }).eq("id", id);
+
+/* STATUS */
+
+window.setStatus =
+  async function(id, status) {
+
+    const { error } =
+      await supabaseClient
+        .from("feedback")
+        .update({ status })
+        .eq("id", id);
+
 
     if (error) {
-      console.error("Změna stavu selhala:", error);
-      alert("Změna stavu se nepovedla: " + error.message);
+
+      console.error(
+        "Změna stavu selhala:",
+        error
+      );
+
+      alert(
+        "Změna stavu se nepovedla: " +
+        error.message
+      );
+
       return;
+
     }
+
 
     await loadFeedback();
+
   };
 
-  (async () => {
-    const { data: { session } } = await supabaseClient.auth.getSession();
-    if (session) {
-      showAdmin();
-    }
-  })();
+
+/* AUTO LOGIN */
+
+(async () => {
+
+  const {
+    data: { session }
+  } =
+    await supabaseClient.auth.getSession();
+
+  if (session) {
+
+    showAdmin();
+
+  }
+
+})();
+
 </script>
 
 </body>
