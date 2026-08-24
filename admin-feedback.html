@@ -209,7 +209,7 @@
     const errEl = document.getElementById("login-err");
     errEl.textContent = "";
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
 
     if (error) {
       errEl.textContent = "Špatný e-mail nebo heslo.";
@@ -220,7 +220,7 @@
   });
 
   logoutBtn.addEventListener("click", async () => {
-    await supabase.auth.signOut();
+    await supabaseClient.auth.signOut();
     location.reload();
   });
 
@@ -241,7 +241,7 @@
   }
 
   async function loadFeedback() {
-    const { data, error } = await supabase
+        const { data, error } = await supabaseClient
       .from("feedback")
       .select("*")
       .order("created_at", { ascending: false });
@@ -293,17 +293,17 @@
     const item = document.querySelector(`.ad-item[data-id="${id}"]`);
     const reply = item.querySelector(".ad-reply").value;
 
-    await supabase.from("feedback").update({ reply, status: "seen" }).eq("id", id);
+    await supabaseClient.from("feedback").update({ reply, status: "seen" }).eq("id", id);
     await loadFeedback();
   };
 
   window.setStatus = async function(id, status) {
-    await supabase.from("feedback").update({ status }).eq("id", id);
+    await supabaseClient.from("feedback").update({ status }).eq("id", id);
     await loadFeedback();
   };
 
   (async () => {
-    const { data: { session } } = await supabase.auth.getSession();
+    const { data: { session } } = await supabaseClient.auth.getSession();
     if (session) {
       showAdmin();
     }
