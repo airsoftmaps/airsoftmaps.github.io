@@ -130,6 +130,9 @@ const MapEngine = (() => {
     const roads =
       el("g", { class: "layer-roads" }, container);
 
+const walls =
+      el("g", { class: "layer-walls" }, container);
+     
     const buildings =
       el("g", { class: "layer-buildings" }, container);
 
@@ -189,6 +192,26 @@ const MapEngine = (() => {
       );
     });
 
+     (data.walls || []).forEach(wall => {
+
+      const [c1, r1, c2, r2] = wall.rect;
+
+      const p1 = flatPoint(c1, r1);
+      const p2 = flatPoint(c2, r2);
+
+      el(
+        "rect",
+        {
+          x: Math.min(p1.x, p2.x),
+          y: Math.min(p1.y, p2.y),
+          width: Math.abs(p2.x - p1.x),
+          height: Math.abs(p2.y - p1.y),
+          fill: mapColor("--map-outline", "#eef1f0"),
+          opacity: .55
+        },
+        walls
+      );
+    });
     if (data.entrance) {
 
       const p =
@@ -467,7 +490,35 @@ const strokeColor =
 
     return group;
   }
+function buildWallBlock(parent, c1, r1, c2, r2, height) {
 
+    const AA = { c: c1, r: r1 };
+    const BA = { c: c2, r: r1 };
+    const BB = { c: c2, r: r2 };
+    const AB = { c: c1, r: r2 };
+
+    const topAA = isoPoint(AA.c, AA.r, height);
+    const topBA = isoPoint(BA.c, BA.r, height);
+    const topBB = isoPoint(BB.c, BB.r, height);
+    const topAB = isoPoint(AB.c, AB.r, height);
+
+    const baseBA = isoPoint(BA.c, BA.r, 0);
+    const baseBB = isoPoint(BB.c, BB.r, 0);
+    const baseAB = isoPoint(AB.c, AB.r, 0);
+
+    const group = el("g", { class: "am-wall3d" }, parent);
+
+    const topColor = mapColor("--map-3d-top", "#4a5058");
+    const rightColor = mapColor("--map-3d-right", "#2f333a");
+    const frontColor = mapColor("--map-3d-front", "#1c1f24");
+    const strokeColor = mapColor("--map-outline", "#eef1f0");
+
+    el("polygon", { points: ptsToStr([topAA, topBA, topBB, topAB]), fill: topColor, stroke: strokeColor, "stroke-width": 1 }, group);
+    el("polygon", { points: ptsToStr([topBA, topBB, baseBB, baseBA]), fill: rightColor, stroke: strokeColor, "stroke-width": 1 }, group);
+    el("polygon", { points: ptsToStr([topBB, topAB, baseAB, baseBB]), fill: frontColor, stroke: strokeColor, "stroke-width": 1 }, group);
+
+    return group;
+}
   function render3D(
     container,
     data,
@@ -488,7 +539,13 @@ const strokeColor =
         { class: "layer-trees-back" },
         container
       );
-
+const walls =
+      el(
+        "g",
+        { class: "layer-walls" },
+        container
+      );
+     
     const buildings =
       el(
         "g",
@@ -613,7 +670,16 @@ const strokeColor =
         );
       }
     );
-
+[...(data.walls || [])]
+      .sort((a, b) => {
+        const ca = a.rect[0] + a.rect[2] + a.rect[1] + a.rect[3];
+        const cb = b.rect[0] + b.rect[2] + b.rect[1] + b.rect[3];
+        return ca - cb;
+      })
+      .forEach(wall => {
+        const [c1, r1, c2, r2] = wall.rect;
+        buildWallBlock(walls, c1, r1, c2, r2, wall.height || 0.9);
+      });
     const sorted =
       [...(data.buildings || [])].sort(
         (a, b) => {
