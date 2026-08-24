@@ -276,8 +276,7 @@
           </div>
                     <span class="ad-meta">${new Date(r.created_at).toLocaleString("cs-CZ")}</span>
         </div>
-        ${r.device_info ? `<div class="ad-meta" style="margin-bottom:8px;">📱 ${escapeHtml(r.device_info)}</div>` : ""}
-        <div class="ad-message">${escapeHtml(r.message)}</div>
+        ${r.device_info ? `<div class="ad-meta" style="margin-bottom:8px;">${escapeHtml(r.device_info)}</div>` : ""}
         ${r.email ? `<div class="ad-email">✉ ${escapeHtml(r.email)}</div>` : ""}
         <textarea class="ad-reply" placeholder="Odpověď (nepovinné, jen pro tvou evidenci)...">${r.reply ? escapeHtml(r.reply) : ""}</textarea>
         <div class="ad-row-actions">
