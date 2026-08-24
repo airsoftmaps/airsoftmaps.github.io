@@ -790,7 +790,8 @@ const strokeColor =
     console.error("MapEngine: SVG element nebyl nalezen.");
     return {
       redraw: () => {},
-      setPlayer: () => {}
+      setPlayer: () => {},
+      setCompassRotation: () => {}
     };
   }
 
@@ -1362,6 +1363,17 @@ function resetTransform() {
   }
 
   /* =========================================================
+     KOMPAS — automatické natočení mapy podle světové strany
+     ========================================================= */
+
+  function setCompassRotation(deg) {
+
+    rotation = deg == null ? 0 : deg;
+
+    updateTransform();
+  }
+
+  /* =========================================================
      VÝBĚR BUDOV
      ========================================================= */
 
@@ -1494,7 +1506,8 @@ function resetTransform() {
 
 return {
   redraw: draw,
-  setPlayer
+  setPlayer,
+  setCompassRotation
 };
 }
 
