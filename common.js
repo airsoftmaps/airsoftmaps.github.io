@@ -145,4 +145,24 @@ AM.wireStyleSwitch = function () {
 
 document.addEventListener("DOMContentLoaded", () => {
   AM.applyTheme(AM.getTheme());
+  AM.addCopyright();
 });
+AM.addCopyright = function () {
+
+  if (document.body.dataset.noCopyright === "true") {
+    return;
+  }
+
+  const footer = document.createElement("div");
+
+  footer.className = "am-copyright";
+
+  footer.innerHTML = `
+    <span class="am-copyright-symbol">®</span>
+    <span>All Rights Reserved</span>
+    <span>Umbrella Corporation Ostrava z.s.</span>
+    <span>2026</span>
+  `;
+
+  document.body.appendChild(footer);
+};
