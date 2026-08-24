@@ -107,7 +107,29 @@ const AMGeo = (() => {
       return null;
     }
 
+    /*
+       Bearing (0-360°, ve směru hodinových ručiček od severu) směru
+       "nahoru" na 2D mapě (tj. směr od vyššího row k nižšímu row).
+       Používá se pro natočení mapy podle kompasu.
+    */
+    const latRef =
+      anchors.reduce((sum, p) => sum + p.lat, 0) / anchors.length;
+
+    const dLatUp = -b;
+    const dLngUp = -d;
+
+    const upBearingDeg =
+      (
+        Math.atan2(
+          dLngUp * Math.cos(latRef * Math.PI / 180),
+          dLatUp
+        ) * 180 / Math.PI +
+        360
+      ) % 360;
+
     return {
+
+      upBearingDeg,
 
       toLatLng(col, row) {
         return {
@@ -219,7 +241,8 @@ const AMGeo = (() => {
           col: grid.col,
           row: grid.row,
           inside,
-          accuracy
+          accuracy,
+          upBearing: transform.upBearingDeg
         });
       },
 
@@ -263,12 +286,67 @@ const AMGeo = (() => {
     }
   }
 
+  /*
+     Sleduje natočení telefonu (digitální kompas).
+     onHeading dostává úhel 0-360° (0 = sever), nebo null,
+     pokud kompas není na zařízení dostupný / nebyl povolen.
+     Vrací funkci pro zastavení sledování.
+  */
+  function watchHeading(onHeading) {
+
+    if (!window.DeviceOrientationEvent) {
+      onHeading(null);
+      return () => {};
+    }
+
+    function handler(e) {
+
+      let heading = null;
+
+      if (typeof e.webkitCompassHeading === "number") {
+        // iOS: heading už je 0-360°, 0 = sever, po směru hodinových ručiček
+        heading = e.webkitCompassHeading;
+      } else if (typeof e.alpha === "number") {
+        // Android: alpha roste proti směru hodinových ručiček od severu
+        heading = (360 - e.alpha) % 360;
+      }
+
+      if (heading != null) {
+        onHeading(heading);
+      }
+    }
+
+    const eventName =
+      "ondeviceorientationabsolute" in window
+        ? "deviceorientationabsolute"
+        : "deviceorientation";
+
+    function start() {
+      window.addEventListener(eventName, handler, true);
+    }
+
+    if (typeof DeviceOrientationEvent.requestPermission === "function") {
+      // iOS 13+ vyžaduje explicitní souhlas vyvolaný gestem uživatele
+      DeviceOrientationEvent.requestPermission()
+        .then(state => {
+          if (state === "granted") start();
+          else onHeading(null);
+        })
+        .catch(() => onHeading(null));
+    } else {
+      start();
+    }
+
+    return () => window.removeEventListener(eventName, handler, true);
+  }
+
   return {
     fitAffine,
     solveAffine: fitAffine,
     pointInBoundary,
     watch,
-    stop
+    stop,
+    watchHeading
   };
 
 })();
