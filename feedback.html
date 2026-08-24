@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIRSOFT MAPS — Zpětná vazba</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="common.css?v=3">
+<style>
+  .fb-wrap {
+    max-width: 640px;
+    margin: 40px auto;
+    padding: 0 20px 60px;
+  }
+
+  .fb-title {
+    font-family: var(--font-display);
+    font-size: 28px;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+
+  .fb-sub {
+    color: var(--muted);
+    margin-bottom: 28px;
+    font-family: var(--font-body);
+  }
+
+  .fb-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+  }
+
+  .fb-label {
+    display: block;
+    font-family: var(--font-body);
+    font-weight: 600;
+    color: var(--text);
+    margin: 18px 0 8px;
+  }
+
+  .fb-label:first-child { margin-top: 0; }
+
+  .fb-types {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .fb-type {
+    flex: 1;
+    min-width: 100px;
+    text-align: center;
+    padding: 10px 8px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: var(--font-body);
+    color: var(--muted);
+    background: var(--panel-2);
+    transition: all .15s;
+  }
+
+  .fb-type.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-dim);
+  }
+
+  .fb-select,
+  .fb-input,
+  .fb-textarea {
+    width: 100%;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 15px;
+    padding: 10px 12px;
+    box-sizing: border-box;
+  }
+
+  .fb-textarea {
+    min-height: 120px;
+    resize: vertical;
+  }
+
+  .fb-hint {
+    color: var(--muted-2);
+    font-size: 13px;
+    margin-top: 6px;
+  }
+
+  .fb-submit {
+    margin-top: 24px;
+    width: 100%;
+    padding: 13px;
+    border-radius: 8px;
+    border: none;
+    background: var(--accent);
+    color: #101214;
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  .fb-submit:disabled {
+    opacity: .5;
+    cursor: default;
+  }
+
+  .fb-msg {
+    margin-top: 16px;
+    font-family: var(--font-body);
+    text-align: center;
+  }
+
+  .fb-msg.ok { color: #4ad07a; }
+  .fb-msg.err { color: #ff5a5a; }
+</style>
+</head>
+<body>
+
+<header class="am-header">
+  <a class="am-brand" href="menu.html">
+    <img class="am-brand-logo" src="logos/logoam.png" alt="Airsoft Maps">
+  </a>
+  <div class="am-field-title">ZPĚTNÁ VAZBA</div>
+  <div class="am-controls">
+    <button class="am-btn" id="back-btn">← Zpět na hřiště</button>
+  </div>
+</header>
+
+<div class="fb-wrap">
+  <div class="fb-title">Nahlásit chybu / poslat nápad</div>
+  <div class="fb-sub">Cokoliv nefunguje, chybí, nebo máš nápad na vylepšení — napiš to sem.</div>
+
+  <div class="fb-card">
+    <label class="fb-label">Typ hlášení</label>
+    <div class="fb-types">
+      <div class="fb-type active" data-type="bug">🐞 Chyba</div>
+      <div class="fb-type" data-type="wish">💡 Nápad</div>
+      <div class="fb-type" data-type="other">💬 Jiné</div>
+    </div>
+
+    <label class="fb-label" for="fb-field">Kterého hřiště / stránky se to týká (nepovinné)</label>
+    <select class="fb-select" id="fb-field">
+      <option value="">— nevybráno —</option>
+      <option value="dalov">Dalov</option>
+      <option value="doubrava">Doubrava</option>
+      <option value="mokra_horakov">Mokrá Horákov</option>
+      <option value="menu">Menu / obecně</option>
+      <option value="jine">Jiné</option>
+    </select>
+
+    <label class="fb-label" for="fb-message">Zpráva</label>
+    <textarea class="fb-textarea" id="fb-message" placeholder="Popiš co nejkonkrétněji, co se stalo / co bys chtěl jinak..."></textarea>
+
+    <label class="fb-label" for="fb-email">Tvůj e-mail (nepovinné)</label>
+    <input class="fb-input" id="fb-email" type="email" placeholder="tvuj@email.cz">
+    <div class="fb-hint">Vyplň, pokud chceš, abych se ti mohl ozvat zpět.</div>
+
+    <button class="fb-submit" id="fb-submit">Odeslat</button>
+    <div class="fb-msg" id="fb-msg"></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const SUPABASE_URL = "https://zebxstyuyaneuwcaxugf.supabase.co";
+  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplYnhzdHl1eWFuZXV3Y2F4dWdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc1MjY3NTksImV4cCI6MjEwMzEwMjc1OX0.EsCbgnaX6wFUNhh9EHfZGtfT_P4LHGwQpDLhhSpy3SU";
+
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  document.getElementById("back-btn").addEventListener("click", () => {
+    window.location.href = "menu.html";
+  });
+
+  let selectedType = "bug";
+
+  document.querySelectorAll(".fb-type").forEach(el => {
+    el.addEventListener("click", () => {
+      document.querySelectorAll(".fb-type").forEach(o => o.classList.remove("active"));
+      el.classList.add("active");
+      selectedType = el.dataset.type;
+    });
+  });
+
+  const submitBtn = document.getElementById("fb-submit");
+  const msgEl = document.getElementById("fb-msg");
+
+  submitBtn.addEventListener("click", async () => {
+    const message = document.getElementById("fb-message").value.trim();
+    const email = document.getElementById("fb-email").value.trim();
+    const field = document.getElementById("fb-field").value;
+
+    msgEl.textContent = "";
+    msgEl.className = "fb-msg";
+
+    if (!message) {
+      msgEl.textContent = "Napiš prosím zprávu.";
+      msgEl.classList.add("err");
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Odesílám...";
+
+    const { error } = await supabase.from("feedback").insert({
+      type: selectedType,
+      field: field || null,
+      message,
+      email: email || null
+    });
+
+    submitBtn.disabled = false;
+    submitBtn.textContent = "Odeslat";
+
+    if (error) {
+      msgEl.textContent = "Něco se pokazilo, zkus to prosím znovu.";
+      msgEl.classList.add("err");
+      return;
+    }
+
+    msgEl.textContent = "Díky! Zpráva byla odeslána.";
+    msgEl.classList.add("ok");
+    document.getElementById("fb-message").value = "";
+    document.getElementById("fb-email").value = "";
+  });
+</script>
+
+</body>
+</html>
