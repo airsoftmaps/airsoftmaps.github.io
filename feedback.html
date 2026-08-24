@@ -220,11 +220,15 @@
     submitBtn.disabled = true;
     submitBtn.textContent = "Odesílám...";
 
-       const { error } = await supabaseClient.from("feedback").insert({
+           const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+    const deviceInfo = `${isMobile ? "Telefon" : "PC"} — ${navigator.userAgent}`;
+
+    const { error } = await supabaseClient.from("feedback").insert({
       type: selectedType,
       field: field || null,
       message,
-      email: email || null
+      email: email || null,
+      device_info: deviceInfo
     });
 
     submitBtn.disabled = false;
