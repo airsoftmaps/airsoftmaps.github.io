@@ -206,8 +206,8 @@ const walls =
           y: Math.min(p1.y, p2.y),
           width: Math.abs(p2.x - p1.x),
           height: Math.abs(p2.y - p1.y),
-          fill: mapColor("--map-outline", "#eef1f0"),
-          opacity: .55
+          fill: wall.color || mapColor("--map-outline", "#eef1f0"),
+          opacity: wall.color ? 1 : .55
         },
         walls
       );
@@ -490,7 +490,18 @@ const strokeColor =
 
     return group;
   }
-function buildWallBlock(parent, c1, r1, c2, r2, height) {
+  function shadeHex(hex, factor) {
+    const h = hex.replace("#", "");
+    const r = parseInt(h.substring(0, 2), 16);
+    const g = parseInt(h.substring(2, 4), 16);
+    const b = parseInt(h.substring(4, 6), 16);
+    const sr = Math.round(r * factor);
+    const sg = Math.round(g * factor);
+    const sb = Math.round(b * factor);
+    return `rgb(${sr}, ${sg}, ${sb})`;
+  }
+
+  function buildWallBlock(parent, c1, r1, c2, r2, height, color) {
 
     const AA = { c: c1, r: r1 };
     const BA = { c: c2, r: r1 };
@@ -508,9 +519,9 @@ function buildWallBlock(parent, c1, r1, c2, r2, height) {
 
     const group = el("g", { class: "am-wall3d" }, parent);
 
-    const topColor = mapColor("--map-3d-top", "#4a5058");
-    const rightColor = mapColor("--map-3d-right", "#2f333a");
-    const frontColor = mapColor("--map-3d-front", "#1c1f24");
+    const topColor = color ? color : mapColor("--map-3d-top", "#4a5058");
+    const rightColor = color ? shadeHex(color, .72) : mapColor("--map-3d-right", "#2f333a");
+    const frontColor = color ? shadeHex(color, .48) : mapColor("--map-3d-front", "#1c1f24");
     const strokeColor = mapColor("--map-outline", "#eef1f0");
 
     el("polygon", { points: ptsToStr([topAA, topBA, topBB, topAB]), fill: topColor, stroke: strokeColor, "stroke-width": 1 }, group);
@@ -518,7 +529,7 @@ function buildWallBlock(parent, c1, r1, c2, r2, height) {
     el("polygon", { points: ptsToStr([topBB, topAB, baseAB, baseBB]), fill: frontColor, stroke: strokeColor, "stroke-width": 1 }, group);
 
     return group;
-}
+  }
   function render3D(
     container,
     data,
@@ -678,7 +689,7 @@ const walls =
       })
       .forEach(wall => {
         const [c1, r1, c2, r2] = wall.rect;
-        buildWallBlock(walls, c1, r1, c2, r2, wall.height || 0.9);
+        buildWallBlock(walls, c1, r1, c2, r2, wall.height || 0.9, wall.color);
       });
     const sorted =
       [...(data.buildings || [])].sort(
