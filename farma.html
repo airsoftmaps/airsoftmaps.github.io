@@ -1,276 +1,162 @@
-<!DOCTYPE html>
-<html lang="cs">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AIRSOFT MAPS — Farma CQB Lovosice</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="common.css">
-</head>
-<body>
-
-<header class="am-header">
-  <a class="am-brand" href="menu.html">
-    <img class="am-brand-logo" src="loga/tmavekulate.png" alt="Airsoft Maps">
-  </a>
-  <div class="am-field-title">CQB — <span>FARMA LOVOSICE</span></div>
-  <div class="am-controls">
-    <button class="am-btn" id="back-btn">← <span id="back-label">Zpět na hřiště</span></button>
-    <div class="am-dd" id="lang-dd">
-      <button class="am-btn">🌐 <span id="lang-current">CZ</span></button>
-      <div class="am-dd-menu">
-        <button data-lang="cs">Čeština</button>
-        <button data-lang="en">English</button>
-      </div>
-    </div>
-  </div>
-</header>
-
-<div class="am-map-toolbar">
-  <div class="am-toggle">
-    <button id="btn-2d" class="active">2D</button>
-    <button id="btn-3d">3D</button>
-    <button class="am-locate-btn" id="locate-btn" style="margin-left:10px;">
-      <span class="dot"></span><span id="locate-label">Moje poloha</span>
-    </button>
-  </div>
-</div>
-<div class="am-locate-status" id="locate-status"></div>
-
-<div class="am-map-body">
-  <div class="am-map-canvas">
-    <svg id="map-svg" xmlns="http://www.w3.org/2000/svg"></svg>
-  </div>
-  <div class="am-sidebar">
-    <div class="am-sidebar-title" id="sidebar-title">Místa na hřišti</div>
-    <div id="poi-list"></div>
-  </div>
-</div>
-
-<script src="common.js?v=3"></script>
-<script src="geo.js?v=3"></script>
-<script src="map-engine.js?v=5"></script>
-<script>
   const FIELD_DATA = {
-    viewBoxFlat: "0 0 1650 980",
+    viewBoxFlat: "0 0 1750 850",
 
     geoAnchors: [
-      { col: 0.0,  row: 8.6, lat: 50.5177349, lng: 14.0266576 },
-      { col: 4.0,  row: 3.0, lat: 50.5178134, lng: 14.0265346 },
-      { col: 18.9, row: 9.4, lat: 50.5181144, lng: 14.0271372 }
+      { col: 0.0,   row: 6.82, lat: 50.5177349, lng: 14.0266576 }, // vlevo dole (roh u WC)
+      { col: 4.46,  row: 0.0,  lat: 50.5178134, lng: 14.0265346 }, // vlevo nahoře (roh venkovní plochy)
+      { col: 17.22, row: 8.4,  lat: 50.5181144, lng: 14.0271372 }  // vpravo dole (vstup)
     ],
 
-    // Červená hranice (Vnitřní + Venkovní plocha)
+    // Hranice = červeně orámovaná "herní plocha" (venkovní + vnitřní), přesně dle plánku
     boundary: [
-      [4.0, 0.0],
-      [16.3, 0.0],
-      [16.3, 3.0],
-      [17.0, 3.0],
-      [17.0, 8.6],
-      [0.0, 8.6],
-      [0.0, 3.0],
-      [4.0, 3.0],
-      [4.0, 0.0]
+      [4.46, 0.0],
+      [17.21, 0.0],
+      [17.21, 2.16],
+      [17.22, 6.82],
+      [0.0, 6.82],
+      [0.0, 2.16],
+      [4.46, 2.16],
+      [4.46, 0.0]
     ],
 
-    entrance: { col: 17.5, row: 8.6, angle: 180 },
+    // Vstup do herní plochy (mezera ve východní zdi u CHRONO)
+    entrance: { col: 17.18, row: 3.49, angle: 180 },
+
     roads: [],
     trees: [],
 
+    // Zdi — automaticky extrahované z pixelové mapy plánku (122 segmentů)
     walls: [
-      // OBVODOVÉ ZDI (s mezerami pro únikové východy a dveře)
-      { rect: [0.00, 3.00, 0.12, 5.50] }, // Levá horní
-      { rect: [0.00, 6.10, 0.12, 8.60] }, // Levá dolní (mezera pro hl. vstup)
-      
-      { rect: [0.00, 8.48, 8.50, 8.60] }, // Dolní levá
-      { rect: [9.30, 8.48, 13.50, 8.60] }, // Dolní střed (mezera únik. východ)
-      { rect: [14.30, 8.48, 17.00, 8.60] }, // Dolní pravá (mezera únik. východ)
-
-      { rect: [16.88, 5.00, 17.00, 8.60] }, // Pravá dolní
-      { rect: [16.88, 3.00, 17.00, 4.20] }, // Pravá horní (mezera chrono)
-
-      { rect: [0.00, 3.00, 3.50, 3.12] }, // Horní vnitřní plocha 1
-      { rect: [4.50, 3.00, 8.00, 3.12] }, // Horní vnitřní plocha 2 (mezera únik. východ)
-      { rect: [9.00, 3.00, 12.50, 3.12] }, // Horní vnitřní plocha 3 (mezera únik. východ)
-      { rect: [13.50, 3.00, 17.00, 3.12] }, // Horní vnitřní plocha 4
-
-      // OBVODOVÉ ZDI - VENKOVNÍ PLOCHA
-      { rect: [4.00, 0.00, 4.12, 3.00] },
-      { rect: [4.00, 0.00, 16.30, 0.12] },
-      { rect: [16.18, 0.00, 16.30, 3.00] },
-
-      // VNITŘNÍ BLUDIŠTĚ - Hlavní horizontální chodby
-      { rect: [2.00, 4.50, 6.50, 4.62] },
-      { rect: [7.50, 4.50, 14.50, 4.62] },
-      { rect: [2.00, 6.50, 5.50, 6.62] },
-      { rect: [6.50, 6.50, 12.00, 6.62] },
-      { rect: [13.00, 6.50, 15.50, 6.62] },
-
-      // VNITŘNÍ BLUDIŠTĚ - Hlavní vertikální přepážky
-      { rect: [2.00, 3.00, 2.12, 4.00] },
-      { rect: [2.00, 4.80, 2.12, 8.00] },
-      
-      { rect: [4.00, 4.50, 4.12, 6.00] },
-      { rect: [4.00, 6.80, 4.12, 8.60] },
-
-      { rect: [6.50, 3.00, 6.62, 4.50] },
-      { rect: [6.50, 5.00, 6.62, 7.50] },
-
-      { rect: [9.00, 4.50, 9.12, 6.50] },
-      
-      { rect: [11.00, 3.00, 11.12, 4.00] },
-      { rect: [11.00, 6.50, 11.12, 8.60] },
-
-      { rect: [13.00, 4.50, 13.12, 6.00] },
-      
-      { rect: [15.00, 3.00, 15.12, 6.50] },
-
-      // Drobné zádveří a rohy (pro dokreslení složitosti)
-      { rect: [7.50, 7.50, 9.50, 7.62] },
-      { rect: [12.00, 5.00, 13.00, 5.12] },
-      { rect: [14.00, 7.20, 15.00, 7.32] },
-      { rect: [1.00, 5.50, 2.00, 5.62] }
+      { rect: [7.8, 2.59, 8.66, 2.67] },
+      { rect: [14.03, 2.6, 14.78, 2.68] },
+      { rect: [11.26, 2.66, 12.62, 2.73] },
+      { rect: [15.03, 2.68, 16.0, 2.76] },
+      { rect: [4.68, 2.69, 5.87, 2.77] },
+      { rect: [6.16, 2.69, 6.94, 2.77] },
+      { rect: [7.2, 2.69, 7.89, 2.77] },
+      { rect: [9.88, 2.71, 10.28, 2.79] },
+      { rect: [1.56, 2.86, 2.89, 2.93] },
+      { rect: [13.59, 2.92, 14.16, 3.0] },
+      { rect: [3.11, 3.09, 4.28, 3.17] },
+      { rect: [10.16, 3.09, 11.37, 3.17] },
+      { rect: [4.49, 3.1, 4.77, 3.18] },
+      { rect: [8.57, 3.12, 8.9, 3.2] },
+      { rect: [9.17, 3.12, 9.46, 3.2] },
+      { rect: [15.61, 3.38, 16.02, 3.46] },
+      { rect: [4.68, 3.66, 4.96, 3.73] },
+      { rect: [5.12, 3.66, 6.32, 3.73] },
+      { rect: [0.09, 3.67, 0.43, 3.74] },
+      { rect: [0.7, 3.67, 1.64, 3.74] },
+      { rect: [10.16, 3.71, 11.48, 3.79] },
+      { rect: [11.73, 3.71, 12.89, 3.79] },
+      { rect: [13.17, 3.71, 13.69, 3.79] },
+      { rect: [13.98, 3.71, 15.32, 3.79] },
+      { rect: [15.59, 3.71, 15.73, 3.79] },
+      { rect: [15.99, 3.71, 16.4, 3.79] },
+      { rect: [16.67, 3.71, 17.12, 3.79] },
+      { rect: [1.31, 4.08, 2.87, 4.16] },
+      { rect: [3.1, 4.08, 4.22, 4.16] },
+      { rect: [4.44, 4.08, 4.81, 4.16] },
+      { rect: [6.23, 4.17, 7.9, 4.24] },
+      { rect: [13.92, 4.43, 14.77, 4.51] },
+      { rect: [15.6, 4.43, 16.24, 4.51] },
+      { rect: [11.54, 4.43, 13.66, 4.52] },
+      { rect: [10.14, 4.44, 11.27, 4.52] },
+      { rect: [4.48, 4.6, 4.79, 4.68] },
+      { rect: [3.9, 4.61, 4.2, 4.68] },
+      { rect: [0.68, 4.77, 1.33, 4.84] },
+      { rect: [1.54, 4.79, 2.27, 4.87] },
+      { rect: [2.51, 4.79, 3.21, 4.87] },
+      { rect: [0.09, 5.19, 0.27, 5.27] },
+      { rect: [0.54, 5.19, 2.26, 5.27] },
+      { rect: [2.54, 5.19, 3.21, 5.27] },
+      { rect: [16.57, 5.2, 17.12, 5.28] },
+      { rect: [13.29, 5.21, 13.54, 5.29] },
+      { rect: [13.81, 5.21, 14.17, 5.29] },
+      { rect: [15.26, 5.2, 16.29, 5.3] },
+      { rect: [14.64, 5.22, 15.0, 5.3] },
+      { rect: [3.86, 5.24, 5.77, 5.32] },
+      { rect: [10.14, 5.26, 11.02, 5.33] },
+      { rect: [6.26, 5.27, 9.5, 5.34] },
+      { rect: [10.0, 5.51, 10.23, 5.62] },
+      { rect: [10.92, 5.79, 11.81, 5.87] },
+      { rect: [13.52, 5.83, 14.73, 5.91] },
+      { rect: [3.12, 5.97, 3.73, 6.04] },
+      { rect: [3.98, 5.97, 4.4, 6.04] },
+      { rect: [4.71, 5.97, 5.76, 6.04] },
+      { rect: [12.48, 5.98, 12.87, 6.06] },
+      { rect: [13.14, 5.98, 13.63, 6.06] },
+      { rect: [11.7, 6.28, 12.57, 6.36] },
+      { rect: [7.8, 6.34, 7.97, 6.42] },
+      { rect: [8.46, 6.36, 8.7, 6.43] },
+      { rect: [9.01, 6.36, 9.26, 6.43] },
+      { rect: [0.68, 4.77, 0.76, 5.28] },
+      { rect: [1.01, 3.67, 1.09, 4.18] },
+      { rect: [1.54, 4.67, 1.62, 5.33] },
+      { rect: [1.54, 5.6, 1.62, 6.73] },
+      { rect: [1.56, 2.22, 1.63, 2.94] },
+      { rect: [1.56, 3.22, 1.63, 4.28] },
+      { rect: [3.11, 2.5, 3.19, 3.27] },
+      { rect: [3.11, 3.56, 3.19, 4.18] },
+      { rect: [3.12, 4.79, 3.2, 6.07] },
+      { rect: [3.48, 5.97, 3.56, 6.44] },
+      { rect: [3.9, 4.08, 3.98, 4.3] },
+      { rect: [3.9, 4.61, 3.98, 5.37] },
+      { rect: [4.19, 5.97, 4.27, 6.43] },
+      { rect: [4.68, 2.61, 4.76, 3.84] },
+      { rect: [4.69, 4.08, 4.77, 5.34] },
+      { rect: [5.64, 6.3, 5.72, 6.73] },
+      { rect: [6.23, 2.69, 6.31, 3.2] },
+      { rect: [6.23, 3.49, 6.31, 4.26] },
+      { rect: [6.23, 5.98, 6.31, 6.42] },
+      { rect: [7.34, 5.98, 7.42, 6.46] },
+      { rect: [7.8, 2.59, 7.88, 3.22] },
+      { rect: [7.8, 3.5, 7.88, 4.42] },
+      { rect: [7.8, 4.63, 7.88, 5.37] },
+      { rect: [7.88, 6.34, 7.96, 6.73] },
+      { rect: [8.46, 6.36, 8.53, 6.73] },
+      { rect: [8.57, 2.58, 8.64, 3.22] },
+      { rect: [9.17, 5.98, 9.24, 6.44] },
+      { rect: [9.37, 3.12, 9.48, 3.84] },
+      { rect: [9.4, 4.17, 9.48, 5.37] },
+      { rect: [9.67, 5.79, 9.82, 6.07] },
+      { rect: [9.88, 2.23, 9.96, 2.8] },
+      { rect: [10.07, 4.44, 10.22, 5.68] },
+      { rect: [10.16, 3.04, 10.23, 3.31] },
+      { rect: [10.16, 3.64, 10.23, 3.8] },
+      { rect: [10.92, 5.23, 11.0, 5.4] },
+      { rect: [10.92, 5.67, 11.0, 6.17] },
+      { rect: [10.92, 6.43, 11.0, 6.74] },
+      { rect: [11.26, 2.5, 11.33, 3.28] },
+      { rect: [11.26, 3.52, 11.33, 3.8] },
+      { rect: [11.7, 4.44, 11.78, 5.33] },
+      { rect: [11.7, 5.6, 11.78, 6.37] },
+      { rect: [12.48, 4.44, 12.56, 5.69] },
+      { rect: [12.48, 5.93, 12.56, 6.37] },
+      { rect: [12.5, 2.58, 12.58, 3.8] },
+      { rect: [13.24, 2.23, 13.32, 2.99] },
+      { rect: [13.29, 4.43, 13.37, 5.3] },
+      { rect: [13.52, 5.83, 13.6, 6.2] },
+      { rect: [13.52, 6.49, 13.6, 6.74] },
+      { rect: [13.59, 2.91, 13.67, 3.8] },
+      { rect: [14.06, 5.2, 14.13, 5.96] },
+      { rect: [14.07, 2.6, 14.14, 3.01] },
+      { rect: [14.64, 4.43, 14.72, 5.94] },
+      { rect: [14.68, 2.46, 14.77, 3.8] },
+      { rect: [15.6, 4.43, 15.68, 5.9] },
+      { rect: [15.6, 6.18, 15.68, 6.74] },
+      { rect: [15.61, 3.38, 15.69, 3.8] },
+      { rect: [15.9, 2.42, 15.98, 3.47] },
+      { rect: [16.16, 3.71, 16.23, 4.52] },
+      { rect: [16.77, 2.52, 16.84, 3.8] }
     ],
 
     buildings: [
-      { id:"ven", code:"VEN", name:"Venkovní herní plocha", nameEn:"Outdoor Play Area", rect:[8.0, 1.0, 12.0, 2.0], height:0.15 },
-      { id:"vni", code:"VNI", name:"Vnitřní herní plocha",  nameEn:"Indoor Play Area",  rect:[6.5, 7.2, 10.5, 8.0], height:0.15 },
-      
-      { id:"off", code:"OFF", name:"Offzóna",               nameEn:"Off-zone",          rect:[17.2, 0.5, 19.5, 2.5], height:0.6 },
-      { id:"chr", code:"CHR", name:"Chrono",                nameEn:"Chrono",            rect:[17.2, 3.5, 18.8, 4.5], height:0.5 },
-      { id:"reg", code:"REG", name:"Registrace",            nameEn:"Registration",      rect:[17.2, 5.5, 19.5, 7.2], height:0.5 },
-      { id:"wc",  code:"WC",  name:"WC",                    nameEn:"Restroom",          rect:[-1.2, 6.5, -0.2, 7.5], height:0.4 },
-      { id:"vst", code:"VST", name:"Vstup",                 nameEn:"Entrance",          rect:[17.5, 8.8, 19.5, 9.5], height:0.3 },
-
-      // Hasicí přístroje (podle červených ikon na plánku)
-      { id:"hp1", code:"🧯", name:"Hasicí přístroj", nameEn:"Extinguisher", rect:[0.2, 4.0, 0.6, 4.4], height:0.2 },
-      { id:"hp2", code:"🧯", name:"Hasicí přístroj", nameEn:"Extinguisher", rect:[3.2, 6.8, 3.6, 7.2], height:0.2 },
-      { id:"hp3", code:"🧯", name:"Hasicí přístroj", nameEn:"Extinguisher", rect:[6.0, 4.8, 6.4, 5.2], height:0.2 },
-      { id:"hp4", code:"🧯", name:"Hasicí přístroj", nameEn:"Extinguisher", rect:[5.7, 5.8, 6.1, 6.2], height:0.2 },
-      { id:"hp5", code:"🧯", name:"Hasicí přístroj", nameEn:"Extinguisher", rect:[9.2, 4.7, 9.6, 5.1], height:0.2 },
-      { id:"hp6", code:"🧯", name:"Hasicí přístroj", nameEn:"Extinguisher", rect:[13.5, 5.8, 13.9, 6.2], height:0.2 },
-      { id:"hp7", code:"🧯", name:"Hasicí přístroj", nameEn:"Extinguisher", rect:[13.8, 7.8, 14.2, 8.2], height:0.2 },
-      { id:"hp8", code:"🧯", name:"Hasicí přístroj", nameEn:"Extinguisher", rect:[17.2, 2.5, 17.6, 2.9], height:0.2 },
-      { id:"hp9", code:"🧯", name:"Hasicí přístroj", nameEn:"Extinguisher", rect:[18.5, 7.3, 18.9, 7.7], height:0.2 }
+      { id:"ven", code:"VEN", name:"Venkovní herní plocha", nameEn:"Outdoor Play Area", rect:[9.6, 0.8, 10.4, 1.4], height:0.15 },
+      { id:"vni", code:"VNI", name:"Vnitřní herní plocha",  nameEn:"Indoor Play Area",  rect:[1.8, 3.9, 2.6, 4.5], height:0.15 },
+      { id:"off", code:"OFF", name:"Offzóna",               nameEn:"Off-zone",          rect:[18.0, 0.2, 19.0, 1.4], height:0.6 },
+      { id:"chr", code:"CHR", name:"Chrono",                nameEn:"Chrono",            rect:[18.0, 3.7, 19.0, 4.6], height:0.5 },
+      { id:"reg", code:"REG", name:"Registrace",            nameEn:"Registration",      rect:[18.0, 5.6, 19.2, 6.6], height:0.5 },
+      { id:"wc",  code:"WC",  name:"WC",                    nameEn:"Restroom",          rect:[-1.0, 5.9, -0.2, 6.6], height:0.4 }
     ]
   };
-
-  const svg = document.getElementById("map-svg");
-  const listEl = document.getElementById("poi-list");
-
-  const LABELS = {
-    cs: { back:"Zpět na hřiště", sidebar:"Místa na hřišti" },
-    en: { back:"Back to fields", sidebar:"Points of interest" }
-  };
-
-  function applyStaticText(lang) {
-    document.getElementById("back-label").textContent = LABELS[lang].back;
-    document.getElementById("sidebar-title").textContent = LABELS[lang].sidebar;
-  }
-
-  AM.wireDropdowns();
-  applyStaticText(AM.getLang());
-
-  document.getElementById("back-btn").addEventListener("click", () => {
-    window.location.href = "menu.html";
-  });
-
-  const engine = MapEngine.init({
-    svg,
-    listEl,
-    data: FIELD_DATA,
-    getLang: AM.getLang,
-    mountModeToggle: {
-      btn2d: document.getElementById("btn-2d"),
-      btn3d: document.getElementById("btn-3d")
-    }
-  });
-
-  AM.wireLangSwitch((lang) => {
-    applyStaticText(lang);
-    engine.redraw();
-  });
-
-  const LOCATE_TEXT = {
-    cs: { btn:"Moje poloha", on:"Sleduji polohu", outside:"Jsi mimo hřiště",
-          denied:"Poloha zamítnuta v prohlížeči", unavailable:"Polohu se nepodařilo zjistit",
-          noAnchors:"Pro toto hřiště není poloha dostupná" },
-    en: { btn:"My location", on:"Tracking location", outside:"You are outside the field",
-          denied:"Location permission denied", unavailable:"Could not get location",
-          noAnchors:"Location isn't available for this field" }
-  };
-
-  const locateBtn = document.getElementById("locate-btn");
-  const locateLabel = document.getElementById("locate-label");
-  const locateStatus = document.getElementById("locate-status");
-  let watchId = null, tracking = false;
-  let stopHeading = null, lastHeading = null, lastUpBearing = null, insideField = false;
-
-  const hasGeo = FIELD_DATA.geoAnchors && FIELD_DATA.geoAnchors.length >= 3
-    && FIELD_DATA.geoAnchors.every(a => a.lat && a.lng);
-
-  function applyCompassRotation() {
-    if (insideField && lastHeading != null && lastUpBearing != null) {
-      engine.setCompassRotation((lastUpBearing - lastHeading + 360) % 360);
-    } else {
-      engine.setCompassRotation(null);
-    }
-  }
-
-  if (!hasGeo) {
-    locateBtn.style.display = "none";
-  } else {
-    locateBtn.addEventListener("click", () => {
-      const lang = AM.getLang();
-      if (tracking) {
-        AMGeo.stop(watchId); watchId = null; tracking = false;
-        if (stopHeading) { stopHeading(); stopHeading = null; }
-        insideField = false;
-        lastHeading = null;
-        applyCompassRotation();
-        locateBtn.classList.remove("active", "outside");
-        locateLabel.textContent = LOCATE_TEXT[lang].btn;
-        locateStatus.textContent = "";
-        engine.setPlayer(null);
-        return;
-      }
-      tracking = true;
-      locateBtn.classList.add("active");
-      locateLabel.textContent = LOCATE_TEXT[lang].on;
-
-      stopHeading = AMGeo.watchHeading((heading) => {
-        lastHeading = heading;
-        applyCompassRotation();
-      });
-
-      watchId = AMGeo.watch(FIELD_DATA, (result) => {
-        const t = LOCATE_TEXT[AM.getLang()];
-        if (!result.ok) {
-          locateStatus.textContent = t[result.reason] || t.unavailable;
-          locateBtn.classList.remove("outside");
-          engine.setPlayer(null);
-          insideField = false;
-          applyCompassRotation();
-          return;
-        }
-        lastUpBearing = result.upBearing;
-        if (result.inside) {
-          locateBtn.classList.remove("outside");
-          locateStatus.textContent = "";
-          engine.setPlayer({ col: result.col, row: result.row });
-          insideField = true;
-        } else {
-          locateBtn.classList.add("outside");
-          locateStatus.textContent = t.outside;
-          engine.setPlayer(null);
-          insideField = false;
-        }
-        applyCompassRotation();
-      });
-    });
-  }
-</script>
-
-</body>
-</html>
