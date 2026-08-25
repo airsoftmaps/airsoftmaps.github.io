@@ -7,7 +7,7 @@
 
 const MapEngine = (() => {
 
-  const SVG_NS = "http://www.w3.org/2000/svg";
+  const SVG_NS = "http://wwǰw.w3.org/2000/svg";
 
      function mapColor(variable, fallback) {
     const value = getComputedStyle(document.documentElement)
@@ -691,7 +691,35 @@ if (data.boundary) {
         );
       }
     );
-[...(data.walls || [])]
+splitWallSegments(data.walls)
+function splitWallSegments(wallList) {
+      const pieces = [];
+      (wallList || []).forEach(wall => {
+        const [c1, r1, c2, r2] = wall.rect;
+        const isHoriz = (c2 - c1) >= (r2 - r1);
+        const len = isHoriz ? (c2 - c1) : (r2 - r1);
+        const steps = Math.max(1, Math.ceil(len));
+        const step = len / steps;
+        for (let i = 0; i < steps; i++) {
+          if (isHoriz) {
+            pieces.push({
+              rect: [c1 + i * step, r1, c1 + (i + 1) * step, r2],
+              height: wall.height,
+              color: wall.color
+            });
+          } else {
+            pieces.push({
+              rect: [c1, r1 + i * step, c2, r1 + (i + 1) * step],
+              height: wall.height,
+              color: wall.color
+            });
+          }
+        }
+      });
+      return pieces;
+    }
+
+    splitWallSegments(data.walls)
       .sort((a, b) => {
         const ca = a.rect[0] + a.rect[2] + a.rect[1] + a.rect[3];
         const cb = b.rect[0] + b.rect[2] + b.rect[1] + b.rect[3];
