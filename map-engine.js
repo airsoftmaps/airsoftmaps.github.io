@@ -530,6 +530,34 @@ const strokeColor =
 
     return group;
   }
+
+  function splitWallSegments(wallList) {
+    const pieces = [];
+    (wallList || []).forEach(wall => {
+      const [c1, r1, c2, r2] = wall.rect;
+      const isHoriz = (c2 - c1) >= (r2 - r1);
+      const len = isHoriz ? (c2 - c1) : (r2 - r1);
+      const steps = Math.max(1, Math.ceil(len));
+      const step = len / steps;
+      for (let i = 0; i < steps; i++) {
+        if (isHoriz) {
+          pieces.push({
+            rect: [c1 + i * step, r1, c1 + (i + 1) * step, r2],
+            height: wall.height,
+            color: wall.color
+          });
+        } else {
+          pieces.push({
+            rect: [c1, r1 + i * step, c2, r1 + (i + 1) * step],
+            height: wall.height,
+            color: wall.color
+          });
+        }
+      }
+    });
+    return pieces;
+  }
+
   function render3D(
     container,
     data,
@@ -550,17 +578,11 @@ const strokeColor =
         { class: "layer-trees-back" },
         container
       );
-const walls =
+
+    const structures =
       el(
         "g",
-        { class: "layer-walls" },
-        container
-      );
-     
-    const buildings =
-      el(
-        "g",
-        { class: "layer-buildings" },
+        { class: "layer-structures" },
         container
       );
 
@@ -691,118 +713,81 @@ if (data.boundary) {
         );
       }
     );
-splitWallSegments(data.walls)
-function splitWallSegments(wallList) {
-      const pieces = [];
-      (wallList || []).forEach(wall => {
-        const [c1, r1, c2, r2] = wall.rect;
-        const isHoriz = (c2 - c1) >= (r2 - r1);
-        const len = isHoriz ? (c2 - c1) : (r2 - r1);
-        const steps = Math.max(1, Math.ceil(len));
-        const step = len / steps;
-        for (let i = 0; i < steps; i++) {
-          if (isHoriz) {
-            pieces.push({
-              rect: [c1 + i * step, r1, c1 + (i + 1) * step, r2],
-              height: wall.height,
-              color: wall.color
-            });
-          } else {
-            pieces.push({
-              rect: [c1, r1 + i * step, c2, r1 + (i + 1) * step],
-              height: wall.height,
-              color: wall.color
-            });
-          }
+
+    /*
+       Zdi i budovy jdou do JEDNÉ společné vrstvy (structures) a
+       řadí se do hloubky společně — jinak by se budovy vždycky
+       kreslily nad zdmi bez ohledu na skutečnou vzdálenost.
+    */
+
+    const wallItems = splitWallSegments(data.walls).map(w => ({
+      type: "wall",
+      depth: w.rect[0] + w.rect[2] + w.rect[1] + w.rect[3],
+      data: w
+    }));
+
+    const buildingItems = (data.buildings || []).map(b => ({
+      type: "building",
+      depth: b.rect[0] + b.rect[2] + b.rect[1] + b.rect[3],
+      data: b
+    }));
+
+    [...wallItems, ...buildingItems]
+      .sort((a, b) => a.depth - b.depth)
+      .forEach(item => {
+
+        if (item.type === "wall") {
+
+          const [c1, r1, c2, r2] = item.data.rect;
+
+          buildWallBlock(
+            structures,
+            c1, r1, c2, r2,
+            item.data.height || 0.9,
+            item.data.color
+          );
+
+          return;
         }
-      });
-      return pieces;
-    }
 
-    splitWallSegments(data.walls)
-      .sort((a, b) => {
-        const ca = a.rect[0] + a.rect[2] + a.rect[1] + a.rect[3];
-        const cb = b.rect[0] + b.rect[2] + b.rect[1] + b.rect[3];
-        return ca - cb;
-      })
-      .forEach(wall => {
-        const [c1, r1, c2, r2] = wall.rect;
-        buildWallBlock(walls, c1, r1, c2, r2, wall.height || 0.9, wall.color);
-      });
-    const sorted =
-      [...(data.buildings || [])].sort(
-        (a, b) => {
+        const building = item.data;
+        const [c1, r1, c2, r2] = building.rect;
+        const active = building.id === activeId;
+        const height = building.height || 0.9;
 
-          const ca =
-            a.rect[0] +
-            a.rect[2] +
-            a.rect[1] +
-            a.rect[3];
-
-          const cb =
-            b.rect[0] +
-            b.rect[2] +
-            b.rect[1] +
-            b.rect[3];
-
-          return ca - cb;
-        }
-      );
-
-    sorted.forEach(building => {
-
-      const [
-        c1,
-        r1,
-        c2,
-        r2
-      ] = building.rect;
-
-      const active =
-        building.id === activeId;
-
-      const height =
-        building.height || 0.9;
-
-      buildBlock(
-        buildings,
-        c1,
-        r1,
-        c2,
-        r2,
-        height,
-        building.id,
-        active,
-        onBuildingClick
-      );
-
-      const center =
-        isoPoint(
-          (c1 + c2) / 2,
-          (r1 + r2) / 2,
-          height
+        buildBlock(
+          structures,
+          c1, r1, c2, r2,
+          height,
+          building.id,
+          active,
+          onBuildingClick
         );
 
-      el(
-        "text",
-        {
-          x: center.x,
-          y: center.y - 6,
-          "text-anchor": "middle",
-          "font-family":
-            "Anton, sans-serif",
-          "font-size": 12,
-          fill:
-  active
-    ? "#ff7a1a"
-    : mapColor("--map-text", "#eef1f0"),
-          style:
-            "pointer-events:none;"
-        },
-        labels
-      ).textContent =
-        building.code;
-    });
+        const center =
+          isoPoint(
+            (c1 + c2) / 2,
+            (r1 + r2) / 2,
+            height
+          );
+
+        el(
+          "text",
+          {
+            x: center.x,
+            y: center.y - 6,
+            "text-anchor": "middle",
+            "font-family": "Anton, sans-serif",
+            "font-size": 12,
+            fill:
+              active
+                ? "#ff7a1a"
+                : mapColor("--map-text", "#eef1f0"),
+            style: "pointer-events:none;"
+          },
+          labels
+        ).textContent = building.code;
+      });
 
     if (playerPos) {
 
