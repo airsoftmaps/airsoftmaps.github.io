@@ -7,7 +7,7 @@
 
 const MapEngine = (() => {
 
-  const SVG_NS = "http://wwǰw.w3.org/2000/svg";
+  const SVG_NS = "http://www.w3.org/2000/svg";
 
      function mapColor(variable, fallback) {
     const value = getComputedStyle(document.documentElement)
