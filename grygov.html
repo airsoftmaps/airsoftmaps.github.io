@@ -54,73 +54,59 @@
 <script src="geo.js?v=3"></script>
 <script src="map-engine.js?v=4"></script>
 <script>
-    /* ====================================================================
-     FIELD DATA — GRYGOV (Sipka vstupu zleva doprava)
+      /* ====================================================================
+     FIELD DATA — GRYGOV (Aktualizované názvy a objekty)
      ==================================================================== */
 
   const FIELD_DATA = {
     viewBoxFlat: "0 0 1400 2200",
 
-    // GPS kotvy
     geoAnchors: [
-      { col: 0.8, row: 20.0, lat: 49.531258, lng: 17.316362 }, // A20
-      { col: 0.8, row: 1.0, lat: 49.531988, lng: 17.318322 },  // A1
-      { col: 12.8, row: 13.0, lat: 49.530620, lng: 17.317774 } // M13
+      { col: 0.8, row: 20.0, lat: 49.531258, lng: 17.316362 },
+      { col: 0.8, row: 1.0, lat: 49.531988, lng: 17.318322 },
+      { col: 12.8, row: 13.0, lat: 49.530620, lng: 17.317774 }
     ],
 
-    // 🔴 ČERVENĚ: Vnější obrys hřiště
     boundary: [
       [0.8, 0.8], [8.0, 0.8], [8.0, 1.8], [13.0, 10.8], 
       [13.0, 14.8], [4.5, 20.2], [2.2, 20.2], [2.2, 19.5], 
       [0.8, 19.5], [0.8, 0.8]
     ],
 
-    // Vstup na hřiště — vodorovně zleva doprava
     entrance: { col: 0.8, row: 16.5, angle: 0 },
 
-    // 🟢 ZELENĚ: Cesty, průchody a komunikace
     roads: [
-      // Hlavní obvodová cesta
       { points: [[1.2, 19.5], [1.2, 13.0], [1.8, 7.0], [1.8, 2.0], [7.2, 2.0], [7.2, 12.8], [7.5, 14.8]] },
-      // Příčná cesta středem
       { points: [[1.2, 13.0], [7.2, 13.0]] },
-      // Šikmá cesta vedoucí nad natočenou budovou
       { points: [[1.2, 15.5], [7.2, 13.2]] },
-      // Krátká odbočka na západě
       { points: [[1.2, 6.2], [1.8, 6.2]] },
-      // Uzavřená obdélníková smyčka vpravo dole (K12-L13)
       { points: [[7.2, 12.8], [10.0, 12.8], [10.0, 12.0], [12.5, 12.0], [12.5, 13.5], [10.0, 13.5], [10.0, 12.8]] }
     ],
 
     trees: [],
 
-    // 🔵 MODŘE: Budovy a objekty
     buildings: [
-      // 3 hlavní haly
-      { id:"b1", code:"OBJ-1", name:"Objekt 1", nameEn:"Building 1", rect:[1.8, 2.6, 7.0, 4.2], height:1.0 },
-      { id:"b2", code:"OBJ-2", name:"Objekt 2", nameEn:"Building 2", rect:[1.8, 5.2, 7.0, 6.8], height:1.0 },
-      { id:"b3", code:"OBJ-3", name:"Objekt 3", nameEn:"Building 3", rect:[1.8, 8.2, 7.0, 9.8], height:1.0 },
+      { id:"b1", code:"1", name:"Budova 1 (střecha 1)", nameEn:"Building 1 (roof 1)", rect:[1.8, 2.6, 7.0, 4.2], height:1.0 },
+      { id:"b2", code:"2", name:"Budova 2 (střecha 2)", nameEn:"Building 2 (roof 2)", rect:[1.8, 5.2, 7.0, 6.8], height:1.0 },
+      { id:"b3", code:"3", name:"Budova 3 (střecha 3)", nameEn:"Building 3 (roof 3)", rect:[1.8, 8.2, 7.0, 9.8], height:1.0 },
 
-      // Spojovací chodby a prstence
-      { id:"b4", code:"OBJ-4", name:"Objekt 4", nameEn:"Building 4", rect:[2.2, 4.2, 2.7, 5.2], height:0.5 },
-      { id:"b5", code:"OBJ-5", name:"Objekt 5", nameEn:"Building 5", rect:[4.6, 6.8, 5.1, 8.2], height:0.5 },
-      { id:"b6", code:"OBJ-6", name:"Objekt 6", nameEn:"Building 6", rect:[1.0, 7.2, 1.7, 8.0], height:0.5 },
-      { id:"b7", code:"OBJ-7", name:"Objekt 7", nameEn:"Building 7", rect:[4.6, 9.8, 5.1, 10.6], height:0.4 },
-      { id:"b8", code:"OBJ-8", name:"Objekt 8", nameEn:"Building 8", rect:[4.0, 10.6, 5.5, 11.8], height:0.8 },
+      { id:"b6", code:"6", name:"Garáž (střecha garáž)", nameEn:"Garage (garage roof)", rect:[1.0, 7.2, 1.7, 8.0], height:0.5 },
+      { id:"b8", code:"8", name:"Koupelka", nameEn:"Bathroom", rect:[4.0, 10.6, 5.5, 11.8], height:0.8 },
 
-      // Objekty na východě
-      { id:"b9", code:"OBJ-9", name:"Objekt 9", nameEn:"Building 9", rect:[7.6, 7.5, 8.5, 8.5], height:0.8 },
-      { id:"b10", code:"OBJ-10", name:"Objekt 10", nameEn:"Building 10", rect:[7.4, 9.1, 9.2, 10.9], height:1.2 },
-      { id:"b11", code:"OBJ-11", name:"Objekt 11", nameEn:"Building 11", rect:[9.3, 9.7, 10.0, 10.2], rotate: -30, height:0.5 },
+      { id:"b9", code:"9", name:"Rozhledna", nameEn:"Lookout Tower", rect:[7.6, 7.5, 8.5, 8.5], height:0.8 },
+      { id:"b10", code:"10", name:"Silo", nameEn:"Silo", rect:[7.4, 9.1, 9.2, 10.9], height:1.2 },
+      { id:"b11", code:"11", name:"Betlém", nameEn:"Bethlehem", rect:[9.3, 9.7, 10.0, 10.2], rotate: -30, height:0.5 },
 
-      // Natočené budovy dole
-      { id:"b12", code:"OBJ-12", name:"Objekt 12", nameEn:"Building 12", rect:[1.8, 14.5, 6.8, 16.5], rotate: -21, height:0.8 },
-      { id:"b13", code:"OBJ-13", name:"Objekt 13", nameEn:"Building 13", rect:[7.3, 13.8, 8.3, 15.0], rotate: -21, height:0.8 },
+      // Přidaný objekt Zastávka na pozici G10 (fialové kolečko)
+      { id:"bzastavka", code:"Zastávka", name:"Zastávka", nameEn:"Bus Stop", rect:[6.8, 9.8, 7.3, 10.6], height:0.5 },
 
-      // Budova uvnitř zelené smyčky vpravo dole
-      { id:"b14", code:"OBJ-14", name:"Objekt 14", nameEn:"Building 14", rect:[10.3, 12.2, 12.2, 13.3], height:0.8 }
+      // Objekt 13 ponechán bez textového názvu
+      { id:"b13", code:"13", name:"", nameEn:"", rect:[7.3, 13.8, 8.3, 15.0], rotate: -21, height:0.8 },
+
+      { id:"b14", code:"14", name:"Baby box (bejbyna)", nameEn:"Baby box", rect:[10.3, 12.2, 12.2, 13.3], height:0.8 }
     ]
   };
+
 
   const svg = document.getElementById("map-svg");
   const listEl = document.getElementById("poi-list");
