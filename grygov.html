@@ -4,941 +4,370 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AIRSOFT MAPS — Grygov</title>
-
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
-
 <link rel="stylesheet" href="common.css">
 </head>
-
 <body>
 
 <header class="am-header">
-
   <a class="am-brand" href="menu.html">
-    <img
-      class="am-brand-logo"
-      src="loga/tmavekulate.png"
-      alt="Airsoft Maps"
-    >
+    <img class="am-brand-logo" src="loga/tmavekulate.png" alt="Airsoft Maps">
   </a>
 
-  <div class="am-field-title">
-    AIRSOFT PARK — <span>GRYGOV</span>
-  </div>
+  <div class="am-field-title">AIRSOFT PARK — <span>GRYGOV</span></div>
 
   <div class="am-controls">
-
-    <button class="am-btn" id="back-btn">
-      ← <span id="back-label">Zpět na hřiště</span>
-    </button>
-
+    <button class="am-btn" id="back-btn">← <span id="back-label">Zpět na hřiště</span></button>
     <div class="am-dd" id="lang-dd">
-
-      <button class="am-btn">
-        🌐 <span id="lang-current">CZ</span>
-      </button>
-
+      <button class="am-btn">🌐 <span id="lang-current">CZ</span></button>
       <div class="am-dd-menu">
         <button data-lang="cs">Čeština</button>
         <button data-lang="en">English</button>
       </div>
-
     </div>
-
   </div>
-
 </header>
 
-
 <div class="am-map-toolbar">
-
   <div class="am-toggle">
-
-    <button id="btn-2d" class="active">
-      2D
+    <button id="btn-2d" class="active">2D</button>
+    <button id="btn-3d">3D</button>
+    <button class="am-locate-btn" id="locate-btn" style="margin-left:10px;">
+      <span class="dot"></span><span id="locate-label">Moje poloha</span>
     </button>
-
-    <button id="btn-3d">
-      3D
-    </button>
-
-    <button
-      class="am-locate-btn"
-      id="locate-btn"
-      style="margin-left:10px;"
-    >
-      <span class="dot"></span>
-      <span id="locate-label">Moje poloha</span>
-    </button>
-
   </div>
-
 </div>
-
-
-<div
-  class="am-locate-status"
-  id="locate-status"
-></div>
-
+<div class="am-locate-status" id="locate-status"></div>
 
 <div class="am-map-body">
-
   <div class="am-map-canvas">
-
-    <svg
-      id="map-svg"
-      xmlns="http://www.w3.org/2000/svg"
-      preserveAspectRatio="xMidYMid meet"
-    ></svg>
-
+    <svg id="map-svg" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet"></svg>
   </div>
-
-
   <div class="am-sidebar">
-
-    <div
-      class="am-sidebar-title"
-      id="sidebar-title"
-    >
-      Místa na hřišti
-    </div>
-
+    <div class="am-sidebar-title" id="sidebar-title">Místa na hřišti</div>
     <div id="poi-list"></div>
-
   </div>
-
 </div>
-
 
 <script src="common.js?v=3"></script>
 <script src="geo.js?v=3"></script>
 <script src="map-engine.js?v=4"></script>
-
-
 <script>
-
-/* ====================================================================
-   FIELD DATA — GRYGOV
-   ====================================================================
-
-   ORIENTACE PODLE PŮVODNÍHO PLÁNKU:
-
-       A B C D E F G H I J K L M
-     1 ┌─────────────────┐
-     2 │                 │
-     3 │                 │
-     4 │                 │
-     5 │                 └────────
-     6 │                         \
-     7 │                          \
-     8 │                           \
-     9 │                            M
-    10 │                            │
-    11 │                            │
-    12 │                            │
-    13 │                            │
-    14 │                            │
-    15 │                       ─────┘
-    16 │                  /
-    17 │                /
-    18 │              /
-    19 │            /
-    20 └───────
-
-   GPS KOTVY:
-
-   A20 = 49.531258, 17.316362
-   A1  = 49.531988, 17.318322
-   M13 = 49.530620, 17.317774
-
-   ---------------------------------------------------------------- */
-
-const FIELD_DATA = {
-
-  /*
-     Poměr mapy je záměrně výškový.
-     Původní plánek má 13 sloupců × 20 řádků.
-  */
-
-  viewBoxFlat: "0 0 950 1480",
-
-
-  /* ================================================================
-     GPS ANCHORS
-     ================================================================ */
-
-  geoAnchors: [
-
-    {
-      col: 1.0,
-      row: 20.0,
-      lat: 49.531258,
-      lng: 17.316362
-    },
-
-    {
-      col: 1.0,
-      row: 1.0,
-      lat: 49.531988,
-      lng: 17.318322
-    },
-
-    {
-      col: 13.0,
-      row: 13.0,
-      lat: 49.530620,
-      lng: 17.317774
-    }
-
-  ],
-
-
-  /* ================================================================
-     HRANICE HŘIŠTĚ
-     ================================================================ */
-
-  boundary: [
-
-    [1.0, 1.0],
-
-    [8.7, 1.0],
-
-    [8.7, 4.4],
-
-    [13.0, 8.9],
-
-    [13.0, 14.0],
-
-    [6.0, 20.0],
-
-    [3.0, 20.0],
-
-    [1.0, 20.0],
-
-    [1.0, 1.0]
-
-  ],
-
-
-  /* ================================================================
-     VSTUP
-     ================================================================ */
-
-  entrance: {
-    col: 3.0,
-    row: 20.0,
-    angle: 0
-  },
-
-
-  /* ================================================================
-     HLAVNÍ CESTY / PRŮCHODY
-     ================================================================ */
-
-  roads: [
-
-    {
-      points: [
-        [1.4, 19.0],
-        [1.5, 16.5],
-        [1.5, 14.0],
-        [1.6, 11.5],
-        [1.7, 8.5],
-        [2.0, 6.0],
-        [2.4, 3.0],
-        [2.8, 1.5]
-      ]
-    },
-
-    {
-      points: [
-        [1.7, 13.0],
-        [3.2, 12.7],
-        [5.0, 12.5],
-        [7.0, 12.7],
-        [9.5, 12.8],
-        [11.8, 12.7]
-      ]
-    },
-
-    {
-      points: [
-        [1.7, 15.0],
-        [3.0, 14.5],
-        [4.8, 14.0],
-        [6.8, 13.5],
-        [8.5, 13.0]
-      ]
-    },
-
-    {
-      points: [
-        [5.0, 18.0],
-        [6.2, 17.0],
-        [7.4, 16.0],
-        [8.8, 15.0],
-        [10.5, 14.0],
-        [12.5, 13.0]
-      ]
-    }
-
-  ],
-
-
-  /* ================================================================
-     OKOLNÍ VEGETACE
-     ================================================================ */
-
-  trees: [
-
-    [0.7, 1.5],
-    [0.6, 3.0],
-    [0.8, 4.5],
-    [0.6, 6.0],
-    [0.8, 7.5],
-    [0.6, 9.0],
-    [0.8, 10.5],
-    [0.7, 12.0],
-    [0.8, 13.5],
-    [0.7, 15.0],
-    [0.8, 16.5],
-    [0.7, 18.0],
-
-    [9.5, 0.6],
-    [11.0, 0.6],
-    [12.5, 1.0],
-
-    [12.5, 5.0],
-    [12.8, 6.5],
-    [13.2, 8.0],
-
-    [13.3, 10.0],
-    [13.2, 11.5],
-    [13.3, 13.0],
-    [13.0, 15.0],
-
-    [10.5, 16.0],
-    [9.0, 17.0],
-    [7.5, 18.0],
-    [6.0, 19.0]
-
-  ],
-
-
-  /* ================================================================
-     OBJEKTY
-     ================================================================
-
-     Názvy jsou zatím pracovní.
-     Až dodáš skutečné názvy, pouze se přepíšou name/nameEn.
-     */
-
-  buildings: [
-
-    /* --------------------------------------------------------------
-       HORNÍ OBJEKTY
-       -------------------------------------------------------------- */
-
-    {
-      id: "g01",
-      code: "G-01",
-      name: "Objekt 01",
-      nameEn: "Building 01",
-      rect: [2.0, 2.4, 6.0, 3.8],
-      height: 0.8
-    },
-
-    {
-      id: "g02",
-      code: "G-02",
-      name: "Objekt 02",
-      nameEn: "Building 02",
-      rect: [2.0, 5.2, 5.9, 6.4],
-      height: 0.8
-    },
-
-
-    /* --------------------------------------------------------------
-       STŘEDNÍ PÁS
-       -------------------------------------------------------------- */
-
-    {
-      id: "g03",
-      code: "G-03",
-      name: "Objekt 03",
-      nameEn: "Building 03",
-      rect: [2.0, 8.3, 5.8, 9.5],
-      height: 0.8
-    },
-
-    {
-      id: "g04",
-      code: "G-04",
-      name: "Objekt 04",
-      nameEn: "Building 04",
-      rect: [1.7, 7.2, 2.6, 7.9],
-      height: 0.4
-    },
-
-    {
-      id: "g05",
-      code: "G-05",
-      name: "Objekt 05",
-      nameEn: "Building 05",
-      rect: [2.4, 7.6, 3.3, 8.6],
-      height: 0.4
-    },
-
-    {
-      id: "g06",
-      code: "G-06",
-      name: "Objekt 06",
-      nameEn: "Building 06",
-      rect: [2.8, 8.1, 4.0, 8.8],
-      height: 0.4
-    },
-
-
-    /* --------------------------------------------------------------
-       STŘED HŘIŠTĚ
-       -------------------------------------------------------------- */
-
-    {
-      id: "g07",
-      code: "G-07",
-      name: "Objekt 07",
-      nameEn: "Building 07",
-      rect: [3.9, 10.8, 5.2, 12.0],
-      height: 0.7
-    },
-
-    {
-      id: "g08",
-      code: "G-08",
-      name: "Objekt 08",
-      nameEn: "Building 08",
-      rect: [3.9, 12.0, 5.2, 12.7],
-      height: 0.3
-    },
-
-    {
-      id: "g09",
-      code: "G-09",
-      name: "Objekt 09",
-      nameEn: "Building 09",
-      rect: [5.4, 10.1, 5.9, 10.8],
-      height: 0.4
-    },
-
-    {
-      id: "g10",
-      code: "G-10",
-      name: "Objekt 10",
-      nameEn: "Building 10",
-      rect: [6.9, 7.8, 7.7, 8.5],
-      height: 0.5
-    },
-
-
-    /* --------------------------------------------------------------
-       KRUHOVÝ OBJEKT
-       -------------------------------------------------------------- */
-
-    {
-      id: "g11",
-      code: "G-11",
-      name: "Objekt 11",
-      nameEn: "Building 11",
-      rect: [7.2, 8.8, 8.8, 10.7],
-      height: 0.3
-    },
-
-
-    /* --------------------------------------------------------------
-       MALÝ OBJEKT VPRAVO
-       -------------------------------------------------------------- */
-
-    {
-      id: "g12",
-      code: "G-12",
-      name: "Objekt 12",
-      nameEn: "Building 12",
-      rect: [9.8, 10.1, 10.5, 10.7],
-      height: 0.3
-    },
-
-
-    /* --------------------------------------------------------------
-       PRAVÁ / JIŽNÍ ČÁST
-       -------------------------------------------------------------- */
-
-    {
-      id: "g13",
-      code: "G-13",
-      name: "Objekt 13",
-      nameEn: "Building 13",
-      rect: [10.3, 12.2, 11.7, 13.1],
-      height: 0.7
-    },
-
-
-    /* --------------------------------------------------------------
-       DOLNÍ LEVÝ DLOUHÝ OBJEKT
-       -------------------------------------------------------------- */
-
-    {
-      id: "g14",
-      code: "G-14",
-      name: "Objekt 14",
-      nameEn: "Building 14",
-      rect: [2.0, 14.9, 5.7, 16.4],
-      height: 0.8
-    },
-
-
-    /* --------------------------------------------------------------
-       DOLNÍ STŘEDNÍ OBJEKT
-       -------------------------------------------------------------- */
-
-    {
-      id: "g15",
-      code: "G-15",
-      name: "Objekt 15",
-      nameEn: "Building 15",
-      rect: [6.4, 14.0, 7.2, 15.6],
-      height: 0.7
-    },
-
-
-    /* --------------------------------------------------------------
-       MALÉ NAPOJENÍ U DOLNÍHO OBJEKTU
-       -------------------------------------------------------------- */
-
-    {
-      id: "g16",
-      code: "G-16",
-      name: "Objekt 16",
-      nameEn: "Building 16",
-      rect: [1.9, 15.9, 2.3, 16.7],
-      height: 0.3
-    },
-
-    {
-      id: "g17",
-      code: "G-17",
-      name: "Objekt 17",
-      nameEn: "Building 17",
-      rect: [3.3, 16.0, 4.1, 16.5],
-      height: 0.3
-    }
-
-  ]
-
-};
-
-
-/* ====================================================================
-   MAP ENGINE
-   ==================================================================== */
-
-const svg = document.getElementById("map-svg");
-const listEl = document.getElementById("poi-list");
-
-
-/* ====================================================================
-   STATIC TEXT
-   ==================================================================== */
-
-const LABELS = {
-
-  cs: {
-    back: "Zpět na hřiště",
-    sidebar: "Místa na hřišti"
-  },
-
-  en: {
-    back: "Back to fields",
-    sidebar: "Points of interest"
+  /* ====================================================================
+     FIELD DATA — GRYGOV
+     ==================================================================== */
+
+  const FIELD_DATA = {
+    // Upravený viewBox pro pokrytí mřížky A-M (1-13) a 1-20
+    viewBoxFlat: "0 0 1500 2200",
+
+    // GPS kotvy podle zadání
+    // Sloupec A = 1.5, Sloupec M = 13.5, Řádek 1 = 1.5, Řádek 20 = 20.5
+    geoAnchors: [
+      { col: 1.5, row: 20.5, lat: 49.531258, lng: 17.316362 }, // A20
+      { col: 1.5, row: 1.5, lat: 49.531988, lng: 17.318322 },  // A1
+      { col: 13.5, row: 13.5, lat: 49.530620, lng: 17.317774 } // M13
+    ],
+
+    // Vnější hranice (Červená čára)
+    boundary: [
+      [1, 1], [9, 1], [9, 5], [14, 11], [14, 15], 
+      [5, 21], [2, 21], [2, 20], [1, 20], [1, 1]
+    ],
+
+    entrance: { col: 1.5, row: 20.5, angle: 0 },
+
+    // Cesty (Zelená)
+    roads: [
+      // Hlavní okruh (levá a horní strana)
+      { points: [[1.5, 20.5], [1.5, 19], [2.5, 18], [2.5, 13], [2.2, 7.5], [3, 2.5], [7.5, 2.5], [7.5, 13], [8.5, 15.5]] },
+      // Křížení a okruh vpravo
+      { points: [[2.5, 13], [7.5, 13], [12.5, 12.5], [12.5, 14], [10.5, 14], [10.5, 12.5]] },
+      // Diagonální spojka vlevo dole
+      { points: [[2.5, 16.5], [7.0, 13.2]] }
+    ],
+
+    trees: [],
+
+    // Budovy (Modrá) - Názvy jsou zatím generické
+    buildings: [
+      // Hlavní velký komplex (3 velké bloky)
+      { id:"b1", code:"B01", name:"Budova 1", nameEn:"Building 1", rect:[3, 3, 7, 4.5], height:1.0 }, // Horní blok
+      { id:"b2", code:"B02", name:"Budova 2", nameEn:"Building 2", rect:[3, 5.8, 7, 7.3], height:1.0 }, // Střední blok
+      { id:"b3", code:"B03", name:"Budova 3", nameEn:"Building 3", rect:[3, 9, 7, 10.5], height:1.0 }, // Spodní blok
+
+      // Spojovací chodby komplexu
+      { id:"b4", code:"B04", name:"Budova 4", nameEn:"Building 4", rect:[3.2, 4.5, 3.8, 5.8], height:0.5 }, // Levá spojka (horní)
+      { id:"b5", code:"B05", name:"Budova 5", nameEn:"Building 5", rect:[5.2, 7.3, 5.8, 9], height:0.5 }, // Pravá spojka (dolní)
+
+      // Levý přístavek u středního bloku
+      { id:"b6", code:"B06", name:"Budova 6", nameEn:"Building 6", rect:[2.2, 8.2, 3, 8.8], height:0.5 },
+      { id:"b7", code:"B07", name:"Budova 7", nameEn:"Building 7", rect:[2.5, 7.5, 3, 8.2], height:0.5 },
+
+      // Spodní centrální struktura
+      { id:"b8", code:"B08", name:"Budova 8", nameEn:"Building 8", rect:[4.5, 11, 5.5, 12.5], height:0.8 },
+      { id:"b9", code:"B09", name:"Budova 9", nameEn:"Building 9", rect:[4.8, 10.5, 5.2, 11], height:0.4 }, // Krček
+
+      // Menší objekty vpravo od komplexu
+      { id:"b10", code:"B10", name:"Budova 1Tady je připravený kód pro **`grygov.html`**. 
+
+Přepsal jsem strukturu přesně podle tvého vzoru[cite: 1] a analyzoval obrázek:
+*   **🔴 Obrys hřiště (Boundary):** Zanesen přesně podle vnější červené čáry, respektuje lomené úhly vpravo i dole.
+*   **🔵 Budovy (Buildings):** Vytvořil jsem jim dočasné názvy (Objekt 1, Objekt 2 atd.), jak jsi požadoval. Úhlopříčná budova vlevo dole je složena z navazujících obdélníků, jelikož mapový engine defaultně pracuje s osou X/Y.
+*   **🟢 Cesty (Roads):** Vykresleny jako propojené křivky středem zelených linií, včetně smyčky u pravé spodní budovy.
+*   **🧭 Kompas a GPS:** Mřížku (sloupce A-M, řádky 1-20) jsem namapoval s přesností na středy buněk. GPS kotvy pro A20, A1 a M13 jsou v kódu usazeny. Engine (přes tvůj `geo.js`) si z těchto tří bodů sám přesně vypočítá rotaci kompasu a deformaci plochy (Sever bude na displeji natočený správně směrem k A1).
+
+```html
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIRSOFT MAPS — Grygov</title>
+<link rel="preconnect" href="[https://fonts.googleapis.com](https://fonts.googleapis.com)">
+<link href="[https://fonts.googleapis.com/css2?family=Anton&family=Rajdhani:wght@400;500;600;700&display=swap](https://fonts.googleapis.com/css2?family=Anton&family=Rajdhani:wght@400;500;600;700&display=swap)" rel="stylesheet">
+<link rel="stylesheet" href="common.css">
+</head>
+<body>
+
+<header class="am-header">
+  <a class="am-brand" href="menu.html">
+    <img class="am-brand-logo" src="loga/tmavekulate.png" alt="Airsoft Maps">
+  </a>
+
+  <div class="am-field-title">AIRSOFT PARK — <span>GRYGOV</span></div>
+
+  <div class="am-controls">
+    <button class="am-btn" id="back-btn">← <span id="back-label">Zpět na hřiště</span></button>
+    <div class="am-dd" id="lang-dd">
+      <button class="am-btn">🌐 <span id="lang-current">CZ</span></button>
+      <div class="am-dd-menu">
+        <button data-lang="cs">Čeština</button>
+        <button data-lang="en">English</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="am-map-toolbar">
+  <div class="am-toggle">
+    <button id="btn-2d" class="active">2D</button>
+    <button id="btn-3d">3D</button>
+    <button class="am-locate-btn" id="locate-btn" style="margin-left:10px;">
+      <span class="dot"></span><span id="locate-label">Moje poloha</span>
+    </button>
+  </div>
+</div>
+<div class="am-locate-status" id="locate-status"></div>
+
+<div class="am-map-body">
+  <div class="am-map-canvas">
+    <svg id="map-svg" xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" preserveAspectRatio="xMidYMid meet"></svg>
+  </div>
+  <div class="am-sidebar">
+    <div class="am-sidebar-title" id="sidebar-title">Místa na hřišti</div>
+    <div id="poi-list"></div>
+  </div>
+</div>
+
+<script src="common.js?v=3"></script>
+<script src="geo.js?v=3"></script>
+<script src="map-engine.js?v=4"></script>
+<script>
+  /* ====================================================================
+     FIELD DATA — GRYGOV
+     ==================================================================== */
+
+  const FIELD_DATA = {
+    // Plocha je namapována na mřížku 15 (A-M + okraje) x 22 (1-20 + okraje)
+    viewBoxFlat: "0 0 1500 2200",
+
+    // GPS kotvy přesně podle požadavku (A=1.5, M=13.5; 1=1.5, 20=20.5)
+    // Map Engine z tohoto sám určí správný upBearing pro kompas!
+    geoAnchors: [
+      { col: 1.5, row: 20.5, lat: 49.531258, lng: 17.316362 }, // A20
+      { col: 1.5, row: 1.5, lat: 49.531988, lng: 17.318322 },  // A1
+      { col: 13.5, row: 13.5, lat: 49.530620, lng: 17.317774 } // M13
+    ],
+
+    boundary: [
+      [1, 1], [9, 1], [9, 5], [14, 11], [14, 15], 
+      [5, 20], [3, 20], [3, 21], [1, 21], [1, 1]
+    ],
+
+    entrance: { col: 1.5, row: 1.5, angle: 90 },
+
+    roads: [
+      // Hlavní levý tah a horní smyčka
+      { points: [[1.5, 20.5], [1.5, 13], [2.2, 7], [2.5, 2.5], [7.5, 2.5], [7.5, 12.5], [6.8, 14.5]] },
+      // Spojky mezi budovami
+      { points: [[1.5, 13], [7.5, 12.5]] },
+      { points: [[1.5, 17], [6.8, 14.5]] },
+      // Pravá větev k budově
+      { points: [[7.5, 12.5], [11, 12.2]] },
+      // Smyčka kolem pravé budovy
+      { points: [[11, 12.2], [13, 12.2], [13, 13.5], [11, 13.5], [11, 12.2]] },
+      // Malá odbočka vlevo nahoře
+      { points: [[1.8, 6.5], [3.0, 6.5]] },
+      // Spodní zelený blok (A20)
+      { points: [[1.5, 20.5], [2.5, 20.5], [2.5, 19.5], [1.5, 19.5], [1.5, 20.5]] }
+    ],
+
+    trees: [], // Zatím bez stromů
+
+    buildings: [
+      // 3 hlavní velké haly nahoře
+      { id:"b1", code:"OBJ-1", name:"Objekt 1", nameEn:"Building 1", rect:[3, 3, 7, 5], height:1.0 },
+      { id:"b2", code:"OBJ-2", name:"Objekt 2", nameEn:"Building 2", rect:[3, 6, 7, 8], height:1.0 },
+      { id:"b3", code:"OBJ-3", name:"Objekt 3", nameEn:"Building 3", rect:[3, 9, 7, 11], height:1.0 },
+      
+      // Spojovací moduly a přístavky (mezi velkými halami)
+      { id:"b4", code:"OBJ-4", name:"Objekt 4", nameEn:"Building 4", rect:[3.2, 5, 3.8, 6], height:0.5 },
+      { id:"b5", code:"OBJ-5", name:"Objekt 5", nameEn:"Building 5", rect:[5.2, 8, 5.8, 9], height:0.5 },
+      { id:"b6", code:"OBJ-6", name:"Objekt 6", nameEn:"Building 6", rect:[2.7, 8.2, 3.2, 8.8], height:0.5 },
+      { id:"b7", code:"OBJ-7", name:"Objekt 7", nameEn:"Building 7", rect:[3.2, 8, 3.8, 9], height:0.5 },
+      { id:"b8", code:"OBJ-8", name:"Objekt 8", nameEn:"Building 8", rect:[3.5, 7.7, 4.1, 8], height:0.5 },
+      
+      // Přístavky pod třetí halou
+      { id:"b9", code:"OBJ-9", name:"Objekt 9", nameEn:"Building 9", rect:[4.4, 11, 4.6, 12], height:0.5 },
+      { id:"b10", code:"OBJ-10", name:"Objekt 10", nameEn:"Building 10", rect:[4, 11.8, 5, 13.2], height:0.8 },
+      { id:"b11", code:"OBJ-11", name:"Objekt 11", nameEn:"Building 11", rect:[6.6, 10.2, 6.9, 10.8], height:0.5 },
+      
+      // Kruhová stavba a malé objekty vpravo
+      { id:"b12", code:"OBJ-12", name:"Objekt 12", nameEn:"Building 12", rect:[7.4, 9.4, 9.2, 11.2], height:1.2 },
+      { id:"b13", code:"OBJ-13", name:"Objekt 13", nameEn:"Building 13", rect:[8.2, 7.6, 8.8, 8.4], height:0.8 },
+      { id:"b14", code:"OBJ-14", name:"Objekt 14", nameEn:"Building 14", rect:[9.4, 10.2, 9.8, 10.6], height:0.5 },
+      
+      // Šikmá budova vlevo dole (rozloženo do bloků pro zachování úhlu v enginech bez polygonů)
+      { id:"b15", code:"OBJ-15", name:"Objekt 15", nameEn:"Building 15", rect:[2.2, 16.5, 3.5, 17.5], height:0.8 },
+      { id:"b16", code:"OBJ-16", name:"Objekt 16", nameEn:"Building 16", rect:[3.0, 16.0, 4.5, 17.0], height:0.8 },
+      { id:"b17", code:"OBJ-17", name:"Objekt 17", nameEn:"Building 17", rect:[4.0, 15.5, 5.5, 16.5], height:0.8 },
+      { id:"b18", code:"OBJ-18", name:"Objekt 18", nameEn:"Building 18", rect:[5.0, 15.0, 6.5, 16.0], height:0.8 },
+      { id:"b19", code:"OBJ-19", name:"Objekt 19", nameEn:"Building 19", rect:[6.0, 14.5, 7.0, 15.5], height:0.8 },
+      
+      // Malá šikmá budova vedle
+      { id:"b20", code:"OBJ-20", name:"Objekt 20", nameEn:"Building 20", rect:[7.4, 14.2, 8.2, 15.2], height:0.8 },
+      
+      // Budova vpravo dole ve smyčce
+      { id:"b21", code:"OBJ-21", name:"Objekt 21", nameEn:"Building 21", rect:[11.2, 12.2, 12.8, 13.2], height:0.8 }
+    ]
+  };
+
+  const svg = document.getElementById("map-svg");
+  const listEl = document.getElementById("poi-list");
+
+  const LABELS = {
+    cs: { back:"Zpět na hřiště", sidebar:"Místa na hřišti" },
+    en: { back:"Back to fields", sidebar:"Points of interest" }
+  };
+
+  function applyStaticText(lang) {
+    document.getElementById("back-label").textContent = LABELS[lang].back;
+    document.getElementById("sidebar-title").textContent = LABELS[lang].sidebar;
   }
 
-};
+  AM.wireDropdowns();
+  applyStaticText(AM.getLang());
 
-
-function applyStaticText(lang) {
-
-  document.getElementById("back-label").textContent =
-    LABELS[lang].back;
-
-  document.getElementById("sidebar-title").textContent =
-    LABELS[lang].sidebar;
-
-}
-
-
-/* ====================================================================
-   MENU
-   ==================================================================== */
-
-AM.wireDropdowns();
-
-applyStaticText(AM.getLang());
-
-
-document
-  .getElementById("back-btn")
-  .addEventListener("click", () => {
-
+  document.getElementById("back-btn").addEventListener("click", () => {
     window.location.href = "menu.html";
-
   });
 
-
-/* ====================================================================
-   ENGINE
-   ==================================================================== */
-
-const engine = MapEngine.init({
-
-  svg,
-
-  listEl,
-
-  data: FIELD_DATA,
-
-  getLang: AM.getLang,
-
-  mountModeToggle: {
-
-    btn2d: document.getElementById("btn-2d"),
-
-    btn3d: document.getElementById("btn-3d")
-
-  }
-
-});
-
-
-/* ====================================================================
-   LANGUAGE SWITCH
-   ==================================================================== */
-
-AM.wireLangSwitch((lang) => {
-
-  applyStaticText(lang);
-
-  engine.redraw();
-
-});
-
-
-/* ====================================================================
-   GPS / COMPASS
-   ==================================================================== */
-
-const LOCATE_TEXT = {
-
-  cs: {
-
-    btn: "Moje poloha",
-
-    on: "Sleduji polohu",
-
-    outside: "Jsi mimo hřiště",
-
-    denied: "Poloha zamítnuta v prohlížeči",
-
-    unavailable: "Polohu se nepodařilo zjistit",
-
-    noAnchors: "Pro toto hřiště není poloha dostupná"
-
-  },
-
-  en: {
-
-    btn: "My location",
-
-    on: "Tracking location",
-
-    outside: "You are outside the field",
-
-    denied: "Location permission denied",
-
-    unavailable: "Could not get location",
-
-    noAnchors: "Location isn't available for this field"
-
-  }
-
-};
-
-
-const locateBtn =
-  document.getElementById("locate-btn");
-
-const locateLabel =
-  document.getElementById("locate-label");
-
-const locateStatus =
-  document.getElementById("locate-status");
-
-
-let watchId = null;
-
-let tracking = false;
-
-let stopHeading = null;
-
-let lastHeading = null;
-
-let lastUpBearing = null;
-
-let insideField = false;
-
-
-/* ====================================================================
-   GPS KONTROLA
-   ==================================================================== */
-
-const hasGeo =
-
-  FIELD_DATA.geoAnchors &&
-
-  FIELD_DATA.geoAnchors.length >= 3 &&
-
-  FIELD_DATA.geoAnchors.every(
-    a => a.lat && a.lng
-  );
-
-
-/* ====================================================================
-   KOMPAS
-   ==================================================================== */
-
-function applyCompassRotation() {
-
-  if (
-    insideField &&
-    lastHeading != null &&
-    lastUpBearing != null
-  ) {
-
-    engine.setCompassRotation(
-
-      (lastUpBearing - lastHeading + 360) % 360
-
-    );
-
-  } else {
-
-    engine.setCompassRotation(null);
-
-  }
-
-}
-
-
-/* ====================================================================
-   GEOLOCATION
-   ==================================================================== */
-
-if (!hasGeo) {
-
-  locateBtn.style.display = "none";
-
-} else {
-
-  locateBtn.addEventListener("click", () => {
-
-    const lang = AM.getLang();
-
-
-    /* --------------------------------------------------------------
-       VYPNOUT SLEDOVÁNÍ
-       -------------------------------------------------------------- */
-
-    if (tracking) {
-
-      AMGeo.stop(watchId);
-
-      watchId = null;
-
-      tracking = false;
-
-
-      if (stopHeading) {
-
-        stopHeading();
-
-        stopHeading = null;
-
-      }
-
-
-      insideField = false;
-
-      lastHeading = null;
-
-      applyCompassRotation();
-
-
-      locateBtn.classList.remove(
-        "active",
-        "outside"
-      );
-
-
-      locateLabel.textContent =
-        LOCATE_TEXT[lang].btn;
-
-
-      locateStatus.textContent = "";
-
-
-      engine.setPlayer(null);
-
-      return;
-
+  const engine = MapEngine.init({
+    svg,
+    listEl,
+    data: FIELD_DATA,
+    getLang: AM.getLang,
+    mountModeToggle: {
+      btn2d: document.getElementById("btn-2d"),
+      btn3d: document.getElementById("btn-3d")
     }
-
-
-    /* --------------------------------------------------------------
-       ZAPNOUT SLEDOVÁNÍ
-       -------------------------------------------------------------- */
-
-    tracking = true;
-
-
-    locateBtn.classList.add("active");
-
-
-    locateLabel.textContent =
-      LOCATE_TEXT[lang].on;
-
-
-    /* --------------------------------------------------------------
-       KOMPAS
-       -------------------------------------------------------------- */
-
-    stopHeading = AMGeo.watchHeading(
-      (heading) => {
-
-        lastHeading = heading;
-
-        applyCompassRotation();
-
-      }
-    );
-
-
-    /* --------------------------------------------------------------
-       GPS
-       -------------------------------------------------------------- */
-
-    watchId = AMGeo.watch(
-      FIELD_DATA,
-
-      (result) => {
-
-        const t =
-          LOCATE_TEXT[AM.getLang()];
-
-
-        /* ----------------------------------------------------------
-           CHYBA
-           ---------------------------------------------------------- */
-
-        if (!result.ok) {
-
-          locateStatus.textContent =
-            t[result.reason] ||
-            t.unavailable;
-
-
-          locateBtn.classList.remove(
-            "outside"
-          );
-
-
-          engine.setPlayer(null);
-
-          insideField = false;
-
-          applyCompassRotation();
-
-          return;
-
-        }
-
-
-        /* ----------------------------------------------------------
-           ORIENTACE MAPY
-           ---------------------------------------------------------- */
-
-        lastUpBearing =
-          result.upBearing;
-
-
-        /* ----------------------------------------------------------
-           UVNITŘ HŘIŠTĚ
-           ---------------------------------------------------------- */
-
-        if (result.inside) {
-
-          locateBtn.classList.remove(
-            "outside"
-          );
-
-
-          locateStatus.textContent = "";
-
-
-          engine.setPlayer({
-
-            col: result.col,
-
-            row: result.row
-
-          });
-
-
-          insideField = true;
-
-        }
-
-
-        /* ----------------------------------------------------------
-           MIMO HŘIŠTĚ
-           ---------------------------------------------------------- */
-
-        else {
-
-          locateBtn.classList.add(
-            "outside"
-          );
-
-
-          locateStatus.textContent =
-            t.outside;
-
-
-          engine.setPlayer(null);
-
-          insideField = false;
-
-        }
-
-
-        applyCompassRotation();
-
-      }
-    );
-
   });
 
-}
+  AM.wireLangSwitch((lang) => {
+    applyStaticText(lang);
+    engine.redraw();
+  });
+  
+  const LOCATE_TEXT = {
+    cs: { btn:"Moje poloha", on:"Sleduji polohu", outside:"Jsi mimo hřiště",
+          denied:"Poloha zamítnuta v prohlížeči", unavailable:"Polohu se nepodařilo zjistit",
+          noAnchors:"Pro toto hřiště není poloha dostupná" },
+    en: { btn:"My location", on:"Tracking location", outside:"You are outside the field",
+          denied:"Location permission denied", unavailable:"Could not get location",
+          noAnchors:"Location isn't available for this field" }
+  };
 
+  const locateBtn = document.getElementById("locate-btn");
+  const locateLabel = document.getElementById("locate-label");
+  const locateStatus = document.getElementById("locate-status");
+  let watchId = null, tracking = false;
+  let stopHeading = null, lastHeading = null, lastUpBearing = null, insideField = false;
+
+  const hasGeo = FIELD_DATA.geoAnchors && FIELD_DATA.geoAnchors.length >= 3
+    && FIELD_DATA.geoAnchors.every(a => a.lat && a.lng);
+
+  function applyCompassRotation() {
+    if (insideField && lastHeading != null && lastUpBearing != null) {
+      engine.setCompassRotation((lastUpBearing - lastHeading + 360) % 360);
+    } else {
+      engine.setCompassRotation(null);
+    }
+  }
+
+  if (!hasGeo) {
+    locateBtn.style.display = "none";
+  } else {
+    locateBtn.addEventListener("click", () => {
+      const lang = AM.getLang();
+      if (tracking) {
+        AMGeo.stop(watchId); watchId = null; tracking = false;
+        if (stopHeading) { stopHeading(); stopHeading = null; }
+        insideField = false;
+        lastHeading = null;
+        applyCompassRotation();
+        locateBtn.classList.remove("active", "outside");
+        locateLabel.textContent = LOCATE_TEXT[lang].btn;
+        locateStatus.textContent = "";
+        engine.setPlayer(null);
+        return;
+      }
+      tracking = true;
+      locateBtn.classList.add("active");
+      locateLabel.textContent = LOCATE_TEXT[lang].on;
+
+      stopHeading = AMGeo.watchHeading((heading) => {
+        lastHeading = heading;
+        applyCompassRotation();
+      });
+
+      watchId = AMGeo.watch(FIELD_DATA, (result) => {
+        const t = LOCATE_TEXT[AM.getLang()];
+        if (!result.ok) {
+          locateStatus.textContent = t[result.reason] || t.unavailable;
+          locateBtn.classList.remove("outside");
+          engine.setPlayer(null);
+          insideField = false;
+          applyCompassRotation();
+          return;
+        }
+        lastUpBearing = result.upBearing;
+        if (result.inside) {
+          locateBtn.classList.remove("outside");
+          locateStatus.textContent = "";
+          engine.setPlayer({ col: result.col, row: result.row });
+          insideField = true;
+        } else {
+          locateBtn.classList.add("outside");
+          locateStatus.textContent = t.outside;
+          engine.setPlayer(null);
+          insideField = false;
+        }
+        applyCompassRotation();
+      });
+    });
+  }
 </script>
 
 </body>
