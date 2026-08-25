@@ -58,68 +58,84 @@
      FIELD DATA — GRYGOV
      ==================================================================== */
 
-  const FIELD_DATA = {
+    const FIELD_DATA = {
     viewBoxFlat: "0 0 1500 2200",
 
-    // GPS kotvy přesně podle zadání (A1, A20, M13)
     geoAnchors: [
       { col: 1.0, row: 20.0, lat: 49.531258, lng: 17.316362 }, // A20
       { col: 1.0, row: 1.0, lat: 49.531988, lng: 17.318322 },  // A1
       { col: 13.0, row: 13.0, lat: 49.530620, lng: 17.317774 } // M13
     ],
 
-    // ČERVENÁ: Vnější obrys hřiště
+    // ČERVENÁ: Vnější obrys hřiště přesně podle mřížky
     boundary: [
-      [1.0, 20.0], [1.0, 1.0], [8.2, 1.0], [8.2, 4.5], 
-      [13.0, 11.0], [13.0, 15.0], [3.5, 20.0], [1.0, 20.0]
+      [1.0, 1.0], [8.2, 1.0], [8.2, 4.5], [13.0, 10.5], 
+      [13.0, 14.5], [4.5, 20.0], [2.2, 20.0], [2.2, 19.5], 
+      [1.0, 19.5], [1.0, 1.0]
     ],
 
-    // Vstup na hřiště umístěn na čáru A16-17
     entrance: { col: 1.0, row: 16.5, angle: 90 },
 
-    // ZELENÁ: Cesty, průchody
+    // ZELENÁ: Cesty s dodržením šířky a smyček
     roads: [
-      // Hlavní obvodová cesta vlevo a nahoře
-      { points: [[1.5, 20.0], [1.5, 13.0], [1.8, 7.0], [2.0, 2.0], [7.2, 2.0], [7.2, 13.0]] },
-      // Příčná cesta středem
-      { points: [[1.5, 13.0], [7.2, 13.0], [12.5, 12.5]] },
-      // Šikmá cesta dole od vstupu
-      { points: [[1.0, 16.5], [7.0, 13.2], [7.8, 15.5]] },
-      // Smyčka vpravo dole
-      { points: [[11.0, 12.5], [12.8, 12.5], [12.8, 13.8], [11.0, 13.8], [11.0, 12.5]] }
+      // Hlavní obvodová cesta
+      { points: [[1.8, 19.5], [1.8, 13.0], [2.2, 7.0], [2.2, 2.0], [7.2, 2.0], [7.2, 13.0]] },
+      // Příčná cesta nad šikmou budovou
+      { points: [[1.8, 13.0], [7.2, 13.0], [12.5, 12.0]] },
+      // Šikmá cestakopírující natočení budovy
+      { points: [[1.8, 15.5], [6.8, 13.5], [7.8, 16.0]] },
+      // Smyčka vpravo dole kolem budovy (K12-M13)
+      { points: [[9.5, 12.0], [12.5, 12.0], [12.5, 13.5], [9.5, 13.5], [9.5, 12.0]] }
     ],
 
     trees: [],
 
-    // MODRÁ: Budovy a objekty (Názvy vynechány/generické, dodáš později)
+    // MODRÁ: Budovy včetně rotací a kruhového objektu
     buildings: [
-      // Hlavní 3 haly
+      // Hlavní 3 rovné haly
       { id:"b1", code:"OBJ-1", name:"Objekt 1", nameEn:"Building 1", rect:[2.8, 3.0, 7.2, 4.5], height:1.0 },
       { id:"b2", code:"OBJ-2", name:"Objekt 2", nameEn:"Building 2", rect:[2.8, 5.8, 7.2, 7.3], height:1.0 },
       { id:"b3", code:"OBJ-3", name:"Objekt 3", nameEn:"Building 3", rect:[2.8, 9.0, 7.2, 10.5], height:1.0 },
 
-      // Spojovací krčky a přístavky
+      // Spojovací krčky
       { id:"b4", code:"OBJ-4", name:"Objekt 4", nameEn:"Building 4", rect:[3.2, 4.5, 3.8, 5.8], height:0.5 },
       { id:"b5", code:"OBJ-5", name:"Objekt 5", nameEn:"Building 5", rect:[5.2, 7.3, 5.8, 9.0], height:0.5 },
-      { id:"b6", code:"OBJ-6", name:"Objekt 6", nameEn:"Building 6", rect:[2.0, 7.5, 2.8, 8.5], height:0.5 },
+      { id:"b6", code:"OBJ-6", name:"Objekt 6", nameEn:"Building 6", rect:[2.0, 7.5, 2.8, 8.2], height:0.5 },
       { id:"b7", code:"OBJ-7", name:"Objekt 7", nameEn:"Building 7", rect:[4.7, 10.5, 5.1, 11.0], height:0.4 },
       { id:"b8", code:"OBJ-8", name:"Objekt 8", nameEn:"Building 8", rect:[4.2, 11.0, 5.5, 12.5], height:0.8 },
 
-      // Objekty vpravo od hal
+      // Objekty vpravo
       { id:"b9", code:"OBJ-9", name:"Objekt 9", nameEn:"Building 9", rect:[8.0, 7.6, 8.8, 8.4], height:0.8 },
-      { id:"b10", code:"OBJ-10", name:"Objekt 10", nameEn:"Building 10", rect:[7.5, 9.2, 9.2, 11.0], height:1.2 },
-      { id:"b11", code:"OBJ-11", name:"Objekt 11", nameEn:"Building 11", rect:[9.3, 9.7, 9.9, 10.2], height:0.5 },
+      
+      // KRUHOVÝ OBJEKT (H9–I10)
+      { id:"b10", code:"OBJ-10", name:"Objekt 10", nameEn:"Building 10", circle:{ cx: 8.3, cy: 10.0, r: 0.9 }, height:1.2 },
+      { id:"b11", code:"OBJ-11", name:"Objekt 11", nameEn:"Building 11", rect:[9.3, 9.7, 9.8, 10.1], height:0.5 },
 
-      // Sloučená šikmá budova vlevo dole (původně 15–19, nyní jedna budova)
-      { id:"b12", code:"OBJ-12", name:"Objekt 12", nameEn:"Building 12", rect:[2.0, 14.5, 7.0, 17.5], height:0.8 },
+      // ŠIKMÁ BUDOVA DOLE (Polygon přes body B17 -> F15 -> E14 -> A16)
+      { 
+        id:"b12", 
+        code:"OBJ-12", 
+        name:"Objekt 12", 
+        nameEn:"Building 12", 
+        polygon: [[2.2, 17.5], [6.2, 15.2], [5.6, 14.2], [1.6, 16.5]], 
+        height: 0.8 
+      },
 
-      // Objekt vpravo od šikmé budovy
-      { id:"b13", code:"OBJ-13", name:"Objekt 13", nameEn:"Building 13", rect:[7.4, 13.5, 8.4, 15.0], height:0.8 },
+      // ŠIKMÝ OBJEKT VEDLE (H14–I15)
+      { 
+        id:"b13", 
+        code:"OBJ-13", 
+        name:"Objekt 13", 
+        nameEn:"Building 13", 
+        polygon: [[7.8, 14.2], [8.8, 13.6], [8.3, 15.2], [7.3, 15.8]], 
+        height: 0.8 
+      },
 
-      // Objekt vpravo dole ve smyčce
-      { id:"b14", code:"OBJ-14", name:"Objekt 14", nameEn:"Building 14", rect:[11.2, 12.3, 12.6, 13.6], height:0.8 }
+      // Budova u smyčky vpravo dole
+      { id:"b14", code:"OBJ-14", name:"Objekt 14", nameEn:"Building 14", rect:[10.2, 12.3, 11.8, 13.3], height:0.8 }
     ]
   };
+
 
   const svg = document.getElementById("map-svg");
   const listEl = document.getElementById("poi-list");
