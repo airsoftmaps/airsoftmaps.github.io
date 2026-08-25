@@ -56,11 +56,10 @@
 <script>
   /* ====================================================================
      FIELD DATA — FARMA CQB LOVOSICE
-     CQB hřiště v hale/objektu — žádné stromy, hranice = jen červená
-     "herní plocha" z podkladu (venkovní + vnitřní). Offzóna/Chrono/
+     CQB hřiště v hale/objektu — = 
+     "herní plocha" . Offzóna/Chrono/
      Registrace/WC/Vstup jsou mimo herní plochu, jen jako markery.
-     Zdi (walls) jsou hrubý odhad z fotky plánku — doladíme spolu.
-     Průchody/dveře = mezery mezi segmenty zdí (žádný text).
+     Zdi (walls) 
      ==================================================================== */
 
     const FIELD_DATA = {
@@ -214,11 +213,24 @@
       { rect: [15.9, 2.42, 15.98, 3.47] },
       { rect: [16.16, 3.71, 16.23, 4.52] },
       { rect: [16.77, 2.52, 16.84, 3.8] }
+            // Červená hranice herní plochy (kopíruje originální plánek)
+      { rect: [4.46, -0.045, 17.21, 0.045], color: "#e2402a" },   // sever venkovní
+      { rect: [17.165, 0.0, 17.255, 2.16], color: "#e2402a" },    // východ venkovní
+      { rect: [4.415, 0.0, 4.505, 2.16], color: "#e2402a" },      // západ venkovní
+      { rect: [0.0, 2.115, 4.83, 2.205], color: "#e2402a" },      // předěl venkovní/vnitřní
+      { rect: [5.2, 2.115, 9.47, 2.205], color: "#e2402a" },      // předěl (mezera = únikový východ)
+      { rect: [9.83, 2.115, 14.33, 2.205], color: "#e2402a" },    // předěl (mezera = únikový východ)
+      { rect: [14.68, 2.115, 17.21, 2.205], color: "#e2402a" },   // předěl (mezera = únikový východ)
+      { rect: [-0.045, 2.16, 0.045, 3.88], color: "#e2402a" },    // západ vnitřní
+      { rect: [-0.045, 5.1, 0.045, 6.82], color: "#e2402a" },     // západ vnitřní (mezera = výklenek)
+      { rect: [0.0, 6.775, 10.91, 6.865], color: "#e2402a" },     // jih
+      { rect: [11.01, 6.775, 17.21, 6.865], color: "#e2402a" },   // jih (mezera = únik. východ)
+      { rect: [17.165, 2.16, 17.255, 3.32], color: "#e2402a" },   // východ vnitřní
+      { rect: [17.165, 3.66, 17.255, 6.82], color: "#e2402a" }    // východ vnitřní (mezera = vstup u Chrono)
     ],
 
     buildings: [
       { id:"ven", code:"VEN", name:"Venkovní herní plocha", nameEn:"Outdoor Play Area", rect:[9.6, 0.8, 10.4, 1.4], height:0.15 },
-      { id:"vni", code:"VNI", name:"Vnitřní herní plocha",  nameEn:"Indoor Play Area",  rect:[1.8, 3.9, 2.6, 4.5], height:0.15 },
       { id:"off", code:"OFF", name:"Offzóna",               nameEn:"Off-zone",          rect:[18.0, 0.2, 19.0, 1.4], height:0.6 },
       { id:"chr", code:"CHR", name:"Chrono",                nameEn:"Chrono",            rect:[18.0, 3.7, 19.0, 4.6], height:0.5 },
       { id:"reg", code:"REG", name:"Registrace",            nameEn:"Registration",      rect:[18.0, 5.6, 19.2, 6.6], height:0.5 },
