@@ -578,12 +578,22 @@ const walls =
         container
       );
 
-    if (data.boundary) {
+if (data.boundary) {
 
       const points =
         data.boundary.map(([c, r]) =>
           isoPoint(c, r, 0)
         );
+
+      el(
+        "polygon",
+        {
+          points: ptsToStr(points),
+          fill: mapColor("--map-ground-fill", "rgba(255,255,255,.02)"),
+          stroke: "none"
+        },
+        ground
+      );
 
       el(
         "polygon",
