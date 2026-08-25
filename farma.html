@@ -14,9 +14,7 @@
   <a class="am-brand" href="menu.html">
     <img class="am-brand-logo" src="loga/tmavekulate.png" alt="Airsoft Maps">
   </a>
-
   <div class="am-field-title">CQB — <span>FARMA LOVOSICE</span></div>
-
   <div class="am-controls">
     <button class="am-btn" id="back-btn">← <span id="back-label">Zpět na hřiště</span></button>
     <div class="am-dd" id="lang-dd">
@@ -54,25 +52,16 @@
 <script src="geo.js?v=3"></script>
 <script src="map-engine.js?v=5"></script>
 <script>
-  /* ====================================================================
-     FIELD DATA — FARMA CQB LOVOSICE
-     CQB hřiště v hale/objektu — žádné stromy, hranice = jen červená
-     "herní plocha" z podkladu (venkovní + vnitřní). Offzóna/Chrono/
-     Registrace/WC/Vstup jsou mimo herní plochu, jen jako markery.
-     Zdi (walls) jsou hrubý odhad z fotky plánku — doladíme spolu.
-     Průchody/dveře = mezery mezi segmenty zdí (žádný text).
-     ==================================================================== */
-
   const FIELD_DATA = {
     viewBoxFlat: "0 0 1650 980",
 
     geoAnchors: [
-      { col: 0.0,  row: 8.6, lat: 50.5177349, lng: 14.0266576 }, // vlevo dole (roh u WC)
-      { col: 4.0,  row: 3.0, lat: 50.5178134, lng: 14.0265346 }, // vlevo nahoře (roh hrací plochy)
-      { col: 18.9, row: 9.4, lat: 50.5181144, lng: 14.0271372 }  // vpravo dole (vstup)
+      { col: 0.0,  row: 8.6, lat: 50.5177349, lng: 14.0266576 },
+      { col: 4.0,  row: 3.0, lat: 50.5178134, lng: 14.0265346 },
+      { col: 18.9, row: 9.4, lat: 50.5181144, lng: 14.0271372 }
     ],
 
-    // Hranice = jen červeně orámovaná "herní plocha" (venkovní + vnitřní)
+    // Červená hranice (Vnitřní + Venkovní plocha)
     boundary: [
       [4.0, 0.0],
       [16.3, 0.0],
@@ -85,59 +74,85 @@
       [4.0, 0.0]
     ],
 
-    entrance: { col: 17.0, row: 3.3, angle: 180 },
-
+    entrance: { col: 17.5, row: 8.6, angle: 180 },
     roads: [],
     trees: [],
 
-    // Zdi — tenké segmenty, mezery = průchody/dveře
     walls: [
-      // Obvodová zeď — vnitřní herní plocha
-      { rect: [0.00, 3.00, 0.12, 5.60] },
-      { rect: [0.00, 5.90, 0.12, 8.60] },
-      { rect: [0.00, 8.48, 17.00, 8.60] },
-      { rect: [16.88, 6.60, 17.00, 8.60] },
-      { rect: [16.88, 3.00, 17.00, 6.30] },
-      { rect: [4.00, 3.00, 9.20, 3.12] },
-      { rect: [9.60, 3.00, 16.88, 3.12] },
+      // OBVODOVÉ ZDI (s mezerami pro únikové východy a dveře)
+      { rect: [0.00, 3.00, 0.12, 5.50] }, // Levá horní
+      { rect: [0.00, 6.10, 0.12, 8.60] }, // Levá dolní (mezera pro hl. vstup)
+      
+      { rect: [0.00, 8.48, 8.50, 8.60] }, // Dolní levá
+      { rect: [9.30, 8.48, 13.50, 8.60] }, // Dolní střed (mezera únik. východ)
+      { rect: [14.30, 8.48, 17.00, 8.60] }, // Dolní pravá (mezera únik. východ)
 
-      // Obvodová zeď — venkovní herní plocha
+      { rect: [16.88, 5.00, 17.00, 8.60] }, // Pravá dolní
+      { rect: [16.88, 3.00, 17.00, 4.20] }, // Pravá horní (mezera chrono)
+
+      { rect: [0.00, 3.00, 3.50, 3.12] }, // Horní vnitřní plocha 1
+      { rect: [4.50, 3.00, 8.00, 3.12] }, // Horní vnitřní plocha 2 (mezera únik. východ)
+      { rect: [9.00, 3.00, 12.50, 3.12] }, // Horní vnitřní plocha 3 (mezera únik. východ)
+      { rect: [13.50, 3.00, 17.00, 3.12] }, // Horní vnitřní plocha 4
+
+      // OBVODOVÉ ZDI - VENKOVNÍ PLOCHA
       { rect: [4.00, 0.00, 4.12, 3.00] },
       { rect: [4.00, 0.00, 16.30, 0.12] },
       { rect: [16.18, 0.00, 16.30, 3.00] },
 
-      // Vnitřní příčky — západní blok místností
-      { rect: [2.00, 3.00, 2.12, 5.20] },
-      { rect: [0.40, 5.20, 2.00, 5.32] },
-      { rect: [2.00, 6.00, 2.12, 8.48] },
+      // VNITŘNÍ BLUDIŠTĚ - Hlavní horizontální chodby
+      { rect: [2.00, 4.50, 6.50, 4.62] },
+      { rect: [7.50, 4.50, 14.50, 4.62] },
+      { rect: [2.00, 6.50, 5.50, 6.62] },
+      { rect: [6.50, 6.50, 12.00, 6.62] },
+      { rect: [13.00, 6.50, 15.50, 6.62] },
 
-      // Střední blok
-      { rect: [4.60, 3.60, 4.72, 6.40] },
-      { rect: [4.72, 6.28, 7.20, 6.40] },
-      { rect: [7.20, 3.60, 7.32, 6.90] },
-      { rect: [4.60, 3.60, 7.20, 3.72] },
+      // VNITŘNÍ BLUDIŠTĚ - Hlavní vertikální přepážky
+      { rect: [2.00, 3.00, 2.12, 4.00] },
+      { rect: [2.00, 4.80, 2.12, 8.00] },
+      
+      { rect: [4.00, 4.50, 4.12, 6.00] },
+      { rect: [4.00, 6.80, 4.12, 8.60] },
 
-      // Střední-východní blok
-      { rect: [9.60, 3.20, 9.72, 6.00] },
-      { rect: [9.60, 6.00, 13.00, 6.12] },
-      { rect: [13.00, 3.60, 13.12, 6.90] },
+      { rect: [6.50, 3.00, 6.62, 4.50] },
+      { rect: [6.50, 5.00, 6.62, 7.50] },
 
-      // Jihovýchodní místnost
-      { rect: [11.20, 7.30, 11.32, 8.48] },
-      { rect: [11.20, 7.30, 13.60, 7.42] },
+      { rect: [9.00, 4.50, 9.12, 6.50] },
+      
+      { rect: [11.00, 3.00, 11.12, 4.00] },
+      { rect: [11.00, 6.50, 11.12, 8.60] },
 
-      // Krátká příčka u severního průchodu
-      { rect: [7.32, 4.40, 9.60, 4.52] }
+      { rect: [13.00, 4.50, 13.12, 6.00] },
+      
+      { rect: [15.00, 3.00, 15.12, 6.50] },
+
+      // Drobné zádveří a rohy (pro dokreslení složitosti)
+      { rect: [7.50, 7.50, 9.50, 7.62] },
+      { rect: [12.00, 5.00, 13.00, 5.12] },
+      { rect: [14.00, 7.20, 15.00, 7.32] },
+      { rect: [1.00, 5.50, 2.00, 5.62] }
     ],
 
     buildings: [
-      { id:"ven", code:"VEN", name:"Venkovní herní plocha", nameEn:"Outdoor Play Area", rect:[9.6, 1.0, 10.4, 1.6], height:0.15 },
-      { id:"vni", code:"VNI", name:"Vnitřní herní plocha",  nameEn:"Indoor Play Area",  rect:[5.6, 5.6, 6.4, 6.2], height:0.15 },
-      { id:"off", code:"OFF", name:"Offzóna",               nameEn:"Off-zone",          rect:[18.0, 0.4, 19.0, 1.6], height:0.6 },
-      { id:"chr", code:"CHR", name:"Chrono",                nameEn:"Chrono",            rect:[18.0, 3.0, 19.0, 4.0], height:0.5 },
-      { id:"reg", code:"REG", name:"Registrace",            nameEn:"Registration",      rect:[18.0, 5.6, 19.2, 6.8], height:0.5 },
-      { id:"wc",  code:"WC",  name:"WC",                    nameEn:"Restroom",          rect:[-1.0, 7.6, -0.2, 8.4], height:0.4 },
-      { id:"vst", code:"VST", name:"Vstup",                 nameEn:"Entrance",          rect:[18.4, 8.6, 19.4, 9.4], height:0.3 }
+      { id:"ven", code:"VEN", name:"Venkovní herní plocha", nameEn:"Outdoor Play Area", rect:[8.0, 1.0, 12.0, 2.0], height:0.15 },
+      { id:"vni", code:"VNI", name:"Vnitřní herní plocha",  nameEn:"Indoor Play Area",  rect:[6.5, 7.2, 10.5, 8.0], height:0.15 },
+      
+      { id:"off", code:"OFF", name:"Offzóna",               nameEn:"Off-zone",          rect:[17.2, 0.5, 19.5, 2.5], height:0.6 },
+      { id:"chr", code:"CHR", name:"Chrono",                nameEn:"Chrono",            rect:[17.2, 3.5, 18.8, 4.5], height:0.5 },
+      { id:"reg", code:"REG", name:"Registrace",            nameEn:"Registration",      rect:[17.2, 5.5, 19.5, 7.2], height:0.5 },
+      { id:"wc",  code:"WC",  name:"WC",                    nameEn:"Restroom",          rect:[-1.2, 6.5, -0.2, 7.5], height:0.4 },
+      { id:"vst", code:"VST", name:"Vstup",                 nameEn:"Entrance",          rect:[17.5, 8.8, 19.5, 9.5], height:0.3 },
+
+      // Hasicí přístroje (podle červených ikon na plánku)
+      { id:"hp1", code:"🧯", name:"Hasicí přístroj", nameEn:"Extinguisher", rect:[0.2, 4.0, 0.6, 4.4], height:0.2 },
+      { id:"hp2", code:"🧯", name:"Hasicí přístroj", nameEn:"Extinguisher", rect:[3.2, 6.8, 3.6, 7.2], height:0.2 },
+      { id:"hp3", code:"🧯", name:"Hasicí přístroj", nameEn:"Extinguisher", rect:[6.0, 4.8, 6.4, 5.2], height:0.2 },
+      { id:"hp4", code:"🧯", name:"Hasicí přístroj", nameEn:"Extinguisher", rect:[5.7, 5.8, 6.1, 6.2], height:0.2 },
+      { id:"hp5", code:"🧯", name:"Hasicí přístroj", nameEn:"Extinguisher", rect:[9.2, 4.7, 9.6, 5.1], height:0.2 },
+      { id:"hp6", code:"🧯", name:"Hasicí přístroj", nameEn:"Extinguisher", rect:[13.5, 5.8, 13.9, 6.2], height:0.2 },
+      { id:"hp7", code:"🧯", name:"Hasicí přístroj", nameEn:"Extinguisher", rect:[13.8, 7.8, 14.2, 8.2], height:0.2 },
+      { id:"hp8", code:"🧯", name:"Hasicí přístroj", nameEn:"Extinguisher", rect:[17.2, 2.5, 17.6, 2.9], height:0.2 },
+      { id:"hp9", code:"🧯", name:"Hasicí přístroj", nameEn:"Extinguisher", rect:[18.5, 7.3, 18.9, 7.7], height:0.2 }
     ]
   };
 
@@ -154,29 +169,29 @@
     document.getElementById("sidebar-title").textContent = LABELS[lang].sidebar;
   }
 
-AM.wireDropdowns();
+  AM.wireDropdowns();
+  applyStaticText(AM.getLang());
 
-applyStaticText(AM.getLang());
+  document.getElementById("back-btn").addEventListener("click", () => {
+    window.location.href = "menu.html";
+  });
 
-document.getElementById("back-btn").addEventListener("click", () => {
-  window.location.href = "menu.html";
-});
+  const engine = MapEngine.init({
+    svg,
+    listEl,
+    data: FIELD_DATA,
+    getLang: AM.getLang,
+    mountModeToggle: {
+      btn2d: document.getElementById("btn-2d"),
+      btn3d: document.getElementById("btn-3d")
+    }
+  });
 
-const engine = MapEngine.init({
-  svg,
-  listEl,
-  data: FIELD_DATA,
-  getLang: AM.getLang,
-  mountModeToggle: {
-    btn2d: document.getElementById("btn-2d"),
-    btn3d: document.getElementById("btn-3d")
-  }
-});
+  AM.wireLangSwitch((lang) => {
+    applyStaticText(lang);
+    engine.redraw();
+  });
 
-AM.wireLangSwitch((lang) => {
-  applyStaticText(lang);
-  engine.redraw();
-});
   const LOCATE_TEXT = {
     cs: { btn:"Moje poloha", on:"Sleduji polohu", outside:"Jsi mimo hřiště",
           denied:"Poloha zamítnuta v prohlížeči", unavailable:"Polohu se nepodařilo zjistit",
