@@ -1525,7 +1525,6 @@ function resetTransform() {
         scale = newScale;
 
 if (mode === "3d") {
-if (mode === "3d") {
 
           const angleDelta =
             metrics.angle - pinchStartAngle;
