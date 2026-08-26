@@ -55,58 +55,60 @@
 <script src="map-engine.js?v=4"></script>
 <script>
   /* ====================================================================
-     FIELD DATA — SWINE COMPLEX (Opravené úhly a rozložení budov)
+     FIELD DATA — SWINE COMPLEX (Přesně vyrovnaný raster a natočení budov)
      ==================================================================== */
 
   const FIELD_DATA = {
     viewBoxFlat: "0 0 1000 1250",
 
     geoAnchors: [
-      { col: 2.40, row: 3.90, lat: 50.17094507226549, lng: 14.022195223248122 }, // Bod 1: Vlevo nahoře (LH roh Budovy 6)
-      { col: 5.00, row: 10.70, lat: 50.16975967017228, lng: 14.023305657771209 }, // Bod 2: Vlevo dole (LD roh Garáží)
-      { col: 8.80, row: 9.60, lat: 50.17006890833581, lng: 14.024367812532427 }   // Bod 3: Vpravo dole (PD roh Vodárny)
+      { col: 2.35, row: 3.40, lat: 50.17094507226549, lng: 14.022195223248122 }, // Bod 1: Vlevo nahoře (roh Budovy 6)
+      { col: 5.40, row: 10.80, lat: 50.16975967017228, lng: 14.023305657771209 }, // Bod 2: Vlevo dole (roh Garáží)
+      { col: 9.10, row: 9.70, lat: 50.17006890833581, lng: 14.024367812532427 }   // Bod 3: Vpravo dole (roh Vodárny)
     ],
 
     boundary: [
-      [0.8, 2.9], [8.1, 0.6], [9.9, 5.5], 
-      [10.0, 7.9], [8.5, 12.4], [2.3, 12.4], 
-      [0.75, 6.0], [1.5, 5.8], [1.1, 4.1], [0.8, 2.9]
+      [0.8, 2.8], [7.0, 0.4], [9.5, 5.8], 
+      [8.2, 11.8], [3.2, 12.2], [0.8, 6.0], 
+      [1.5, 5.7], [1.1, 4.0], [0.8, 2.8]
     ],
 
-    entrance: { col: 1.1, row: 5.0, angle: 165 },
+    entrance: { col: 1.1, row: 4.8, angle: 165 },
 
     roads: [
-      { points: [[1.1, 4.1], [6.95, 2.35], [7.6, 2.5], [9.1, 7.25], [8.5, 7.8], [3.3, 9.8], [2.6, 9.5], [1.4, 5.7], [1.1, 4.1]] }
+      { points: [[1.3, 3.8], [6.6, 2.1], [8.7, 6.8], [8.4, 7.6], [3.2, 9.5], [2.4, 9.1], [1.5, 5.5], [1.3, 3.8]] }
     ],
 
     trees: [],
 
     buildings: [
-      // Horní budovy (podél horní cesty)
-      { id:"b_pit", code:"PIT", name:"Pitevna", nameEn:"Autopsy Room", rect:[3.00, 1.80, 3.80, 2.20], rotate:-16.5, height:0.8 },
-      { id:"b_sam", code:"SAM", name:"Samotka", nameEn:"Solitary", rect:[4.00, 1.20, 6.60, 1.80], rotate:-16.5, height:0.8 },
-      
-      // Levá zóna
-      { id:"b_reg", code:"REG", name:"Registrace / Offzone", nameEn:"Registration / Offzone", rect:[1.92, 5.35, 2.68, 7.45], rotate:-16.5, height:0.8 },
-      
-      // Horní řada budov u Prasečáků
-      { id:"b6", code:"B6", name:"Budova 6", nameEn:"Building 6", rect:[2.55, 3.75, 3.25, 5.85], rotate:-16.5, height:1.0 },
-      { id:"b7", code:"B7", name:"Budova 7", nameEn:"Building 7", rect:[3.35, 3.45, 4.05, 5.55], rotate:-16.5, height:1.0 },
-      
-      // Prasečáky a Rampa
-      { id:"b_prs", code:"PRS", name:"Prasečáky", nameEn:"Pigsties", rect:[4.55, 2.75, 7.45, 5.25], rotate:-16.5, height:1.2 },
-      { id:"b_rmp", code:"RMP", name:"Rampa", nameEn:"Ramp", rect:[7.48, 3.80, 7.93, 5.00], rotate:-16.5, height:0.6 },
+      // Horní sekce podél cesty
+      { id:"b_pit", code:"PIT", name:"Pitevna", nameEn:"Autopsy Room", rect:[2.8, 1.8, 3.6, 2.3], rotate:20, height:0.8 },
+      { id:"b_sam", code:"SAM", name:"Samotka", nameEn:"Solitary", rect:[3.8, 1.2, 5.8, 1.8], rotate:20, height:0.8 },
+      { id:"b_ele", code:"ELE", name:"Elektrárna", nameEn:"Power Station", rect:[6.0, 0.3, 6.8, 0.9], rotate:20, height:0.8 },
 
-      // Spodní řada 5 budov (1 až 5)
-      { id:"b1", code:"B1", name:"Budova 1", nameEn:"Building 1", rect:[3.45, 6.35, 4.15, 9.05], rotate:-16.5, height:1.0 },
-      { id:"b2", code:"B2", name:"Budova 2", nameEn:"Building 2", rect:[4.25, 6.05, 4.95, 8.75], rotate:-16.5, height:1.0 },
-      { id:"b3", code:"B3", name:"Budova 3", nameEn:"Building 3", rect:[5.05, 5.75, 5.75, 8.45], rotate:-16.5, height:1.0 },
-      { id:"b4", code:"B4", name:"Budova 4", nameEn:"Building 4", rect:[5.85, 5.45, 6.55, 8.15], rotate:-16.5, height:1.0 },
-      { id:"b5", code:"B5", name:"Budova 5", nameEn:"Building 5", rect:[6.65, 5.15, 7.35, 7.85], rotate:-16.5, height:1.0 },
+      // Levá zóna (Off-zone / Registrace)
+      { id:"b_reg", code:"REG", name:"Registrace / Offzone", nameEn:"Registration / Offzone", rect:[1.8, 5.4, 2.6, 7.2], rotate:20, height:0.8 },
 
-      // Spodní samostatné budovy
-      { id:"b_gar", code:"GAR", name:"Garáže", nameEn:"Garages", rect:[4.95, 9.40, 5.65, 10.80], rotate:-16.5, height:0.8 },
-      { id:"b_vod", code:"VOD", name:"Vodárna", nameEn:"Waterhouse", rect:[8.15, 8.35, 8.85, 9.65], rotate:-16.5, height:1.0 }
+      // Horní řada budov v hlavním bloku
+      { id:"b6", code:"B6", name:"Budova 6", nameEn:"Building 6", rect:[2.7, 3.4, 3.5, 5.8], rotate:20, height:1.0 },
+      { id:"b7", code:"B7", name:"Budova 7", nameEn:"Building 7", rect:[3.7, 3.1, 4.5, 5.5], rotate:20, height:1.0 },
+
+      // Prasečáky & Rampa
+      { id:"b_prs", code:"PRS", name:"Prasečáky", nameEn:"Pigsties", rect:[4.7, 2.4, 7.5, 5.0], rotate:20, height:1.2 },
+      { id:"b_rmp", code:"RMP", name:"Rampa", nameEn:"Ramp", rect:[7.5, 3.6, 8.0, 4.8], rotate:20, height:0.6 },
+
+      // Spodní řada paralelních budov 1 až 5
+      { id:"b1", code:"B1", name:"Budova 1", nameEn:"Building 1", rect:[3.2, 6.2, 4.0, 9.2], rotate:20, height:1.0 },
+      { id:"b2", code:"B2", name:"Budova 2", nameEn:"Building 2", rect:[4.2, 5.9, 5.0, 8.9], rotate:20, height:1.0 },
+      { id:"b3", code:"B3", name:"Budova 3", nameEn:"Building 3", rect:[5.2, 5.6, 6.0, 8.6], rotate:20, height:1.0 },
+      { id:"b4", code:"B4", name:"Budova 4", nameEn:"Building 4", rect:[6.2, 5.3, 7.0, 8.3], rotate:20, height:1.0 },
+      { id:"b5", code:"B5", name:"Budova 5", nameEn:"Building 5", rect:[7.2, 5.0, 8.0, 8.0], rotate:20, height:1.0 },
+
+      // Spodní samostatné budovy a objekty
+      { id:"b_gar", code:"GAR", name:"Garáže", nameEn:"Garages", rect:[5.0, 9.4, 6.0, 10.8], rotate:20, height:0.8 },
+      { id:"b_skl", code:"SKL", name:"Sklad", nameEn:"Warehouse", rect:[3.8, 10.8, 4.7, 11.8], rotate:20, height:0.8 },
+      { id:"b_vod", code:"VOD", name:"Vodárna", nameEn:"Waterhouse", rect:[8.0, 8.4, 9.0, 9.7], rotate:20, height:1.0 }
     ]
   };
 
