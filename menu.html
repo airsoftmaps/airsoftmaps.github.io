@@ -376,8 +376,9 @@ window.addEventListener("appinstalled", () => {
   sb.rpc("increment_page_view", { page_name: "global" })
     .then(({ data, error }) => {
       const el = document.getElementById("visit-count");
-      if (!error && el) {
-        el.textContent = data;
+      const count = Array.isArray(data) ? data[0] : data;
+      if (!error && el && count != null) {
+        el.textContent = count;
       }
     });
 </script>
