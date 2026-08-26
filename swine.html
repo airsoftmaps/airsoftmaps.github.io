@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIRSOFT MAPS — Swine Complex</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="common.css">
+</head>
+<body>
+
+<header class="am-header">
+  <a class="am-brand" href="menu.html">
+    <img class="am-brand-logo" src="loga/tmavekulate.png" alt="Airsoft Maps">
+  </a>
+
+  <div class="am-field-title">AIRSOFT PARK — <span>SWINE COMPLEX</span></div>
+
+  <div class="am-controls">
+    <button class="am-btn" id="back-btn">← <span id="back-label">Zpět na hřiště</span></button>
+    <div class="am-dd" id="lang-dd">
+      <button class="am-btn">🌐 <span id="lang-current">CZ</span></button>
+      <div class="am-dd-menu">
+        <button data-lang="cs">Čeština</button>
+        <button data-lang="en">English</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="am-map-toolbar">
+  <div class="am-toggle">
+    <button id="btn-2d" class="active">2D</button>
+    <button id="btn-3d">3D</button>
+    <button class="am-locate-btn" id="locate-btn" style="margin-left:10px;">
+      <span class="dot"></span><span id="locate-label">Moje poloha</span>
+    </button>
+  </div>
+</div>
+<div class="am-locate-status" id="locate-status"></div>
+
+<div class="am-map-body">
+  <div class="am-map-canvas">
+    <svg id="map-svg" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet"></svg>
+  </div>
+  <div class="am-sidebar">
+    <div class="am-sidebar-title" id="sidebar-title">Místa na hřišti</div>
+    <div id="poi-list"></div>
+  </div>
+</div>
+
+<script src="common.js?v=3"></script>
+<script src="geo.js?v=3"></script>
+<script src="map-engine.js?v=4"></script>
+<script>
+  /* ====================================================================
+     FIELD DATA — SWINE COMPLEX
+     ==================================================================== */
+
+  const FIELD_DATA = {
+    viewBoxFlat: "0 0 1000 1250",
+
+    geoAnchors: [
+      { col: 2.4, row: 4.0, lat: 50.17094507226549, lng: 14.022195223248122 },
+      { col: 5.4, row: 10.8, lat: 50.16975967017228, lng: 14.023305657771209 },
+      { col: 9.1, row: 9.8, lat: 50.17006890833581, lng: 14.024367812532427 }
+    ],
+
+    boundary: [
+      [0.8, 2.9], [8.1, 0.6], [9.9, 9.8], 
+      [8.5, 12.4], [2.3, 12.4], [0.75, 6.0], 
+      [1.5, 5.8], [0.8, 2.9]
+    ],
+
+    entrance: { col: 1.5, row: 6.0, angle: 0 },
+
+    roads: [
+      { points: [[1.15, 4.1], [6.95, 2.35], [9.1, 7.25], [3.3, 9.8], [2.6, 9.5], [1.4, 5.7], [1.15, 4.1]] }
+    ],
+
+    trees: [],
+
+    buildings: [
+      { id:"b_pit", code:"PIT", name:"Pitevna", nameEn:"Autopsy Room", rect:[2.9, 2.1, 3.8, 2.7], height:0.8 },
+      { id:"b_sam", code:"SAM", name:"Samotka", nameEn:"Solitary", rect:[3.9, 1.2, 6.8, 2.8], height:0.8 },
+      { id:"b_reg", code:"REG", name:"Registrace / Offzone", nameEn:"Registration / Offzone", rect:[1.7, 6.0, 3.2, 8.1], height:0.8 },
+      
+      { id:"b6", code:"B6", name:"Budova 6", nameEn:"Building 6", rect:[2.3, 3.9, 3.2, 6.3], height:1.0 },
+      { id:"b7", code:"B7", name:"Budova 7", nameEn:"Building 7", rect:[3.3, 3.7, 4.2, 6.1], height:1.0 },
+      
+      { id:"b_prs", code:"PRS", name:"Prasečáky", nameEn:"Pigsties", rect:[4.3, 2.6, 7.7, 5.6], height:1.2 },
+      { id:"b_rmp", code:"RMP", name:"Rampa", nameEn:"Ramp", rect:[7.3, 4.2, 8.0, 5.6], height:0.6 },
+
+      { id:"b1", code:"B1", name:"Budova 1", nameEn:"Building 1", rect:[3.1, 6.5, 4.0, 9.0], height:1.0 },
+      { id:"b2", code:"B2", name:"Budova 2", nameEn:"Building 2", rect:[4.1, 6.3, 5.0, 8.8], height:1.0 },
+      { id:"b3", code:"B3", name:"Budova 3", nameEn:"Building 3", rect:[5.1, 6.0, 6.0, 8.5], height:1.0 },
+      { id:"b4", code:"B4", name:"Budova 4", nameEn:"Building 4", rect:[6.1, 5.7, 7.0, 8.2], height:1.0 },
+      { id:"b5", code:"B5", name:"Budova 5", nameEn:"Building 5", rect:[7.1, 5.4, 8.0, 7.8], height:1.0 },
+
+      { id:"b_gar", code:"GAR", name:"Garáže", nameEn:"Garages", rect:[5.0, 9.5, 6.2, 10.9], height:0.8 },
+      { id:"b_vod", code:"VOD", name:"Vodárna", nameEn:"Waterhouse", rect:[8.1, 8.6, 9.1, 10.0], height:1.0 }
+    ]
+  };
+
+  const svg = document.getElementById("map-svg");
+  const listEl = document.getElementById("poi-list");
+
+  const LABELS = {
+    cs: { back:"Zpět na hřiště", sidebar:"Místa na hřišti" },
+    en: { back:"Back to fields", sidebar:"Points of interest" }
+  };
+
+  function applyStaticText(lang) {
+    document.getElementById("back-label").textContent = LABELS[lang].back;
+    document.getElementById("sidebar-title").textContent = LABELS[lang].sidebar;
+  }
+
+  AM.wireDropdowns();
+  applyStaticText(AM.getLang());
+
+  document.getElementById("back-btn").addEventListener("click", () => {
+    window.location.href = "menu.html";
+  });
+
+  const engine = MapEngine.init({
+    svg,
+    listEl,
+    data: FIELD_DATA,
+    getLang: AM.getLang,
+    mountModeToggle: {
+      btn2d: document.getElementById("btn-2d"),
+      btn3d: document.getElementById("btn-3d")
+    }
+  });
+
+  AM.wireLangSwitch((lang) => {
+    applyStaticText(lang);
+    engine.redraw();
+  });
+  
+  const LOCATE_TEXT = {
+    cs: { btn:"Moje poloha", on:"Sleduji polohu", outside:"Jsi mimo hřiště",
+          denied:"Poloha zamítnuta v prohlížeči", unavailable:"Polohu se nepodařilo zjistit",
+          noAnchors:"Pro toto hřiště není poloha dostupná" },
+    en: { btn:"My location", on:"Tracking location", outside:"You are outside the field",
+          denied:"Location permission denied", unavailable:"Could not get location",
+          noAnchors:"Location isn't available for this field" }
+  };
+
+  const locateBtn = document.getElementById("locate-btn");
+  const locateLabel = document.getElementById("locate-label");
+  const locateStatus = document.getElementById("locate-status");
+  let watchId = null, tracking = false;
+  let stopHeading = null, lastHeading = null, lastUpBearing = null, insideField = false;
+
+  const hasGeo = FIELD_DATA.geoAnchors && FIELD_DATA.geoAnchors.length >= 3
+    && FIELD_DATA.geoAnchors.every(a => a.lat && a.lng);
+
+  function applyCompassRotation() {
+    if (insideField && lastHeading != null && lastUpBearing != null) {
+      engine.setCompassRotation((lastUpBearing - lastHeading + 360) % 360);
+    } else {
+      engine.setCompassRotation(null);
+    }
+  }
+
+  if (!hasGeo) {
+    locateBtn.style.display = "none";
+  } else {
+    locateBtn.addEventListener("click", () => {
+      const lang = AM.getLang();
+      if (tracking) {
+        AMGeo.stop(watchId); watchId = null; tracking = false;
+        if (stopHeading) { stopHeading(); stopHeading = null; }
+        insideField = false;
+        lastHeading = null;
+        applyCompassRotation();
+        locateBtn.classList.remove("active", "outside");
+        locateLabel.textContent = LOCATE_TEXT[lang].btn;
+        locateStatus.textContent = "";
+        engine.setPlayer(null);
+        return;
+      }
+      tracking = true;
+      locateBtn.classList.add("active");
+      locateLabel.textContent = LOCATE_TEXT[lang].on;
+
+      stopHeading = AMGeo.watchHeading((heading) => {
+        lastHeading = heading;
+        applyCompassRotation();
+      });
+
+      watchId = AMGeo.watch(FIELD_DATA, (result) => {
+        const t = LOCATE_TEXT[AM.getLang()];
+        if (!result.ok) {
+          locateStatus.textContent = t[result.reason] || t.unavailable;
+          locateBtn.classList.remove("outside");
+          engine.setPlayer(null);
+          insideField = false;
+          applyCompassRotation();
+          return;
+        }
+        lastUpBearing = result.upBearing;
+        if (result.inside) {
+          locateBtn.classList.remove("outside");
+          locateStatus.textContent = "";
+          engine.setPlayer({ col: result.col, row: result.row });
+          insideField = true;
+        } else {
+          locateBtn.classList.add("outside");
+          locateStatus.textContent = t.outside;
+          engine.setPlayer(null);
+        }
+        applyCompassRotation();
+      });
+    });
+  }
+</script>
+
+</body>
+</html>
