@@ -1,3 +1,109 @@
+
+Gemini
+Nový chat
+Hledat v chatech
+Knihovna
+Nový sešit
+Vytvoření HTML souboru pro God of War
+Generování HTML mapy God of War
+Generování mapových prvků podle GPS
+Vytvoření souboru swine.html
+Vytvoření mapy swine.html
+Určení lokace airsoftové akce ve Slaném
+Generování mapy hřiště Grygov
+Čištění a úprava mapy
+Počet místností na plánku
+Seznam českých airsoftových hřišť
+Návrh brandingu pro AIRSOFT MAPS
+Příprava kontextu pro tvorbu webu
+Vytvoření pozadí z loga
+Odstranění číslem z mapy
+Detailní popis airsoftových fotografií
+Redesign airsoftové mapové nášivky
+Úprava elementů v dlaních
+Popis hořících dlaní v tçoně
+Realistický elektrika wallpaper 9:16
+Rozdělení pohonů v airsoftu
+Legálnost stahování filmů přes torrenty
+Nápady na pozadí pro IG příspěvek s airsoftkami
+Airsoft Maps Project Code Integration
+Podvržení GPS souřadnic v prohlížeči
+Oživení projektu na GitHub Pages
+Instalace Flutter, VS Code a Supabase
+Bouchajdy z filmu Krakonoš a lyžníci
+Omezení airsoftových granátometů
+Hypotéka pro zapsaný spolek
+Spotřeba paliva na 180 km
+Samolepka Biohazard, Resident Evil, Airsoft
+Resident Evil Slova na Písmeno V
+Přesun hráčů a aliancí v herním světě
+Puma Logo s Taktickou Výzbrojí
+
+Aktivita
+Moravská Ostrava a Přívoz, Česko
+Na základě vašich míst (domov)
+Aktualizovat polohu
+Konverzace s Gemini
+
+
+mapu v png máš
+
+vzor podle čeho stvořit html - máš
+
+
+
+
+
+modré jsou budovy - dej jim universální názvy (doplním si to)
+
+červené je okraj hřiště
+
+zelené jsou cesty
+
+černé puntíky jsou gps body
+
+
+
+levý horní gps bod - 50.221052373119996, 14.093832644926833
+
+levý spodní gps bod - 50.21970538742027, 14.094106959300413
+
+pravý gps bod - 50.222156229447585, 14.111312746674239
+
+
+
+vytvoř godofwar.html kód
+
+
+
+prosím ať to funguje...
+
+Your HTML file (God of War map) is ready
+
+Ikona aplikace HTML
+godofwar
+ HTML 
+Otevřít
+Vytvořil jsem pro tebe kód godofwar.html přesně podle tvého vzoru.
+
+Zde je přehled toho, co jsem v mapě nastavil:
+
+GPS body (černé puntíky): Jsou mapované přesně podle tebou zadaných souřadnic (levý horní, levý spodní a pravý roh mapy) a zasazené jako kotvy (geoAnchors) pro správné fungování GPS lokalizace na hřišti.
+
+Okraje hřiště (červená): Odhadl jsem souřadnice tvaru na základě přiloženého obrázku godwars.png a vytvořil polygonovou hranici.
+
+Budovy (modrá): Vložil jsem 4 budovy a dal jim univerzální názvy ("Budova 1" až "Budova 4" / "B1" - "B4"). Rozložení a natočení odpovídá zhruba obrázku. Tady si pak v kódu ve FIELD_DATA můžeš upravit přesné pojmenování.
+
+Cesty (zelená): Do dat jsem připravil prázdné pole roads: [], protože na obrázku zelené cesty nejsou viditelné. Pokud je tam budeš chtít doplnit, stačí je přidat ve stejném formátu jako v původním Dalově.
+
+Kód plně zachovává funkčnost 2D/3D enginu, lokalizace přes GPS, přepínání jazyků a další věci ze vzoru dalov.html.
+
+
+
+
+Gemini je AI a může dělat chyby (i co se týče lidí). Vaše soukromí a GeminiOtevře se v novém okně
+
+Addressing Image Inaccessibility
 <!DOCTYPE html>
 <html lang="cs">
 <head>
@@ -34,15 +140,14 @@
     <button id="btn-2d" class="active">2D</button>
     <button id="btn-3d">3D</button>
     <button class="am-locate-btn" id="locate-btn" style="margin-left:10px;">
-      <span class="dot"></span><span id="locate-label">Moje poloha</span>
-    </button>
+  <span class="dot"></span><span id="locate-label">Moje poloha</span>
+</button>
   </div>
 </div>
 <div class="am-locate-status" id="locate-status"></div>
-
 <div class="am-map-body">
   <div class="am-map-canvas">
-    <svg id="map-svg" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet"></svg>
+    <svg id="map-svg" xmlns="http://www.w3.org/2000/svg"></svg>
   </div>
   <div class="am-sidebar">
     <div class="am-sidebar-title" id="sidebar-title">Místa na hřišti</div>
@@ -52,46 +157,28 @@
 
 <script src="common.js?v=3"></script>
 <script src="geo.js?v=3"></script>
-<script src="map-engine.js?v=4"></script>
+<script src="map-engine.js?v=3"></script>
 <script>
-  /* ====================================================================
-     FIELD DATA — GOD OF WAR
-     ==================================================================== */
-
   const FIELD_DATA = {
-    viewBoxFlat: "0 0 1366 768",
-
+    viewBoxFlat: "0 0 1360 800",
     geoAnchors: [
-      { col: 30.0, row: 280.0, lat: 50.221052373119996, lng: 14.093832644926833 }, // Levý horní gps bod
-      { col: 35.0, row: 535.0, lat: 50.21970538742027, lng: 14.094106959300413 },  // Levý spodní gps bod
-      { col: 1335.0, row: 245.0, lat: 50.22156229447585, lng: 14.111312746674239 } // Pravý gps bod
+      { col: 0.1,  row: 2.1, lat: 50.221052373119996, lng: 14.093832644926833 },
+      { col: 0.35, row: 5.3, lat: 50.21970538742027, lng: 14.094106959300413 },
+      { col: 12.35, row: 1.15, lat: 50.222156229447585, lng: 14.111312746674239 }
     ],
-
     boundary: [
-      [27, 280], [130, 235], [370, 235], [370, 260], [315, 290],
-      [680, 230], [920, 160], [950, 195], [740, 240], [530, 310],
-      [470, 380], [505, 385], [540, 350], [570, 350], [590, 370],
-      [35, 545], [200, 530], [530, 520], [550, 480], [27, 545]
+      [0.0, 2.05], [1.1, 1.75], [1.6, 1.7], [4.6, 1.5], [11.5, 0.4], 
+      [12.5, 0.9], [12.2, 1.3], [8.9, 2.0], [9.1, 2.5], [8.4, 2.7], 
+      [7.5, 2.4], [6.4, 2.9], [6.7, 4.9], [0.3, 5.35], [0.0, 2.05]
     ],
-
-    entrance: { col: 35, row: 535, angle: 0 },
-
-    roads: [
-      { points: [[150, 260], [350, 280], [600, 250], [850, 200], [1200, 230]] },
-      { points: [[100, 400], [300, 380], [500, 450]] },
-      { points: [[300, 530], [500, 530], [700, 450]] }
-    ],
-
-    trees: [
-      [200, 200], [400, 180], [600, 150], [800, 130], [1000, 150], [1200, 200],
-      [100, 600], [300, 600], [500, 600], [700, 550], [900, 450], [1100, 300]
-    ],
-
+    entrance: { col: 0.1, row: 2.1, angle: 0 },
+    roads: [],
+    trees: [],
     buildings: [
-      { id:"b1", code:"BLD1", name:"Budova 1", nameEn:"Building 1", rect:[80, 360, 180, 480], height:1.0 },
-      { id:"b2", code:"BLD2", name:"Budova 2", nameEn:"Building 2", rect:[350, 470, 450, 530], height:0.6 },
-      { id:"b3", code:"BLD3", name:"Budova 3", nameEn:"Building 3", rect:[270, 265, 330, 320], height:0.8 },
-      { id:"b4", code:"BLD4", name:"Budova 4", nameEn:"Building 4", rect:[460, 325, 530, 390], height:1.2 }
+      { id:"b1", code:"B1", name:"Budova 1", nameEn:"Building 1", rect:[0.5, 2.4, 1.2, 3.7], height:0.8 },
+      { id:"b2", code:"B2", name:"Budova 2", nameEn:"Building 2", rect:[1.6, 4.6, 2.8, 5.2], height:0.8 },
+      { id:"b3", code:"B3", name:"Budova 3", nameEn:"Building 3", rect:[4.6, 1.5, 5.2, 2.1], rotate:20, height:0.8 },
+      { id:"b4", code:"B4", name:"Budova 4", nameEn:"Building 4", rect:[7.9, 1.5, 8.7, 2.5], height:0.8 }
     ]
   };
 
@@ -213,3 +300,5 @@
 
 </body>
 </html>
+godofwar.html
+Zobrazuje se položka godofwar.html
