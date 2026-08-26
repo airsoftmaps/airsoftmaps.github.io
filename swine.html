@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AIRSOFT MAPS — Swine Complex</title>
+<title>AIRSOFT MAPS — Swine</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="common.css">
@@ -15,7 +15,7 @@
     <img class="am-brand-logo" src="loga/tmavekulate.png" alt="Airsoft Maps">
   </a>
 
-  <div class="am-field-title">AIRSOFT PARK — <span>SWINE COMPLEX</span></div>
+  <div class="am-field-title">AIRSOFT PARK — <span>SWINE</span></div>
 
   <div class="am-controls">
     <button class="am-btn" id="back-btn">← <span id="back-label">Zpět na hřiště</span></button>
@@ -55,62 +55,51 @@
 <script src="map-engine.js?v=4"></script>
 <script>
   /* ====================================================================
-     FIELD DATA — SWINE COMPLEX
-     (Geometricky přesný model rotovaný o -20.5°)
+     FIELD DATA — SWINE
+     Vypočítaná kompozice s přesným posunem středů pro čisté lícování.
      ==================================================================== */
 
   const FIELD_DATA = {
-    viewBoxFlat: "0 0 1400 1600",
+    viewBoxFlat: "0 0 100 120",
 
     geoAnchors: [
-      // Matematicky vypočtené pozice černých puntíků v lokální mřížce
-      { col: 3.38, row: 4.11, lat: 50.17094507226549, lng: 14.022195223248122 }, // Bod 1: Vlevo nahoře (B6)
-      { col: 8.20, row: 11.71, lat: 50.16975967017228, lng: 14.023305657771209 }, // Bod 2: Vlevo dole (Garáže)
-      { col: 10.96, row: 9.39, lat: 50.17006890833581, lng: 14.024367812532427 }   // Bod 3: Vpravo dole (Vodárna)
+      { col: 33.95, row: 28.50, lat: 50.1709378188841, lng: 14.022212743518688 }, // Vlevo nahoře (Blok 6)
+      { col: 18.50, row: 76.05, lat: 50.170058218849704, lng: 14.022856473678806 }, // Vlevo dole (Blok 1)
+      { col: 66.05, row: 91.50, lat: 50.171326074686526, lng: 14.023535072557621 }, // Vpravo dole (Blok 5)
+      { col: 81.50, row: 43.95, lat: 50.17132075268947, lng: 14.02353285885949 }  // Vpravo nahoře (Rampa)
     ],
 
     boundary: [
-      [2.0, 4.0], [8.5, 1.0], [12.2, 9.0], 
-      [11.5, 12.5], [5.5, 13.5], [3.0, 9.5], 
-      [2.5, 8.5], [2.7, 6.0], [2.0, 4.0]
+      [8, 25], [80, 5], [98, 55], [95, 95], [25, 115], [12, 65], [8, 62], [8, 25]
     ],
 
-    entrance: { col: 2.5, row: 7.5, angle: 110 }, // Oranžová šipka zleva dolů
+    entrance: { col: 9, row: 61, angle: 110 },
 
     roads: [
-      { points: [[3.0, 6.5], [8.5, 4.5], [10.5, 8.5], [5.5, 10.5], [3.0, 6.5]] },
-      { points: [[8.5, 4.5], [9.5, 3.5]] },
-      { points: [[3.0, 6.5], [2.5, 8.5]] }
+      { points: [[11, 40], [40, 30], [70, 24], [88, 60], [83, 80], [35, 98], [22, 95], [15, 65], [9, 61]] }
     ],
 
     trees: [],
 
     buildings: [
-      // Horní sekce (Pitevna, Samotka, Elektrárna)
-      { id:"b_pit", code:"PIT", name:"Pitevna", nameEn:"Autopsy Room", rect:[4.26, 2.90, 5.06, 3.30], rotate:-20.5, height:0.8 },
-      { id:"b_sam", code:"SAM", name:"Samotka", nameEn:"Solitary", rect:[5.03, 2.00, 7.43, 2.60], rotate:-20.5, height:0.8 },
-      { id:"b_ele", code:"ELE", name:"Elektrárna", nameEn:"Power Station", rect:[7.50, 0.90, 8.50, 1.50], rotate:-20.5, height:0.8 },
+      // Periferní budovy
+      { id:"b_pit", code:"PIT", name:"Pitevna", nameEn:"Morgue", rect:[17.5, 17, 32.5, 23], rotate: -15, height: 1.0 },
+      { id:"b_pit2", code:"", name:"", nameEn:"", rect:[32.5, 16, 37.5, 20], rotate: -15, height: 0.8 },
+      { id:"b_sam", code:"SAM", name:"Samotka", nameEn:"Solitary", rect:[37.5, 11, 62.5, 19], rotate: -10, height: 1.2 },
+      { id:"b_reg", code:"REG", name:"Registrace", nameEn:"Registration", rect:[9.625, 46.195, 17.625, 71.195], rotate: 18, height: 1.0 },
+      { id:"b_gar", code:"GAR", name:"Garáže", nameEn:"Garages", rect:[45, 97.5, 55, 112.5], rotate: 18, height: 1.0 },
+      { id:"b_vod", code:"VOD", name:"Vodárna", nameEn:"Waterworks", rect:[76, 87.5, 84, 102.5], rotate: 18, height: 1.2 },
 
-      // Levá zóna (Off-zone)
-      { id:"b_reg", code:"REG", name:"Registrace / Offzone", nameEn:"Registration / Offzone", rect:[3.20, 6.11, 4.10, 8.11], rotate:-20.5, height:0.8 },
-      { id:"b_skl", code:"SKL", name:"Sklad", nameEn:"Warehouse", rect:[6.45, 10.71, 7.45, 11.71], rotate:-20.5, height:0.8 },
-
-      // Střední blok (B6, B7, Prasečáky, Rampa)
-      { id:"b6", code:"B6", name:"Budova 6", nameEn:"Building 6", rect:[3.85, 3.90, 4.55, 6.70], rotate:-20.5, height:1.0 },
-      { id:"b7", code:"B7", name:"Budova 7", nameEn:"Building 7", rect:[4.65, 3.60, 5.35, 6.40], rotate:-20.5, height:1.0 },
-      { id:"b_prs", code:"PRS", name:"Prasečáky", nameEn:"Pigsties", rect:[5.26, 2.89, 8.46, 5.09], rotate:-20.5, height:1.2 },
-      { id:"b_rmp", code:"RMP", name:"Rampa", nameEn:"Ramp", rect:[8.55, 3.22, 8.95, 4.62], rotate:-20.5, height:0.6 },
-
-      // Spodní blok rovnoběžných budov (B1 - B5)
-      { id:"b1", code:"B1", name:"Budova 1", nameEn:"Building 1", rect:[5.04, 6.88, 5.74, 10.08], rotate:-20.5, height:1.0 },
-      { id:"b2", code:"B2", name:"Budova 2", nameEn:"Building 2", rect:[5.84, 6.59, 6.54, 9.79], rotate:-20.5, height:1.0 },
-      { id:"b3", code:"B3", name:"Budova 3", nameEn:"Building 3", rect:[6.63, 6.29, 7.33, 9.49], rotate:-20.5, height:1.0 },
-      { id:"b4", code:"B4", name:"Budova 4", nameEn:"Building 4", rect:[7.43, 5.99, 8.13, 9.19], rotate:-20.5, height:1.0 },
-      { id:"b5", code:"B5", name:"Budova 5", nameEn:"Building 5", rect:[8.22, 5.69, 8.92, 8.89], rotate:-20.5, height:1.0 },
-
-      // Spodní samostatné objekty
-      { id:"b_gar", code:"GAR", name:"Garáže", nameEn:"Garages", rect:[7.88, 9.98, 8.88, 11.58], rotate:-20.5, height:0.8 },
-      { id:"b_vod", code:"VOD", name:"Vodárna", nameEn:"Waterhouse", rect:[9.94, 8.18, 10.74, 9.58], rotate:-20.5, height:1.0 }
+      // Centrální komplex PRASEČÁKY (lícováno do mřížky, rotace 18 stupňů)
+      { id:"p1", code:"P1", name:"Prasečák 1", nameEn:"Pigsty 1", rect:[22.89, 48.33, 32.89, 78.33], rotate: 18, height: 1.5 },
+      { id:"p2", code:"P2", name:"Prasečák 2", nameEn:"Pigsty 2", rect:[32.40, 51.42, 42.40, 81.42], rotate: 18, height: 1.5 },
+      { id:"p3", code:"P3", name:"Prasečák 3", nameEn:"Pigsty 3", rect:[41.91, 54.51, 51.91, 84.51], rotate: 18, height: 1.5 },
+      { id:"p4", code:"P4", name:"Prasečák 4", nameEn:"Pigsty 4", rect:[51.42, 57.60, 61.42, 87.60], rotate: 18, height: 1.5 },
+      { id:"p5", code:"P5", name:"Prasečák 5", nameEn:"Pigsty 5", rect:[60.93, 60.69, 70.93, 90.69], rotate: 18, height: 1.5 },
+      { id:"p6", code:"P6", name:"Prasečák 6", nameEn:"Pigsty 6", rect:[30.615, 29.555, 40.615, 49.555], rotate: 18, height: 1.5 },
+      { id:"p7", code:"P7", name:"Prasečák 7", nameEn:"Pigsty 7", rect:[40.125, 32.645, 50.125, 52.645], rotate: 18, height: 1.5 },
+      { id:"p_main", code:"PRA", name:"Prasečáky", nameEn:"Main Pigsty", rect:[49.341, 37.589, 71.341, 57.589], rotate: 18, height: 1.5 },
+      { id:"p_ram", code:"RAM", name:"Rampa", nameEn:"Ramp", rect:[70.606, 42.224, 78.606, 62.224], rotate: 18, height: 0.5 }
     ]
   };
 
