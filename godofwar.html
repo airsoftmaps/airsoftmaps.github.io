@@ -56,23 +56,43 @@
   const FIELD_DATA = {
     viewBoxFlat: "0 0 1360 800",
     geoAnchors: [
-      { col: 1.2,  row: 2.3, lat: 50.221052373119996, lng: 14.093832644926833 },
-      { col: 1.2,  row: 5.2, lat: 50.21970538742027, lng: 14.094106959300413 },
-      { col: 11.2, row: 1.9, lat: 50.222156229447585, lng: 14.111312746674239 }
+      { col: 0.1,  row: 2.1, lat: 50.221052373119996, lng: 14.093832644926833 },
+      { col: 0.35, row: 5.3, lat: 50.21970538742027, lng: 14.094106959300413 },
+      { col: 12.35, row: 1.15, lat: 50.222156229447585, lng: 14.111312746674239 }
     ],
+    // Traced meticulously from godwars_3.png proportions
     boundary: [
-      [1.4, 2.5], [1.4, 1.9], [2.2, 1.3], [4.5, 1.3], [10.2, 0.7], 
-      [11.2, 1.4], [10.8, 2.1], [6.2, 2.6], [5.9, 4.3], [3.9, 4.5], 
-      [3.6, 5.3], [1.5, 5.3], [1.4, 2.5]
+      [0.0, 2.05],   // top left corner
+      [1.1, 1.75],   // top bump 1
+      [1.6, 1.75],   // flat top section start
+      [4.6, 1.5],    // peak before slope up
+      [5.4, 1.95],   // dip after peak
+      [11.5, 0.4],   // top right corner
+      [11.8, 1.1],   // right edge down
+      [12.5, 0.9],   // tip right
+      [12.6, 1.35],  // bottom right corner tip
+      [8.9, 2.15],   // inner corner right
+      [9.1, 2.5],    // outer corner middle
+      [8.4, 2.7],    // bottom edge middle
+      [7.5, 2.45],   // dip middle
+      [7.2, 2.1],    // corner before slope down
+      [6.1, 2.75],   // inner corner left
+      [6.4, 4.9],    // bottom bump
+      [0.35, 5.35],  // bottom left corner
+      [0.0, 2.05]    // back to start
     ],
-    entrance: { col: 1.2, row: 2.3, angle: 0 },
+    entrance: { col: 0.1, row: 2.1, angle: 0 },
     roads: [],
     trees: [],
     buildings: [
-      { id:"b1", code:"B1", name:"Budova 1", nameEn:"Building 1", rect:[1.7, 2.8, 2.7, 4.4], height:0.8 },
-      { id:"b2", code:"B2", name:"Budova 2", nameEn:"Building 2", rect:[3.0, 4.7, 4.4, 5.4], height:0.8 },
-      { id:"b3", code:"B3", name:"Budova 3", nameEn:"Building 3", rect:[4.8, 1.8, 5.6, 2.6], rotate:-20, height:0.8 },
-      { id:"b4", code:"B4", name:"Budova 4", nameEn:"Building 4", rect:[7.6, 2.1, 8.6, 3.2], height:0.8 }
+      // Left big square
+      { id:"b1", code:"B1", name:"Budova 1", nameEn:"Building 1", rect:[0.5, 2.6, 1.2, 3.8], height:0.8 },
+      // Bottom flat rectangle
+      { id:"b2", code:"B2", name:"Budova 2", nameEn:"Building 2", rect:[1.6, 4.6, 2.8, 5.15], height:0.8 },
+      // Top angled rectangle
+      { id:"b3", code:"B3", name:"Budova 3", nameEn:"Building 3", rect:[4.6, 1.5, 5.2, 2.1], rotate:20, height:0.8 },
+      // Right rectangle
+      { id:"b4", code:"B4", name:"Budova 4", nameEn:"Building 4", rect:[7.9, 1.85, 8.7, 2.8], height:0.8 }
     ]
   };
 
@@ -141,7 +161,7 @@
   if (!hasGeo) {
     locateBtn.style.display = "none";
   } else {
-    locateBtn.addEventListener("click",() => {
+    locateBtn.addEventListener("click", () => {
       const lang = AM.getLang();
       if (tracking) {
         AMGeo.stop(watchId); watchId = null; tracking = false;
