@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIRSOFT MAPS — God of War</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="common.css">
+</head>
+<body>
+
+<header class="am-header">
+  <a class="am-brand" href="menu.html">
+    <img class="am-brand-logo" src="loga/tmavekulate.png" alt="Airsoft Maps">
+  </a>
+
+  <div class="am-field-title">AIRSOFT PARK — <span>GOD OF WAR</span></div>
+
+  <div class="am-controls">
+    <button class="am-btn" id="back-btn">← <span id="back-label">Zpět na hřiště</span></button>
+    <div class="am-dd" id="lang-dd">
+      <button class="am-btn">🌐 <span id="lang-current">CZ</span></button>
+      <div class="am-dd-menu">
+        <button data-lang="cs">Čeština</button>
+        <button data-lang="en">English</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="am-map-toolbar">
+  <div class="am-toggle">
+    <button id="btn-2d" class="active">2D</button>
+    <button id="btn-3d">3D</button>
+    <button class="am-locate-btn" id="locate-btn" style="margin-left:10px;">
+      <span class="dot"></span><span id="locate-label">Moje poloha</span>
+    </button>
+  </div>
+</div>
+<div class="am-locate-status" id="locate-status"></div>
+
+<div class="am-map-body">
+  <div class="am-map-canvas">
+    <svg id="map-svg" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet"></svg>
+  </div>
+  <div class="am-sidebar">
+    <div class="am-sidebar-title" id="sidebar-title">Místa na hřišti</div>
+    <div id="poi-list"></div>
+  </div>
+</div>
+
+<script src="common.js?v=3"></script>
+<script src="geo.js?v=3"></script>
+<script src="map-engine.js?v=4"></script>
+<script>
+  /* ====================================================================
+     FIELD DATA — GOD OF WAR
+     ==================================================================== */
+
+  const FIELD_DATA = {
+    viewBoxFlat: "0 0 1366 768",
+
+    geoAnchors: [
+      { col: 30.0, row: 280.0, lat: 50.221052373119996, lng: 14.093832644926833 }, // Levý horní gps bod
+      { col: 35.0, row: 535.0, lat: 50.21970538742027, lng: 14.094106959300413 },  // Levý spodní gps bod
+      { col: 1335.0, row: 245.0, lat: 50.22156229447585, lng: 14.111312746674239 } // Pravý gps bod
+    ],
+
+    boundary: [
+      [27, 280], [130, 235], [370, 235], [370, 260], [315, 290],
+      [680, 230], [920, 160], [950, 195], [740, 240], [530, 310],
+      [470, 380], [505, 385], [540, 350], [570, 350], [590, 370],
+      [35, 545], [200, 530], [530, 520], [550, 480], [27, 545]
+    ],
+
+    entrance: { col: 35, row: 535, angle: 0 },
+
+    roads: [
+      { points: [[150, 260], [350, 280], [600, 250], [850, 200], [1200, 230]] },
+      { points: [[100, 400], [300, 380], [500, 450]] },
+      { points: [[300, 530], [500, 530], [700, 450]] }
+    ],
+
+    trees: [
+      [200, 200], [400, 180], [600, 150], [800, 130], [1000, 150], [1200, 200],
+      [100, 600], [300, 600], [500, 600], [700, 550], [900, 450], [1100, 300]
+    ],
+
+    buildings: [
+      { id:"b1", code:"BLD1", name:"Budova 1", nameEn:"Building 1", rect:[80, 360, 180, 480], height:1.0 },
+      { id:"b2", code:"BLD2", name:"Budova 2", nameEn:"Building 2", rect:[350, 470, 450, 530], height:0.6 },
+      { id:"b3", code:"BLD3", name:"Budova 3", nameEn:"Building 3", rect:[270, 265, 330, 320], height:0.8 },
+      { id:"b4", code:"BLD4", name:"Budova 4", nameEn:"Building 4", rect:[460, 325, 530, 390], height:1.2 }
+    ]
+  };
+
+  const svg = document.getElementById("map-svg");
+  const listEl = document.getElementById("poi-list");
+
+  const LABELS = {
+    cs: { back:"Zpět na hřiště", sidebar:"Místa na hřišti" },
+    en: { back:"Back to fields", sidebar:"Points of interest" }
+  };
+
+  function applyStaticText(lang) {
+    document.getElementById("back-label").textContent = LABELS[lang].back;
+    document.getElementById("sidebar-title").textContent = LABELS[lang].sidebar;
+  }
+
+  AM.wireDropdowns();
+  applyStaticText(AM.getLang());
+
+  document.getElementById("back-btn").addEventListener("click", () => {
+    window.location.href = "menu.html";
+  });
+
+  const engine = MapEngine.init({
+    svg,
+    listEl,
+    data: FIELD_DATA,
+    getLang: AM.getLang,
+    mountModeToggle: {
+      btn2d: document.getElementById("btn-2d"),
+      btn3d: document.getElementById("btn-3d")
+    }
+  });
+
+  AM.wireLangSwitch((lang) => {
+    applyStaticText(lang);
+    engine.redraw();
+  });
+
+  const LOCATE_TEXT = {
+    cs: { btn:"Moje poloha", on:"Sleduji polohu", outside:"Jsi mimo hřiště",
+          denied:"Poloha zamítnuta v prohlížeči", unavailable:"Polohu se nepodařilo zjistit",
+          noAnchors:"Pro toto hřiště není poloha dostupná" },
+    en: { btn:"My location", on:"Tracking location", outside:"You are outside the field",
+          denied:"Location permission denied", unavailable:"Could not get location",
+          noAnchors:"Location isn't available for this field" }
+  };
+
+  const locateBtn = document.getElementById("locate-btn");
+  const locateLabel = document.getElementById("locate-label");
+  const locateStatus = document.getElementById("locate-status");
+  let watchId = null, tracking = false;
+  let stopHeading = null, lastHeading = null, lastUpBearing = null, insideField = false;
+
+  const hasGeo = FIELD_DATA.geoAnchors && FIELD_DATA.geoAnchors.length >= 3
+    && FIELD_DATA.geoAnchors.every(a => a.lat && a.lng);
+
+  function applyCompassRotation() {
+    if (insideField && lastHeading != null && lastUpBearing != null) {
+      engine.setCompassRotation((lastUpBearing - lastHeading + 360) % 360);
+    } else {
+      engine.setCompassRotation(null);
+    }
+  }
+
+  if (!hasGeo) {
+    locateBtn.style.display = "none";
+  } else {
+    locateBtn.addEventListener("click", () => {
+      const lang = AM.getLang();
+      if (tracking) {
+        AMGeo.stop(watchId); watchId = null; tracking = false;
+        if (stopHeading) { stopHeading(); stopHeading = null; }
+        insideField = false;
+        lastHeading = null;
+        applyCompassRotation();
+        locateBtn.classList.remove("active", "outside");
+        locateLabel.textContent = LOCATE_TEXT[lang].btn;
+        locateStatus.textContent = "";
+        engine.setPlayer(null);
+        return;
+      }
+      tracking = true;
+      locateBtn.classList.add("active");
+      locateLabel.textContent = LOCATE_TEXT[lang].on;
+
+      stopHeading = AMGeo.watchHeading((heading) => {
+        lastHeading = heading;
+        applyCompassRotation();
+      });
+
+      watchId = AMGeo.watch(FIELD_DATA, (result) => {
+        const t = LOCATE_TEXT[AM.getLang()];
+        if (!result.ok) {
+          locateStatus.textContent = t[result.reason] || t.unavailable;
+          locateBtn.classList.remove("outside");
+          engine.setPlayer(null);
+          insideField = false;
+          applyCompassRotation();
+          return;
+        }
+        lastUpBearing = result.upBearing;
+        if (result.inside) {
+          locateBtn.classList.remove("outside");
+          locateStatus.textContent = "";
+          engine.setPlayer({ col: result.col, row: result.row });
+          insideField = true;
+        } else {
+          locateBtn.classList.add("outside");
+          locateStatus.textContent = t.outside;
+          engine.setPlayer(null);
+          insideField = false;
+        }
+        applyCompassRotation();
+      });
+    });
+  }
+</script>
+
+</body>
+</html>
