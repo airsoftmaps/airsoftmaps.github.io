@@ -1,222 +1,839 @@
+SWINE.png
+Obrázek
+50.1709378188841, 14.022212743518688 (vlevo nahoře) 
+50.170058218849704, 14.022856473678806 (vlevo dole) 
+50.171326074686526, 14.023535072557621 (vpravo dole) 
+50.17132075268947, 14.02353285885949 (vpravo nahoře) 
+- černé kolečka jsou gps anchor 
+ 
+názvy budov jsem napsal buď do budovy nebo vedle 
+zelená je cesta 
+červená obrys hřiště 
+oranžová šipka je vstup do hřiště (prosím zachovej orientaci) 
+zachovej orientaci budov, velikost, vše 
+prosím dej si pozor - ten prostřední element je velký objekt, rozdělený do menších (ale tvar musí být zachovaný!!!!) 
+ 
+víš jak to nakódovat?? nebo chceš vzor?
+ 
+dej si brutálně záležet - musí to být pecka 
+
+Jo. Teď už přesně vím, jak to napojit. A po prohlédnutí map-engine.js i toho nákresu bych původní systém nepřepisoval celý. Udělal bych jednu zásadní věc: rozšířil engine o polygonovou geometrii, přičemž současné obdélníky zůstanou funkční pro ostatní hřiště.
+
+Klíčová věc
+
+Tvůj současný engine umí budovu jen jako:
+
+rect: [c1, r1, c2, r2]
+
+To je pro SWINE nedostatečné.
+
+Protože tady máme například PRASÉČÁKY, které nejsou obdélník, ale jeden velký nepravidelný objekt:
+
+┌─────────────────────────────┐
+│  6 │ 7                      │
+│    │                        │
+│    │                        │
+├────┴────────────────────────┤
+│ 1  │ 2 │ 3 │ 4 │     5     │
+└────┴────┴────┴────┴─────────┘
+
+A vnější obrys musí zůstat jeden celek. Uvnitř budou jen dělicí čáry a jednotlivé sektory.
+
+To bych tedy datově udělal zhruba takhle:
+
+{
+    id: "prasecaky",
+    code: "PRASÉČÁKY",
+
+    polygon: [
+        ...
+    ],
+
+    sections: [
+        {
+            id: "1",
+            polygon: [...]
+        },
+        {
+            id: "2",
+            polygon: [...]
+        },
+        ...
+        {
+            id: "7",
+            polygon: [...]
+        }
+    ]
+}
+
+Tím získáme jeden skutečný objekt PRASÉČÁKY, ale uvnitř jeho přesné členění.
+
+A ty GPS anchory jsou dokonce ideální
+
+Ty čtyři body:
+
+50.1709378188841, 14.022212743518688   ← vlevo nahoře
+50.170058218849704, 14.022856473678806  ← vlevo dole
+50.171326074686526, 14.023535072557621  ← vpravo dole
+50.17132075268947, 14.02353285885949    ← vpravo nahoře
+
+nebudu brát jako čtyři body nějaké budovy.
+
+Použijeme je jako georeferenční kontrolní body.
+
+To znamená:
+
+nákres → lokální souřadnice → GPS
+
+A protože ty čtyři body netvoří dokonale obdélník, použil bych perspektivní transformaci / homografii, ne obyčejné lineární přepočítání.
+
+To je důležité. Jinak by se při převodu mapa na krajích začala deformovat.
+
+Výsledek bude přesně tohle
+🔴 hranice hřiště
+🟢 cesta
+🟠 vstup se stejnou orientací jako na obrázku
+🔵 všechny objekty přesně podle skutečného tvaru
+🏭 PRASÉČÁKY jako jeden velký objekt
+1–7 jako vnitřní části PRASÉČÁKŮ
+REGISTRACE přesně natočená
+RAMPA přesně natočená
+PITEVNA
+SAMOTKA
+GARÁŽE
+VODÁRNA
+všechny rozměry a vzájemné polohy zachované
+GPS poloha hráče bude následně sedět na stejnou geometrii
+
+A hlavně nebudu převádět každý objekt do nějakého „hezčího“ obdélníku. To by přesně zabilo to, co se snažíš zachovat.
+
+Tvoje současné 2D/3D ovládání můžeme zachovat
+
+Tohle je naopak dobrá zpráva.
+
+Nemusíme sahat na:
+
+zoom
+pan
+pinch
+touch
+stylus
+rotaci 3D
+kompas
+výběr budov
+sidebar
+fitMapToWindow()
+viewport transformace
+
+Upravíme hlavně kreslení budov:
+
+building.rect
+
+→ současná metoda
+
+a přidáme:
+
+building.polygon
+
+→ nová metoda.
+
+Takže starý Dalov/Grygov/etc. se nemusí rozbít.
+
+Ale potřebuji ještě jednu věc
+
+Pošli mi soubor, kde máš definovaná data toho konkrétního hřiště.
+
+Typicky něco jako:
+
+const MAP_DATA = {
+    ...
+};
+
+nebo třeba:
+
+const BATTLEFIELD = {
+    ...
+};
+
+Případně celý swine.html, pokud je mapa přímo tam.
+
+map-engine.js už mám. Obrázek už mám. GPS anchory už mám.
+
+Chybí mi jen ta datová vrstva, do které to mám zasadit.
+
+A pak bych to udělal pořádně, ne nějaké rect: [1,2,3,4] poskládané od oka. Nejdřív překreslíme geometrii z tvého nákresu do lokálního souřadnicového systému a teprve potom ji napojíme na ty čtyři GPS body. To je cesta, jak dostat mapu, která bude skutečně odpovídat tomu obrázku. 🔥
+
+Jo, teď už je to úplně jasné. A díky za upřesnění, protože tohle mění způsob, jak bych modeloval stěny. Na obrázku je přesně vidět, že ty čtyři černé body jsou anchory a že PRASÉČÁKY jsou jeden souvislý objekt.
+
+6
+PRASÉČÁKY budu modelovat takto
+
+Ne jako 7 budov.
+
+Jeden hlavní objekt:
+
+        ┌───────────────┐
+        │       6 │ 7   │
+        │         │     │
+        │         │     │
+        ├─────────┴─────┤
+        │ 1 │ 2 │ 3 │ 4 │ 5
+        └───┴───┴───┴───┴───┘
+
+Ale v geometrii bude:
+
+jeden vnější polygon PRASÉČÁKŮ
+uvnitř dělicí čáry
+jednotlivé sektory 1–7
+rampa jako malý samostatný objekt vložený do pravé stěny
+A stěny přesně podle toho, co říkáš
+
+Toto je důležité pro 3D, protože nechceme, aby nám vznikaly falešné mezery nebo dvojité stěny.
+
+1. Levá stěna
+
+Spojuje:
+
+6
+│
+1
+
+Je to jedna souvislá stěna.
+
+2. Horní stěna
+
+Spojuje:
+
+6 ─ 7 ─ PRASÉČÁKY
+
+Opět jedna souvislá vnější stěna.
+
+3. Spodní stěna
+
+1 ─ 2 ─ 3 ─ 4 ─ 5
+
+Jedna dlouhá souvislá stěna.
+
+4. Pravá stěna
+
+PRASÉČÁKY
+     │
+     5
+
+Jedna souvislá pravá stěna.
+
+Ale:
+
+🟧 RAMPA
+
+Na pravé stěně je mezi PRASÉČÁKY a 5 malý výřez/prostor pro rampu.
+
+Takže ji nebudu kreslit jako objekt nalepený přes zeď.
+
+Uděláme skutečný otvor:
+
+┌─────────────────────────┐
+│       PRASÉČÁKY         │
+│                         │
+│                    ┌───┐│
+│                    │   ││ ← RAMPA
+├────────────────────┘   ││
+│  1 │ 2 │ 3 │ 4 │   5  │
+└─────────────────────────┘
+
+Tedy pravá stěna bude geometricky rozdělená pouze v místě rampy.
+
+A ještě jedna věc, kterou jsem si teď všiml
+
+Na obrázku REGISTRACE neleží na samotných PRASÉČÁKÁCH. Je to samostatný objekt vlevo, mezi hranicí hřiště a hlavním objektem.
+
+Stejně tak:
+
+PITEVNA
+SAMOTKA
+GARÁŽE
+VODÁRNA
+
+budou samostatné polygony.
+
+Takže výsledná struktura může být přibližně:
+
+buildings: [
+
+  // hlavní objekt
+  {
+    id: "prasecaky",
+    polygon: [...],
+    sections: [...]
+  },
+
+  // samostatné objekty
+  {
+    id: "registrace",
+    polygon: [...]
+  },
+
+  {
+    id: "pitevna",
+    polygon: [...]
+  },
+
+  {
+    id: "samotka",
+    polygon: [...]
+  },
+
+  {
+    id: "garaze",
+    polygon: [...]
+  },
+
+  {
+    id: "vodarna",
+    polygon: [...]
+  },
+
+  {
+    id: "rampa",
+    polygon: [...]
+  }
+]
+
+A červený obrys a zelená cesta budou úplně oddělená geometrie.
+
+Takže další krok
+
+Ty si vytvoř:
+
+swine.html
+
+A klidně ho nejdřív nech úplně jednoduchý, stejně jako máš ostatní mapové stránky.
+
+Jakmile ho vytvoříš, pošli mi jeho obsah.
+
+Já pak připravím:
+
+swine.html
+potřebná data pro mapu
+úpravu map-engine.js pro nepravidelné polygony
+2D vykreslení
+3D vykreslení
+klikání na objekty
+názvy
+GPS transformaci přes tvoje 4 anchory
+
+A hlavně to budu stavět podle geometrie toho obrázku, ne podle nějaké generické mřížky. Tady už bych byl fakt puntičkář. 🧐
+
+Ten obrázek bude pro nás předloha, ne jen inspirace.
+
+1 2 PRASEČÁKY (napřiklad ať to pochopíš - má 106m na délku)
+3 4 5 6 7 (106m na délku)
+a mezi Prasečáky a 7 je někde u toho nalepená rampa (na pomezí)
+
+Jo! Teď už to vidím přesně a moje předchozí interpretace byla špatně. Díky za opravu.
+
+PRASÉČÁKY jsou ten velký společný objekt, uvnitř kterého je rozdělení na sektory:
+
+        ┌───────────────┬───────────────┐
+        │       6       │       7       │
+        │               │               │
+        │               │               │
+        ├───────────────┴───────────────┤
+        │       1 │ 2 │ 3 │ 4 │ 5       │
+        └───────────────────────────────┘
+
+Ale podle tvého posledního upřesnění je ještě přesnější chápat jeho délkové osy takto:
+
+1 + 2 + PRASÉČÁKY tvoří jednu dlouhou část, která má 106 m na délku
+3 + 4 + 5 + 6 + 7 tvoří druhou osu/část, také 106 m na délku
+6 a 7 jsou nahoře
+1–5 dole
+RAMPA je přilepená na pravé straně PRASÉČÁKŮ, přesně na pomezí PRASÉČÁKŮ a 5
+rampa tedy není samostatná budova někde vedle. Je součástí pravého okraje hlavního objektu
+
+A z obrázku je teď krásně patrná ještě jedna zásadní věc:
+
+Černé body nejsou rohy areálu
+
+Jsou GPS anchory samotného hlavního objektu:
+
+vlevo nahoře
+vpravo nahoře
+vlevo dole
+vpravo dole
+
+Takže těch 106 metrů můžeme využít jako reálné měřítko, což je paráda.
+
+To znamená, že nemusíme mapu jen „natáhnout mezi čtyři GPS body“. Můžeme vytvořit reálný lokální metrický systém, kde:
+
+106 m
+←────────────────────────────→
+
+a všechny objekty dostanou skutečné rozměry a následně se celý model transformuje do GPS.
+
+To bude podstatně přesnější.
+
+A teď už mám z obrázku jasno i v celkové struktuře:
+
+🔴 červená = celý areál
+🟢 zelená = vnitřní cesta
+🟠 oranžová = vstup a směr vstupu zachovat
+🔵 hlavní objekt = PRASÉČÁKY + sektory 1–7
+🔵 samostatně = REGISTRACE
+🔵 samostatně = PITEVNA
+🔵 samostatně = SAMOTKA
+🔵 samostatně = GARÁŽE
+🔵 samostatně = VODÁRNA
+🟧 RAMPA = výřez/přilepená část na pravé straně hlavního objektu
+
+A hlavně už chápu, co myslíš těmi stěnami. Vnější obrys PRASÉČÁKŮ není tvořený sedmi samostatnými stěnami. Je to jeden souvislý objekt, který má uvnitř příčky.
+
+Takže ano. Teď už bych se do toho pustil. swine.html může být nový čistý soubor a map-engine.js upravíme tak, aby uměl tento polygonový model, aniž bychom rozbili současné mapy.
+
+zkus vytvořit swine.html a uvidíme
+
+Hotovo. Udělal jsem první swine.html jako testovací verzi napojenou na tvůj současný map-engine.js.
+
+Stáhnout swine.html
+
+Je to zatím geometrický draft, ne finální překreslení. Záměrně jsem tam dal:
+
+1–7 podle tvého rozložení
+PRASÉČÁKY jako společný celek
+rampu na pomezí PRASÉČÁKY / 5
+Registraci
+Pitevnu
+Samotku
+Garáže
+Vodárnu
+zelenou cestu
+červenou hranici
+oranžový vstup
+zachovanou rotaci objektů
+tvoje 4 GPS anchory uložené přímo v datech
+
+Teď bych ale ještě nic dalšího nepřekopával. Nahraj swine.html k ostatním souborům, otevři ho a podívej se hlavně na orientaci a vzájemné rozmístění objektů.
+
+Jakmile řekneš třeba „takhle ano, ale PRASÉČÁKY posuň/dotáhni/otoč“, uděláme druhou fázi a pak už bych přešel na skutečné polygony, aby obrys odpovídal nákresu na chlup. 
+
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AIRSOFT MAPS — Swine</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="common.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>AIRSOFT MAPS — SWINE</title>
+
+  <link rel="stylesheet" href="common.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /*
+      SWINE — první geometrický draft.
+      MapEngine zatím pracuje s rect + rotate, proto je hlavní objekt
+      rozdělený na 7 přesně sousedících sektorů. Jakmile odsouhlasíme
+      základní proporce, můžeme přejít na skutečné polygonové hrany.
+    */
+
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      background: var(--bg, #0b0d0f);
+    }
+
+    .am-page {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .am-map-wrap {
+      position: relative;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .am-map-canvas {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    .am-map-canvas svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      touch-action: none;
+      user-select: none;
+      opacity: 0;
+    }
+
+    .am-map-canvas svg.am-ready {
+      opacity: 1;
+    }
+
+    .am-map-title {
+      position: absolute;
+      left: 18px;
+      top: 16px;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .am-map-title strong {
+      display: block;
+      font-family: Anton, sans-serif;
+      font-size: 28px;
+      letter-spacing: .04em;
+      color: var(--map-text, #eef1f0);
+    }
+
+    .am-map-title span {
+      display: block;
+      margin-top: 2px;
+      font: 600 12px/1 Rajdhani, sans-serif;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--map-text, #eef1f0);
+      opacity: .58;
+    }
+
+    .swine-legend {
+      position: absolute;
+      left: 18px;
+      bottom: 18px;
+      z-index: 10;
+      padding: 10px 12px;
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 8px;
+      background: rgba(8,10,12,.78);
+      backdrop-filter: blur(8px);
+      color: var(--map-text, #eef1f0);
+      font: 600 12px/1.5 Rajdhani, sans-serif;
+      pointer-events: none;
+    }
+
+    .swine-legend div {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .swine-legend i {
+      width: 18px;
+      height: 3px;
+      display: inline-block;
+      border-radius: 99px;
+    }
+
+    .swine-legend .red { background: #ff2a2a; }
+    .swine-legend .green { background: #00e638; }
+    .swine-legend .orange { background: #ff7a1a; }
+
+    .am-map-controls {
+      z-index: 20;
+    }
+  </style>
 </head>
+
 <body>
+  <div class="am-page">
 
-<header class="am-header">
-  <a class="am-brand" href="menu.html">
-    <img class="am-brand-logo" src="loga/tmavekulate.png" alt="Airsoft Maps">
-  </a>
+    <div class="am-map-wrap">
 
-  <div class="am-field-title">AIRSOFT PARK — <span>SWINE</span></div>
-
-  <div class="am-controls">
-    <button class="am-btn" id="back-btn">← <span id="back-label">Zpět na hřiště</span></button>
-    <div class="am-dd" id="lang-dd">
-      <button class="am-btn">🌐 <span id="lang-current">CZ</span></button>
-      <div class="am-dd-menu">
-        <button data-lang="cs">Čeština</button>
-        <button data-lang="en">English</button>
+      <div class="am-map-title">
+        <strong>SWINE</strong>
+        <span>Airsoft Maps</span>
       </div>
+
+      <div class="swine-legend">
+        <div><i class="red"></i> hranice hřiště</div>
+        <div><i class="green"></i> cesta</div>
+        <div><i class="orange"></i> vstup</div>
+      </div>
+
+      <div class="am-map-canvas">
+        <svg id="map"></svg>
+      </div>
+
     </div>
+
   </div>
-</header>
 
-<div class="am-map-toolbar">
-  <div class="am-toggle">
-    <button id="btn-2d" class="active">2D</button>
-    <button id="btn-3d">3D</button>
-    <button class="am-locate-btn" id="locate-btn" style="margin-left:10px;">
-      <span class="dot"></span><span id="locate-label">Moje poloha</span>
-    </button>
-  </div>
-</div>
-<div class="am-locate-status" id="locate-status"></div>
+  <script src="common.js"></script>
+  <script src="map-engine.js"></script>
 
-<div class="am-map-body">
-  <div class="am-map-canvas">
-    <svg id="map-svg" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet"></svg>
-  </div>
-  <div class="am-sidebar">
-    <div class="am-sidebar-title" id="sidebar-title">Místa na hřišti</div>
-    <div id="poi-list"></div>
-  </div>
-</div>
+  <script>
+    /*
+      ======================================================================
+      SWINE — DATA
+      ======================================================================
 
-<script src="common.js?v=3"></script>
-<script src="geo.js?v=3"></script>
-<script src="map-engine.js?v=4"></script>
-<script>
-  /* ====================================================================
-     FIELD DATA — SWINE
-     Vypočítaná kompozice s přesným posunem středů pro čisté lícování.
-     ==================================================================== */
+      GPS ANCHORY Z PŮVODNÍHO NÁKRESU
 
-  const FIELD_DATA = {
-    viewBoxFlat: "0 0 100 120",
+      TL  50.1709378188841,  14.022212743518688
+      BL  50.170058218849704, 14.022856473678806
+      BR  50.171326074686526, 14.023535072557621
+      TR  50.17132075268947,  14.02353285885949
 
-    geoAnchors: [
-      { col: 33.95, row: 28.50, lat: 50.1709378188841, lng: 14.022212743518688 }, // Vlevo nahoře (Blok 6)
-      { col: 18.50, row: 76.05, lat: 50.170058218849704, lng: 14.022856473678806 }, // Vlevo dole (Blok 1)
-      { col: 66.05, row: 91.50, lat: 50.171326074686526, lng: 14.023535072557621 }, // Vpravo dole (Blok 5)
-      { col: 81.50, row: 43.95, lat: 50.17132075268947, lng: 14.02353285885949 }  // Vpravo nahoře (Rampa)
-    ],
+      Poznámka:
+      Současný MapEngine ještě neumí polygonovou geometrii.
+      Tento první draft proto používá lokální pravoúhlou geometrii,
+      která nám dovolí zkontrolovat orientaci, pořadí objektů,
+      proporce a ovládání. V další fázi se rect nahradí polygonem.
+    */
 
-    boundary: [
-      [8, 25], [80, 5], [98, 55], [95, 95], [25, 115], [12, 65], [8, 62], [8, 25]
-    ],
+    const SWINE_ANCHORS = {
+      topLeft:     [50.1709378188841, 14.022212743518688],
+      bottomLeft:  [50.170058218849704, 14.022856473678806],
+      bottomRight: [50.171326074686526, 14.023535072557621],
+      topRight:    [50.17132075268947, 14.02353285885949]
+    };
 
-    entrance: { col: 9, row: 61, angle: 110 },
+    /*
+      Lokální souřadnice:
+      - hlavní objekt je dlouhý ve směru C
+      - 1–5 jsou spodní část
+      - 6–7 jsou horní část
+      - rampa je na pomezí PRASÉČÁKY / 5
+      - jednotka gridu je pouze pracovní, ne finální metr
+    */
 
-    roads: [
-      { points: [[11, 40], [40, 30], [70, 24], [88, 60], [83, 80], [35, 98], [22, 95], [15, 65], [9, 61]] }
-    ],
+    const SWINE_DATA = {
 
-    trees: [],
+      viewBoxFlat: "0 0 1500 1100",
 
-    buildings: [
-      // Periferní budovy
-      { id:"b_pit", code:"PIT", name:"Pitevna", nameEn:"Morgue", rect:[17.5, 17, 32.5, 23], rotate: -15, height: 1.0 },
-      { id:"b_pit2", code:"", name:"", nameEn:"", rect:[32.5, 16, 37.5, 20], rotate: -15, height: 0.8 },
-      { id:"b_sam", code:"SAM", name:"Samotka", nameEn:"Solitary", rect:[37.5, 11, 62.5, 19], rotate: -10, height: 1.2 },
-      { id:"b_reg", code:"REG", name:"Registrace", nameEn:"Registration", rect:[9.625, 46.195, 17.625, 71.195], rotate: 18, height: 1.0 },
-      { id:"b_gar", code:"GAR", name:"Garáže", nameEn:"Garages", rect:[45, 97.5, 55, 112.5], rotate: 18, height: 1.0 },
-      { id:"b_vod", code:"VOD", name:"Vodárna", nameEn:"Waterworks", rect:[76, 87.5, 84, 102.5], rotate: 18, height: 1.2 },
+      boundary: [
+        [1.0, 1.2],
+        [11.9, 0.0],
+        [14.0, 8.0],
+        [12.0, 12.7],
+        [2.8, 13.7],
+        [0.0, 7.0],
+        [0.0, 5.9],
+        [0.9, 5.6]
+      ],
 
-      // Centrální komplex PRASEČÁKY (lícováno do mřížky, rotace 18 stupňů)
-      { id:"p1", code:"P1", name:"Prasečák 1", nameEn:"Pigsty 1", rect:[22.89, 48.33, 32.89, 78.33], rotate: 18, height: 1.5 },
-      { id:"p2", code:"P2", name:"Prasečák 2", nameEn:"Pigsty 2", rect:[32.40, 51.42, 42.40, 81.42], rotate: 18, height: 1.5 },
-      { id:"p3", code:"P3", name:"Prasečák 3", nameEn:"Pigsty 3", rect:[41.91, 54.51, 51.91, 84.51], rotate: 18, height: 1.5 },
-      { id:"p4", code:"P4", name:"Prasečák 4", nameEn:"Pigsty 4", rect:[51.42, 57.60, 61.42, 87.60], rotate: 18, height: 1.5 },
-      { id:"p5", code:"P5", name:"Prasečák 5", nameEn:"Pigsty 5", rect:[60.93, 60.69, 70.93, 90.69], rotate: 18, height: 1.5 },
-      { id:"p6", code:"P6", name:"Prasečák 6", nameEn:"Pigsty 6", rect:[30.615, 29.555, 40.615, 49.555], rotate: 18, height: 1.5 },
-      { id:"p7", code:"P7", name:"Prasečák 7", nameEn:"Pigsty 7", rect:[40.125, 32.645, 50.125, 52.645], rotate: 18, height: 1.5 },
-      { id:"p_main", code:"PRA", name:"Prasečáky", nameEn:"Main Pigsty", rect:[49.341, 37.589, 71.341, 57.589], rotate: 18, height: 1.5 },
-      { id:"p_ram", code:"RAM", name:"Rampa", nameEn:"Ramp", rect:[70.606, 42.224, 78.606, 62.224], rotate: 18, height: 0.5 }
-    ]
-  };
+      roads: [
+        {
+          points: [
+            [0.55, 5.8],
+            [2.2, 5.25],
+            [5.0, 4.35],
+            [8.0, 3.35],
+            [10.8, 2.45],
+            [11.65, 3.15],
+            [12.65, 7.9],
+            [12.0, 10.25],
+            [8.8, 11.3],
+            [5.5, 12.15],
+            [2.6, 11.25],
+            [1.1, 7.15]
+          ]
+        }
+      ],
 
-  const svg = document.getElementById("map-svg");
-  const listEl = document.getElementById("poi-list");
+      /*
+        Vnější hlavní objekt.
+        Jeho 7 dílů sdílí stejné vnější hrany.
+        Vizuálně tak tvoří jeden celek.
+      */
+      buildings: [
 
-  const LABELS = {
-    cs: { back:"Zpět na hřiště", sidebar:"Místa na hřišti" },
-    en: { back:"Back to fields", sidebar:"Points of interest" }
-  };
+        {
+          id: "swine-6",
+          code: "6",
+          name: "6",
+          nameEn: "6",
+          rect: [3.25, 3.65, 4.65, 7.15],
+          rotate: -14,
+          height: 0.9
+        },
 
-  function applyStaticText(lang) {
-    document.getElementById("back-label").textContent = LABELS[lang].back;
-    document.getElementById("sidebar-title").textContent = LABELS[lang].sidebar;
-  }
+        {
+          id: "swine-7",
+          code: "7",
+          name: "7",
+          nameEn: "7",
+          rect: [4.65, 3.65, 6.45, 7.15],
+          rotate: -14,
+          height: 0.9
+        },
 
-  AM.wireDropdowns();
-  applyStaticText(AM.getLang());
+        {
+          id: "swine-1",
+          code: "1",
+          name: "1",
+          nameEn: "1",
+          rect: [3.25, 7.15, 4.65, 11.45],
+          rotate: -14,
+          height: 0.9
+        },
 
-  document.getElementById("back-btn").addEventListener("click", () => {
-    window.location.href = "menu.html";
-  });
+        {
+          id: "swine-2",
+          code: "2",
+          name: "2",
+          nameEn: "2",
+          rect: [4.65, 7.15, 6.15, 11.45],
+          rotate: -14,
+          height: 0.9
+        },
 
-  const engine = MapEngine.init({
-    svg,
-    listEl,
-    data: FIELD_DATA,
-    getLang: AM.getLang,
-    mountModeToggle: {
-      btn2d: document.getElementById("btn-2d"),
-      btn3d: document.getElementById("btn-3d")
-    }
-  });
+        {
+          id: "swine-3",
+          code: "3",
+          name: "3",
+          nameEn: "3",
+          rect: [6.15, 7.15, 7.65, 11.45],
+          rotate: -14,
+          height: 0.9
+        },
 
-  AM.wireLangSwitch((lang) => {
-    applyStaticText(lang);
-    engine.redraw();
-  });
-  
-  const LOCATE_TEXT = {
-    cs: { btn:"Moje poloha", on:"Sleduji polohu", outside:"Jsi mimo hřiště",
-          denied:"Poloha zamítnuta v prohlížeči", unavailable:"Polohu se nepodařilo zjistit",
-          noAnchors:"Pro toto hřiště není poloha dostupná" },
-    en: { btn:"My location", on:"Tracking location", outside:"You are outside the field",
-          denied:"Location permission denied", unavailable:"Could not get location",
-          noAnchors:"Location isn't available for this field" }
-  };
+        {
+          id: "swine-4",
+          code: "4",
+          name: "4",
+          nameEn: "4",
+          rect: [7.65, 7.15, 9.15, 11.45],
+          rotate: -14,
+          height: 0.9
+        },
 
-  const locateBtn = document.getElementById("locate-btn");
-  const locateLabel = document.getElementById("locate-label");
-  const locateStatus = document.getElementById("locate-status");
-  let watchId = null, tracking = false;
-  let stopHeading = null, lastHeading = null, lastUpBearing = null, insideField = false;
+        {
+          id: "swine-5",
+          code: "5",
+          name: "5",
+          nameEn: "5",
+          rect: [9.15, 7.15, 10.55, 11.45],
+          rotate: -14,
+          height: 0.9
+        },
 
-  const hasGeo = FIELD_DATA.geoAnchors && FIELD_DATA.geoAnchors.length >= 3
-    && FIELD_DATA.geoAnchors.every(a => a.lat && a.lng);
+        /*
+          RAMPA — záměrně samostatný objekt na pomezí PRASÉČÁKŮ / 5.
+        */
+        {
+          id: "rampa",
+          code: "RAMPA",
+          name: "Rampa",
+          nameEn: "Ramp",
+          rect: [9.15, 6.0, 10.05, 7.25],
+          rotate: -14,
+          height: 0.45
+        },
 
-  function applyCompassRotation() {
-    if (insideField && lastHeading != null && lastUpBearing != null) {
-      engine.setCompassRotation((lastUpBearing - lastHeading + 360) % 360);
-    } else {
-      engine.setCompassRotation(null);
-    }
-  }
+        {
+          id: "registrace",
+          code: "REGISTRACE",
+          name: "Registrace",
+          nameEn: "Registration",
+          rect: [1.65, 7.15, 2.55, 9.95],
+          rotate: -14,
+          height: 0.65
+        },
 
-  if (!hasGeo) {
-    locateBtn.style.display = "none";
-  } else {
-    locateBtn.addEventListener("click", () => {
-      const lang = AM.getLang();
-      if (tracking) {
-        AMGeo.stop(watchId); watchId = null; tracking = false;
-        if (stopHeading) { stopHeading(); stopHeading = null; }
-        insideField = false;
-        lastHeading = null;
-        applyCompassRotation();
-        locateBtn.classList.remove("active", "outside");
-        locateLabel.textContent = LOCATE_TEXT[lang].btn;
-        locateStatus.textContent = "";
-        engine.setPlayer(null);
-        return;
+        {
+          id: "pitevna",
+          code: "PITEVNA",
+          name: "Pitevna",
+          nameEn: "Dissection room",
+          rect: [1.75, 2.0, 3.1, 3.05],
+          rotate: -14,
+          height: 0.65
+        },
+
+        {
+          id: "samotka",
+          code: "SAMOTKA",
+          name: "Samotka",
+          nameEn: "Solitary",
+          rect: [4.0, 1.55, 7.2, 2.55],
+          rotate: -14,
+          height: 0.65
+        },
+
+        {
+          id: "garaze",
+          code: "GARÁŽE",
+          name: "Garáže",
+          nameEn: "Garages",
+          rect: [5.2, 11.5, 6.15, 13.0],
+          rotate: -14,
+          height: 0.65
+        },
+
+        {
+          id: "vodarna",
+          code: "VODÁRNA",
+          name: "Vodárna",
+          nameEn: "Water plant",
+          rect: [10.8, 10.45, 11.75, 12.0],
+          rotate: -14,
+          height: 0.65
+        }
+      ],
+
+      walls: [],
+
+      entrance: {
+        col: 0.55,
+        row: 5.8,
+        angle: 75
+      },
+
+      trees: []
+    };
+
+    /*
+      Minimální napojení na současný MapEngine.
+      common.js může na konkrétních stránkách poskytovat jazykový systém,
+      proto zde máme bezpečný fallback.
+    */
+
+    const langGetter =
+      () => document.documentElement.lang === "en" ? "en" : "cs";
+
+    const listEl = document.createElement("div");
+    listEl.style.display = "none";
+
+    const btn2d = document.createElement("button");
+    const btn3d = document.createElement("button");
+
+    btn2d.type = "button";
+    btn3d.type = "button";
+
+    const engine = MapEngine.init({
+      svg: document.getElementById("map"),
+      data: SWINE_DATA,
+      listEl,
+      getLang: langGetter,
+      mountModeToggle: {
+        btn2d,
+        btn3d
       }
-      tracking = true;
-      locateBtn.classList.add("active");
-      locateLabel.textContent = LOCATE_TEXT[lang].on;
-
-      stopHeading = AMGeo.watchHeading((heading) => {
-        lastHeading = heading;
-        applyCompassRotation();
-      });
-
-      watchId = AMGeo.watch(FIELD_DATA, (result) => {
-        const t = LOCATE_TEXT[AM.getLang()];
-        if (!result.ok) {
-          locateStatus.textContent = t[result.reason] || t.unavailable;
-          locateBtn.classList.remove("outside");
-          engine.setPlayer(null);
-          insideField = false;
-          applyCompassRotation();
-          return;
-        }
-        lastUpBearing = result.upBearing;
-        if (result.inside) {
-          locateBtn.classList.remove("outside");
-          locateStatus.textContent = "";
-          engine.setPlayer({ col: result.col, row: result.row });
-          insideField = true;
-        } else {
-          locateBtn.classList.add("outside");
-          locateStatus.textContent = t.outside;
-          engine.setPlayer(null);
-        }
-        applyCompassRotation();
-      });
     });
-  }
-</script>
 
+    /*
+      SWINE je záměrně spuštěné jako 2D mapa.
+      3D tlačítko je připravené pro současný engine.
+    */
+    btn2d.classList.add("active");
+    document.documentElement.lang = "cs";
+  </script>
 </body>
 </html>
+swine.html
+HTML
+Chat je pozastaven, dokud se vám zítra v 2:52 neresetuje limit využití
+Dosáhli jste limitu pro chaty obsahující soubory nebo obrázky. Začněte nový chat pouze s textem nebo přejděte na vyšší tarif a pokračujte ihned.
+Nový chat
+Upgradovat na verzi Go
