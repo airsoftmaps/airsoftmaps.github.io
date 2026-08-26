@@ -1524,7 +1524,7 @@ function resetTransform() {
 
         scale = newScale;
 
-        if (mode === "3d") {
+if (mode === "3d") {
 
           const angleDelta =
             metrics.angle - pinchStartAngle;
@@ -1532,12 +1532,14 @@ function resetTransform() {
           rotation =
             pinchStartRotation + angleDelta;
 
-          requestDraw();
+          // Nekreslíme živě — smazání DOM elementů pod prstem
+          // by na dotykových zařízeních zrušilo celé gesto.
+          // Model se dotočí až po zvednutí prstů (viz touchend).
 
         } else {
 
           updateTransform();
-        }
+       }
       }
     },
     { passive: true }
@@ -1545,11 +1547,17 @@ function resetTransform() {
 
   svg.addEventListener("touchend", e => {
 
+    const wasPinching = pinchStartDist != null;
+
     if (e.touches.length === 0) {
 
       isDragging = false;
       pinchStartDist = null;
       pinchStartAngle = null;
+
+      if (wasPinching && mode === "3d") {
+        draw();
+      }
 
     } else if (e.touches.length === 1) {
 
@@ -1564,6 +1572,10 @@ function resetTransform() {
 
       touchStartY =
         e.touches[0].clientY - translateY;
+
+      if (wasPinching && mode === "3d") {
+        draw();
+      }
     }
   });
 
