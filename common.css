@@ -2719,3 +2719,7 @@ html[data-theme="light"] .am-kicker-line {
       drop-shadow(0 0 34px rgba(255,122,26,.25));
   }
 }
+.am-map-canvas svg,
+.am-map-canvas svg * {
+  touch-action: none;
+}
