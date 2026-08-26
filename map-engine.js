@@ -1128,7 +1128,7 @@ if (data.boundary) {
     const oldScale = scale;
 
     const newScale = Math.min(
-      Math.max(0.4, oldScale * factor),
+      Math.max(0.08, oldScale * factor),
       6
     );
 
@@ -1492,7 +1492,7 @@ function resetTransform() {
           (metrics.dist / pinchStartDist);
 
         const newScale =
-          Math.min(Math.max(0.4, rawScale), 6);
+          Math.min(Math.max(0.08, rawScale), 6);
 
         // bod v obsahu, který byl na začátku gesta pod prsty
         const startMidLocalX =
