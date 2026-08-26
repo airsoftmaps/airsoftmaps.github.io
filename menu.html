@@ -366,24 +366,28 @@ window.addEventListener("appinstalled", () => {
 
 });
 </script>
+  
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
+document.addEventListener("DOMContentLoaded", async () => {
+
+  const el = document.getElementById("visit-count");
+
+  if (!el) return;
+
   const sb = window.supabase.createClient(
     "https://zebxstyuyaneuwcaxugf.supabase.co",
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplYnhzdHl1eWFuZXV3Y2F4dWdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc1MjY3NTksImV4cCI6MjEwMzEwMjc1OX0.EsCbgnaX6wFUNhh9EHfZGtfT_P4LHGwQpDLhhSpy3SU"
   );
-
-async function updateVisitCount() {
-  const el = document.getElementById("visit-count");
-
-  if (!el) return;
 
   const { data, error } = await sb.rpc("increment_page_view", {
     page_name: "global"
   });
 
   if (error) {
-    console.error("Visit counter error:", error);
+    console.error("❌ Visit counter:", error);
     return;
   }
 
@@ -392,9 +396,8 @@ async function updateVisitCount() {
   if (count != null) {
     el.textContent = count;
   }
-}
 
-updateVisitCount();
-  </script>
+});
+</script>
 </body>
 </html>
