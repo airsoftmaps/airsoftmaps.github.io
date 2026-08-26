@@ -30,6 +30,51 @@ const MapEngine = (() => {
     heightScale: 42
   };
 
+  /*
+     Stav "orbitu" 3D pohledu — na rozdíl od dřívější verze se
+     rotace NEaplikuje jako plochá SVG transformace nad hotovým
+     obrázkem, ale přímo do výpočtu izometrických bodů (isoPoint).
+     Díky tomu se model skutečně otáčí kolem svého vlastního středu
+     v prostoru, ne kolem náhodného rohu obrazovky.
+     Nastavuje se vždy na začátku render3D() pro daný snímek.
+  */
+  let __orbitDeg = 0;
+  let __orbitCenter = { c: 0, r: 0 };
+
+  function computeGridCenter(data) {
+
+    let minC = Infinity, maxC = -Infinity;
+    let minR = Infinity, maxR = -Infinity;
+
+    const consider = (c, r) => {
+      if (c < minC) minC = c;
+      if (c > maxC) maxC = c;
+      if (r < minR) minR = r;
+      if (r > maxR) maxR = r;
+    };
+
+    (data.boundary || []).forEach(([c, r]) => consider(c, r));
+
+    (data.buildings || []).forEach(b => {
+      consider(b.rect[0], b.rect[1]);
+      consider(b.rect[2], b.rect[3]);
+    });
+
+    (data.walls || []).forEach(w => {
+      consider(w.rect[0], w.rect[1]);
+      consider(w.rect[2], w.rect[3]);
+    });
+
+    if (!Number.isFinite(minC)) {
+      return { c: 0, r: 0 };
+    }
+
+    return {
+      c: (minC + maxC) / 2,
+      r: (minR + maxR) / 2
+    };
+  }
+
   function el(name, attrs = {}, parent) {
 
     const node =
@@ -56,10 +101,24 @@ const MapEngine = (() => {
 
   function isoPoint(col, row, height = 0) {
 
+    let c = col;
+    let r = row;
+
+    if (__orbitDeg) {
+
+      const rad = __orbitDeg * Math.PI / 180;
+
+      const dc = col - __orbitCenter.c;
+      const dr = row - __orbitCenter.r;
+
+      c = __orbitCenter.c + dc * Math.cos(rad) - dr * Math.sin(rad);
+      r = __orbitCenter.r + dc * Math.sin(rad) + dr * Math.cos(rad);
+    }
+
     return {
-      x: (col - row) * (ISO.tileW / 2),
+      x: (c - r) * (ISO.tileW / 2),
       y:
-        (col + row) * (ISO.tileH / 2) -
+        (c + r) * (ISO.tileH / 2) -
         height * ISO.heightScale
     };
   }
@@ -564,10 +623,20 @@ const strokeColor =
     lang,
     onBuildingClick,
     activeId,
-    playerPos
+    playerPos,
+    orbitDeg
   ) {
 
     container.innerHTML = "";
+
+    /*
+       Nastavíme stav orbitu pro TENTO snímek — všechny izometrické
+       body (boundary, cesty, stromy, zdi, budovy, hráč, popisky)
+       níže v této funkci pak automaticky počítají s otočením
+       kolem skutečného středu modelu.
+    */
+    __orbitDeg = orbitDeg || 0;
+    __orbitCenter = computeGridCenter(data);
 
     const ground =
       el("g", { class: "layer-ground" }, container);
@@ -882,6 +951,8 @@ if (data.boundary) {
   let rotateStartX = 0;
   let rotateStartRotation = 0;
 
+  let rafPending = false;
+
   const svg = opts.svg;
   const parentCanvas = svg.closest(".am-map-canvas");
      
@@ -893,6 +964,23 @@ if (data.boundary) {
       setPlayer: () => {},
       setCompassRotation: () => {}
     };
+  }
+
+  /*
+     Redraw "na požádání" — svazuje víc rychlých volání (např.
+     tažením prstu při rotaci) do jednoho vykreslení za snímek,
+     ať to na telefonu nesekundá.
+  */
+  function requestDraw() {
+
+    if (rafPending) return;
+
+    rafPending = true;
+
+    requestAnimationFrame(() => {
+      rafPending = false;
+      draw();
+    });
   }
 
   /* =========================================================
@@ -911,6 +999,8 @@ if (data.boundary) {
      OVLÁDÁNÍ MAPY
      ========================================================= */
 
+  let rotateBtnEl = null;
+
   if (parentCanvas && !parentCanvas.querySelector(".am-map-controls")) {
 
     const controls = document.createElement("div");
@@ -920,7 +1010,7 @@ if (data.boundary) {
     controls.innerHTML = `
       <button type="button" id="am-zoom-in" title="Přiblížit">+</button>
       <button type="button" id="am-zoom-out" title="Oddálit">−</button>
-      <button type="button" id="am-rotate" title="Otočit o 90° (nebo Alt+tažení myší / dvěma prsty pro plynulé natočení)">⟲</button>
+      <button type="button" id="am-rotate" title="Otočit o 90°">⟲</button>
       <button type="button" id="am-reset" title="Obnovit pohled">⌂</button>
     `;
 
@@ -928,8 +1018,10 @@ if (data.boundary) {
 
     const zoomIn = controls.querySelector("#am-zoom-in");
     const zoomOut = controls.querySelector("#am-zoom-out");
-    const rotate = controls.querySelector("#am-rotate");
+    const rotateBtn = controls.querySelector("#am-rotate");
     const reset = controls.querySelector("#am-reset");
+
+    rotateBtnEl = rotateBtn;
 
     zoomIn.addEventListener("click", e => {
       e.stopPropagation();
@@ -955,14 +1047,16 @@ if (data.boundary) {
       );
     });
 
-    rotate.addEventListener("click", e => {
+    rotateBtn.addEventListener("click", e => {
       e.stopPropagation();
+
+      if (mode !== "3d") return;
 
       userAdjusted = true;
 
       rotation = (rotation + 90) % 360;
 
-      updateTransform();
+      draw();
     });
 
     reset.addEventListener("click", e => {
@@ -972,30 +1066,36 @@ if (data.boundary) {
     });
   }
 
+  function updateRotateBtnVisibility() {
+
+    if (!rotateBtnEl) return;
+
+    rotateBtnEl.style.display =
+      mode === "3d" ? "" : "none";
+  }
+
   /* =========================================================
      TRANSFORMACE
+
+     Otočení (rotation) se od teď NEaplikuje tady jako plochá
+     SVG transformace — to je počítáno přímo v isoPoint() při
+     kreslení 3D scény (viz render3D / __orbitDeg výše). Tady
+     zůstává jen posun a přiblížení.
      ========================================================= */
 
   function updateTransform() {
 
     viewport.setAttribute(
       "transform",
-      `
-        translate(${translateX} ${translateY})
-        scale(${scale})
-        rotate(${rotation})
-      `
+      `translate(${translateX} ${translateY}) scale(${scale})`
     );
   }
 
   /*
      KLÍČOVÁ OPRAVA:
      SVG viewBox se VŽDY nastaví přesně na skutečnou velikost
-     kontejneru v pixelech. Veškeré přiblížení/posun/otočení pak
-     řeší výhradně JS transform na <g class="am-map-viewport">.
-     Dřív se o scale "dělil" jak nativní viewBox (přes
-     preserveAspectRatio), tak tento JS transform zároveň — což
-     mapu efektivně zvětšovalo 2x a "vylévalo" ji mimo obrazovku.
+     kontejneru v pixelech. Veškeré přiblížení/posun pak řeší
+     výhradně JS transform na <g class="am-map-viewport">.
   */
 
   function syncViewBox() {
@@ -1169,12 +1269,6 @@ function fitMapToWindow() {
     rect.h / 2 -
     mapCenterY * scale;
 
-  /*
-     Při automatickém fitu vždy začínáme bez rotace.
-     */
-
-  rotation = 0;
-
   updateTransform();
 }
 function resetTransform() {
@@ -1182,8 +1276,14 @@ function resetTransform() {
   rotation = 0;
   userAdjusted = false;
 
+  /*
+     Rotace se teď peče přímo do geometrie, takže při návratu
+     na 0° je potřeba scénu nejdřív překreslit (draw), a až
+     pak dopočítat zarovnání/zoom (fitMapToWindow) — jinak by
+     se chvíli zobrazovala stará, ještě pootočená geometrie.
+  */
+  draw();
   fitMapToWindow();
-
 }
 
   /* =========================================================
@@ -1202,11 +1302,12 @@ function resetTransform() {
     userAdjusted = true;
 
     /*
-       Alt + tažení = plynulé otočení mapy (štelování),
-       obyčejné tažení = posun.
+       Alt + tažení = plynulé otočení mapy (štelování) — dává
+       smysl jen ve 3D, kde skutečně otáčí model v prostoru.
+       Ve 2D je rotace vypnutá.
     */
 
-    if (e.altKey) {
+    if (e.altKey && mode === "3d") {
 
       isRotating = true;
 
@@ -1234,7 +1335,7 @@ function resetTransform() {
         rotateStartRotation +
         (e.clientX - rotateStartX) * 0.4;
 
-      updateTransform();
+      requestDraw();
       return;
     }
 
@@ -1278,13 +1379,24 @@ function resetTransform() {
 
   /* =========================================================
      TOUCH
+
+     Pinch-zoom/pan/rotate je teď vždy počítán ZNOVU od pevného
+     výchozího bodu gesta (zachyceného při dotyku druhého prstu),
+     ne přírůstkově krok po kroku — díky tomu se drobné nepřesnosti
+     nesčítají a mapa se při zoomu/rotaci neposouvá ("neujíždí").
      ========================================================= */
+
+  let pinchStartDist = null;
+  let pinchStartScale = 1;
+  let pinchStartTranslateX = 0;
+  let pinchStartTranslateY = 0;
+  let pinchStartMidX = 0;
+  let pinchStartMidY = 0;
+  let pinchStartAngle = 0;
+  let pinchStartRotation = 0;
 
   let touchStartX = 0;
   let touchStartY = 0;
-  let initialPinchDist = null;
-  let initialPinchAngle = null;
-  let initialPinchRotation = 0;
 
   function getPinchMetrics(e) {
 
@@ -1334,14 +1446,14 @@ function resetTransform() {
         const metrics =
           getPinchMetrics(e);
 
-        initialPinchDist =
-          metrics.dist;
-
-        initialPinchAngle =
-          metrics.angle;
-
-        initialPinchRotation =
-          rotation;
+        pinchStartDist = metrics.dist;
+        pinchStartScale = scale;
+        pinchStartTranslateX = translateX;
+        pinchStartTranslateY = translateY;
+        pinchStartMidX = metrics.centerX;
+        pinchStartMidY = metrics.centerY;
+        pinchStartAngle = metrics.angle;
+        pinchStartRotation = rotation;
       }
     },
     { passive: true }
@@ -1366,31 +1478,63 @@ function resetTransform() {
 
       } else if (
         e.touches.length === 2 &&
-        initialPinchDist
+        pinchStartDist
       ) {
 
         const metrics =
           getPinchMetrics(e);
 
-        const factor =
-          metrics.dist / initialPinchDist;
+        const rect =
+          svg.getBoundingClientRect();
 
-        applyZoomAt(
-          factor,
-          metrics.centerX,
-          metrics.centerY
-        );
+        const rawScale =
+          pinchStartScale *
+          (metrics.dist / pinchStartDist);
 
-        initialPinchDist =
-          metrics.dist;
+        const newScale =
+          Math.min(Math.max(0.4, rawScale), 6);
 
-        if (initialPinchAngle !== null) {
+        // bod v obsahu, který byl na začátku gesta pod prsty
+        const startMidLocalX =
+          pinchStartMidX - rect.left;
+
+        const startMidLocalY =
+          pinchStartMidY - rect.top;
+
+        const contentX =
+          (startMidLocalX - pinchStartTranslateX) /
+          pinchStartScale;
+
+        const contentY =
+          (startMidLocalY - pinchStartTranslateY) /
+          pinchStartScale;
+
+        // kam se prsty přesunuly teď
+        const curMidLocalX =
+          metrics.centerX - rect.left;
+
+        const curMidLocalY =
+          metrics.centerY - rect.top;
+
+        translateX =
+          curMidLocalX - contentX * newScale;
+
+        translateY =
+          curMidLocalY - contentY * newScale;
+
+        scale = newScale;
+
+        if (mode === "3d") {
 
           const angleDelta =
-            metrics.angle - initialPinchAngle;
+            metrics.angle - pinchStartAngle;
 
           rotation =
-            initialPinchRotation + angleDelta;
+            pinchStartRotation + angleDelta;
+
+          requestDraw();
+
+        } else {
 
           updateTransform();
         }
@@ -1399,12 +1543,28 @@ function resetTransform() {
     { passive: true }
   );
 
-  svg.addEventListener("touchend", () => {
+  svg.addEventListener("touchend", e => {
 
-    isDragging = false;
-    initialPinchDist = null;
-    initialPinchAngle = null;
+    if (e.touches.length === 0) {
 
+      isDragging = false;
+      pinchStartDist = null;
+      pinchStartAngle = null;
+
+    } else if (e.touches.length === 1) {
+
+      // z pinche zbyl jeden prst — plynule pokračuj tažením
+      pinchStartDist = null;
+      pinchStartAngle = null;
+
+      isDragging = true;
+
+      touchStartX =
+        e.touches[0].clientX - translateX;
+
+      touchStartY =
+        e.touches[0].clientY - translateY;
+    }
   });
 
   /* =========================================================
@@ -1436,11 +1596,14 @@ function resetTransform() {
         lang,
         select,
         activeId,
-        playerPos
+        playerPos,
+        rotation
       );
     }
 
     updateTransform();
+
+    updateRotateBtnVisibility();
 
     renderList(
       opts.listEl,
@@ -1470,7 +1633,9 @@ function resetTransform() {
 
     rotation = deg == null ? 0 : deg;
 
-    updateTransform();
+    if (mode === "3d") {
+      requestDraw();
+    }
   }
 
   /* =========================================================
@@ -1505,7 +1670,6 @@ function resetTransform() {
       opts.mountModeToggle.btn3d
         .classList.remove("active");
 
-      draw();
       resetTransform();
     }
   );
@@ -1524,7 +1688,6 @@ function resetTransform() {
       opts.mountModeToggle.btn2d
         .classList.remove("active");
 
-      draw();
       resetTransform();
     }
   );
