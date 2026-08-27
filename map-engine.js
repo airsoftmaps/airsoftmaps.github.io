@@ -428,6 +428,17 @@ stroke:
      3D
      ======================================================================== */
 
+  function rotateGridPoint(c, r, cx, cy, deg) {
+    if (!deg) return { c, r };
+    const rad = deg * Math.PI / 180;
+    const dc = c - cx;
+    const dr = r - cy;
+    return {
+      c: cx + dc * Math.cos(rad) - dr * Math.sin(rad),
+      r: cy + dc * Math.sin(rad) + dr * Math.cos(rad)
+    };
+  }
+
   function buildBlock(
     parent,
     c1,
@@ -437,35 +448,29 @@ stroke:
     height,
     id,
     active,
-    onClick
+    onClick,
+    rotateDeg
   ) {
-
-    const AA = { c: c1, r: r1 };
-    const BA = { c: c2, r: r1 };
-    const BB = { c: c2, r: r2 };
-    const AB = { c: c1, r: r2 };
-
+    const cx = (c1 + c2) / 2;
+    const cy = (r1 + r2) / 2;
+    const AA = rotateGridPoint(c1, r1, cx, cy, rotateDeg);
+    const BA = rotateGridPoint(c2, r1, cx, cy, rotateDeg);
+    const BB = rotateGridPoint(c2, r2, cx, cy, rotateDeg);
+    const AB = rotateGridPoint(c1, r2, cx, cy, rotateDeg);
     const topAA =
       isoPoint(AA.c, AA.r, height);
-
     const topBA =
       isoPoint(BA.c, BA.r, height);
-
     const topBB =
       isoPoint(BB.c, BB.r, height);
-
     const topAB =
       isoPoint(AB.c, AB.r, height);
-
     const baseBA =
       isoPoint(BA.c, BA.r, 0);
-
     const baseBB =
       isoPoint(BB.c, BB.r, 0);
-
     const baseAB =
       isoPoint(AB.c, AB.r, 0);
-
     const group =
       el(
         "g",
@@ -475,16 +480,12 @@ stroke:
         },
         parent
       );
-
     const topColor =
   active ? "var(--accent)" : "var(--map-3d-top)";
-
 const rightColor =
   active ? "var(--accent)" : "var(--map-3d-right)";
-
 const frontColor =
   active ? "var(--accent)" : "var(--map-3d-front)";
-
 const strokeColor =
   active
     ? "var(--accent)"
@@ -504,7 +505,6 @@ const strokeColor =
       },
       group
     );
-
     el(
       "polygon",
       {
@@ -520,7 +520,6 @@ const strokeColor =
       },
       group
     );
-
     el(
       "polygon",
       {
@@ -536,9 +535,7 @@ const strokeColor =
       },
       group
     );
-
     group.style.cursor = "pointer";
-
     group.addEventListener(
       "click",
       e => {
@@ -546,7 +543,6 @@ const strokeColor =
         onClick(id);
       }
     );
-
     return group;
   }
   function shadeHex(hex, factor) {
@@ -824,13 +820,14 @@ if (data.boundary) {
         const active = building.id === activeId;
         const height = building.height || 0.9;
 
-        buildBlock(
+          buildBlock(
           structures,
           c1, r1, c2, r2,
           height,
           building.id,
           active,
-          onBuildingClick
+          onBuildingClick,
+          building.rotate || 0
         );
 
         const center =
