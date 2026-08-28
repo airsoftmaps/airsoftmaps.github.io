@@ -795,7 +795,7 @@ const strokeColor =
         sc2 = c2;
       }
 
-      const h = 0.12 + (i + 1) * (0.7 / steps);
+      const h = 0.12 + (steps - i) * (0.7 / steps);
 
       buildWallBlock(group, sc1, sr1, sc2, sr2, h, color);
     }
