@@ -31,11 +31,10 @@ const MapEngine = (() => {
   };
 
   /*
-     Stav "orbitu" 3D pohledu — na rozdíl od dřívější verze se
-     rotace NEaplikuje jako plochá SVG transformace nad hotovým
-     obrázkem, ale přímo do výpočtu izometrických bodů (isoPoint).
-     Díky tomu se model skutečně otáčí kolem svého vlastního středu
-     v prostoru, ne kolem náhodného rohu obrazovky.
+     Stav "orbitu" 3D pohledu — rotace se NEaplikuje jako plochá
+     SVG transformace nad hotovým obrázkem, ale přímo do výpočtu
+     izometrických bodů (isoPoint). Model se tak skutečně otáčí
+     kolem svého vlastního středu v prostoru.
      Nastavuje se vždy na začátku render3D() pro daný snímek.
   */
   let __orbitDeg = 0;
@@ -123,6 +122,17 @@ const MapEngine = (() => {
     };
   }
 
+  function rotateGridPoint(c, r, cx, cy, deg) {
+    if (!deg) return { c, r };
+    const rad = deg * Math.PI / 180;
+    const dc = c - cx;
+    const dr = r - cy;
+    return {
+      c: cx + dc * Math.cos(rad) - dr * Math.sin(rad),
+      r: cy + dc * Math.sin(rad) + dr * Math.cos(rad)
+    };
+  }
+
   function ptsToStr(points) {
 
     return points
@@ -178,7 +188,8 @@ const MapEngine = (() => {
     lang,
     onBuildingClick,
     activeId,
-    playerPos
+    playerPos,
+    onStairsClick
   ) {
 
     container.innerHTML = "";
@@ -194,6 +205,9 @@ const walls =
      
     const buildings =
       el("g", { class: "layer-buildings" }, container);
+
+    const stairsLayer =
+      el("g", { class: "layer-stairs" }, container);
 
     if (data.boundary) {
 
@@ -216,6 +230,57 @@ const walls =
   ground
 );
     }
+
+    /* --------------------------------------------------------
+       ZÓNY — pojmenovaná plocha bez klikací budovy (např.
+       shromaždiště). Jen barevná výplň + popisek, nic klikacího.
+       -------------------------------------------------------- */
+    (data.zones || []).forEach(zone => {
+
+      const [c1, r1, c2, r2] = zone.rect;
+      const p1 = flatPoint(c1, r1);
+      const p2 = flatPoint(c2, r2);
+
+      const x = Math.min(p1.x, p2.x);
+      const y = Math.min(p1.y, p2.y);
+      const w = Math.abs(p2.x - p1.x);
+      const h = Math.abs(p2.y - p1.y);
+
+      const color = zone.color || "#2f6bd6";
+
+      el(
+        "rect",
+        {
+          x, y, width: w, height: h,
+          fill: color,
+          opacity: .16,
+          stroke: color,
+          "stroke-width": 2,
+          "stroke-dasharray": "6 4"
+        },
+        ground
+      );
+
+      const label =
+        lang === "en" ? (zone.labelEn || zone.label) : zone.label;
+
+      if (label) {
+        el(
+          "text",
+          {
+            x: x + w / 2,
+            y: y + h / 2 + 5,
+            "text-anchor": "middle",
+            "font-family": "Rajdhani, sans-serif",
+            "font-weight": 600,
+            "font-size": Math.max(11, Math.min(17, w / (label.length * 0.62))),
+            fill: color,
+            style: "pointer-events:none;"
+          },
+          ground
+        ).textContent = label;
+      }
+    });
 
     (data.roads || []).forEach(road => {
 
@@ -406,6 +471,87 @@ stroke:
       );
     });
 
+    /* --------------------------------------------------------
+       SCHODY — obdélník + "příčky" napříč kratší stranou, ať to
+       vypadá jako schodiště, ne jen barevný obdélník. Klikací,
+       pokud mají nastavené patro, na které vedou (toFloor).
+       -------------------------------------------------------- */
+    (data.stairs || []).forEach(stair => {
+
+      const [c1, r1, c2, r2] = stair.rect;
+      const p1 = flatPoint(c1, r1);
+      const p2 = flatPoint(c2, r2);
+
+      const x = Math.min(p1.x, p2.x);
+      const y = Math.min(p1.y, p2.y);
+      const w = Math.abs(p2.x - p1.x);
+      const h = Math.abs(p2.y - p1.y);
+
+      const g = el("g", { class: "am-stairs" }, stairsLayer);
+
+      el(
+        "rect",
+        {
+          x, y, width: w, height: h,
+          fill: "#3a2f06",
+          stroke: "#ffcf1a",
+          "stroke-width": 2
+        },
+        g
+      );
+
+      const horizontal = w >= h;
+      const steps = 6;
+
+      for (let i = 1; i < steps; i++) {
+        if (horizontal) {
+          const lx = x + (w * i) / steps;
+          el(
+            "line",
+            { x1: lx, y1: y, x2: lx, y2: y + h, stroke: "#ffcf1a", "stroke-width": 1.4, opacity: .85 },
+            g
+          );
+        } else {
+          const ly = y + (h * i) / steps;
+          el(
+            "line",
+            { x1: x, y1: ly, x2: x + w, y2: ly, stroke: "#ffcf1a", "stroke-width": 1.4, opacity: .85 },
+            g
+          );
+        }
+      }
+
+      const label =
+        lang === "en" ? (stair.labelEn || stair.label) : stair.label;
+
+      if (label) {
+        el(
+          "text",
+          {
+            x: x + w / 2,
+            y: y - 6,
+            "text-anchor": "middle",
+            "font-family": "Rajdhani, sans-serif",
+            "font-weight": 600,
+            "font-size": 11,
+            fill: "#ffcf1a",
+            style: "pointer-events:none;"
+          },
+          g
+        ).textContent = label;
+      }
+
+      if (stair.toFloor) {
+        g.style.cursor = "pointer";
+        g.addEventListener("click", e => {
+          e.stopPropagation();
+          if (typeof onStairsClick === "function") {
+            onStairsClick(stair.toFloor);
+          }
+        });
+      }
+    });
+
     if (playerPos) {
 
       drawPlayerDot(
@@ -428,17 +574,6 @@ stroke:
      3D
      ======================================================================== */
 
-  function rotateGridPoint(c, r, cx, cy, deg) {
-    if (!deg) return { c, r };
-    const rad = deg * Math.PI / 180;
-    const dc = c - cx;
-    const dr = r - cy;
-    return {
-      c: cx + dc * Math.cos(rad) - dr * Math.sin(rad),
-      r: cy + dc * Math.sin(rad) + dr * Math.cos(rad)
-    };
-  }
-
   function buildBlock(
     parent,
     c1,
@@ -451,26 +586,36 @@ stroke:
     onClick,
     rotateDeg
   ) {
+
     const cx = (c1 + c2) / 2;
     const cy = (r1 + r2) / 2;
+
     const AA = rotateGridPoint(c1, r1, cx, cy, rotateDeg);
     const BA = rotateGridPoint(c2, r1, cx, cy, rotateDeg);
     const BB = rotateGridPoint(c2, r2, cx, cy, rotateDeg);
     const AB = rotateGridPoint(c1, r2, cx, cy, rotateDeg);
+
     const topAA =
       isoPoint(AA.c, AA.r, height);
+
     const topBA =
       isoPoint(BA.c, BA.r, height);
+
     const topBB =
       isoPoint(BB.c, BB.r, height);
+
     const topAB =
       isoPoint(AB.c, AB.r, height);
+
     const baseBA =
       isoPoint(BA.c, BA.r, 0);
+
     const baseBB =
       isoPoint(BB.c, BB.r, 0);
+
     const baseAB =
       isoPoint(AB.c, AB.r, 0);
+
     const group =
       el(
         "g",
@@ -480,12 +625,16 @@ stroke:
         },
         parent
       );
+
     const topColor =
   active ? "var(--accent)" : "var(--map-3d-top)";
+
 const rightColor =
   active ? "var(--accent)" : "var(--map-3d-right)";
+
 const frontColor =
   active ? "var(--accent)" : "var(--map-3d-front)";
+
 const strokeColor =
   active
     ? "var(--accent)"
@@ -505,6 +654,7 @@ const strokeColor =
       },
       group
     );
+
     el(
       "polygon",
       {
@@ -520,6 +670,7 @@ const strokeColor =
       },
       group
     );
+
     el(
       "polygon",
       {
@@ -535,7 +686,9 @@ const strokeColor =
       },
       group
     );
+
     group.style.cursor = "pointer";
+
     group.addEventListener(
       "click",
       e => {
@@ -543,6 +696,7 @@ const strokeColor =
         onClick(id);
       }
     );
+
     return group;
   }
   function shadeHex(hex, factor) {
@@ -613,6 +767,51 @@ const strokeColor =
     return pieces;
   }
 
+  function buildStairs3D(parent, rect, onClick, toFloor) {
+
+    const [c1, r1, c2, r2] = rect;
+    const horizontal = (c2 - c1) >= (r2 - r1);
+    const steps = 6;
+    const color = "#ffcf1a";
+
+    const group = el("g", { class: "am-stairs3d" }, parent);
+
+    for (let i = 0; i < steps; i++) {
+
+      const t0 = i / steps;
+      const t1 = (i + 1) / steps;
+
+      let sc1, sr1, sc2, sr2;
+
+      if (horizontal) {
+        sc1 = c1 + (c2 - c1) * t0;
+        sc2 = c1 + (c2 - c1) * t1;
+        sr1 = r1;
+        sr2 = r2;
+      } else {
+        sr1 = r1 + (r2 - r1) * t0;
+        sr2 = r1 + (r2 - r1) * t1;
+        sc1 = c1;
+        sc2 = c2;
+      }
+
+      const h = 0.12 + (i + 1) * (0.7 / steps);
+
+      buildWallBlock(group, sc1, sr1, sc2, sr2, h, color);
+    }
+
+    group.style.cursor = onClick ? "pointer" : "default";
+
+    if (onClick) {
+      group.addEventListener("click", e => {
+        e.stopPropagation();
+        onClick(toFloor);
+      });
+    }
+
+    return group;
+  }
+
   function render3D(
     container,
     data,
@@ -620,7 +819,8 @@ const strokeColor =
     onBuildingClick,
     activeId,
     playerPos,
-    orbitDeg
+    orbitDeg,
+    onStairsClick
   ) {
 
     container.innerHTML = "";
@@ -665,6 +865,13 @@ const strokeColor =
         container
       );
 
+    const stairsLayer3D =
+      el(
+        "g",
+        { class: "layer-stairs" },
+        container
+      );
+
 if (data.boundary) {
 
       const points =
@@ -695,6 +902,59 @@ if (data.boundary) {
         ground
       );
     }
+
+    /* --------------------------------------------------------
+       ZÓNY — plochá barevná "podlahová" plocha + plovoucí popisek,
+       bez klikací 3D krabice.
+       -------------------------------------------------------- */
+    (data.zones || []).forEach(zone => {
+
+      const [c1, r1, c2, r2] = zone.rect;
+
+      const pts = [
+        isoPoint(c1, r1, 0.02),
+        isoPoint(c2, r1, 0.02),
+        isoPoint(c2, r2, 0.02),
+        isoPoint(c1, r2, 0.02)
+      ];
+
+      const color = zone.color || "#2f6bd6";
+
+      el(
+        "polygon",
+        {
+          points: ptsToStr(pts),
+          fill: color,
+          opacity: .3,
+          stroke: color,
+          "stroke-width": 1
+        },
+        ground
+      );
+
+      const label =
+        lang === "en" ? (zone.labelEn || zone.label) : zone.label;
+
+      if (label) {
+        const center =
+          isoPoint((c1 + c2) / 2, (r1 + r2) / 2, 0.02);
+
+        el(
+          "text",
+          {
+            x: center.x,
+            y: center.y - 4,
+            "text-anchor": "middle",
+            "font-family": "Rajdhani, sans-serif",
+            "font-weight": 600,
+            "font-size": 12,
+            fill: color,
+            style: "pointer-events:none;"
+          },
+          labels
+        ).textContent = label;
+      }
+    });
 
     (data.roads || []).forEach(road => {
 
@@ -820,7 +1080,7 @@ if (data.boundary) {
         const active = building.id === activeId;
         const height = building.height || 0.9;
 
-          buildBlock(
+        buildBlock(
           structures,
           c1, r1, c2, r2,
           height,
@@ -854,6 +1114,47 @@ if (data.boundary) {
           labels
         ).textContent = building.code;
       });
+
+    /* --------------------------------------------------------
+       SCHODY (3D) — schodovitě rostoucí bloky, kreslené nad
+       ostatními strukturami.
+       -------------------------------------------------------- */
+    (data.stairs || []).forEach(stair => {
+
+      const onClick =
+        stair.toFloor
+          ? (toFloor) => {
+              if (typeof onStairsClick === "function") {
+                onStairsClick(toFloor);
+              }
+            }
+          : null;
+
+      buildStairs3D(stairsLayer3D, stair.rect, onClick, stair.toFloor);
+
+      const label =
+        lang === "en" ? (stair.labelEn || stair.label) : stair.label;
+
+      if (label) {
+        const [c1, r1, c2, r2] = stair.rect;
+        const center = isoPoint((c1 + c2) / 2, (r1 + r2) / 2, 0.85);
+
+        el(
+          "text",
+          {
+            x: center.x,
+            y: center.y - 6,
+            "text-anchor": "middle",
+            "font-family": "Rajdhani, sans-serif",
+            "font-weight": 600,
+            "font-size": 11,
+            fill: "#ffcf1a",
+            style: "pointer-events:none;"
+          },
+          labels
+        ).textContent = label;
+      }
+    });
 
     if (playerPos) {
 
@@ -959,7 +1260,8 @@ if (data.boundary) {
     return {
       redraw: () => {},
       setPlayer: () => {},
-      setCompassRotation: () => {}
+      setCompassRotation: () => {},
+      setData: () => {}
     };
   }
 
@@ -1521,7 +1823,7 @@ function resetTransform() {
 
         scale = newScale;
 
-if (mode === "3d") {
+        if (mode === "3d") {
 
           const angleDelta =
             metrics.angle - pinchStartAngle;
@@ -1534,7 +1836,7 @@ if (mode === "3d") {
         } else {
 
           updateTransform();
-     }
+        }
       }
     },
     { passive: true }
@@ -1568,6 +1870,13 @@ if (mode === "3d") {
      VYKRESLENÍ
      ========================================================= */
 
+  function handleStairsClick(toFloor) {
+
+    if (typeof opts.onStairsClick === "function") {
+      opts.onStairsClick(toFloor);
+    }
+  }
+
   function draw() {
 
     const lang = opts.getLang();
@@ -1582,7 +1891,8 @@ if (mode === "3d") {
         lang,
         select,
         activeId,
-        playerPos
+        playerPos,
+        handleStairsClick
       );
 
     } else {
@@ -1594,7 +1904,8 @@ if (mode === "3d") {
         select,
         activeId,
         playerPos,
-        rotation
+        rotation,
+        handleStairsClick
       );
     }
 
@@ -1620,6 +1931,19 @@ if (mode === "3d") {
     playerPos = pos;
 
     draw();
+  }
+
+  /* =========================================================
+     PATRA / VÝMĚNA DAT ZA BĚHU
+     ========================================================= */
+
+  function setData(newData) {
+
+    opts.data = newData;
+    activeId = null;
+    playerPos = null;
+
+    resetTransform();
   }
 
   /* =========================================================
@@ -1767,7 +2091,8 @@ if (mode === "3d") {
 return {
   redraw: draw,
   setPlayer,
-  setCompassRotation
+  setCompassRotation,
+  setData
 };
 }
 
