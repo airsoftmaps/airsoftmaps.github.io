@@ -767,7 +767,7 @@ const strokeColor =
     return pieces;
   }
 
-  function buildStairs3D(parent, rect, onClick, toFloor) {
+  function buildStairs3D(parent, rect, onClick, toFloor, heightOffset) {
 
     const [c1, r1, c2, r2] = rect;
     const horizontal = (c2 - c1) >= (r2 - r1);
@@ -795,7 +795,7 @@ const strokeColor =
         sc2 = c2;
       }
 
-      const h = 0.12 + (steps - i) * (0.7 / steps);
+      const h = 0.12 + (steps - i) * (0.7 / steps) - (heightOffset || 0);
 
       buildWallBlock(group, sc1, sr1, sc2, sr2, h, color);
     }
@@ -1130,7 +1130,7 @@ if (data.boundary) {
             }
           : null;
 
-      buildStairs3D(stairsLayer3D, stair.rect, onClick, stair.toFloor);
+      buildStairs3D(stairsLayer3D, stair.rect, onClick, stair.toFloor, stair.heightOffset);
 
       const label =
         lang === "en" ? (stair.labelEn || stair.label) : stair.label;
