@@ -318,6 +318,27 @@ const walls =
 
      (data.walls || []).forEach(wall => {
 
+      if (wall.points && wall.points.length >= 2) {
+
+        const pts = wall.points.map(([c, r]) => flatPoint(c, r));
+
+        el(
+          "polyline",
+          {
+            points: ptsToStr(pts),
+            fill: "none",
+            stroke: wall.color || mapColor("--map-outline", "#eef1f0"),
+            "stroke-width": (wall.thickness || 0.12) * FLAT.colW,
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            opacity: wall.color ? 1 : .55
+          },
+          walls
+        );
+
+        return;
+      }
+
       const [c1, r1, c2, r2] = wall.rect;
 
       const p1 = flatPoint(c1, r1);
@@ -711,12 +732,7 @@ const strokeColor =
     return `rgb(${sr}, ${sg}, ${sb})`;
   }
 
-  function buildWallBlock(parent, c1, r1, c2, r2, height, color) {
-
-    const AA = { c: c1, r: r1 };
-    const BA = { c: c2, r: r1 };
-    const BB = { c: c2, r: r2 };
-    const AB = { c: c1, r: r2 };
+  function buildWallBlockQuad(parent, AA, BA, BB, AB, height, color) {
 
     const topAA = isoPoint(AA.c, AA.r, height);
     const topBA = isoPoint(BA.c, BA.r, height);
@@ -741,9 +757,36 @@ const strokeColor =
     return group;
   }
 
+  function buildWallBlock(parent, c1, r1, c2, r2, height, color) {
+    return buildWallBlockQuad(
+      parent,
+      { c: c1, r: r1 },
+      { c: c2, r: r1 },
+      { c: c2, r: r2 },
+      { c: c1, r: r2 },
+      height,
+      color
+    );
+  }
+
   function splitWallSegments(wallList) {
     const pieces = [];
     (wallList || []).forEach(wall => {
+
+      if (wall.points && wall.points.length >= 2) {
+        for (let i = 0; i < wall.points.length - 1; i++) {
+          pieces.push({
+            kind: "quad",
+            p1: { c: wall.points[i][0], r: wall.points[i][1] },
+            p2: { c: wall.points[i + 1][0], r: wall.points[i + 1][1] },
+            thickness: wall.thickness || 0.12,
+            height: wall.height,
+            color: wall.color
+          });
+        }
+        return;
+      }
+
       const [c1, r1, c2, r2] = wall.rect;
       const isHoriz = (c2 - c1) >= (r2 - r1);
       const len = isHoriz ? (c2 - c1) : (r2 - r1);
@@ -752,12 +795,14 @@ const strokeColor =
       for (let i = 0; i < steps; i++) {
         if (isHoriz) {
           pieces.push({
+            kind: "rect",
             rect: [c1 + i * step, r1, c1 + (i + 1) * step, r2],
             height: wall.height,
             color: wall.color
           });
         } else {
           pieces.push({
+            kind: "rect",
             rect: [c1, r1 + i * step, c2, r1 + (i + 1) * step],
             height: wall.height,
             color: wall.color
@@ -1048,7 +1093,10 @@ if (data.boundary) {
 
     const wallItems = splitWallSegments(data.walls).map(w => ({
       type: "wall",
-      depth: w.rect[0] + w.rect[2] + w.rect[1] + w.rect[3],
+      depth:
+        w.kind === "quad"
+          ? (w.p1.c + w.p2.c + w.p1.r + w.p2.r)
+          : (w.rect[0] + w.rect[2] + w.rect[1] + w.rect[3]),
       data: w
     }));
 
@@ -1064,13 +1112,36 @@ if (data.boundary) {
 
         if (item.type === "wall") {
 
-          const [c1, r1, c2, r2] = item.data.rect;
+          const w = item.data;
+
+          if (w.kind === "quad") {
+
+            const dc = w.p2.c - w.p1.c;
+            const dr = w.p2.r - w.p1.r;
+            const len = Math.hypot(dc, dr) || 1;
+            const px = (-dr / len) * (w.thickness / 2);
+            const pr = (dc / len) * (w.thickness / 2);
+
+            buildWallBlockQuad(
+              structures,
+              { c: w.p1.c + px, r: w.p1.r + pr },
+              { c: w.p2.c + px, r: w.p2.r + pr },
+              { c: w.p2.c - px, r: w.p2.r - pr },
+              { c: w.p1.c - px, r: w.p1.r - pr },
+              w.height || 0.9,
+              w.color
+            );
+
+            return;
+          }
+
+          const [c1, r1, c2, r2] = w.rect;
 
           buildWallBlock(
             structures,
             c1, r1, c2, r2,
-            item.data.height || 0.9,
-            item.data.color
+            w.height || 0.9,
+            w.color
           );
 
           return;
