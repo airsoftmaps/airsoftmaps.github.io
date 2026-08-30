@@ -52,26 +52,26 @@
 
 <script src="common.js?v=3"></script>
 <script src="geo.js?v=3"></script>
-<script src="map-engine.js?v=7"></script>
+<script src="map-engine.js?v=8"></script>
 <script>
   /* ====================================================================
      FIELD DATA — JABLONNÉ
-     Hranice, zdi a "místa" vytažené z pixelů podkladu (jablgrid.png),
-     měřítko 94.7 px = 1 grid jednotka, počátek (0,0) = levý horní
-     roh obrázku.
-     GPS kotvy zatím nejsou — doplní se později (tlačítko "Moje poloha"
-     se zatím samo schová, dokud geoAnchors nebudou vyplněné).
-     "Místa" (světle/tmavě modrá na plánku) jsou v datech obyčejné
-     "buildings" s vlastní barvou (color) a nízkou výškou — fungují
-     jako běžné POI (klik, zvýraznění, seznam dole), jen vizuálně
-     nevypadají jako klasická budova.
+     Hranice a zdi vytažené z pixelů podkladu (jablgrid.png), měřítko
+     94.7 px = 1 grid jednotka. Zdi mají poloviční výšku (0.45) oproti
+     výchozí — bylo jich moc blízko sebe a při plné výšce (0.9) se ve
+     3D vizuálně "prolínaly". Cik-cak zeď u severního vstupu je teď
+     skutečná šikmá (diagonální) zeď přes nový "points" formát.
+     Stromy jsou orientační rozptyl po ploché zelené ploše z podkladu
+     (nejde o reálně zaměřená místa jednotlivých stromů).
      ==================================================================== */
 
   const FIELD_DATA = {
     viewBoxFlat: "0 0 650 700",
 
     geoAnchors: [
-      // TODO: doplnit 3 reálné GPS body — { col, row, lat, lng }
+      { col: 4.546, row: 0.454, lat: 48.34986128192615, lng: 17.11442300682751 },  // střed A
+      { col: 5.428, row: 6.495, lat: 48.34947596494841, lng: 17.111651759185214 }, // střed I
+      { col: 6.14,  row: 3.088, lat: 48.349348678502125, lng: 17.113367479832633 } // střed D
     ],
 
     boundary: [
@@ -89,61 +89,139 @@
       [0.707, 1.468]
     ],
 
-    entrance: null,
-    roads: [],
-    trees: [],
+    // Vstup u pravé strany plochy "I", šipka směřuje zdola nahoru
+    entrance: { col: 5.7, row: 6.9, angle: -90 },
 
-    // Zdi — vytažené z černých linek v podkladu (vč. hrubé aproximace
-    // klikatého "cik-cak" prvku u severního vstupu do vnitřní plochy —
-    // ten je ve skutečnosti šikmý, tady zjednodušený na pár rovných
-    // úseků; pokud chceš přesný lomený tvar, řekni, dodělám do enginu
-    // podporu pro víc-bodové zdi)
+    roads: [],
+
+    trees: [
+      [4.17,0.37],
+      [1.85,1.57],
+      [1.49,3.27],
+      [1.5,3.78],
+      [2.27,1.16],
+      [3.52,6.1],
+      [2.51,3.56],
+      [4.59,0.5],
+      [1.55,1.97],
+      [0.74,1.9],
+      [2.46,1.49],
+      [1.14,2.51],
+      [3.65,4.36],
+      [5.47,4.91],
+      [2.11,1.84],
+      [1.78,1.71],
+      [3.68,1.81],
+      [3.82,5.64],
+      [2.64,1.55],
+      [0.5,2.53],
+      [6.29,5.42],
+      [1.8,4.09],
+      [0.81,2.85],
+      [2.99,5.98],
+      [5.68,1.81],
+      [3.29,1.3],
+      [5.92,5.48],
+      [2.0,4.08],
+      [3.98,1.15],
+      [5.7,5.25],
+      [5.69,5.94],
+      [0.64,3.16],
+      [4.98,1.0],
+      [3.13,3.54],
+      [1.79,5.49],
+      [2.79,1.5],
+      [3.53,4.63],
+      [1.38,2.1],
+      [2.89,3.35],
+      [0.87,1.58],
+      [2.25,3.78],
+      [1.56,1.55],
+      [1.61,4.26],
+      [3.11,4.96],
+      [5.25,1.37],
+      [0.71,2.83],
+      [2.8,3.04],
+      [2.66,2.27],
+      [5.59,1.72],
+      [1.31,2.93],
+      [2.79,1.9],
+      [2.92,5.42],
+      [3.6,0.53],
+      [6.28,5.82],
+      [5.51,1.23],
+      [3.19,1.51],
+      [1.79,4.96],
+      [3.0,2.78],
+      [3.64,4.56],
+      [1.08,2.01],
+      [3.55,4.74],
+      [3.3,5.37],
+      [5.77,1.71],
+      [2.77,3.75],
+      [3.43,5.87],
+      [1.4,4.55],
+      [1.62,2.61],
+      [2.11,4.76],
+      [0.56,2.99],
+      [5.71,5.53],
+    ],
+
+    // Zdi — vytažené z černých linek v podkladu, poloviční výška (0.45)
     walls: [
-      { rect: [5.238, 2.524, 5.502, 2.534] },
-      { rect: [4.52, 2.577, 4.931, 2.587] },
-      { rect: [4.562, 2.64, 4.699, 2.65] },
-      { rect: [5.005, 2.841, 5.079, 2.851] },
-      { rect: [5.016, 3.083, 5.185, 3.094] },
-      { rect: [5.29, 3.136, 5.438, 3.147] },
-      { rect: [4.731, 3.2, 4.826, 3.21] },
-      { rect: [4.002, 3.485, 4.108, 3.495] },
-      { rect: [4.002, 3.611, 4.129, 3.622] },
-      { rect: [5.523, 3.664, 5.734, 3.675] },
-      { rect: [4.572, 3.696, 4.688, 3.706] },
-      { rect: [5.829, 3.728, 5.924, 3.738] },
-      { rect: [4.741, 3.738, 4.868, 3.749] },
-      { rect: [4.446, 3.833, 4.541, 3.844] },
-      { rect: [5.216, 3.854, 5.375, 3.865] },
-      { rect: [5.523, 3.875, 5.734, 3.886] },
-      { rect: [4.002, 3.949, 4.097, 3.96] },
-      { rect: [4.583, 4.488, 4.868, 4.498] },
-      { rect: [3.58, 4.593, 3.759, 4.604] },
-      { rect: [3.58, 4.731, 3.759, 4.741] },
-      { rect: [3.305, 3.242, 3.326, 3.39] },
-      { rect: [3.58, 4.604, 3.59, 4.752] },
-      { rect: [3.738, 4.593, 3.749, 4.752] },
-      { rect: [3.96, 3.252, 3.97, 3.421] },
-      { rect: [4.424, 3.358, 4.435, 3.569] },
-      { rect: [4.52, 2.577, 4.53, 2.978] },
-      { rect: [4.52, 3.01, 4.53, 3.981] },
-      { rect: [4.583, 4.498, 4.593, 4.593] },
-      { rect: [4.678, 2.64, 4.688, 2.978] },
-      { rect: [4.678, 3.01, 4.688, 3.083] },
-      { rect: [4.731, 3.115, 4.741, 3.485] },
-      { rect: [4.847, 4.488, 4.857, 4.583] },
-      { rect: [4.91, 2.577, 4.921, 2.978] },
-      { rect: [4.91, 3.01, 4.921, 3.981] },
-      { rect: [5.079, 3.537, 5.121, 3.664] },
-      { rect: [5.153, 2.175, 5.164, 2.334] },
-      { rect: [5.216, 3.854, 5.227, 3.981] },
-      { rect: [5.269, 3.01, 5.28, 3.094] },
-      { rect: [5.364, 3.854, 5.375, 3.981] },
-      { rect: [5.523, 3.664, 5.533, 3.897] },
-      { rect: [5.713, 3.664, 5.723, 3.897] },
-      { rect: [5.913, 3.854, 5.924, 3.981] },
-      { rect: [4.615, 1.489, 4.773, 1.605] },
-      { rect: [4.773, 1.605, 4.889, 1.774] },
-      { rect: [4.805, 1.774, 5.005, 2.006] },
+      { rect: [5.238, 2.524, 5.502, 2.534], height: 0.45 },
+      { rect: [4.52, 2.577, 4.931, 2.587], height: 0.45 },
+      { rect: [4.562, 2.64, 4.699, 2.65], height: 0.45 },
+      { rect: [5.005, 2.841, 5.079, 2.851], height: 0.45 },
+      { rect: [5.016, 3.083, 5.185, 3.094], height: 0.45 },
+      { rect: [5.29, 3.136, 5.438, 3.147], height: 0.45 },
+      { rect: [4.731, 3.2, 4.826, 3.21], height: 0.45 },
+      { rect: [4.002, 3.485, 4.108, 3.495], height: 0.45 },
+      { rect: [4.002, 3.611, 4.129, 3.622], height: 0.45 },
+      { rect: [5.523, 3.664, 5.734, 3.675], height: 0.45 },
+      { rect: [4.572, 3.696, 4.688, 3.706], height: 0.45 },
+      { rect: [5.829, 3.728, 5.924, 3.738], height: 0.45 },
+      { rect: [4.741, 3.738, 4.868, 3.749], height: 0.45 },
+      { rect: [4.446, 3.833, 4.541, 3.844], height: 0.45 },
+      { rect: [5.216, 3.854, 5.375, 3.865], height: 0.45 },
+      { rect: [5.523, 3.875, 5.734, 3.886], height: 0.45 },
+      { rect: [4.002, 3.949, 4.097, 3.96], height: 0.45 },
+      { rect: [4.583, 4.488, 4.868, 4.498], height: 0.45 },
+      { rect: [3.58, 4.593, 3.759, 4.604], height: 0.45 },
+      { rect: [3.58, 4.731, 3.759, 4.741], height: 0.45 },
+      { rect: [3.305, 3.242, 3.326, 3.39], height: 0.45 },
+      { rect: [3.58, 4.604, 3.59, 4.752], height: 0.45 },
+      { rect: [3.738, 4.593, 3.749, 4.752], height: 0.45 },
+      { rect: [3.96, 3.252, 3.97, 3.421], height: 0.45 },
+      { rect: [4.424, 3.358, 4.435, 3.569], height: 0.45 },
+      { rect: [4.52, 2.577, 4.53, 2.978], height: 0.45 },
+      { rect: [4.52, 3.01, 4.53, 3.981], height: 0.45 },
+      { rect: [4.583, 4.498, 4.593, 4.593], height: 0.45 },
+      { rect: [4.678, 2.64, 4.688, 2.978], height: 0.45 },
+      { rect: [4.678, 3.01, 4.688, 3.083], height: 0.45 },
+      { rect: [4.731, 3.115, 4.741, 3.485], height: 0.45 },
+      { rect: [4.847, 4.488, 4.857, 4.583], height: 0.45 },
+      { rect: [4.91, 2.577, 4.921, 2.978], height: 0.45 },
+      { rect: [4.91, 3.01, 4.921, 3.981], height: 0.45 },
+      { rect: [5.079, 3.537, 5.121, 3.664], height: 0.45 },
+      { rect: [5.153, 2.175, 5.164, 2.334], height: 0.45 },
+      { rect: [5.216, 3.854, 5.227, 3.981], height: 0.45 },
+      { rect: [5.269, 3.01, 5.28, 3.094], height: 0.45 },
+      { rect: [5.364, 3.854, 5.375, 3.981], height: 0.45 },
+      { rect: [5.523, 3.664, 5.533, 3.897], height: 0.45 },
+      { rect: [5.713, 3.664, 5.723, 3.897], height: 0.45 },
+      { rect: [5.913, 3.854, 5.924, 3.981], height: 0.45 },
+      ,
+      // Cik-cak zeď u severního vstupu — skutečná šikmá zeď (points),
+      // ne aproximace rovnými úseky
+      { points: [
+        [4.984, 1.478],
+        [4.72, 1.478],
+        [4.625, 1.637],
+        [4.72, 1.753],
+        [4.615, 1.848],
+        [4.794, 1.996]
+      ], thickness: 0.12, height: 0.45 }
     ],
 
     // Jediná skutečná budova (plný černý čtverec v podkladu)
@@ -151,8 +229,7 @@
       { id:"budova1", code:"B1", name:"Budova 1", nameEn:"Building 1", rect:[3.812, 3.654, 3.981, 3.791], height:0.8 },
 
       // "Místa" — barevné, nízké, bez vzhledu budovy, ale plně
-      // klikací a v seznamu dole. Názvy/kódy zatím obecné — přejmenuj
-      // podle potřeby.
+      // klikací a v seznamu dole.
       { id:"misto_a", code:"A", name:"Místo A", nameEn:"Place A", rect:[4.234, 0.296, 4.857, 0.612], color:"#0064ff", height:0.2 },
       { id:"misto_b", code:"B", name:"Místo B", nameEn:"Place B", rect:[4.572, 2.059, 4.984, 2.291], color:"#0064ff", height:0.2 },
       { id:"misto_c", code:"C", name:"Místo C", nameEn:"Place C", rect:[4.71, 2.619, 4.91, 3.105], color:"#0064ff", height:0.2 },
