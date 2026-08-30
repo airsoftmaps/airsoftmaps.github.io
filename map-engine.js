@@ -419,12 +419,12 @@ const walls =
           fill:
   active
     ? "var(--accent-dim)"
-    : "var(--map-building-fill)",
+    : (building.color || "var(--map-building-fill)"),
 
 stroke:
   active
     ? "var(--accent)"
-    : "var(--map-outline)",
+    : (building.color || "var(--map-outline)"),
           "stroke-width":
             active ? 3 : 2,
           rx: 2
@@ -584,7 +584,8 @@ stroke:
     id,
     active,
     onClick,
-    rotateDeg
+    rotateDeg,
+    color
   ) {
 
     const cx = (c1 + c2) / 2;
@@ -627,13 +628,13 @@ stroke:
       );
 
     const topColor =
-  active ? "var(--accent)" : "var(--map-3d-top)";
+  active ? "var(--accent)" : (color ? color : "var(--map-3d-top)");
 
 const rightColor =
-  active ? "var(--accent)" : "var(--map-3d-right)";
+  active ? "var(--accent)" : (color ? shadeHex(color, .72) : "var(--map-3d-right)");
 
 const frontColor =
-  active ? "var(--accent)" : "var(--map-3d-front)";
+  active ? "var(--accent)" : (color ? shadeHex(color, .48) : "var(--map-3d-front)");
 
 const strokeColor =
   active
@@ -1087,7 +1088,8 @@ if (data.boundary) {
           building.id,
           active,
           onBuildingClick,
-          building.rotate || 0
+          building.rotate || 0,
+          building.color
         );
 
         const center =
