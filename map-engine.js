@@ -60,6 +60,10 @@ const MapEngine = (() => {
     });
 
     (data.walls || []).forEach(w => {
+      if (w.points) {
+        w.points.forEach(([c, r]) => consider(c, r));
+        return;
+      }
       consider(w.rect[0], w.rect[1]);
       consider(w.rect[2], w.rect[3]);
     });
