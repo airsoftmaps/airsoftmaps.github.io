@@ -1,8 +1,3 @@
-/* ============================================================
-   AIRSOFT MAPS — feedback.js
-   Automaticky načte ACTIVE hřiště z menu.html
-   ============================================================ */
-
 async function loadFeedbackFields() {
 
   const select = document.getElementById("fb-field");
@@ -14,57 +9,50 @@ async function loadFeedbackFields() {
     const response = await fetch("menu.html");
 
     if (!response.ok) {
-      throw new Error("Nelze načíst menu.html");
+      throw new Error("Nepodařilo se načíst menu.html");
     }
 
     const html = await response.text();
 
-    /*
-     * Najdeme BATTLEFIELDS přímo v menu.html
-     */
-    const match = html.match(
-      /const\s+BATTLEFIELDS\s*=\s*(\[[\s\S]*?\]);/
-    );
+    const doc = new DOMParser()
+      .parseFromString(html, "text/html");
 
-    if (!match) {
-      throw new Error("BATTLEFIELDS nebylo nalezeno v menu.html");
+    const scripts = doc.querySelectorAll("script");
+
+    let battlefields = [];
+
+    for (const script of scripts) {
+
+      const text = script.textContent;
+
+      if (!text.includes("BATTLEFIELDS")) {
+        continue;
+      }
+
+      const match = text.match(
+        /const\s+BATTLEFIELDS\s*=\s*(\[[\s\S]*?\]);/
+      );
+
+      if (!match) continue;
+
+      battlefields = Function(
+        `"use strict"; return ${match[1]};`
+      )();
+
+      break;
     }
 
-    /*
-     * Převedeme pole z menu.html na skutečný JavaScript array
-     */
-    const battlefields = Function(
-      `"use strict"; return (${match[1]});`
-    )();
+    const lang =
+      AM.getLang() === "en"
+        ? "en"
+        : "cs";
 
-    const lang = AM.getLang();
-
-    /*
-     * Vyčistíme původní nabídku
-     */
-    select.innerHTML = "";
-
-    /*
-     * Výchozí možnost
-     */
-    const empty = document.createElement("option");
-
-    empty.value = "";
-    empty.textContent =
-      lang === "en"
-        ? "— not selected —"
-        : "— nevybráno —";
-
-    select.appendChild(empty);
-
-    /*
-     * POUZE AKTIVNÍ HŘIŠTĚ
-     */
     battlefields
       .filter(field => field.status === "active")
       .forEach(field => {
 
-        const option = document.createElement("option");
+        const option =
+          document.createElement("option");
 
         option.value = field.id;
 
@@ -77,29 +65,22 @@ async function loadFeedbackFields() {
 
       });
 
-    /*
-     * Jiné
-     */
-    const other = document.createElement("option");
+    const otherOption =
+      document.createElement("option");
 
-    other.value = "jine";
+    otherOption.value = "jine";
 
-    other.textContent =
+    otherOption.textContent =
       lang === "en"
         ? "Other"
         : "Jiné";
 
-    select.appendChild(other);
-
-    console.log(
-      "✅ Feedback: načteno aktivních hřišť:",
-      battlefields.filter(field => field.status === "active").length
-    );
+    select.appendChild(otherOption);
 
   } catch (error) {
 
     console.error(
-      "❌ Feedback: nepodařilo se načíst hřiště:",
+      "Feedback: nepodařilo se načíst hřiště:",
       error
     );
 
