@@ -1,7 +1,7 @@
-/* ==========================================================================
+/* ============================================================
    AIRSOFT MAPS — feedback.js
-   Automaticky načítá aktivní hřiště z menu.html
-   ========================================================================== */
+   Automaticky načte ACTIVE hřiště z menu.html
+   ============================================================ */
 
 async function loadFeedbackFields() {
 
@@ -9,43 +9,47 @@ async function loadFeedbackFields() {
 
   if (!select) return;
 
-  const lang = AM.getLang();
-
   try {
 
-    /* Načteme menu.html */
     const response = await fetch("menu.html");
 
     if (!response.ok) {
-      throw new Error("Nepodařilo se načíst menu.html");
+      throw new Error("Nelze načíst menu.html");
     }
 
     const html = await response.text();
 
-
-    /* Najdeme BATTLEFIELDS v menu.html */
+    /*
+     * Najdeme BATTLEFIELDS přímo v menu.html
+     */
     const match = html.match(
       /const\s+BATTLEFIELDS\s*=\s*(\[[\s\S]*?\]);/
     );
 
     if (!match) {
-      throw new Error("BATTLEFIELDS nebyl v menu.html nalezen");
+      throw new Error("BATTLEFIELDS nebylo nalezeno v menu.html");
     }
 
-
-    /* Převedeme seznam na JS objekt */
+    /*
+     * Převedeme pole z menu.html na skutečný JavaScript array
+     */
     const battlefields = Function(
       `"use strict"; return (${match[1]});`
     )();
 
+    const lang = AM.getLang();
 
-    /* Vyčistíme dropdown */
+    /*
+     * Vyčistíme původní nabídku
+     */
     select.innerHTML = "";
 
+    /*
+     * Výchozí možnost
+     */
     const empty = document.createElement("option");
 
     empty.value = "";
-
     empty.textContent =
       lang === "en"
         ? "— not selected —"
@@ -53,8 +57,9 @@ async function loadFeedbackFields() {
 
     select.appendChild(empty);
 
-
-    /* Přidáme pouze AKTIVNÍ hřiště */
+    /*
+     * POUZE AKTIVNÍ HŘIŠTĚ
+     */
     battlefields
       .filter(field => field.status === "active")
       .forEach(field => {
@@ -72,8 +77,9 @@ async function loadFeedbackFields() {
 
       });
 
-
-    /* JINÉ */
+    /*
+     * Jiné
+     */
     const other = document.createElement("option");
 
     other.value = "jine";
@@ -85,13 +91,18 @@ async function loadFeedbackFields() {
 
     select.appendChild(other);
 
+    console.log(
+      "✅ Feedback: načteno aktivních hřišť:",
+      battlefields.filter(field => field.status === "active").length
+    );
 
   } catch (error) {
 
     console.error(
-      "AIRSOFT MAPS — feedback:",
+      "❌ Feedback: nepodařilo se načíst hřiště:",
       error
     );
 
   }
+
 }
