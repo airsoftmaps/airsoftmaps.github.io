@@ -555,18 +555,7 @@
       "fb-field-label"
     ).textContent = t.fieldLabel;
 
-    document.getElementById(
-      "fb-field-empty"
-    ).textContent = t.fieldEmpty;
-
-    document.getElementById(
-      "fb-field-menu"
-    ).textContent = t.menu;
-
-    document.getElementById(
-      "fb-field-other"
-    ).textContent = t.fieldOther;
-
+    
     document.getElementById(
       "fb-message-label"
     ).textContent = t.messageLabel;
@@ -914,7 +903,49 @@
      ============================================================ */
 
 document.addEventListener("DOMContentLoaded", () => {
+function loadFeedbackFields() {
 
+  const select = document.getElementById("fb-field");
+
+  if (!select) return;
+
+  const lang = AM.getLang() === "en" ? "en" : "cs";
+
+  const t = translations[lang];
+
+  select.innerHTML = "";
+
+  const emptyOption = document.createElement("option");
+  emptyOption.value = "";
+  emptyOption.textContent = t.fieldEmpty;
+  select.appendChild(emptyOption);
+
+  const menuOption = document.createElement("option");
+  menuOption.value = "menu";
+  menuOption.textContent = t.menu;
+  select.appendChild(menuOption);
+
+  BATTLEFIELDS.forEach(f => {
+
+    const option = document.createElement("option");
+
+    option.value = f.id;
+
+    option.textContent =
+      lang === "en"
+        ? f.nameEn
+        : f.name;
+
+    select.appendChild(option);
+
+  });
+
+  const otherOption = document.createElement("option");
+  otherOption.value = "other";
+  otherOption.textContent = t.fieldOther;
+  select.appendChild(otherOption);
+
+}
   AM.applyTheme(AM.getTheme());
 
   applyLanguage();
