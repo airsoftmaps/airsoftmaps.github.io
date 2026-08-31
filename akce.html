@@ -6,35 +6,812 @@
 
 <title>AIRSOFT MAPS — Akce</title>
 
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+
 <style>
-    html,
-    body {
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-        background: #000;
+
+/* =========================================================
+   AIRSOFT MAPS — AKCE
+   ========================================================= */
+
+:root {
+    --red: #d90000;
+    --red-bright: #ff1616;
+    --black: #050505;
+    --dark: #0b0b0b;
+    --panel: #111111;
+    --text: #f2f2f2;
+    --muted: #888;
+    --line: rgba(255,255,255,0.10);
+}
+
+/* ---------------------------------------------------------
+   RESET
+   --------------------------------------------------------- */
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background:
+        radial-gradient(
+            circle at 50% 42%,
+            rgba(217,0,0,0.08),
+            transparent 38%
+        ),
+        #050505;
+
+    color: var(--text);
+
+    font-family: 'Rajdhani', sans-serif;
+
+    overflow: hidden;
+}
+
+
+/* ---------------------------------------------------------
+   BACKGROUND
+   --------------------------------------------------------- */
+
+.background {
+    position: fixed;
+    inset: 0;
+
+    pointer-events: none;
+
+    background:
+        linear-gradient(
+            rgba(255,255,255,0.018) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(255,255,255,0.018) 1px,
+            transparent 1px
+        );
+
+    background-size: 40px 40px;
+
+    mask-image: linear-gradient(
+        to bottom,
+        transparent,
+        black 20%,
+        black 80%,
+        transparent
+    );
+}
+
+
+/* ---------------------------------------------------------
+   TOP BAR
+   --------------------------------------------------------- */
+
+.topbar {
+    position: fixed;
+
+    top: 0;
+    left: 0;
+    right: 0;
+
+    height: 64px;
+
+    display: flex;
+    align-items: center;
+
+    padding: 0 18px;
+
+    background: rgba(5,5,5,0.94);
+
+    border-bottom: 1px solid var(--line);
+
+    z-index: 20;
+
+    backdrop-filter: blur(8px);
+}
+
+.back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    height: 38px;
+
+    padding: 0 14px;
+
+    color: #fff;
+
+    text-decoration: none;
+
+    border: 1px solid rgba(255,255,255,0.14);
+
+    background: rgba(255,255,255,0.04);
+
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.back:hover {
+    background: rgba(217,0,0,0.16);
+    border-color: rgba(217,0,0,0.5);
+    transform: translateX(-2px);
+}
+
+.back-arrow {
+    color: var(--red-bright);
+    font-size: 20px;
+    line-height: 1;
+}
+
+
+/* ---------------------------------------------------------
+   MAIN
+   --------------------------------------------------------- */
+
+.main {
+    position: relative;
+
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 84px 20px 40px;
+
+    z-index: 2;
+}
+
+
+/* ---------------------------------------------------------
+   CARD
+   --------------------------------------------------------- */
+
+.card {
+    width: min(680px, 100%);
+
+    text-align: center;
+
+    padding: 52px 30px 44px;
+
+    border: 1px solid rgba(255,255,255,0.10);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,0.045),
+            rgba(255,255,255,0.012)
+        );
+
+    box-shadow:
+        0 30px 80px rgba(0,0,0,0.55),
+        inset 0 1px rgba(255,255,255,0.03);
+
+    position: relative;
+
+    overflow: hidden;
+}
+
+
+/* red accent */
+
+.card::before {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 0;
+    right: 0;
+
+    height: 3px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            var(--red),
+            transparent
+        );
+}
+
+
+/* corner details */
+
+.card::after {
+    content: "";
+
+    position: absolute;
+
+    width: 90px;
+    height: 90px;
+
+    right: -45px;
+    bottom: -45px;
+
+    border: 1px solid rgba(217,0,0,0.35);
+
+    transform: rotate(45deg);
+}
+
+
+/* ---------------------------------------------------------
+   BRAND
+   --------------------------------------------------------- */
+
+.brand {
+    margin-bottom: 26px;
+}
+
+.brand-small {
+    font-size: 13px;
+
+    font-weight: 600;
+
+    letter-spacing: 5px;
+
+    color: #777;
+
+    text-transform: uppercase;
+}
+
+.brand-main {
+    margin-top: 2px;
+
+    font-family: 'Anton', sans-serif;
+
+    font-size: clamp(42px, 10vw, 72px);
+
+    line-height: 0.95;
+
+    letter-spacing: 1px;
+
+    color: #fff;
+
+    text-shadow:
+        0 0 30px rgba(217,0,0,0.15);
+}
+
+.brand-main span {
+    color: var(--red);
+}
+
+
+/* ---------------------------------------------------------
+   TITLE
+   --------------------------------------------------------- */
+
+.title {
+    margin: 0;
+
+    font-family: 'Anton', sans-serif;
+
+    font-size: clamp(30px, 7vw, 48px);
+
+    letter-spacing: 1px;
+
+    text-transform: uppercase;
+}
+
+.title::after {
+    content: "";
+
+    display: block;
+
+    width: 50px;
+    height: 3px;
+
+    margin: 15px auto 18px;
+
+    background: var(--red);
+}
+
+.description {
+    max-width: 470px;
+
+    margin: 0 auto;
+
+    color: #aaa;
+
+    font-size: 18px;
+
+    line-height: 1.45;
+
+    font-weight: 500;
+}
+
+
+/* ---------------------------------------------------------
+   LOADING
+   --------------------------------------------------------- */
+
+.loading {
+    margin-top: 38px;
+
+    transition:
+        opacity 0.5s ease,
+        transform 0.5s ease;
+}
+
+.loading.hidden {
+    opacity: 0;
+    transform: translateY(-10px);
+    pointer-events: none;
+}
+
+.loading-text {
+    font-size: 13px;
+
+    letter-spacing: 3px;
+
+    color: #777;
+
+    margin-bottom: 12px;
+}
+
+.loading-bar {
+    width: min(300px, 80%);
+
+    height: 3px;
+
+    margin: auto;
+
+    background: rgba(255,255,255,0.08);
+
+    overflow: hidden;
+}
+
+.loading-progress {
+    width: 0%;
+    height: 100%;
+
+    background: var(--red);
+
+    box-shadow:
+        0 0 12px rgba(255,0,0,0.6);
+
+    transition: width 0.15s linear;
+}
+
+
+/* ---------------------------------------------------------
+   ACTION AREA
+   --------------------------------------------------------- */
+
+.action {
+    margin-top: 32px;
+
+    opacity: 0;
+
+    transform: translateY(12px);
+
+    pointer-events: none;
+
+    transition:
+        opacity 0.5s ease,
+        transform 0.5s ease;
+}
+
+.action.visible {
+    opacity: 1;
+
+    transform: translateY(0);
+
+    pointer-events: auto;
+}
+
+
+/* ---------------------------------------------------------
+   OPEN BUTTON
+   --------------------------------------------------------- */
+
+.open-button {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-width: 260px;
+
+    min-height: 54px;
+
+    padding: 0 25px;
+
+    background: var(--red);
+
+    color: #fff;
+
+    text-decoration: none;
+
+    font-family: 'Rajdhani', sans-serif;
+
+    font-size: 18px;
+
+    font-weight: 700;
+
+    letter-spacing: 1.5px;
+
+    text-transform: uppercase;
+
+    border: 1px solid rgba(255,255,255,0.15);
+
+    box-shadow:
+        0 8px 30px rgba(217,0,0,0.22);
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.open-button:hover {
+    background: var(--red-bright);
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 12px 35px rgba(217,0,0,0.35);
+}
+
+.open-button:active {
+    transform: translateY(0);
+}
+
+.open-arrow {
+    margin-left: 12px;
+
+    font-size: 22px;
+}
+
+
+/* ---------------------------------------------------------
+   INFO
+   --------------------------------------------------------- */
+
+.info {
+    margin-top: 22px;
+
+    color: #666;
+
+    font-size: 13px;
+
+    line-height: 1.5;
+}
+
+.info strong {
+    color: #999;
+}
+
+
+/* ---------------------------------------------------------
+   STATUS
+   --------------------------------------------------------- */
+
+.status {
+    margin-top: 25px;
+
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    gap: 8px;
+
+    color: #666;
+
+    font-size: 12px;
+
+    letter-spacing: 1px;
+
+    text-transform: uppercase;
+}
+
+.status-dot {
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: var(--red);
+
+    box-shadow:
+        0 0 8px rgba(255,0,0,0.7);
+}
+
+
+/* ---------------------------------------------------------
+   MOBILE
+   --------------------------------------------------------- */
+
+@media (max-width: 600px) {
+
+    .topbar {
+        height: 58px;
+
+        padding: 0 12px;
     }
 
-    iframe {
-        width: 100%;
-        height: 100%;
-        border: 0;
-        display: block;
+    .back {
+        height: 36px;
+
+        padding: 0 11px;
+
+        font-size: 14px;
     }
 
-    .back-button {
-        position: fixed;
-        top: 12px;
-        left: 12px;
-        z-index: 9999;
+    .main {
+        padding:
+            74px 12px 25px;
+    }
 
-        padding: 10px 16px;
+    .card {
+        padding:
+            38px 20px 34px;
+    }
 
-        background: rgba(0, 0, 0, 0.85);
-        color: white;
+    .brand {
+        margin-bottom: 22px;
+    }
 
+    .description {
+        font-size: 17px;
+    }
+
+    .open-button {
+        width: 100%;
+        min-width: 0;
+    }
+
+}
+
+
+/* ---------------------------------------------------------
+   SMALL HEIGHT
+   --------------------------------------------------------- */
+
+@media (max-height: 650px) {
+
+    .main {
+        align-items: flex-start;
+
+        overflow-y: auto;
+
+        padding-top: 80px;
+        padding-bottom: 30px;
+    }
+
+    .card {
+        margin: auto 0;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="background"></div>
+
+
+<!-- ======================================================
+     TOP BAR
+     ====================================================== -->
+
+<header class="topbar">
+
+    <a href="menu.html" class="back">
+        <span class="back-arrow">‹</span>
+        ZPĚT NA MENU
+    </a>
+
+</header>
+
+
+<!-- ======================================================
+     MAIN
+     ====================================================== -->
+
+<main class="main">
+
+    <section class="card">
+
+        <div class="brand">
+
+            <div class="brand-small">
+                AIRSOFT
+            </div>
+
+            <div class="brand-main">
+                MAP<span>S</span>
+            </div>
+
+        </div>
+
+
+        <h1 class="title">
+            AIRSOFT AKCE
+        </h1>
+
+
+        <p class="description">
+            Přehled airsoftových akcí na mapě
+            po celé České republice.
+        </p>
+
+
+        <!-- LOADING -->
+
+        <div class="loading" id="loading">
+
+            <div class="loading-text" id="loadingText">
+                NAVAZOVÁNÍ SPOJENÍ
+            </div>
+
+            <div class="loading-bar">
+
+                <div
+                    class="loading-progress"
+                    id="progress">
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ACTION -->
+
+        <div class="action" id="action">
+
+            <a
+                href="https://mapa-airsoft-akci.cz/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="open-button">
+
+                OTEVŘÍT MAPU AKCÍ
+
+                <span class="open-arrow">→</span>
+
+            </a>
+
+
+            <div class="info">
+
+                <strong>Mapa airsoftových akcí</strong><br>
+
+                Kliknutím se mapa otevře
+                v nové kartě.
+
+            </div>
+
+        </div>
+
+
+        <!-- STATUS -->
+
+        <div class="status">
+
+            <span class="status-dot"></span>
+
+            SYSTÉM PŘIPRAVEN
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<script>
+
+/* =========================================================
+   AIRSOFT MAPS — BOOT SEQUENCE
+   ========================================================= */
+
+const progress = document.getElementById("progress");
+const loadingText = document.getElementById("loadingText");
+const loading = document.getElementById("loading");
+const action = document.getElementById("action");
+
+const messages = [
+    "NAVAZOVÁNÍ SPOJENÍ",
+    "KONTROLA DAT",
+    "NAČÍTÁNÍ MAPY",
+    "SYSTÉM PŘIPRAVEN"
+];
+
+let value = 0;
+let messageIndex = 0;
+
+
+/* Progress */
+
+const interval = setInterval(() => {
+
+    value += Math.random() * 7 + 3;
+
+    if (value >= 100) {
+
+        value = 100;
+
+        progress.style.width = "100%";
+
+        clearInterval(interval);
+
+        setTimeout(() => {
+
+            loadingText.textContent = messages[3];
+
+            setTimeout(() => {
+
+                loading.classList.add("hidden");
+
+                setTimeout(() => {
+
+                    action.classList.add("visible");
+
+                }, 250);
+
+            }, 350);
+
+        }, 350);
+
+        return;
+    }
+
+    progress.style.width = value + "%";
+
+
+    /* Change status text */
+
+    if (
+        value > 25 &&
+        messageIndex === 0
+    ) {
+
+        messageIndex = 1;
+
+        loadingText.textContent = messages[1];
+
+    }
+
+    if (
+        value > 55 &&
+        messageIndex === 1
+    ) {
+
+        messageIndex = 2;
+
+        loadingText.textContent = messages[2];
+
+    }
+
+}, 150);
+
+</script>
+
+</body>
+</html>
         border: 1px solid rgba(255,255,255,0.2);
         border-radius: 8px;
 
