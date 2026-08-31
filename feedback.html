@@ -11,7 +11,8 @@
 
 <link rel="stylesheet" href="common.css?v=3">
 <script src="common.js?v=3"></script>
-
+<script src="feedback.js?v=1"></script>
+  
 <style>
   .fb-wrap {
     max-width: 640px;
@@ -270,8 +271,8 @@
       Kterého hřiště / stránky se to týká (nepovinné)
     </label>
 
-   <select class="fb-select" id="fb-field">
-  <option value="" id="fb-field-empty">— nevybráno —</option>
+<select class="fb-select" id="fb-field">
+  <option value="">— nevybráno —</option>
 </select>
 
 
@@ -331,85 +332,7 @@
 
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-async function loadBattlefields() {
 
-  const select = document.getElementById("fb-field");
-
-  try {
-
-    const response = await fetch("menu.html");
-    const html = await response.text();
-
-    const doc = new DOMParser().parseFromString(html, "text/html");
-
-    const scripts = doc.querySelectorAll("script");
-
-    for (const script of scripts) {
-
-      if (!script.textContent.includes("const BATTLEFIELDS")) {
-        continue;
-      }
-
-      const match = script.textContent.match(
-        /const BATTLEFIELDS\s*=\s*(\[[\s\S]*?\]);/
-      );
-
-      if (!match) continue;
-
-      const BATTLEFIELDS = Function(
-        `"use strict"; return (${match[1]});`
-      )();
-
-      const lang = AM.getLang();
-
-      BATTLEFIELDS
-        .filter(f => f.status === "active")
-        .forEach(f => {
-
-          const option = document.createElement("option");
-
-          option.value = f.id;
-
-          option.textContent =
-            lang === "en"
-              ? f.nameEn
-              : f.name;
-
-          select.appendChild(option);
-
-        });
-
-      break;
-    }
-
-    const menuOption = document.createElement("option");
-    menuOption.value = "menu";
-    menuOption.id = "fb-field-menu";
-    menuOption.textContent =
-      lang === "en"
-        ? "Menu / general"
-        : "Menu / obecně";
-
-    select.appendChild(menuOption);
-
-    const otherOption = document.createElement("option");
-    otherOption.value = "jine";
-    otherOption.id = "fb-field-other";
-    otherOption.textContent =
-      lang === "en"
-        ? "Other"
-        : "Jiné";
-
-    select.appendChild(otherOption);
-
-  } catch (error) {
-
-    console.error("Nepodařilo se načíst seznam hřišť:", error);
-
-  }
-}
-</script>
 <script>
 
   /* ============================================================
@@ -990,22 +913,16 @@ async function loadBattlefields() {
      INITIALIZE
      ============================================================ */
 
-  document.addEventListener(
-    "DOMContentLoaded",
-    () => {
+document.addEventListener("DOMContentLoaded", () => {
 
-      /*
-       * common.js už při načtení
-       * automaticky aplikuje uložené téma.
-       */
+  AM.applyTheme(AM.getTheme());
 
-AM.applyTheme(
-  AM.getTheme()
-);
+  applyLanguage();
 
-applyLanguage();
+  loadFeedbackFields();
 
-await loadBattlefields();
+});
+
 
     }
   );
