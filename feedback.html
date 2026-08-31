@@ -270,33 +270,9 @@
       Kterého hřiště / stránky se to týká (nepovinné)
     </label>
 
-    <select class="fb-select" id="fb-field">
-
-      <option value="" id="fb-field-empty">
-        — nevybráno —
-      </option>
-
-      <option value="dalov">
-        Dalov
-      </option>
-
-      <option value="doubrava">
-        Doubrava
-      </option>
-
-      <option value="mokra_horakov">
-        Mokrá Horákov
-      </option>
-
-      <option value="menu" id="fb-field-menu">
-        Menu / obecně
-      </option>
-
-      <option value="jine" id="fb-field-other">
-        Jiné
-      </option>
-
-    </select>
+   <select class="fb-select" id="fb-field">
+  <option value="" id="fb-field-empty">— nevybráno —</option>
+</select>
 
 
     <label
@@ -355,7 +331,85 @@
 
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+async function loadBattlefields() {
 
+  const select = document.getElementById("fb-field");
+
+  try {
+
+    const response = await fetch("menu.html");
+    const html = await response.text();
+
+    const doc = new DOMParser().parseFromString(html, "text/html");
+
+    const scripts = doc.querySelectorAll("script");
+
+    for (const script of scripts) {
+
+      if (!script.textContent.includes("const BATTLEFIELDS")) {
+        continue;
+      }
+
+      const match = script.textContent.match(
+        /const BATTLEFIELDS\s*=\s*(\[[\s\S]*?\]);/
+      );
+
+      if (!match) continue;
+
+      const BATTLEFIELDS = Function(
+        `"use strict"; return (${match[1]});`
+      )();
+
+      const lang = AM.getLang();
+
+      BATTLEFIELDS
+        .filter(f => f.status === "active")
+        .forEach(f => {
+
+          const option = document.createElement("option");
+
+          option.value = f.id;
+
+          option.textContent =
+            lang === "en"
+              ? f.nameEn
+              : f.name;
+
+          select.appendChild(option);
+
+        });
+
+      break;
+    }
+
+    const menuOption = document.createElement("option");
+    menuOption.value = "menu";
+    menuOption.id = "fb-field-menu";
+    menuOption.textContent =
+      lang === "en"
+        ? "Menu / general"
+        : "Menu / obecně";
+
+    select.appendChild(menuOption);
+
+    const otherOption = document.createElement("option");
+    otherOption.value = "jine";
+    otherOption.id = "fb-field-other";
+    otherOption.textContent =
+      lang === "en"
+        ? "Other"
+        : "Jiné";
+
+    select.appendChild(otherOption);
+
+  } catch (error) {
+
+    console.error("Nepodařilo se načíst seznam hřišť:", error);
+
+  }
+}
+</script>
 <script>
 
   /* ============================================================
@@ -945,11 +999,13 @@
        * automaticky aplikuje uložené téma.
        */
 
-      AM.applyTheme(
-        AM.getTheme()
-      );
+AM.applyTheme(
+  AM.getTheme()
+);
 
-      applyLanguage();
+applyLanguage();
+
+await loadBattlefields();
 
     }
   );
