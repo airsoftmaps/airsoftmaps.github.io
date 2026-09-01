@@ -545,6 +545,103 @@ html[data-theme="pubg"] .event-enter {
 html[data-theme="pubg"] .event-disclaimer {
   bottom: calc(42% - 28px);
 }
+   /* =========================================================
+   DARK — COMMAND CENTER
+   ========================================================= */
+
+html[data-theme="dark"] .am-event-stage {
+  background:
+    radial-gradient(
+      circle at 50% 45%,
+      rgba(255, 80, 20, .12),
+      transparent 45%
+    );
+}
+
+html[data-theme="dark"] .am-event-stage::before {
+  opacity: .65;
+  background-size: 38px 38px;
+}
+
+html[data-theme="dark"] .event-light {
+  width: 65vw;
+  height: 65vw;
+  max-width: 850px;
+  max-height: 850px;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(255, 90, 20, .22),
+      transparent 65%
+    );
+
+  filter: blur(90px);
+}
+
+html[data-theme="dark"] .event-title {
+  text-shadow:
+    0 0 25px var(--theme-glow),
+    0 0 80px rgba(255, 70, 20, .18);
+}
+
+html[data-theme="dark"] .event-loading {
+  width: min(520px, 80vw);
+}
+
+html[data-theme="dark"] .loading-bar {
+  height: 3px;
+}
+
+
+/* =========================================================
+   LIGHT — TECHNICAL FIELD
+   ========================================================= */
+
+html[data-theme="light"] .am-event-stage {
+  background:
+    radial-gradient(
+      circle at 50% 42%,
+      rgba(255, 120, 40, .12),
+      transparent 42%
+    ),
+    linear-gradient(
+      135deg,
+      rgba(0,0,0,.025),
+      transparent 45%,
+      rgba(0,0,0,.04)
+    );
+}
+
+html[data-theme="light"] .am-event-stage::before {
+  opacity: .35;
+  background-size: 50px 50px;
+}
+
+html[data-theme="light"] .event-light {
+  width: 60vw;
+  height: 60vw;
+  max-width: 750px;
+  max-height: 750px;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(255, 130, 50, .16),
+      transparent 65%
+    );
+
+  filter: blur(100px);
+}
+
+html[data-theme="light"] .event-title {
+  text-shadow:
+    0 2px 20px rgba(0,0,0,.12);
+}
+
+html[data-theme="light"] .loading-bar {
+  height: 3px;
+}
 </style>
 
 </head>
