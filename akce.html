@@ -864,6 +864,243 @@ html[data-theme="light"] .am-event-stage::after {
       rgba(0,0,0,.07) 100%
     );
 }
+   /* =========================================================
+   AIRSOFT AKCE — DARK / LIGHT TITLE ART
+   ========================================================= */
+
+.event-title-art {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 4;
+
+  width: min(900px, 90vw);
+  transform: translate(-50%, -50%);
+
+  text-align: center;
+  pointer-events: none;
+}
+
+.event-title-art__text {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  gap: .22em;
+
+  font-family: var(--font-display);
+  font-size: clamp(52px, 8vw, 120px);
+  line-height: .9;
+  letter-spacing: .025em;
+
+  animation: titleBreath 5s ease-in-out infinite;
+}
+
+.event-title-art__airsoft {
+  color: #e3261b;
+}
+
+.event-title-art__akce {
+  color: currentColor;
+}
+
+/* linky */
+.event-title-art__line {
+  position: absolute;
+  left: 50%;
+  width: 42%;
+  height: 1px;
+
+  transform: translateX(-50%);
+  opacity: .45;
+}
+
+.event-title-art__line--top {
+  top: -24px;
+}
+
+.event-title-art__line--bottom {
+  bottom: -24px;
+}
+
+/* =========================================================
+   DARK
+   ========================================================= */
+
+html[data-theme="dark"] .event-title-art {
+  color: #f1f1f1;
+}
+
+html[data-theme="dark"] .event-title-art__text {
+  text-shadow:
+    0 0 12px rgba(255,50,20,.65),
+    0 0 45px rgba(255,40,10,.28),
+    0 0 90px rgba(255,30,0,.14);
+}
+
+html[data-theme="dark"] .event-title-art__line {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255,55,25,.9),
+    transparent
+  );
+  box-shadow: 0 0 12px rgba(255,50,20,.45);
+}
+
+/* centrální aura */
+html[data-theme="dark"] .event-title-art::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+
+  width: 55%;
+  aspect-ratio: 1;
+
+  transform: translate(-50%, -50%);
+
+  background: radial-gradient(
+    circle,
+    rgba(255,55,20,.16),
+    rgba(255,30,10,.05) 35%,
+    transparent 70%
+  );
+
+  filter: blur(35px);
+  z-index: -1;
+
+  animation: darkAura 4s ease-in-out infinite;
+}
+
+/* scan */
+html[data-theme="dark"] .event-title-art__scan {
+  position: absolute;
+  left: 15%;
+  right: 15%;
+  top: 50%;
+
+  height: 1px;
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255,80,50,.8),
+    transparent
+  );
+
+  opacity: 0;
+  filter: blur(1px);
+
+  animation: titleScan 5s ease-in-out infinite;
+}
+
+
+/* =========================================================
+   LIGHT
+   ========================================================= */
+
+html[data-theme="light"] .event-title-art {
+  color: #171717;
+}
+
+html[data-theme="light"] .event-title-art__text {
+  text-shadow:
+    0 2px 12px rgba(0,0,0,.10);
+}
+
+html[data-theme="light"] .event-title-art__line {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(190,40,25,.45),
+    transparent
+  );
+}
+
+/* světelná aura */
+html[data-theme="light"] .event-title-art::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+
+  width: 65%;
+  aspect-ratio: 1;
+
+  transform: translate(-50%, -50%);
+
+  background: radial-gradient(
+    circle,
+    rgba(255,140,50,.18),
+    rgba(255,180,100,.07) 35%,
+    transparent 70%
+  );
+
+  filter: blur(45px);
+  z-index: -1;
+
+  animation: lightAura 7s ease-in-out infinite;
+}
+
+
+/* =========================================================
+   ANIMATIONS
+   ========================================================= */
+
+@keyframes titleBreath {
+  0%, 100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.018);
+  }
+}
+
+@keyframes darkAura {
+  0%, 100% {
+    opacity: .55;
+    transform: translate(-50%, -50%) scale(.9);
+  }
+
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.08);
+  }
+}
+
+@keyframes lightAura {
+  0%, 100% {
+    opacity: .55;
+    transform: translate(-50%, -50%) scale(.92);
+  }
+
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.08);
+  }
+}
+
+@keyframes titleScan {
+  0%, 35% {
+    transform: translateY(-55px);
+    opacity: 0;
+  }
+
+  45% {
+    opacity: .7;
+  }
+
+  65% {
+    transform: translateY(55px);
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
 </style>
 
 </head>
@@ -907,7 +1144,18 @@ html[data-theme="light"] .am-event-stage::after {
   <div class="event-wallpaper" id="event-wallpaper"></div>
 
   <div class="event-content">
+<div class="event-title-art" aria-hidden="true">
+  <div class="event-title-art__line event-title-art__line--top"></div>
 
+  <div class="event-title-art__text">
+    <span class="event-title-art__airsoft">AIRSOFT</span>
+    <span class="event-title-art__akce">AKCE</span>
+  </div>
+
+  <div class="event-title-art__line event-title-art__line--bottom"></div>
+
+  <div class="event-title-art__scan"></div>
+</div>
 
     <div class="event-kicker">
       <span class="event-kicker-line"></span>
