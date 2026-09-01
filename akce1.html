@@ -406,7 +406,28 @@ html[data-theme="fortnite"] .event-wallpaper {
   transform: translate(-50%, 0);
   pointer-events: auto;
 }
+.event-disclaimer {
+  position: absolute;
+  left: 50%;
+  bottom: calc(12% - 28px);
 
+  transform: translateX(-50%);
+
+  z-index: 20;
+
+  color: var(--muted-2);
+  font-family: var(--font-body);
+  font-size: 9px;
+  letter-spacing: .04em;
+  white-space: nowrap;
+
+  opacity: 0;
+  transition: opacity .7s ease;
+}
+
+.event-disclaimer.visible {
+  opacity: .75;
+}
 .event-enter:hover {
   background: var(--accent);
   color: var(--bg-0);
@@ -586,9 +607,13 @@ html[data-theme="light"] .event-logo {
   </div>
 
   <button class="event-enter" id="event-enter" type="button">
-    <span id="enter-text">VSTOUPIT DO AKCÍ</span>
-    <span>→</span>
-  </button>
+  <span id="enter-text">VSTOUPIT DO AKCÍ</span>
+  <span>→</span>
+</button>
+
+<div class="event-disclaimer" id="event-disclaimer">
+  Tlačítko tě přesměruje na web mapa-airsoft-akci.cz
+</div>
 
 </main>
 
@@ -685,7 +710,8 @@ const percent = document.getElementById("loading-percent");
 const loadingStatus = document.getElementById("loading-status");
 const wallpaper = document.getElementById("event-wallpaper");
 const enter = document.getElementById("event-enter");
-
+const disclaimer = document.getElementById("event-disclaimer");
+   
 let current = 0;
 
 const loadingTimer = setInterval(() => {
@@ -718,6 +744,7 @@ document.querySelector(".event-content").classList.add("loaded");
 document.getElementById("event-status").classList.add("loaded");
 wallpaper.classList.add("visible");
 enter.classList.add("visible");
+disclaimer.classList.add("visible");
 }, 500);
 
 return;
