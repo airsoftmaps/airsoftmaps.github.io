@@ -670,6 +670,200 @@ html[data-theme="light"] .loading-bar {
     background-position: center 70%;
   }
 }
+   /* =========================================================
+   DARK — CINEMATIC ATMOSPHERE
+   ========================================================= */
+
+html[data-theme="dark"] .am-event-stage {
+  position: relative;
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      ellipse at 50% 48%,
+      rgba(255, 70, 20, .11) 0%,
+      rgba(255, 40, 10, .035) 28%,
+      transparent 62%
+    ),
+    #080808;
+}
+
+/* jemná taktická mřížka */
+html[data-theme="dark"] .am-event-stage::before {
+  content: "";
+  position: absolute;
+  inset: -50%;
+  z-index: 0;
+  pointer-events: none;
+
+  background-image:
+    linear-gradient(
+      rgba(255,255,255,.025) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(255,255,255,.025) 1px,
+      transparent 1px
+    );
+
+  background-size: 42px 42px;
+
+  transform: rotate(-8deg);
+  animation: darkGridMove 22s linear infinite;
+}
+
+@keyframes darkGridMove {
+  from {
+    transform: rotate(-8deg) translate3d(0,0,0);
+  }
+
+  to {
+    transform: rotate(-8deg) translate3d(42px,42px,0);
+  }
+}
+
+/* centrální světlo */
+html[data-theme="dark"] .event-light {
+  width: 70vw;
+  height: 70vw;
+  max-width: 900px;
+  max-height: 900px;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(255, 80, 20, .20) 0%,
+      rgba(255, 60, 10, .08) 28%,
+      transparent 68%
+    );
+
+  filter: blur(90px);
+
+  animation: darkPulse 5s ease-in-out infinite;
+}
+
+@keyframes darkPulse {
+  0%, 100% {
+    opacity: .65;
+    transform: scale(.94);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.04);
+  }
+}
+
+/* lehká filmová viněta */
+html[data-theme="dark"] .am-event-stage::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      ellipse at center,
+      transparent 42%,
+      rgba(0,0,0,.55) 100%
+    );
+}
+   /* =========================================================
+   LIGHT — CLEAN CINEMATIC ATMOSPHERE
+   ========================================================= */
+
+html[data-theme="light"] .am-event-stage {
+  position: relative;
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      ellipse at 50% 45%,
+      rgba(255, 120, 40, .10),
+      transparent 55%
+    ),
+    #f4f4f2;
+}
+
+/* diagonální struktura */
+html[data-theme="light"] .am-event-stage::before {
+  content: "";
+  position: absolute;
+  inset: -50%;
+  z-index: 0;
+  pointer-events: none;
+
+  background:
+    repeating-linear-gradient(
+      -45deg,
+      transparent 0,
+      transparent 48px,
+      rgba(0,0,0,.025) 49px,
+      transparent 50px
+    );
+
+  animation: lightLines 28s linear infinite;
+}
+
+@keyframes lightLines {
+  from {
+    transform: translate3d(0,0,0);
+  }
+
+  to {
+    transform: translate3d(70px,70px,0);
+  }
+}
+
+/* měkké světlo */
+html[data-theme="light"] .event-light {
+  width: 65vw;
+  height: 65vw;
+  max-width: 850px;
+  max-height: 850px;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(255, 145, 60, .16),
+      rgba(255, 180, 100, .05) 35%,
+      transparent 70%
+    );
+
+  filter: blur(100px);
+
+  animation: lightBreath 7s ease-in-out infinite;
+}
+
+@keyframes lightBreath {
+  0%, 100% {
+    opacity: .65;
+    transform: scale(.96);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.04);
+  }
+}
+
+/* velmi jemná hloubka */
+html[data-theme="light"] .am-event-stage::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      ellipse at center,
+      transparent 50%,
+      rgba(0,0,0,.07) 100%
+    );
+}
 </style>
 
 </head>
