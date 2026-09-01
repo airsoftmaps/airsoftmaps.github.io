@@ -34,7 +34,7 @@
     <button id="btn-2d" class="active">2D</button>
     <button id="btn-3d">3D</button>
     <button class="am-locate-btn" id="floor-btn" style="margin-left:10px;">
-      <span class="dot"></span><span id="floor-label">1. patro</span>
+      <span class="dot"></span><span id="floor-label">Přízemí</span>
     </button>
   </div>
 </div>
@@ -53,108 +53,121 @@
 <script src="geo.js?v=3"></script>
 <script src="map-engine.js?v=6"></script>
 <script>
+  /* ====================================================================
+     FIELD DATA — DUTY ARENA (Přízemí & 1. patro)
+     Souřadnice namapované dle mřížky dutygrid.png
+     ==================================================================== */
+
   const FIELD_DATA_FLOOR1 = {
-    viewBoxFlat: "0 0 1000 1500",
+    viewBoxFlat: "0 0 500 900",
+
     boundary: [],
-    entrance: null,
+    entrance: { col: 2.0, row: 10.2, angle: 90 },
     roads: [],
     trees: [],
 
     zones: [
-      { color:"#32a852", label:"SAFE ZONE", labelEn:"SAFE ZONE", rect:[110, 1010, 200, 1290] },
-      { color:"#a88932", label:"A", labelEn:"A", rect:[560, 460, 700, 600] },
-      { color:"#a88932", label:"B", labelEn:"B", rect:[310, 560, 450, 700] },
-      { color:"#a88932", label:"C", labelEn:"C", rect:[360, 910, 450, 1050] },
-      { color:"#a88932", label:"WC", labelEn:"WC", rect:[560, 1310, 750, 1390] },
-      { color:"#ff0000", label:"Nehratelné", labelEn:"Unplayable", rect:[310, 210, 450, 350] },
-      { color:"#ff0000", label:"Nehratelné", labelEn:"Unplayable", rect:[560, 850, 750, 1150] },
-      { color:"#ff0000", label:"Nehratelné", labelEn:"Unplayable", rect:[560, 1160, 650, 1250] },
-      { color:"#ff0000", label:"Nehratelné", labelEn:"Unplayable", rect:[760, 1310, 790, 1390] }
+      { color:"#2f6bd6", label:"SAFE ZONE", labelEn:"SAFE ZONE", rect:[1.4, 9.0, 2.4, 11.5] },
+      { color:"#a88932", label:"Místnost A", labelEn:"Room A", rect:[4.9, 3.2, 6.2, 6.5] },
+      { color:"#a88932", label:"Místnost B", labelEn:"Room B", rect:[2.4, 3.2, 3.7, 5.5] },
+      { color:"#a88932", label:"Místnost C", labelEn:"Room C", rect:[3.7, 7.5, 4.9, 9.5] },
+      { color:"#32a852", label:"WC", labelEn:"WC", rect:[2.4, 12.5, 5.7, 13.5] },
+      
+      // Nehratelné místnosti (Červené)
+      { color:"#e63946", label:"Nehratelné", labelEn:"Unplayable", rect:[2.4, 2.0, 3.7, 3.2] },
+      { color:"#e63946", label:"Nehratelné", labelEn:"Unplayable", rect:[4.9, 9.0, 6.2, 11.5] },
+      { color:"#e63946", label:"Nehratelné", labelEn:"Unplayable", rect:[3.9, 11.5, 4.9, 12.5] },
+      { color:"#e63946", label:"Nehratelné", labelEn:"Unplayable", rect:[5.7, 12.5, 6.2, 13.5] }
     ],
 
     stairs: [
-      { id:"s1", toFloor:"floor2", label:"Schody", labelEn:"Stairs", rect:[400, 800, 450, 900] },
-      { id:"s2", toFloor:"floor2", label:"Schody", labelEn:"Stairs", rect:[250, 1000, 350, 1050] },
-      { id:"s3", toFloor:"floor2", label:"Schody", labelEn:"Stairs", rect:[450, 1050, 550, 1100] },
-      { id:"s4", toFloor:"floor2", label:"Schody", labelEn:"Stairs", rect:[550, 1250, 650, 1300] },
-      { id:"s5", toFloor:"floor2", label:"Schody", labelEn:"Stairs", rect:[700, 1150, 800, 1200] }
+      { id:"stairs1", toFloor:"floor2", label:"Schody", labelEn:"Stairs", rect:[3.8, 6.5, 4.8, 7.4] },
+      { id:"stairs2", toFloor:"floor2", label:"Schody", labelEn:"Stairs", rect:[2.5, 8.5, 3.6, 9.4] },
+      { id:"stairs3", toFloor:"floor2", label:"Schody", labelEn:"Stairs", rect:[3.8, 9.6, 4.8, 10.4] },
+      { id:"stairs4", toFloor:"floor2", label:"Schody", labelEn:"Stairs", rect:[3.9, 10.5, 4.8, 11.4] },
+      { id:"stairs5", toFloor:"floor2", label:"Schody", labelEn:"Stairs", rect:[5.0, 11.6, 6.1, 12.4] }
     ],
 
     walls: [
-      { rect: [200, 200, 800, 210] },
-      { rect: [200, 1390, 800, 1400] },
-      { rect: [200, 200, 210, 1000] },
-      { rect: [100, 1000, 200, 1010] },
-      { rect: [100, 1000, 110, 1300] },
-      { rect: [100, 1290, 200, 1300] },
-      { rect: [200, 1300, 210, 1400] },
-      { rect: [790, 200, 800, 1400] },
-      { rect: [300, 200, 310, 700] },
-      { rect: [450, 200, 460, 700] },
-      { rect: [550, 200, 560, 700] },
-      { rect: [300, 350, 450, 360] },
-      { rect: [300, 450, 450, 460] },
-      { rect: [300, 550, 450, 560] },
-      { rect: [550, 350, 700, 360] },
-      { rect: [550, 450, 700, 460] },
-      { rect: [550, 600, 700, 610] },
-      { rect: [550, 700, 700, 710] },
-      { rect: [200, 700, 300, 710] },
-      { rect: [450, 700, 550, 710] },
-      { rect: [300, 800, 350, 810] },
-      { rect: [450, 800, 550, 810] },
-      { rect: [350, 900, 450, 910] },
-      { rect: [350, 1050, 450, 1060] },
-      { rect: [350, 900, 360, 1100] },
-      { rect: [450, 900, 460, 1100] },
-      { rect: [200, 1300, 450, 1310] },
-      { rect: [550, 1300, 750, 1310] },
-      { rect: [550, 1150, 750, 1160] },
-      { rect: [550, 1150, 560, 1400] },
-      { rect: [650, 1150, 660, 1400] },
-      { rect: [750, 1300, 760, 1400] },
-      { rect: [750, 900, 760, 1100] }
+      // Obvodové zdi
+      { rect: [2.4, 0.95, 6.2, 1.05] },
+      { rect: [2.4, 13.45, 6.2, 13.55] },
+      { rect: [2.35, 1.0, 2.45, 9.0] },
+      { rect: [2.35, 11.5, 2.45, 13.5] },
+      { rect: [6.15, 1.0, 6.25, 13.5] },
+
+      // Safe Zone (přístavek vlevo)
+      { rect: [1.4, 8.95, 2.4, 9.05] },
+      { rect: [1.35, 9.0, 1.45, 11.5] },
+      { rect: [1.4, 11.45, 2.4, 11.55] },
+
+      // Vnitřní svislé zdi
+      { rect: [3.65, 1.0, 3.75, 3.2] },
+      { rect: [3.65, 3.2, 3.75, 5.5] },
+      { rect: [3.65, 7.5, 3.75, 9.5] },
+      { rect: [3.65, 10.0, 3.75, 12.5] },
+      { rect: [4.85, 1.0, 4.95, 2.0] },
+      { rect: [4.85, 3.2, 4.95, 6.5] },
+      { rect: [4.85, 9.0, 4.95, 11.5] },
+      { rect: [4.85, 11.5, 4.95, 13.5] },
+
+      // Vnitřní vodorovné zdi
+      { rect: [2.4, 1.95, 3.7, 2.05] },
+      { rect: [4.9, 1.95, 6.2, 2.05] },
+      { rect: [2.4, 3.15, 3.7, 3.25] },
+      { rect: [4.9, 3.15, 6.2, 3.25] },
+      { rect: [2.4, 4.15, 3.4, 4.25] },
+      { rect: [2.4, 5.45, 3.7, 5.55] },
+      { rect: [4.9, 6.45, 6.2, 6.55] },
+      { rect: [3.7, 7.45, 4.9, 7.55] },
+      { rect: [3.7, 9.45, 4.9, 9.55] },
+      { rect: [4.9, 8.95, 6.2, 9.05] },
+      { rect: [4.9, 11.45, 6.2, 11.55] },
+      { rect: [2.4, 12.45, 6.2, 12.55] },
+      { rect: [5.65, 12.5, 5.75, 13.5] }
     ],
+
     buildings: []
   };
 
   const FIELD_DATA_FLOOR2 = {
-    viewBoxFlat: "0 0 1000 1500",
+    viewBoxFlat: "0 0 500 900",
+
     boundary: [],
     entrance: null,
     roads: [],
     trees: [],
 
     zones: [
-      { color:"#a88932", label:"BALKÓN", labelEn:"BALCONY", rect:[360, 810, 450, 1090] },
-      { color:"#a88932", label:"WC", labelEn:"WC", rect:[560, 1310, 750, 1390] }
+      { color:"#a88932", label:"BALKÓN", labelEn:"BALCONY", rect:[3.7, 7.5, 4.9, 10.5] },
+      { color:"#32a852", label:"WC", labelEn:"WC", rect:[3.9, 12.5, 6.2, 13.5] }
     ],
 
     stairs: [
-      { id:"s1", toFloor:"floor1", label:"Schody", labelEn:"Stairs", rect:[400, 800, 450, 900], heightOffset: 0.82 },
-      { id:"s2", toFloor:"floor1", label:"Schody", labelEn:"Stairs", rect:[250, 1000, 350, 1050], heightOffset: 0.82 },
-      { id:"s3", toFloor:"floor1", label:"Schody", labelEn:"Stairs", rect:[450, 1050, 550, 1100], heightOffset: 0.82 },
-      { id:"s4", toFloor:"floor1", label:"Schody", labelEn:"Stairs", rect:[550, 1250, 650, 1300], heightOffset: 0.82 },
-      { id:"s4b", toFloor:"floor1", label:"Schody", labelEn:"Stairs", rect:[650, 1250, 750, 1300], heightOffset: 0.82 },
-      { id:"s5", toFloor:"floor1", label:"Schody", labelEn:"Stairs", rect:[700, 1150, 800, 1200], heightOffset: 0.82 }
+      { id:"stairs1", toFloor:"floor1", label:"Schody", labelEn:"Stairs", rect:[3.8, 6.5, 4.8, 7.4], heightOffset: 0.82 },
+      { id:"stairs2", toFloor:"floor1", label:"Schody", labelEn:"Stairs", rect:[2.5, 8.5, 3.6, 9.4], heightOffset: 0.82 },
+      { id:"stairs3", toFloor:"floor1", label:"Schody", labelEn:"Stairs", rect:[3.8, 9.6, 4.8, 10.4], heightOffset: 0.82 },
+      { id:"stairs4", toFloor:"floor1", label:"Schody", labelEn:"Stairs", rect:[3.9, 10.5, 4.8, 11.4], heightOffset: 0.82 },
+      { id:"stairs5", toFloor:"floor1", label:"Schody", labelEn:"Stairs", rect:[5.0, 11.6, 6.1, 12.4], heightOffset: 0.82 }
     ],
 
     walls: [
-      { rect: [350, 800, 360, 1100] },
-      { rect: [450, 800, 460, 1100] },
-      { rect: [350, 800, 450, 810] },
-      { rect: [350, 1100, 450, 1110] },
-      { rect: [450, 1050, 550, 1060] },
-      { rect: [550, 1050, 560, 1300] },
-      { rect: [550, 1150, 750, 1160] },
-      { rect: [750, 1150, 760, 1400] },
-      { rect: [550, 1300, 800, 1310] },
-      { rect: [550, 1400, 800, 1410] },
-      { rect: [550, 1300, 560, 1400] },
-      { rect: [790, 1250, 800, 1400] },
-      { rect: [750, 1250, 800, 1260] },
-      { rect: [650, 1300, 660, 1400] }
+      // Zdi Balkónu
+      { rect: [3.65, 7.5, 3.75, 11.5] },
+      { rect: [4.85, 7.5, 4.95, 11.5] },
+      { rect: [3.7, 7.45, 4.9, 7.55] },
+      { rect: [3.7, 11.45, 4.9, 11.55] },
+
+      // Zdi schodišťových chodbiček a WC v 1. patře
+      { rect: [2.4, 8.45, 3.7, 8.55] },
+      { rect: [2.4, 9.45, 3.7, 9.55] },
+      { rect: [2.35, 8.5, 2.45, 9.5] },
+      { rect: [4.85, 11.5, 4.95, 13.5] },
+      { rect: [6.15, 11.5, 6.25, 13.5] },
+      { rect: [3.7, 12.45, 6.2, 12.55] },
+      { rect: [3.7, 13.45, 6.2, 13.55] }
     ],
+
     buildings: []
   };
 
@@ -162,8 +175,8 @@
   const listEl = document.getElementById("poi-list");
 
   const LABELS = {
-    cs: { back:"Zpět na hřiště", sidebar:"Místa na hřišti", floor1:"1. patro", floor2:"Přízemí" },
-    en: { back:"Back to fields", sidebar:"Points of interest", floor1:"1st floor", floor2:"Ground floor" }
+    cs: { back:"Zpět na hřiště", sidebar:"Místa na hřišti", floor1:"Přízemí", floor2:"1. patro" },
+    en: { back:"Back to fields", sidebar:"Points of interest", floor1:"Ground floor", floor2:"1st floor" }
   };
 
   let currentFloor = "floor1";
@@ -220,5 +233,6 @@
     switchFloor(currentFloor === "floor1" ? "floor2" : "floor1");
   });
 </script>
+
 </body>
 </html>
