@@ -1112,6 +1112,25 @@ html[data-theme="light"] .event-title-art::before {
     opacity: 0;
   }
 }
+   /* =========================================================
+   AIRSOFT AKCE TITLE ART — THEME VISIBILITY
+   ========================================================= */
+
+/* Dark + Light mohou title zobrazit */
+html[data-theme="dark"] .event-title-art.visible,
+html[data-theme="light"] .event-title-art.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Wallpaper themes title schovají */
+html[data-theme="resident-evil"] .event-title-art,
+html[data-theme="pubg"] .event-title-art,
+html[data-theme="fortnite"] .event-title-art {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none;
+}
 </style>
 
 </head>
