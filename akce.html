@@ -650,17 +650,20 @@ html[data-theme="light"] .loading-bar {
    EVENT WALLPAPER — DEVICE SPECIFIC POSITIONING
    ========================================================= */
 
-/* MOBIL */
 @media (max-width: 760px) {
 
-  /* Resident Evil */
+  /* RESIDENT EVIL
+     Zmenšený obraz, aby bylo vidět více celé kompozice */
   html[data-theme="resident-evil"] .event-wallpaper {
-    background-position: center 100%;
+    background-size: auto 100%;
+    background-position: center center;
   }
 
-  /* Fortnite */
+  /* FORTNITE
+     Zmenšený obraz, aby se neusekával horní nápis */
   html[data-theme="fortnite"] .event-wallpaper {
-    background-position: center 0%;
+    background-size: auto 100%;
+    background-position: center center;
   }
 }
 
