@@ -863,13 +863,6 @@ html[data-theme="resident-evil"] .am-field-title {
   letter-spacing: .08em;
 }
 
-html[data-theme="resident-evil"] .am-field-title::before {
-  content: "BIOHAZARD // ";
-  color: #7d2424;
-  font-size: .55em;
-  letter-spacing: .15em;
-}
-
 
 /* ==========================================================================
    PUBG ATMOSPHERE
@@ -908,12 +901,6 @@ html[data-theme="pubg"] .am-field-title {
   letter-spacing: .07em;
 }
 
-html[data-theme="pubg"] .am-field-title::before {
-  content: "TACTICAL // ";
-  color: #807541;
-  font-size: .55em;
-  letter-spacing: .14em;
-}
 
 
 /* ==========================================================================
