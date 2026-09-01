@@ -652,19 +652,13 @@ html[data-theme="light"] .loading-bar {
 
 @media (max-width: 760px) {
 
-  /* RESIDENT EVIL
-     Zmenšený obraz, aby bylo vidět více celé kompozice */
-  html[data-theme="resident-evil"] .event-wallpaper {
-    background-size: auto 100%;
+  html[data-theme="resident-evil"] .event-wallpaper,
+  html[data-theme="fortnite"] .event-wallpaper {
+    background-size: 100% auto;
     background-position: center center;
+    background-repeat: no-repeat;
   }
 
-  /* FORTNITE
-     Zmenšený obraz, aby se neusekával horní nápis */
-  html[data-theme="fortnite"] .event-wallpaper {
-    background-size: auto 100%;
-    background-position: center center;
-  }
 }
 
 
