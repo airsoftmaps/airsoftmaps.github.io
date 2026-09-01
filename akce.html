@@ -875,12 +875,23 @@ html[data-theme="light"] .am-event-stage::after {
   z-index: 4;
 
   width: min(900px, 90vw);
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) scale(.96);
 
   text-align: center;
   pointer-events: none;
-}
 
+  opacity: 0;
+  visibility: hidden;
+
+  transition:
+    opacity .9s ease,
+    transform 1s cubic-bezier(.16,1,.3,1);
+}
+.event-title-art.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, -50%) scale(1);
+}
 .event-title-art__text {
   position: relative;
   display: flex;
@@ -1144,18 +1155,6 @@ html[data-theme="light"] .event-title-art::before {
   <div class="event-wallpaper" id="event-wallpaper"></div>
 
   <div class="event-content">
-<div class="event-title-art" aria-hidden="true">
-  <div class="event-title-art__line event-title-art__line--top"></div>
-
-  <div class="event-title-art__text">
-    <span class="event-title-art__airsoft">AIRSOFT</span>
-    <span class="event-title-art__akce">AKCE</span>
-  </div>
-
-  <div class="event-title-art__line event-title-art__line--bottom"></div>
-
-  <div class="event-title-art__scan"></div>
-</div>
 
     <div class="event-kicker">
       <span class="event-kicker-line"></span>
@@ -1180,7 +1179,18 @@ html[data-theme="light"] .event-title-art::before {
     </div>
 
   </div>
+<div class="event-title-art" aria-hidden="true">
+  <div class="event-title-art__line event-title-art__line--top"></div>
 
+  <div class="event-title-art__text">
+    <span class="event-title-art__airsoft">AIRSOFT</span>
+    <span class="event-title-art__akce">AKCE</span>
+  </div>
+
+  <div class="event-title-art__line event-title-art__line--bottom"></div>
+
+  <div class="event-title-art__scan"></div>
+</div>
   <button class="event-enter" id="event-enter" type="button">
   <span id="enter-text">VSTOUPIT DO AKCÍ</span>
   <span>→</span>
@@ -1286,6 +1296,7 @@ const loadingStatus = document.getElementById("loading-status");
 const wallpaper = document.getElementById("event-wallpaper");
 const enter = document.getElementById("event-enter");
 const disclaimer = document.getElementById("event-disclaimer");
+const titleArt = document.querySelector(".event-title-art");
    
 let current = 0;
 
@@ -1318,6 +1329,7 @@ setTimeout(() => {
 document.querySelector(".event-content").classList.add("loaded");
 document.getElementById("event-status").classList.add("loaded");
 wallpaper.classList.add("visible");
+titleArt.classList.add("visible");
 enter.classList.add("visible");
 disclaimer.classList.add("visible");
 }, 500);
