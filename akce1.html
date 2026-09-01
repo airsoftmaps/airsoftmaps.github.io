@@ -155,18 +155,80 @@ html[data-theme="light"] {
   50%      { opacity: 1;   transform: scale(1.08); }
 }
 
+/* ---------------------------------------------------------
+   EVENT WALLPAPER
+   --------------------------------------------------------- */
 
+.event-wallpaper {
+  position: absolute;
+  inset: 0;
+
+  z-index: 1;
+
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+
+  opacity: 0;
+  pointer-events: none;
+
+  transition: opacity .8s ease;
+}
+
+.event-wallpaper.visible {
+  opacity: 1;
+}
+
+/* Dark + Light = bez wallpaperu */
+
+html[data-theme="dark"] .event-wallpaper,
+html[data-theme="light"] .event-wallpaper {
+  display: none;
+}
+
+/* Tematické wallpapery */
+
+html[data-theme="resident-evil"] .event-wallpaper {
+  background-image: url("REWAL.jpg");
+}
+
+html[data-theme="pubg"] .event-wallpaper {
+  background-image: url("PUBGWAL.jpg");
+}
+
+html[data-theme="fortnite"] .event-wallpaper {
+  background-image: url("FORWAL.jpg");
+}
+
+/* Jemný overlay pro lepší čitelnost tlačítka */
+
+.event-wallpaper::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  background: rgba(0,0,0,.18);
+}
 /* ---------------------------------------------------------
    CONTENT
    --------------------------------------------------------- */
 
 .event-content {
+     transition: opacity .7s ease, transform .7s ease;
   position: relative;
   width: min(850px, 90vw);
   text-align: center;
   z-index: 5;
 }
-
+.event-content.loaded {
+  opacity: 0;
+  transform: scale(.96);
+  pointer-events: none;
+}
+   .event-status.loaded {
+  opacity: 0;
+  pointer-events: none;
+}
 .event-logo {
   width: 82px;
   height: 82px;
@@ -299,13 +361,18 @@ html[data-theme="light"] {
 }
 
 .event-enter {
+  position: absolute;
+  left: 50%;
+  bottom: 12%;
+
+  z-index: 20;
   display: inline-flex;
   align-items: center;
   justify-content: center;
 
+
   min-width: 250px;
 
-  margin-top: 34px;
 
   padding: 15px 28px;
 
@@ -324,7 +391,7 @@ html[data-theme="light"] {
 
   opacity: 0;
 
-  transform: translateY(15px);
+ transform: translate(-50%, 15px);
 
   pointer-events: none;
 
@@ -336,7 +403,7 @@ html[data-theme="light"] {
 
 .event-enter.visible {
   opacity: 1;
-  transform: translateY(0);
+  transform: translate(-50%, 0);
   pointer-events: auto;
 }
 
@@ -489,9 +556,10 @@ html[data-theme="light"] .event-logo {
 
   <div class="event-light"></div>
 
+  <div class="event-wallpaper" id="event-wallpaper"></div>
+
   <div class="event-content">
 
-    <img class="event-logo" src="loga/tmavekulate.png" alt="Airsoft Maps">
 
     <div class="event-kicker">
       <span class="event-kicker-line"></span>
@@ -515,12 +583,12 @@ html[data-theme="light"] .event-logo {
       </div>
     </div>
 
-    <button class="event-enter" id="event-enter" type="button">
-      <span id="enter-text">VSTOUPIT DO AKCÍ</span>
-      <span>→</span>
-    </button>
-
   </div>
+
+  <button class="event-enter" id="event-enter" type="button">
+    <span id="enter-text">VSTOUPIT DO AKCÍ</span>
+    <span>→</span>
+  </button>
 
 </main>
 
@@ -615,6 +683,7 @@ AM.wireLangSwitch((lang) => {
 const progress = document.getElementById("loading-progress");
 const percent = document.getElementById("loading-percent");
 const loadingStatus = document.getElementById("loading-status");
+const wallpaper = document.getElementById("event-wallpaper");
 const enter = document.getElementById("event-enter");
 
 let current = 0;
@@ -641,12 +710,17 @@ const loadingTimer = setInterval(() => {
     progress.style.width = "100%";
     percent.textContent = "100";
 
-    loadingStatus.dataset.done = "true";
-    loadingStatus.textContent = t.ready;
+loadingStatus.dataset.done = "true";
+loadingStatus.textContent = t.ready;
 
-    enter.classList.add("visible");
+setTimeout(() => {
+document.querySelector(".event-content").classList.add("loaded");
+document.getElementById("event-status").classList.add("loaded");
+wallpaper.classList.add("visible");
+enter.classList.add("visible");
+}, 500);
 
-    return;
+return;
   }
 
   progress.style.width = current + "%";
