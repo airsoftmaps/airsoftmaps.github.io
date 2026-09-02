@@ -34,7 +34,7 @@
     <button id="btn-2d" class="active">2D</button>
     <button id="btn-3d">3D</button>
     <button class="am-locate-btn" id="floor-btn" style="margin-left:10px;">
-      <span class="dot"></span><span id="floor-label">Přízemí</span>
+      <span class="dot"></span><span id="floor-label">1. patro</span>
     </button>
   </div>
 </div>
@@ -51,204 +51,216 @@
 
 <script src="common.js?v=3"></script>
 <script src="geo.js?v=3"></script>
-<script src="map-engine.js?v=6"></script>
+<script src="map-engine.js?v=9"></script>
 <script>
   /* ====================================================================
-     FIELD DATA — DUTY ARENA
-
-     Reference: dutygrid.png
-     - levá černá mapa = PŘÍZEMÍ
-     - pravá černá mapa = 1. PATRO
-     - šedá / téměř neviditelná část není součást mapy
-     - červené místnosti = NEHRATELNÉ
-     - modré šipky = SCHODY
-     - čísla 1–5 z plánku nejsou zakreslena
-
-     Obě podlaží jsou převedena do stejného lokálního souřadnicového
-     systému, aby na sebe schody v 2D/3D správně navazovaly.
+     FIELD DATA — DUTY ARENA (2 podlaží: přízemí + 1. patro)
+     Zdi a nehratelné (červené) místnosti vytažené automaticky z pixelů
+     podkladu (dutygrid.png), měřítko 57 px = 1 grid jednotka, počátek
+     (0,0) = levý horní roh obrázku.
+     1. patro sdílí stejné měřítko/počátek jako přízemí (posunuto o
+     zjištěný offset mezi oběma nákresy), takže schodiště na sebe
+     vzájemně navazují ve správné pozici. Na 1. patře je u každého
+     schodiště zobrazen jen nejvyšší schod (zarovnaný s podlahou),
+     na přízemí celé schodišťové rameno.
+     Bez GPS lokalizace — jen 2D/3D a přepínač podlaží.
      ==================================================================== */
 
-  const FIELD_DATA_FLOOR1 = {
-    viewBoxFlat: "0 0 1000 1500",
+  const FIELD_DATA_PRIZEMI = {
+    viewBoxFlat: "0 0 850 1550",
+
     boundary: [],
-    entrance: null,
+    entrance: { col: 2.05, row: 11.15, angle: 0 },
     roads: [],
     trees: [],
 
-    zones: [
-      { color:"#32a852", label:"SAFE ZONE", labelEn:"SAFE ZONE", rect:[80, 1010, 210, 1400] },
-      { color:"#a88932", label:"A", labelEn:"A", rect:[536, 284, 683, 560] },
-      { color:"#a88932", label:"B", labelEn:"B", rect:[325, 418, 466, 560] },
-      { color:"#a88932", label:"C", labelEn:"C", rect:[356, 856, 446, 1046] },
-      { color:"#a88932", label:"WC", labelEn:"WC", rect:[529, 1298, 726, 1400] },
-
-      { color:"#ff0000", label:"Nehratelné", labelEn:"Unplayable", rect:[326, 284, 466, 374] },
-      { color:"#ff0000", label:"Nehratelné", labelEn:"Unplayable", rect:[529, 856, 683, 1046] },
-      { color:"#ff0000", label:"Nehratelné", labelEn:"Unplayable", rect:[529, 1124, 615, 1219] },
-      { color:"#ff0000", label:"Nehratelné", labelEn:"Unplayable", rect:[726, 1301, 800, 1400] }
-    ],
-
     stairs: [
-      { id:"s1", toFloor:"floor2", label:"Schody", labelEn:"Stairs", rect:[400, 800, 450, 900] },
-      { id:"s2", toFloor:"floor2", label:"Schody", labelEn:"Stairs", rect:[250, 1000, 350, 1050] },
-      { id:"s3", toFloor:"floor2", label:"Schody", labelEn:"Stairs", rect:[450, 1050, 550, 1100] },
-      { id:"s4", toFloor:"floor2", label:"Schody", labelEn:"Stairs", rect:[550, 1250, 650, 1300] },
-      { id:"s5", toFloor:"floor2", label:"Schody", labelEn:"Stairs", rect:[700, 1150, 800, 1200] }
+      { id:"stairsA", toFloor:"patro", label:"Schody", labelEn:"Stairs", rect:[3.6, 7.95, 4.05, 8.9] },
+      { id:"stairsB", toFloor:"patro", label:"Schody", labelEn:"Stairs", rect:[2.75, 10.15, 5.15, 10.9] },
+      { id:"stairsC", toFloor:"patro", label:"Schody", labelEn:"Stairs", rect:[5.15, 12.45, 6.15, 13.15] },
+      { id:"stairsD", toFloor:"patro", label:"Schody", labelEn:"Stairs", rect:[6.85, 11.2, 7.85, 11.75] }
     ],
 
+    // Zdi — automaticky extrahované z pixelové mapy plánku (95 segmentů)
     walls: [
-      { rect: [200, 200, 800, 210] },
-      { rect: [200, 1390, 800, 1400] },
-      { rect: [200, 200, 210, 1000] },
-      { rect: [100, 1000, 200, 1010] },
-      { rect: [100, 1000, 110, 1300] },
-      { rect: [100, 1290, 200, 1300] },
-      { rect: [200, 1300, 210, 1400] },
-      { rect: [790, 200, 800, 1400] },
-      { rect: [300, 200, 310, 700] },
-      { rect: [450, 200, 460, 700] },
-      { rect: [550, 200, 560, 700] },
-      { rect: [300, 350, 450, 360] },
-      { rect: [300, 450, 450, 460] },
-      { rect: [300, 550, 450, 560] },
-      { rect: [550, 350, 700, 360] },
-      { rect: [550, 450, 700, 460] },
-      { rect: [550, 600, 700, 610] },
-      { rect: [550, 700, 700, 710] },
-      { rect: [200, 700, 300, 710] },
-      { rect: [450, 700, 550, 710] },
-      { rect: [300, 800, 350, 810] },
-      { rect: [450, 800, 550, 810] },
-      { rect: [350, 900, 450, 910] },
-      { rect: [350, 1050, 450, 1060] },
-      { rect: [350, 900, 360, 1100] },
-      { rect: [450, 900, 460, 1100] },
-      { rect: [200, 1300, 450, 1310] },
-      { rect: [550, 1300, 750, 1310] },
-      { rect: [550, 1150, 750, 1160] },
-      { rect: [550, 1150, 560, 1400] },
-      { rect: [650, 1150, 660, 1400] },
-      { rect: [750, 1300, 760, 1400] },
-      { rect: [750, 900, 760, 1100] }
+      { rect: [0.825, 10.386, 0.947, 10.842] },
+      { rect: [0.825, 10.912, 0.842, 11.842] },
+      { rect: [0.825, 11.912, 0.842, 12.842] },
+      { rect: [0.825, 12.912, 0.842, 13.842] },
+      { rect: [0.825, 13.912, 0.947, 14.386] },
+      { rect: [1.018, 10.386, 1.947, 10.421] },
+      { rect: [1.018, 14.368, 1.947, 14.386] },
+      { rect: [2.018, 9.912, 2.088, 10.842] },
+      { rect: [2.018, 14.368, 2.947, 14.386] },
+      { rect: [2.053, 2.035, 2.947, 2.895] },
+      { rect: [2.053, 2.965, 2.088, 3.912] },
+      { rect: [2.053, 3.982, 2.088, 4.912] },
+      { rect: [2.053, 4.982, 2.088, 5.912] },
+      { rect: [2.053, 5.982, 2.088, 6.895] },
+      { rect: [2.053, 6.965, 2.088, 7.895] },
+      { rect: [2.053, 7.965, 2.088, 8.895] },
+      { rect: [2.053, 8.965, 2.088, 9.842] },
+      { rect: [2.07, 10.912, 2.088, 11.842] },
+      { rect: [2.07, 11.912, 2.088, 12.491] },
+      { rect: [3.018, 2.035, 3.965, 2.053] },
+      { rect: [3.018, 14.368, 3.965, 14.386] },
+      { rect: [3.193, 2.895, 3.965, 2.895] },
+      { rect: [3.193, 2.965, 3.965, 3.912] },
+      { rect: [3.193, 3.982, 3.965, 4.912] },
+      { rect: [3.193, 4.982, 3.965, 5.912] },
+      { rect: [3.193, 5.982, 3.211, 6.211] },
+      { rect: [3.193, 6.579, 3.211, 6.825] },
+      { rect: [3.193, 7.246, 3.211, 7.895] },
+      { rect: [3.193, 7.965, 3.667, 8.895] },
+      { rect: [3.491, 8.965, 3.526, 9.439] },
+      { rect: [3.491, 9.737, 3.526, 9.842] },
+      { rect: [3.491, 9.912, 3.965, 10.193] },
+      { rect: [3.491, 10.526, 3.526, 10.842] },
+      { rect: [3.491, 10.912, 3.965, 11.842] },
+      { rect: [3.491, 11.912, 3.965, 12.491] },
+      { rect: [4.035, 2.035, 4.965, 2.053] },
+      { rect: [4.035, 2.895, 4.561, 2.895] },
+      { rect: [4.035, 2.965, 4.579, 3.895] },
+      { rect: [4.035, 4.228, 4.579, 4.421] },
+      { rect: [4.035, 4.982, 4.579, 5.737] },
+      { rect: [4.035, 8.789, 4.404, 8.877] },
+      { rect: [4.035, 9.912, 4.404, 10.544] },
+      { rect: [4.035, 11.246, 4.404, 11.737] },
+      { rect: [4.035, 12.018, 4.404, 12.491] },
+      { rect: [4.035, 13.912, 4.965, 14.386] },
+      { rect: [4.281, 13.333, 4.614, 13.825] },
+      { rect: [4.386, 8.965, 4.404, 9.158] },
+      { rect: [4.386, 9.456, 4.404, 9.825] },
+      { rect: [4.386, 10.912, 4.404, 11.0] },
+      { rect: [4.544, 4.702, 4.579, 4.895] },
+      { rect: [4.947, 13.333, 4.965, 13.351] },
+      { rect: [5.035, 2.035, 5.965, 2.053] },
+      { rect: [5.035, 13.333, 5.614, 13.825] },
+      { rect: [5.035, 13.912, 5.965, 14.386] },
+      { rect: [5.193, 8.789, 5.965, 8.877] },
+      { rect: [5.193, 8.965, 5.228, 9.825] },
+      { rect: [5.193, 9.912, 5.965, 10.719] },
+      { rect: [5.211, 11.14, 5.965, 11.825] },
+      { rect: [5.211, 11.912, 5.965, 12.509] },
+      { rect: [5.263, 2.965, 5.965, 3.895] },
+      { rect: [5.263, 3.982, 5.298, 4.895] },
+      { rect: [5.263, 4.982, 5.298, 5.193] },
+      { rect: [5.263, 5.579, 5.965, 5.719] },
+      { rect: [5.93, 11.14, 5.965, 11.175] },
+      { rect: [5.947, 13.456, 5.965, 13.491] },
+      { rect: [6.035, 2.035, 6.947, 2.053] },
+      { rect: [6.035, 2.965, 6.702, 3.509] },
+      { rect: [6.035, 3.789, 6.702, 3.895] },
+      { rect: [6.035, 4.982, 6.702, 5.895] },
+      { rect: [6.035, 7.965, 6.702, 8.877] },
+      { rect: [6.035, 9.912, 6.702, 10.719] },
+      { rect: [6.035, 11.14, 6.509, 11.825] },
+      { rect: [6.035, 11.912, 6.211, 12.509] },
+      { rect: [6.035, 13.456, 6.947, 13.491] },
+      { rect: [6.035, 14.351, 6.947, 14.386] },
+      { rect: [6.526, 11.912, 6.947, 12.491] },
+      { rect: [6.667, 3.982, 6.702, 4.895] },
+      { rect: [6.667, 5.982, 6.702, 6.877] },
+      { rect: [6.667, 6.965, 6.702, 7.877] },
+      { rect: [6.667, 8.965, 6.702, 9.825] },
+      { rect: [6.772, 11.14, 6.912, 11.316] },
+      { rect: [6.895, 11.632, 6.912, 11.825] },
+      { rect: [7.018, 2.035, 7.86, 2.877] },
+      { rect: [7.018, 11.912, 7.86, 12.825] },
+      { rect: [7.018, 12.912, 7.86, 13.825] },
+      { rect: [7.018, 13.912, 7.86, 14.386] },
+      { rect: [7.825, 2.965, 7.86, 3.895] },
+      { rect: [7.825, 3.982, 7.86, 4.895] },
+      { rect: [7.825, 4.982, 7.86, 5.895] },
+      { rect: [7.825, 5.982, 7.86, 6.877] },
+      { rect: [7.825, 6.965, 7.86, 7.877] },
+      { rect: [7.825, 7.965, 7.86, 8.877] },
+      { rect: [7.825, 8.965, 7.86, 9.825] },
+      { rect: [7.825, 9.912, 7.86, 10.825] },
+      { rect: [7.825, 10.912, 7.86, 11.825] },
     ],
-    buildings: []
-  };
 
-  /*
-     The first-floor reference is the black drawing on the RIGHT side
-     of dutygrid.png. The original tracing used a different coordinate
-     frame. It is normalized here into the exact same 200..800 / 200..1400
-     frame as the ground floor, so the floor switch does not change scale.
-  */
-  const FLOOR2_SOURCE = {
-    xMin: 0.656,
-    xMax: 11.489,
-    yMin: 0.266,
-    yMax: 9.113,
+    buildings: [
+      { id:"safezone", code:"SZ", name:"Safe zone", nameEn:"Safe zone", rect:[0.75, 9.9, 2.05, 14.4], height:0.3 },
+      { id:"roomA", code:"A", name:"Místnost A", nameEn:"Room A", rect:[5.0, 2.0, 7.9, 8.0], height:0.3 },
+      { id:"roomB", code:"B", name:"Místnost B", nameEn:"Room B", rect:[3.15, 3.9, 4.6, 5.9], height:0.3 },
+      { id:"roomC", code:"C", name:"Místnost C", nameEn:"Room C", rect:[3.15, 7.9, 4.6, 10.2], height:0.3 },
+      { id:"wc", code:"WC", name:"WC", nameEn:"Restroom", rect:[4.0, 13.3, 7.9, 14.4], color:"#adadad", height:0.3 },
 
-    stairs: [
-      { id:"s1", toFloor:"floor1", label:"Schody", labelEn:"Stairs", rect:[9.149, 0.461, 9.947, 1.099] },
-      { id:"s2", toFloor:"floor1", label:"Schody", labelEn:"Stairs", rect:[7.128, 7.429, 10.018, 9.113] }
-    ],
-
-    walls: [
-      [1.046,0.266,2.004,0.443],[2.039,0.266,3.014,0.443],[5.071,0.266,6.028,0.443],
-      [7.092,0.266,8.032,0.443],[8.085,0.266,9.025,0.443],[9.078,0.266,10.053,0.443],[10.089,0.266,11.046,0.443],
-      [3.067,0.266,4.007,0.975],[4.06,0.266,5.035,0.975],[6.064,0.266,7.039,0.975],[11.082,0.266,11.489,0.975],
-      [4.415,1.028,4.61,1.383],[6.277,1.028,6.472,1.383],[3.67,1.028,3.865,1.418],[11.294,1.028,11.489,1.968],
-      [0.656,1.259,1.011,1.968],[6.082,1.773,7.039,1.968],[4.326,1.844,5.035,1.968],[3.067,1.862,3.883,1.968],
-      [1.046,1.897,2.004,1.968],[2.057,1.897,3.014,1.968],[5.071,1.897,6.028,1.968],[7.092,1.897,7.535,1.968],
-      [8.085,1.897,9.025,1.968],[1.046,2.021,2.004,2.074],[2.057,2.021,3.014,2.074],[5.071,2.021,6.028,2.074],
-      [7.092,2.021,7.535,2.074],[8.085,2.021,9.025,2.074],[9.078,2.66,10.053,2.837],[10.089,2.66,11.046,2.837],
-      [0.656,2.021,1.011,2.979],[3.067,2.021,3.883,2.979],[4.326,2.021,5.035,2.979],[6.082,2.021,7.039,2.979],
-      [11.099,2.021,11.489,2.979],[6.277,3.032,6.472,3.067],[3.387,3.032,3.901,3.936],[4.309,3.032,5.035,3.936],
-      [6.082,3.475,7.039,3.936],[1.064,3.759,2.004,3.936],[2.057,3.759,2.979,3.936],[5.089,3.759,6.028,3.936],
-      [7.092,3.759,7.606,3.936],[8.085,3.759,8.369,3.936],[8.83,3.759,9.025,3.936],[0.656,3.032,1.011,3.972],
-      [11.294,3.032,11.489,3.972],[1.525,4.663,2.004,4.84],[2.057,4.663,3.014,4.84],[4.486,4.663,5.035,4.84],
-      [5.089,4.663,6.028,4.84],[6.082,4.663,7.039,4.84],[7.092,4.663,7.5,4.84],[7.837,4.663,8.032,4.84],
-      [8.085,4.663,8.528,4.84],[9.078,4.663,9.539,4.84],[9.84,4.663,10.053,4.84],[10.106,4.663,10.674,4.84],
-      [0.656,4.025,1.011,5.0],[11.099,4.025,11.489,5.0],[3.422,4.663,4.007,5.0],[0.656,5.053,0.851,5.993],
-      [3.67,5.053,3.865,5.993],[11.099,5.053,11.489,5.993],[7.092,5.922,8.032,5.993],[8.085,5.922,9.025,5.993],
-      [9.078,5.922,10.053,5.993],[10.106,5.922,11.046,5.993],[7.092,6.046,8.032,6.099],[8.085,6.046,9.025,6.099],
-      [9.078,6.046,10.053,6.099],[10.106,6.046,11.046,6.099],[11.099,6.046,11.489,6.099],[3.67,6.046,3.865,6.897],
-      [0.656,6.046,0.851,7.004],[0.656,7.057,0.851,7.996],[3.67,7.411,3.865,7.996],[0.656,8.05,1.011,9.007],
-      [3.067,8.05,4.025,9.007],[1.064,8.936,2.004,9.007],[2.057,8.936,3.014,9.007],[4.06,8.936,5.035,9.007],
-      [5.089,8.936,6.028,9.007],[6.082,8.936,7.039,9.007],[0.656,9.06,1.011,9.113],[1.064,9.06,2.004,9.113],
-      [2.057,9.06,3.014,9.113],[3.067,9.06,4.025,9.113],[4.06,9.06,5.035,9.113],[5.089,9.06,6.028,9.113],
-      [6.082,9.06,7.039,9.113],[0.656,2.021,0.833,2.996],[0.656,5.053,0.833,6.011],[0.656,6.046,0.833,7.021],
-      [0.656,7.057,0.833,8.014],[0.656,8.05,0.833,9.025],[0.656,1.259,0.887,1.986],[0.656,3.032,0.993,3.989],
-      [0.656,4.025,0.993,5.018],[0.904,0.266,0.993,0.993],[0.904,1.028,0.993,1.454],[1.046,1.028,1.082,1.454],
-      [1.046,0.266,1.986,0.993],[1.064,3.759,1.986,3.954],[1.525,4.663,1.986,4.858],[2.057,3.759,2.961,3.954],
-      [2.039,0.266,2.996,0.461],[2.057,4.663,2.996,4.858],[3.67,1.028,3.848,1.436],[3.67,2.021,3.848,2.996],
-      [3.67,5.053,3.848,6.011],[3.67,6.046,3.848,6.915],[3.67,7.411,3.848,8.014],[3.67,8.05,3.848,9.025],
-      [3.387,3.032,3.883,3.954],[3.067,0.266,3.989,0.993],[3.422,4.663,3.989,5.018],[4.06,4.663,4.06,4.858],
-      [4.415,1.028,4.592,1.401],[4.415,2.021,4.592,2.996],[4.06,0.266,5.018,0.993],[4.309,3.032,5.018,3.954],
-      [4.486,4.663,5.018,4.858],[5.071,0.266,6.011,0.461],[5.089,3.759,6.011,3.954],[5.089,4.663,6.011,4.858],
-      [6.277,1.028,6.454,1.401],[6.277,1.773,6.454,1.986],[6.277,2.021,6.454,2.996],[6.064,0.266,7.021,0.993],
-      [6.082,3.475,7.021,3.954],[6.082,4.663,7.021,5.018],[6.933,6.046,7.021,7.021],[6.933,7.057,7.021,7.624],
-      [6.933,8.05,7.021,9.025],[6.986,5.053,7.021,6.011],[7.092,6.046,7.11,7.021],[7.092,7.057,7.11,7.624],
-      [7.092,8.05,7.11,9.025],[7.092,5.053,7.163,6.011],[7.092,4.663,7.482,5.018],[7.092,3.759,7.589,3.954],
-      [7.092,0.266,8.014,0.461],[7.837,4.663,8.014,4.858],[7.961,3.032,8.014,3.954],[8.014,2.021,8.014,2.996],
-      [8.085,2.021,8.191,2.996],[8.085,3.032,8.351,3.954],[8.085,4.663,8.511,4.858],[8.085,0.266,9.007,0.993],
-      [8.83,3.032,9.007,3.989],[8.883,4.025,9.007,4.858],[8.936,1.418,9.007,1.986],[8.936,2.021,9.007,2.216],
-      [8.936,2.553,9.007,2.996],[9.078,1.418,9.113,1.986],[9.078,2.021,9.113,2.216],[9.078,3.032,9.113,3.989],
-      [9.078,4.025,9.521,4.858],[9.078,0.266,10.035,0.993],[9.078,2.553,10.035,2.996],[9.84,4.663,10.035,4.858],
-      [9.947,1.401,10.035,1.95],[10.089,1.401,10.124,1.95],[10.106,4.663,10.656,4.858],[10.089,0.266,11.028,0.993],
-      [10.089,2.66,11.028,2.855],[10.957,4.663,11.028,4.858],[11.082,0.266,11.472,0.993],[11.099,2.021,11.472,2.996],
-      [11.099,4.025,11.472,5.018],[11.294,1.028,11.472,1.986],[11.294,3.032,11.472,3.989],[11.294,5.053,11.472,6.011]
+      { id:"nehratelna1", code:"X", name:"Nehratelná místnost", nameEn:"Non-playable room", rect:[3.246, 2.947, 4.526, 3.772], color:"#ff0000", height:0.35 },
+      { id:"nehratelna2", code:"X", name:"Nehratelná místnost", nameEn:"Non-playable room", rect:[5.246, 8.842, 6.649, 10.667], color:"#ff0000", height:0.35 },
+      { id:"nehratelna3", code:"X", name:"Nehratelná místnost", nameEn:"Non-playable room", rect:[5.263, 11.579, 6.018, 12.456], color:"#ff0000", height:0.35 },
+      { id:"nehratelna4", code:"X", name:"Nehratelná místnost", nameEn:"Non-playable room", rect:[7.158, 13.386, 7.825, 14.351], color:"#ff0000", height:0.35 }
     ]
   };
 
-  function normalizeFloor2Rect(rect) {
-    const [x1,y1,x2,y2] = rect;
-    const nx1 = 200 + ((x1 - FLOOR2_SOURCE.xMin) / (FLOOR2_SOURCE.xMax - FLOOR2_SOURCE.xMin)) * 600;
-    const nx2 = 200 + ((x2 - FLOOR2_SOURCE.xMin) / (FLOOR2_SOURCE.xMax - FLOOR2_SOURCE.xMin)) * 600;
-    const ny1 = 200 + ((y1 - FLOOR2_SOURCE.yMin) / (FLOOR2_SOURCE.yMax - FLOOR2_SOURCE.yMin)) * 1200;
-    const ny2 = 200 + ((y2 - FLOOR2_SOURCE.yMin) / (FLOOR2_SOURCE.yMax - FLOOR2_SOURCE.yMin)) * 1200;
-    return [nx1, ny1, nx2, ny2];
-  }
+  const FIELD_DATA_PATRO = {
+    viewBoxFlat: "0 0 850 1550",
 
-  const FIELD_DATA_FLOOR2 = {
-    viewBoxFlat: "0 0 1000 1500",
     boundary: [],
-    entrance: null,
     roads: [],
     trees: [],
 
-    zones: [
-      { color:"#a88932", label:"BALKÓN", labelEn:"BALCONY", rect:[200, 200, 323, 1132] },
-      { color:"#a88932", label:"WC", labelEn:"WC", rect:[322, 1115, 800, 1400] }
+    // Schody na 1. patře — jen nejvyšší schod, zarovnaný s podlahou
+    stairs: [
+      { id:"stairsA", toFloor:"prizemi", label:"Schody", labelEn:"Stairs", rect:[3.5, 8.55, 4.15, 8.85] },
+      { id:"stairsB", toFloor:"prizemi", label:"Schody", labelEn:"Stairs", rect:[2.75, 10.6, 5.15, 10.9] },
+      { id:"stairsC", toFloor:"prizemi", label:"Schody", labelEn:"Stairs", rect:[5.1, 12.35, 6.2, 12.65] },
+      { id:"stairsD", toFloor:"prizemi", label:"Schody", labelEn:"Stairs", rect:[6.8, 11.05, 7.9, 11.35] }
     ],
 
-    stairs: FLOOR2_SOURCE.stairs.map(s => ({
-      ...s,
-      rect: normalizeFloor2Rect(s.rect),
-      heightOffset: 1.0
-    })),
+    // Zdi — automaticky extrahované z pixelové mapy plánku, posunuté
+    // o offset mezi přízemím a 1. patrem v podkladu (32 segmentů).
+    // Vyblednutá kresba přízemí v podkladu se ignoruje.
+    walls: [
+      { rect: [3.452, 8.807, 3.609, 8.877] },
+      { rect: [3.452, 8.965, 3.487, 9.825] },
+      { rect: [3.452, 9.912, 3.487, 10.228] },
+      { rect: [3.452, 10.526, 3.487, 10.825] },
+      { rect: [3.452, 10.912, 3.715, 11.825] },
+      { rect: [3.452, 11.912, 3.487, 12.825] },
+      { rect: [3.452, 12.912, 3.715, 13.123] },
+      { rect: [3.785, 12.947, 4.539, 13.825] },
+      { rect: [3.925, 8.807, 4.364, 8.877] },
+      { rect: [3.978, 10.895, 4.364, 11.825] },
+      { rect: [4.329, 8.947, 4.364, 9.825] },
+      { rect: [4.329, 9.912, 4.364, 10.544] },
+      { rect: [4.329, 11.895, 4.715, 12.614] },
+      { rect: [4.329, 13.895, 4.715, 14.386] },
+      { rect: [4.785, 12.421, 5.188, 12.456] },
+      { rect: [4.785, 13.895, 5.715, 14.386] },
+      { rect: [4.925, 13.474, 5.715, 13.825] },
+      { rect: [5.785, 13.474, 6.013, 13.491] },
+      { rect: [5.785, 14.351, 6.715, 14.386] },
+      { rect: [6.101, 11.158, 6.715, 11.825] },
+      { rect: [6.101, 11.895, 6.136, 12.825] },
+      { rect: [6.101, 12.895, 6.294, 13.07] },
+      { rect: [6.276, 13.474, 6.715, 13.491] },
+      { rect: [6.627, 13.035, 6.715, 13.07] },
+      { rect: [6.785, 11.158, 6.873, 11.316] },
+      { rect: [6.785, 12.895, 7.715, 13.088] },
+      { rect: [6.785, 13.439, 6.873, 13.825] },
+      { rect: [6.785, 13.895, 7.715, 14.386] },
+      { rect: [6.838, 11.649, 6.873, 11.825] },
+      { rect: [6.838, 11.895, 6.873, 12.825] },
+      { rect: [7.785, 13.035, 7.802, 13.825] },
+      { rect: [7.785, 13.895, 7.802, 14.386] },
+    ],
 
-    walls: FLOOR2_SOURCE.walls.map(rect => ({ rect: normalizeFloor2Rect(rect) })),
-    buildings: []
+    buildings: [
+      { id:"balkon", code:"BAL", name:"Balkón", nameEn:"Balcony", rect:[3.4, 8.8, 4.4, 11.9], height:0.3 }
+    ]
   };
 
   const svg = document.getElementById("map-svg");
   const listEl = document.getElementById("poi-list");
 
   const LABELS = {
-    cs: {
-      back:"Zpět na hřiště",
-      sidebar:"Místa na hřišti",
-      floor1:"Přízemí",
-      floor2:"1. patro"
-    },
-    en: {
-      back:"Back to fields",
-      sidebar:"Points of interest",
-      floor1:"Ground floor",
-      floor2:"1st floor"
-    }
+    cs: { back:"Zpět na hřiště", sidebar:"Místa na hřišti", floor1:"1. patro", floor2:"Přízemí" },
+    en: { back:"Back to fields", sidebar:"Points of interest", floor1:"1st floor", floor2:"Ground floor" }
   };
 
-  let currentFloor = "floor1";
+  let currentFloor = "prizemi";
 
   function applyStaticText(lang) {
     document.getElementById("back-label").textContent = LABELS[lang].back;
@@ -259,48 +271,50 @@
   function updateFloorLabel(lang) {
     const t = LABELS[lang];
     document.getElementById("floor-label").textContent =
-      currentFloor === "floor1" ? t.floor1 : t.floor2;
+      currentFloor === "prizemi" ? t.floor1 : t.floor2;
   }
 
-  AM.wireDropdowns();
-  applyStaticText(AM.getLang());
+AM.wireDropdowns();
 
-  document.getElementById("back-btn").addEventListener("click", () => {
-    window.location.href = "menu.html";
-  });
+applyStaticText(AM.getLang());
 
-  function getFloorData(floor) {
-    return floor === "floor1" ? FIELD_DATA_FLOOR1 : FIELD_DATA_FLOOR2;
+document.getElementById("back-btn").addEventListener("click", () => {
+  window.location.href = "menu.html";
+});
+
+function getFloorData(floor) {
+  return floor === "prizemi" ? FIELD_DATA_PRIZEMI : FIELD_DATA_PATRO;
+}
+
+function switchFloor(floor) {
+  currentFloor = floor;
+  engine.setData(getFloorData(floor));
+  updateFloorLabel(AM.getLang());
+}
+
+const engine = MapEngine.init({
+  svg,
+  listEl,
+  data: getFloorData(currentFloor),
+  getLang: AM.getLang,
+  onStairsClick: (toFloor) => {
+    switchFloor(toFloor);
+  },
+  mountModeToggle: {
+    btn2d: document.getElementById("btn-2d"),
+    btn3d: document.getElementById("btn-3d")
   }
+});
 
-  function switchFloor(floor) {
-    currentFloor = floor;
-    engine.setData(getFloorData(floor));
-    updateFloorLabel(AM.getLang());
-  }
+AM.wireLangSwitch((lang) => {
+  applyStaticText(lang);
+  engine.redraw();
+});
 
-  const engine = MapEngine.init({
-    svg,
-    listEl,
-    data: getFloorData(currentFloor),
-    getLang: AM.getLang,
-    onStairsClick: (toFloor) => {
-      switchFloor(toFloor);
-    },
-    mountModeToggle: {
-      btn2d: document.getElementById("btn-2d"),
-      btn3d: document.getElementById("btn-3d")
-    }
-  });
-
-  AM.wireLangSwitch((lang) => {
-    applyStaticText(lang);
-    engine.redraw();
-  });
-
-  document.getElementById("floor-btn").addEventListener("click", () => {
-    switchFloor(currentFloor === "floor1" ? "floor2" : "floor1");
-  });
+document.getElementById("floor-btn").addEventListener("click", () => {
+  switchFloor(currentFloor === "prizemi" ? "patro" : "prizemi");
+});
 </script>
+
 </body>
 </html>
