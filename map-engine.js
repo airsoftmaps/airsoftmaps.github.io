@@ -820,7 +820,7 @@ const strokeColor =
   function buildStairs3D(parent, rect, onClick, toFloor, heightOffset) {
 
     const [c1, r1, c2, r2] = rect;
-    const horizontal = (c2 - c1) >= (r2 - r1);
+    const horizontal = Math.abs(c2 - c1) >= Math.abs(r2 - r1);
     const steps = 6;
     const color = "#ffcf1a";
 
