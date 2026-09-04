@@ -86,21 +86,43 @@ const FIELD_DATA = {
 
     // Zjednodušený blok stromů (vyplňuje východní a jižní část)
     trees: [
-      [4.2, 1.2], [5.4, 1.1], [7.2, 2.5], [7.8, 4.2], [7.4, 6.0], 
-      [2.8, 6.3], [3.5, 5.0], [4.1, 5.0], [4.1, 3.5], [4.5, 3.5]
+      // Pás 1 (vlevo)
+      [0.9, 4.1], [0.9, 4.4], [0.9, 4.7], [0.9, 5.0], [0.9, 5.3],
+      // Pás 2
+      [1.8, 3.0], [1.8, 3.3], [1.8, 3.6], [1.8, 3.9], [1.8, 4.2], [1.8, 4.5], [1.8, 4.8], [1.8, 5.1],
+      // Pás 3
+      [2.6, 3.0], [2.6, 3.3], [2.6, 3.6], [2.6, 3.9], [2.6, 4.2], [2.6, 4.5], [2.6, 4.8], [2.6, 5.1],
+      // Pás 4
+      [3.4, 3.0], [3.4, 3.3], [3.4, 3.6], [3.4, 3.9], [3.4, 4.2], [3.4, 4.5], [3.4, 4.8], [3.4, 5.1],
+      // Pás 5
+      [4.2, 2.9], [4.2, 3.2], [4.2, 3.5], [4.2, 4.5], [4.2, 4.8],
+      // Hlavní zelený lesní blok na pravé straně
+      [4.0, 0.8], [4.3, 0.8], [4.6, 0.8], [4.9, 0.8], [5.2, 0.8],
+      [3.9, 1.2], [4.2, 1.2], [4.5, 1.2], [4.8, 1.2], [5.1, 1.2],
+      [4.5, 1.6], [4.8, 1.6], [5.1, 1.6], [5.4, 1.6],
+      [4.6, 2.0], [4.9, 2.0], [5.2, 2.0], [5.5, 2.0], [5.8, 2.0],
+      [4.7, 2.4], [5.0, 2.4], [5.3, 2.4], [5.6, 2.4], [5.9, 2.4], [6.2, 2.4],
+      [4.8, 2.8], [5.1, 2.8], [5.4, 2.8], [5.7, 2.8], [6.0, 2.8], [6.3, 2.8], [6.6, 2.8],
+      [4.8, 3.2], [5.1, 3.2], [5.4, 3.2], [5.7, 3.2], [6.0, 3.2], [6.3, 3.2], [6.6, 3.2],
+      [4.8, 3.6], [5.1, 3.6], [5.4, 3.6], [5.7, 3.6], [6.0, 3.6], [6.3, 3.6], [6.6, 3.6], [6.9, 3.6],
+      [4.8, 4.0], [5.1, 4.0], [5.4, 4.0], [5.7, 4.0], [6.0, 4.0], [6.3, 4.0], [6.6, 4.0], [6.9, 4.0],
+      [4.8, 4.4], [5.1, 4.4], [5.4, 4.4], [5.7, 4.4], [6.0, 4.4], [6.3, 4.4], [6.6, 4.4], [6.9, 4.4],
+      [4.8, 4.8], [5.1, 4.8], [6.2, 4.8], [6.5, 4.8], [6.8, 4.8],
+      [4.8, 5.2], [5.1, 5.2], [6.2, 5.2], [6.5, 5.2], [6.8, 5.2],
+      [4.8, 5.6], [5.2, 5.6], [5.6, 5.6], [6.0, 5.6], [6.4, 5.6], [6.7, 5.6]
     ],
 
     walls: [],
 
     // Srovnané modré plochy - VSTUP posunut úplně nahoru
     buildings: [
-      { id: "vstup_plocha", code: "VSTUP", name: "Vstup na hřiště", nameEn: "Entrance Area", rect: [3.6, 0.85, 4.4, 1.15], color: "#0064ff", height: 0.2 },
-      { id: "plocha_1", code: "P1", name: "Modrá plocha 1", nameEn: "Blue Area 1", rect: [1.2, 2.2, 1.7, 2.6], color: "#0064ff", height: 0.2 },
-      { id: "plocha_2", code: "P2", name: "Modrá plocha 2", nameEn: "Blue Area 2", rect: [2.3, 4.2, 2.6, 5.2], color: "#0064ff", height: 0.2 },
-      { id: "plocha_3", code: "P3", name: "Modrá plocha 3", nameEn: "Blue Area 3", rect: [3.5, 4.1, 3.8, 5.0], color: "#0064ff", height: 0.2 },
-      { id: "plocha_4", code: "P4", name: "Modrá plocha 4", nameEn: "Blue Area 4", rect: [4.7, 3.8, 5.1, 4.8], color: "#0064ff", height: 0.2 },
-      { id: "plocha_5", code: "P5", name: "Modrá plocha 5", nameEn: "Blue Area 5", rect: [4.3, 5.6, 4.9, 5.9], color: "#0064ff", height: 0.2 },
-      { id: "plocha_6", code: "P6", name: "Modrá plocha 6", nameEn: "Blue Area 6", rect: [6.2, 5.5, 6.7, 5.9], color: "#0064ff", height: 0.2 }
+      { id: "vstup_plocha", code: "OZ", name: "Parkoviště/Off-Zóna", nameEn: "Parking/Off-Zone", rect: [3.6, 0.85, 4.4, 1.15], color: "#0064ff", height: 0.2 },
+      { id: "plocha_1", code: "RC", name: "Respawn Cívka", nameEn: "Respawn Coil", rect: [1.2, 2.2, 1.7, 2.6], color: "#0064ff", height: 0.2 },
+      { id: "plocha_2", code: "V3", name: "Val #3", nameEn: "Rampart #3", rect: [2.3, 4.2, 2.6, 5.2], color: "#0064ff", height: 0.2 },
+      { id: "plocha_3", code: "V2", name: "Val #2", nameEn: "Rampart #2", rect: [3.5, 4.1, 3.8, 5.0], color: "#0064ff", height: 0.2 },
+      { id: "plocha_4", code: "V1", name: "Val #1", nameEn: "Rampart #1", rect: [4.7, 3.8, 5.1, 4.8], color: "#0064ff", height: 0.2 },
+      { id: "plocha_5", code: "V4", name: "Val #4", nameEn: "Rampart #4", rect: [4.3, 5.6, 4.9, 5.9], color: "#0064ff", height: 0.2 },
+      { id: "plocha_6", code: "RK", name: "Respawn Křižovatka", nameEn: "Respawn Crossroads", rect: [6.2, 5.5, 6.7, 5.9], color: "#0064ff", height: 0.2 }
     ]
   };
 
