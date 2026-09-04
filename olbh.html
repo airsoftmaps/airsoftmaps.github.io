@@ -15,7 +15,7 @@
     <img class="am-brand-logo" src="loga/tmavekulate.png" alt="Airsoft Maps">
   </a>
 
-  <div class="am-field-title">Airsoft Hřiště — <span>OLBH</span></div>
+  <div class="am-field-title">Airsoft OLBH — <span>VALCHA</span></div>
 
   <div class="am-controls">
     <button class="am-btn" id="back-btn">← <span id="back-label">Zpět na hřiště</span></button>
@@ -260,62 +260,6 @@
 
 </body>
 </html>
-                color: "red",
-                type: "polygon",
-                // Zde se polygon propojí přes GPS body
-                coordinates: [
-                    [gpsPoints.levyHorni.lat, gpsPoints.levyHorni.lng],
-                    [gpsPoints.pravyHorni.lat, gpsPoints.pravyHorni.lng],
-                    [gpsPoints.pravySpodni.lat, gpsPoints.pravySpodni.lng],
-                    // Levý spodní bod se případně dopočítá podle gridu
-                ]
-            },
-            
-            // Fialové - cesty
-            paths: {
-                color: "purple",
-                type: "polyline",
-                coordinates: [] // Zde doplníš body z gridu pro cesty
-            },
-            
-            // Modré - plochy
-            blueAreas: {
-                color: "blue",
-                type: "polygon",
-                clickable: true,
-                onClick: function() {
-                    alert("Popis plochy (přidám klikací popis později)");
-                },
-                coordinates: [] // Body pro modré plochy
-            },
-            
-            // Zelená plocha - stromy
-            trees: {
-                color: "green",
-                type: "polygon",
-                snapToGrid: true, // drží grid podle zadání
-                coordinates: [] // Body pro stromy
-            },
-            
-            // Oranžová šipka - vstup na hřiště
-            entrance: {
-                color: "orange",
-                type: "marker",
-                icon: "arrow",
-                // Vstup je pravděpodobně u cesty u pravého horního bodu, uprav podle potřeby
-                coordinates: [gpsPoints.pravyHorni.lat, gpsPoints.pravyHorni.lng] 
-            }
-        }
-    };
-
-    /* 3. INICIALIZACE ENGINU
-    Podle toho, jak funguje tvůj map-engine.js nebo jablonove.html,
-    by se zde volala inicializační funkce. Například:
-    
-    const myMap = new MapEngine("map-container", mapConfig);
-    myMap.drawGrid();
-    myMap.drawLayers();
-    */
 
     console.log("Konfigurace mapy OLBH byla načtena.", mapConfig);
 </script>
