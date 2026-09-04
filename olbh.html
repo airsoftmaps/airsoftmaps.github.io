@@ -1,39 +1,265 @@
-<div id="map-container" style="width: 100%; height: 100vh;"></div>
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIRSOFT MAPS — Airsoft Hřiště OLBH</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="common.css">
+</head>
+<body>
 
+<header class="am-header">
+  <a class="am-brand" href="menu.html">
+    <img class="am-brand-logo" src="loga/tmavekulate.png" alt="Airsoft Maps">
+  </a>
+
+  <div class="am-field-title">Airsoft Hřiště — <span>OLBH</span></div>
+
+  <div class="am-controls">
+    <button class="am-btn" id="back-btn">← <span id="back-label">Zpět na hřiště</span></button>
+    <div class="am-dd" id="lang-dd">
+      <button class="am-btn">🌐 <span id="lang-current">CZ</span></button>
+      <div class="am-dd-menu">
+        <button data-lang="cs">Čeština</button>
+        <button data-lang="en">English</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="am-map-toolbar">
+  <div class="am-toggle">
+    <button id="btn-2d" class="active">2D</button>
+    <button id="btn-3d">3D</button>
+    <button class="am-locate-btn" id="locate-btn" style="margin-left:10px;">
+      <span class="dot"></span><span id="locate-label">Moje poloha</span>
+    </button>
+  </div>
+</div>
+<div class="am-locate-status" id="locate-status"></div>
+
+<div class="am-map-body">
+  <div class="am-map-canvas">
+    <svg id="map-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+  </div>
+  <div class="am-sidebar">
+    <div class="am-sidebar-title" id="sidebar-title">Místa na hřišti</div>
+    <div id="poi-list"></div>
+  </div>
+</div>
+
+<script src="common.js?v=3"></script>
+<script src="geo.js?v=3"></script>
+<script src="map-engine.js?v=8"></script>
 <script>
-    // 1. ZÁKLADNÍ GPS BODY
-    const gpsPoints = {
-        levyHorni: { 
-            lat: 49.53702625496071, 
-            lng: 17.70065755140087, 
-            desc: "Levý horní (v modré ploše)" 
-        },
-        pravyHorni: { 
-            lat: 49.53742124215919, 
-            lng: 17.70217383856186, 
-            desc: "Pravý horní (u cesty)" 
-        },
-        pravySpodni: { 
-            lat: 49.535610877024865, 
-            lng: 17.703880012282212, 
-            desc: "Pravý spodní (v modré ploše)" 
-        }
-    };
+  /* ====================================================================
+     FIELD DATA — OLBH
+     Data převedená z mřížky olbh grid.png:
+     - Hranice hřiště (červená)
+     - Cesty (fialová lomená čára)
+     - Vstup (oranžová šipka směřující do hřiště)
+     - Modré plochy (klikací body v seznamu)
+     - Stromy (zelená plocha s hustou mřížkou stromů)
+     - GPS kotvy (podle zadaných bodů pro zaměření polohy)
+     ==================================================================== */
 
-    // 2. KONFIGURACE PRVKŮ (připraveno pro tvůj map-engine.js)
-    const mapConfig = {
-        center: { lat: 49.5363, lng: 17.7022 }, // Přibližný střed
-        zoom: 18,
-        layers: {
-            // Žluté - pomocný grid
-            helperGrid: {
-                color: "yellow",
-                type: "grid",
-                visible: true
-            },
-            
-            // Červený - hranice hřiště
-            boundary: {
+  const FIELD_DATA = {
+    viewBoxFlat: "0 0 800 650",
+
+    geoAnchors: [
+      { col: 1.5, row: 2.1, lat: 49.53702625496071, lng: 17.70065755140087 }, // Levý horní (v modré ploše)
+      { col: 3.6, row: 1.2, lat: 49.53742124215919, lng: 17.70217383856186 }, // Pravý horní (u cesty)
+      { col: 5.7, row: 5.1, lat: 49.535610877024865, lng: 17.703880012282212 } // Pravý spodní (v modré ploše)
+    ],
+
+    // Červená hranice hřiště podle obvodu z podkladu
+    boundary: [
+      [3.4, 0.4],
+      [4.8, 0.5],
+      [6.8, 2.5],
+      [7.2, 5.0],
+      [7.0, 5.8],
+      [2.7, 6.2],
+      [1.2, 5.8],
+      [0.7, 2.7],
+      [1.4, 1.8],
+      [3.4, 0.4]
+    ],
+
+    // Vstup u horní hranice hřiště (oranžová šipka směřující dolů)
+    entrance: { col: 3.4, row: 0.4, angle: 90 },
+
+    // Fialové cesty a jejich větvení
+    roads: [
+      { points: [[3.4, 0.5], [3.6, 1.2], [3.0, 2.3], [2.5, 2.8], [1.8, 3.2], [1.7, 3.5]] },
+      { points: [[3.0, 2.3], [2.8, 3.5], [2.9, 4.3]] },
+      { points: [[2.5, 2.8], [2.4, 3.3]] },
+      { points: [[3.6, 1.2], [3.8, 2.2], [3.9, 2.8]] }
+    ],
+
+    // Zelená plocha stromů držená na mřížce (vyplňuje lesní pásy a pravou část)
+    trees: [
+      // Pás 1 (vlevo)
+      [0.9, 4.1], [0.9, 4.4], [0.9, 4.7], [0.9, 5.0], [0.9, 5.3],
+      // Pás 2
+      [1.8, 3.0], [1.8, 3.3], [1.8, 3.6], [1.8, 3.9], [1.8, 4.2], [1.8, 4.5], [1.8, 4.8], [1.8, 5.1],
+      // Pás 3
+      [2.6, 3.0], [2.6, 3.3], [2.6, 3.6], [2.6, 3.9], [2.6, 4.2], [2.6, 4.5], [2.6, 4.8], [2.6, 5.1],
+      // Pás 4
+      [3.4, 3.0], [3.4, 3.3], [3.4, 3.6], [3.4, 3.9], [3.4, 4.2], [3.4, 4.5], [3.4, 4.8], [3.4, 5.1],
+      // Pás 5
+      [4.2, 2.9], [4.2, 3.2], [4.2, 3.5], [4.2, 4.5], [4.2, 4.8],
+      // Hlavní zelený lesní blok na pravé straně
+      [4.0, 0.8], [4.3, 0.8], [4.6, 0.8], [4.9, 0.8], [5.2, 0.8],
+      [3.9, 1.2], [4.2, 1.2], [4.5, 1.2], [4.8, 1.2], [5.1, 1.2],
+      [4.5, 1.6], [4.8, 1.6], [5.1, 1.6], [5.4, 1.6],
+      [4.6, 2.0], [4.9, 2.0], [5.2, 2.0], [5.5, 2.0], [5.8, 2.0],
+      [4.7, 2.4], [5.0, 2.4], [5.3, 2.4], [5.6, 2.4], [5.9, 2.4], [6.2, 2.4],
+      [4.8, 2.8], [5.1, 2.8], [5.4, 2.8], [5.7, 2.8], [6.0, 2.8], [6.3, 2.8], [6.6, 2.8],
+      [4.8, 3.2], [5.1, 3.2], [5.4, 3.2], [5.7, 3.2], [6.0, 3.2], [6.3, 3.2], [6.6, 3.2],
+      [4.8, 3.6], [5.1, 3.6], [5.4, 3.6], [5.7, 3.6], [6.0, 3.6], [6.3, 3.6], [6.6, 3.6], [6.9, 3.6],
+      [4.8, 4.0], [5.1, 4.0], [5.4, 4.0], [5.7, 4.0], [6.0, 4.0], [6.3, 4.0], [6.6, 4.0], [6.9, 4.0],
+      [4.8, 4.4], [5.1, 4.4], [5.4, 4.4], [5.7, 4.4], [6.0, 4.4], [6.3, 4.4], [6.6, 4.4], [6.9, 4.4],
+      [4.8, 4.8], [5.1, 4.8], [6.2, 4.8], [6.5, 4.8], [6.8, 4.8],
+      [4.8, 5.2], [5.1, 5.2], [6.2, 5.2], [6.5, 5.2], [6.8, 5.2],
+      [4.8, 5.6], [5.2, 5.6], [5.6, 5.6], [6.0, 5.6], [6.4, 5.6], [6.7, 5.6]
+    ],
+
+    walls: [],
+
+    // Modré plochy na hřišti (všechny plochy z podkladu, plně klikací)
+    buildings: [
+      { id: "vstup_plocha", code: "VSTUP", name: "Vstup na hřiště", nameEn: "Entrance Area", rect: [3.1, 0.35, 3.7, 0.55], color: "#0064ff", height: 0.2 },
+      { id: "plocha_1", code: "P1", name: "Modrá plocha 1", nameEn: "Blue Area 1", rect: [1.3, 1.9, 1.7, 2.3], color: "#0064ff", height: 0.2 },
+      { id: "plocha_2", code: "P2", name: "Modrá plocha 2", nameEn: "Blue Area 2", rect: [2.1, 3.9, 2.3, 4.6], color: "#0064ff", height: 0.2 },
+      { id: "plocha_3", code: "P3", name: "Modrá plocha 3", nameEn: "Blue Area 3", rect: [3.1, 3.7, 3.3, 4.4], color: "#0064ff", height: 0.2 },
+      { id: "plocha_4", code: "P4", name: "Modrá plocha 4", nameEn: "Blue Area 4", rect: [4.1, 3.5, 4.4, 4.3], color: "#0064ff", height: 0.2 },
+      { id: "plocha_5", code: "P5", name: "Modrá plocha 5", nameEn: "Blue Area 5", rect: [3.9, 5.1, 4.4, 5.4], color: "#0064ff", height: 0.2 },
+      { id: "plocha_6", code: "P6", name: "Modrá plocha 6", nameEn: "Blue Area 6", rect: [5.5, 4.9, 5.9, 5.3], color: "#0064ff", height: 0.2 }
+    ]
+  };
+
+  const svg = document.getElementById("map-svg");
+  const listEl = document.getElementById("poi-list");
+
+  const LABELS = {
+    cs: { back: "Zpět na hřiště", sidebar: "Místa na hřišti" },
+    en: { back: "Back to fields", sidebar: "Points of interest" }
+  };
+
+  function applyStaticText(lang) {
+    document.getElementById("back-label").textContent = LABELS[lang].back;
+    document.getElementById("sidebar-title").textContent = LABELS[lang].sidebar;
+  }
+
+  AM.wireDropdowns();
+
+  applyStaticText(AM.getLang());
+
+  document.getElementById("back-btn").addEventListener("click", () => {
+    window.location.href = "menu.html";
+  });
+
+  const engine = MapEngine.init({
+    svg,
+    listEl,
+    data: FIELD_DATA,
+    getLang: AM.getLang,
+    mountModeToggle: {
+      btn2d: document.getElementById("btn-2d"),
+      btn3d: document.getElementById("btn-3d")
+    }
+  });
+
+  AM.wireLangSwitch((lang) => {
+    applyStaticText(lang);
+    engine.redraw();
+  });
+
+  const LOCATE_TEXT = {
+    cs: { btn: "Moje poloha", on: "Sleduji polohu", outside: "Jsi mimo hřiště",
+          denied: "Poloha zamítnuta v prohlížeči", unavailable: "Polohu se nepodařilo zjistit",
+          noAnchors: "Pro toto hřiště není poloha dostupná" },
+    en: { btn: "My location", on: "Tracking location", outside: "You are outside the field",
+          denied: "Location permission denied", unavailable: "Could not get location",
+          noAnchors: "Location isn't available for this field" }
+  };
+
+  const locateBtn = document.getElementById("locate-btn");
+  const locateLabel = document.getElementById("locate-label");
+  const locateStatus = document.getElementById("locate-status");
+  let watchId = null, tracking = false;
+  let stopHeading = null, lastHeading = null, lastUpBearing = null, insideField = false;
+
+  const hasGeo = FIELD_DATA.geoAnchors && FIELD_DATA.geoAnchors.length >= 3
+    && FIELD_DATA.geoAnchors.every(a => a.lat && a.lng);
+
+  function applyCompassRotation() {
+    if (insideField && lastHeading != null && lastUpBearing != null) {
+      engine.setCompassRotation((lastUpBearing - lastHeading + 360) % 360);
+    } else {
+      engine.setCompassRotation(null);
+    }
+  }
+
+  if (!hasGeo) {
+    locateBtn.style.display = "none";
+  } else {
+    locateBtn.addEventListener("click", () => {
+      const lang = AM.getLang();
+      if (tracking) {
+        AMGeo.stop(watchId); watchId = null; tracking = false;
+        if (stopHeading) { stopHeading(); stopHeading = null; }
+        insideField = false;
+        lastHeading = null;
+        applyCompassRotation();
+        locateBtn.classList.remove("active", "outside");
+        locateLabel.textContent = LOCATE_TEXT[lang].btn;
+        locateStatus.textContent = "";
+        engine.setPlayer(null);
+        return;
+      }
+      tracking = true;
+      locateBtn.classList.add("active");
+      locateLabel.textContent = LOCATE_TEXT[lang].on;
+
+      stopHeading = AMGeo.watchHeading((heading) => {
+        lastHeading = heading;
+        applyCompassRotation();
+      });
+
+      watchId = AMGeo.watch(FIELD_DATA, (result) => {
+        const t = LOCATE_TEXT[AM.getLang()];
+        if (!result.ok) {
+          locateStatus.textContent = t[result.reason] || t.unavailable;
+          locateBtn.classList.remove("outside");
+          engine.setPlayer(null);
+          insideField = false;
+          applyCompassRotation();
+          return;
+        }
+        lastUpBearing = result.upBearing;
+        if (result.inside) {
+          locateBtn.classList.remove("outside");
+          locateStatus.textContent = "";
+          engine.setPlayer({ col: result.col, row: result.row });
+          insideField = true;
+        } else {
+          locateBtn.classList.add("outside");
+          locateStatus.textContent = t.outside;
+          engine.setPlayer(null);
+          insideField = false;
+        }
+        applyCompassRotation();
+      });
+    });
+  }
+</script>
+
+</body>
+</html>
                 color: "red",
                 type: "polygon",
                 // Zde se polygon propojí přes GPS body
