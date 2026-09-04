@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://airsoftmaps.github.io/sitemap.xml
