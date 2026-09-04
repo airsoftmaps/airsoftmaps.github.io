@@ -1,0 +1,95 @@
+<div id="map-container" style="width: 100%; height: 100vh;"></div>
+
+<script>
+    // 1. ZÁKLADNÍ GPS BODY
+    const gpsPoints = {
+        levyHorni: { 
+            lat: 49.53702625496071, 
+            lng: 17.70065755140087, 
+            desc: "Levý horní (v modré ploše)" 
+        },
+        pravyHorni: { 
+            lat: 49.53742124215919, 
+            lng: 17.70217383856186, 
+            desc: "Pravý horní (u cesty)" 
+        },
+        pravySpodni: { 
+            lat: 49.535610877024865, 
+            lng: 17.703880012282212, 
+            desc: "Pravý spodní (v modré ploše)" 
+        }
+    };
+
+    // 2. KONFIGURACE PRVKŮ (připraveno pro tvůj map-engine.js)
+    const mapConfig = {
+        center: { lat: 49.5363, lng: 17.7022 }, // Přibližný střed
+        zoom: 18,
+        layers: {
+            // Žluté - pomocný grid
+            helperGrid: {
+                color: "yellow",
+                type: "grid",
+                visible: true
+            },
+            
+            // Červený - hranice hřiště
+            boundary: {
+                color: "red",
+                type: "polygon",
+                // Zde se polygon propojí přes GPS body
+                coordinates: [
+                    [gpsPoints.levyHorni.lat, gpsPoints.levyHorni.lng],
+                    [gpsPoints.pravyHorni.lat, gpsPoints.pravyHorni.lng],
+                    [gpsPoints.pravySpodni.lat, gpsPoints.pravySpodni.lng],
+                    // Levý spodní bod se případně dopočítá podle gridu
+                ]
+            },
+            
+            // Fialové - cesty
+            paths: {
+                color: "purple",
+                type: "polyline",
+                coordinates: [] // Zde doplníš body z gridu pro cesty
+            },
+            
+            // Modré - plochy
+            blueAreas: {
+                color: "blue",
+                type: "polygon",
+                clickable: true,
+                onClick: function() {
+                    alert("Popis plochy (přidám klikací popis později)");
+                },
+                coordinates: [] // Body pro modré plochy
+            },
+            
+            // Zelená plocha - stromy
+            trees: {
+                color: "green",
+                type: "polygon",
+                snapToGrid: true, // drží grid podle zadání
+                coordinates: [] // Body pro stromy
+            },
+            
+            // Oranžová šipka - vstup na hřiště
+            entrance: {
+                color: "orange",
+                type: "marker",
+                icon: "arrow",
+                // Vstup je pravděpodobně u cesty u pravého horního bodu, uprav podle potřeby
+                coordinates: [gpsPoints.pravyHorni.lat, gpsPoints.pravyHorni.lng] 
+            }
+        }
+    };
+
+    /* 3. INICIALIZACE ENGINU
+    Podle toho, jak funguje tvůj map-engine.js nebo jablonove.html,
+    by se zde volala inicializační funkce. Například:
+    
+    const myMap = new MapEngine("map-container", mapConfig);
+    myMap.drawGrid();
+    myMap.drawLayers();
+    */
+
+    console.log("Konfigurace mapy OLBH byla načtena.", mapConfig);
+</script>
