@@ -152,3 +152,15 @@
     initGodMode();
   }
 })();
+    /* =====================================================
+       KONTROLA PŘI NAČTENÍ NOVÉ STRÁNKY
+       ===================================================== */
+    const isGodMode = 
+      document.documentElement.getAttribute("data-theme") === "god-mode" || 
+      (typeof AM !== "undefined" && typeof AM.getTheme === "function" && AM.getTheme() === "god-mode");
+
+    if (isGodMode) {
+      // Pokud uživatel přišel s aktivním božským módem, 
+      // vizuály se aplikují přes CSS a my jen nahodíme blesky.
+      scheduleLightning();
+    }
