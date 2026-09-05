@@ -1,0 +1,657 @@
+/* =========================================================
+   AIRSOFT MAPS
+   DIVINE MODE
+   ========================================================= */
+
+body.divine-mode {
+  --divine-gold: #d4af37;
+  --divine-gold-light: #ffe9a3;
+  --divine-gold-dark: #7b5b12;
+  --divine-black: #080706;
+
+  background:
+    radial-gradient(
+      ellipse at 50% 100%,
+      rgba(255, 226, 145, .16),
+      transparent 45%
+    ),
+    radial-gradient(
+      ellipse at 50% 0%,
+      rgba(255, 220, 120, .08),
+      transparent 50%
+    ),
+    #080706;
+
+  color: #eee4c5;
+}
+
+/* ---------------------------------------------------------
+   ZLATÝ FILM PŘES CELÝ WEB
+   --------------------------------------------------------- */
+
+body.divine-mode::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9000;
+
+  background:
+    radial-gradient(
+      ellipse at center,
+      transparent 45%,
+      rgba(0,0,0,.55) 100%
+    );
+
+  box-shadow:
+    inset 0 0 80px rgba(212,175,55,.08);
+
+  animation: divineBreath 6s ease-in-out infinite;
+}
+
+@keyframes divineBreath {
+  0%,100% {
+    opacity: .75;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+/* ---------------------------------------------------------
+   OBLAKA ODSPODU
+   --------------------------------------------------------- */
+
+body.divine-mode::after {
+  content: "";
+  position: fixed;
+  left: -10%;
+  bottom: -110px;
+
+  width: 120%;
+  height: 260px;
+
+  pointer-events: none;
+  z-index: 8990;
+
+  background:
+    radial-gradient(
+      ellipse at 15% 80%,
+      rgba(255,255,255,.22) 0%,
+      rgba(255,255,255,.08) 30%,
+      transparent 65%
+    ),
+    radial-gradient(
+      ellipse at 45% 100%,
+      rgba(255,255,255,.18) 0%,
+      rgba(255,255,255,.06) 35%,
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse at 80% 75%,
+      rgba(255,255,255,.2) 0%,
+      rgba(255,255,255,.06) 35%,
+      transparent 70%
+    );
+
+  filter: blur(18px);
+
+  animation: divineClouds 18s ease-in-out infinite alternate;
+}
+
+@keyframes divineClouds {
+  from {
+    transform: translateX(-3%) translateY(15px) scale(1);
+  }
+
+  to {
+    transform: translateX(3%) translateY(-20px) scale(1.05);
+  }
+}
+
+/* ---------------------------------------------------------
+   ZLATÉ DEKORATIVNÍ OKRAJE
+   --------------------------------------------------------- */
+
+body.divine-mode .am-header {
+  border-bottom: 1px solid var(--divine-gold);
+
+  box-shadow:
+    0 1px 0 rgba(255,233,163,.25),
+    0 0 25px rgba(212,175,55,.12);
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(212,175,55,.08),
+      transparent 20%,
+      transparent 80%,
+      rgba(212,175,55,.08)
+    );
+}
+
+/* ---------------------------------------------------------
+   LOGO
+   --------------------------------------------------------- */
+
+body.divine-mode .am-brand-logo {
+  filter:
+    drop-shadow(0 0 5px rgba(212,175,55,.65))
+    drop-shadow(0 0 15px rgba(212,175,55,.25));
+
+  transition: filter .4s ease, transform .4s ease;
+}
+
+body.divine-mode .am-brand:hover .am-brand-logo {
+  transform: scale(1.05);
+
+  filter:
+    drop-shadow(0 0 7px rgba(255,233,163,.9))
+    drop-shadow(0 0 25px rgba(212,175,55,.45));
+}
+
+/* ---------------------------------------------------------
+   TLAČÍTKA
+   --------------------------------------------------------- */
+
+body.divine-mode .am-btn {
+  border-color: var(--divine-gold);
+  color: var(--divine-gold-light);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(212,175,55,.13),
+      rgba(0,0,0,.45)
+    );
+
+  box-shadow:
+    inset 0 0 0 1px rgba(255,233,163,.08),
+    0 0 12px rgba(212,175,55,.08);
+
+  transition:
+    border-color .25s ease,
+    box-shadow .25s ease,
+    color .25s ease;
+}
+
+body.divine-mode .am-btn:hover {
+  border-color: var(--divine-gold-light);
+  color: #fff4cf;
+
+  box-shadow:
+    0 0 18px rgba(212,175,55,.25),
+    inset 0 0 20px rgba(212,175,55,.08);
+}
+
+/* ---------------------------------------------------------
+   HLAVNÍ NADPIS
+   --------------------------------------------------------- */
+
+body.divine-mode .am-menu-heading h1 {
+  color: var(--divine-gold-light);
+
+  text-shadow:
+    0 0 8px rgba(212,175,55,.35),
+    0 0 25px rgba(212,175,55,.15);
+}
+
+body.divine-mode .am-kicker-line {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--divine-gold),
+    transparent
+  );
+}
+
+/* ---------------------------------------------------------
+   TABULKA
+   --------------------------------------------------------- */
+
+body.divine-mode .am-table {
+  border: 1px solid var(--divine-gold-dark);
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(212,175,55,.06),
+      rgba(0,0,0,.35)
+    );
+
+  box-shadow:
+    0 0 25px rgba(212,175,55,.08),
+    inset 0 0 25px rgba(0,0,0,.35);
+}
+
+body.divine-mode .am-table-head {
+  border-bottom: 1px solid var(--divine-gold);
+
+  color: var(--divine-gold-light);
+}
+
+body.divine-mode .am-row {
+  border-bottom-color: rgba(212,175,55,.18);
+
+  transition:
+    background .25s ease,
+    box-shadow .25s ease;
+}
+
+body.divine-mode .am-row:hover {
+  background: rgba(212,175,55,.08);
+
+  box-shadow:
+    inset 0 0 25px rgba(212,175,55,.05);
+}
+
+body.divine-mode .am-row-name b {
+  color: #f5e8bd;
+}
+
+body.divine-mode .am-row-icon {
+  color: var(--divine-gold);
+}
+
+/* ---------------------------------------------------------
+   BADGE
+   --------------------------------------------------------- */
+
+body.divine-mode .am-badge.active {
+  color: var(--divine-gold-light);
+  border-color: var(--divine-gold);
+  background: rgba(212,175,55,.08);
+}
+
+/* ---------------------------------------------------------
+   SEARCH
+   --------------------------------------------------------- */
+
+body.divine-mode .am-search {
+  border-color: var(--divine-gold-dark);
+
+  box-shadow:
+    inset 0 0 15px rgba(212,175,55,.04);
+}
+
+body.divine-mode .am-search:focus-within {
+  border-color: var(--divine-gold);
+
+  box-shadow:
+    0 0 18px rgba(212,175,55,.12);
+}
+
+body.divine-mode .am-search .icon {
+  color: var(--divine-gold);
+}
+
+/* ---------------------------------------------------------
+   BOŽSKÉ SLOUPY
+   --------------------------------------------------------- */
+
+.divine-column {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+
+  width: 58px;
+
+  pointer-events: none;
+  z-index: 8980;
+
+  opacity: 0;
+  transform: scaleY(.96);
+
+  transition:
+    opacity 1.2s ease,
+    transform 1.2s ease;
+}
+
+body.divine-mode .divine-column {
+  opacity: .85;
+  transform: scaleY(1);
+}
+
+.divine-column.left {
+  left: 0;
+}
+
+.divine-column.right {
+  right: 0;
+}
+
+/* tělo sloupu */
+
+.divine-column::before {
+  content: "";
+
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 16px;
+  right: 16px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #4e3a10,
+      #d4af37 25%,
+      #fff0a5 48%,
+      #d4af37 65%,
+      #4e3a10
+    );
+
+  box-shadow:
+    0 0 15px rgba(212,175,55,.18);
+
+  border-left: 1px solid #7b5b12;
+  border-right: 1px solid #7b5b12;
+}
+
+/* patka + hlavice */
+
+.divine-column::after {
+  content: "";
+
+  position: absolute;
+
+  left: 5px;
+  right: 5px;
+
+  top: 25px;
+  height: 22px;
+
+  border: 2px solid var(--divine-gold);
+
+  background:
+    repeating-linear-gradient(
+      135deg,
+      #6e5110 0 5px,
+      #d4af37 5px 9px,
+      #3e2e0c 9px 14px
+    );
+
+  box-shadow:
+    0 0 15px rgba(212,175,55,.2);
+}
+
+.divine-column.left {
+  border-right: none;
+}
+
+.divine-column.right {
+  border-left: none;
+}
+
+/* ---------------------------------------------------------
+   ŘECKÝ MEANDR
+   --------------------------------------------------------- */
+
+.divine-meander {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  height: 18px;
+
+  z-index: 8995;
+  pointer-events: none;
+
+  opacity: 0;
+  transition: opacity 1s ease;
+
+  background-color: #080706;
+
+  background-image:
+    linear-gradient(90deg,
+      transparent 0 8px,
+      #d4af37 8px 11px,
+      transparent 11px 19px
+    );
+
+  border-top: 1px solid #d4af37;
+  box-shadow: 0 -3px 15px rgba(212,175,55,.15);
+}
+
+body.divine-mode .divine-meander {
+  opacity: .85;
+}
+
+/* ---------------------------------------------------------
+   POCHODNĚ
+   --------------------------------------------------------- */
+
+.divine-torch {
+  position: fixed;
+
+  bottom: 38px;
+
+  width: 24px;
+  height: 60px;
+
+  z-index: 8996;
+  pointer-events: none;
+
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+
+body.divine-mode .divine-torch {
+  opacity: 1;
+}
+
+.divine-torch.left {
+  left: 72px;
+}
+
+.divine-torch.right {
+  right: 72px;
+}
+
+.divine-torch::before {
+  content: "";
+
+  position: absolute;
+
+  width: 18px;
+  height: 34px;
+
+  left: 3px;
+  top: 0;
+
+  background:
+    radial-gradient(
+      ellipse at 50% 80%,
+      #fff7b0 0%,
+      #ffd54a 25%,
+      #e07b16 55%,
+      transparent 72%
+    );
+
+  filter: blur(2px);
+
+  animation: divineFire .8s ease-in-out infinite alternate;
+}
+
+.divine-torch::after {
+  content: "";
+
+  position: absolute;
+
+  width: 5px;
+  height: 28px;
+
+  left: 10px;
+  top: 30px;
+
+  background: #5b4210;
+}
+
+@keyframes divineFire {
+  from {
+    transform: scale(.9) rotate(-2deg);
+  }
+
+  to {
+    transform: scale(1.08) rotate(3deg);
+  }
+}
+
+/* ---------------------------------------------------------
+   BLESK
+   --------------------------------------------------------- */
+
+.divine-lightning {
+  position: fixed;
+  inset: 0;
+
+  pointer-events: none;
+  z-index: 9998;
+
+  background: rgba(255,248,218,.9);
+
+  opacity: 0;
+}
+
+.divine-lightning.flash {
+  animation: divineLightning .32s ease-out;
+}
+
+@keyframes divineLightning {
+  0% {
+    opacity: 0;
+  }
+
+  8% {
+    opacity: .85;
+  }
+
+  13% {
+    opacity: .15;
+  }
+
+  22% {
+    opacity: .65;
+  }
+
+  30% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+/* ---------------------------------------------------------
+   PŘECHOD DO BOŽSKÉHO REŽIMU
+   --------------------------------------------------------- */
+
+.divine-transition {
+  position: fixed;
+  inset: 0;
+
+  z-index: 10000;
+
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      circle at center,
+      rgba(255,238,174,.95),
+      rgba(212,175,55,.65) 25%,
+      rgba(0,0,0,.95) 75%
+    );
+
+  opacity: 0;
+
+  transform: scale(1.2);
+
+  transition:
+    opacity .7s ease,
+    transform .9s ease;
+}
+
+.divine-transition.active {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ---------------------------------------------------------
+   HOLD INDICATOR
+   --------------------------------------------------------- */
+
+.divine-hold {
+  position: fixed;
+
+  top: 70px;
+  left: 20px;
+
+  z-index: 10001;
+
+  pointer-events: none;
+
+  font-family: Rajdhani, sans-serif;
+  font-size: 10px;
+  letter-spacing: .18em;
+
+  color: var(--divine-gold-light);
+
+  opacity: 0;
+
+  transition: opacity .2s ease;
+}
+
+.divine-hold.active {
+  opacity: 1;
+}
+
+.divine-hold-bar {
+  margin-top: 5px;
+
+  width: 100px;
+  height: 2px;
+
+  background: rgba(212,175,55,.2);
+}
+
+.divine-hold-progress {
+  height: 100%;
+  width: 0%;
+
+  background: var(--divine-gold);
+
+  box-shadow: 0 0 8px rgba(212,175,55,.8);
+}
+
+/* ---------------------------------------------------------
+   MOBIL
+   --------------------------------------------------------- */
+
+@media (max-width: 700px) {
+
+  .divine-column {
+    width: 28px;
+  }
+
+  .divine-column::before {
+    left: 9px;
+    right: 9px;
+  }
+
+  .divine-column::after {
+    left: 2px;
+    right: 2px;
+  }
+
+  .divine-torch.left {
+    left: 34px;
+  }
+
+  .divine-torch.right {
+    right: 34px;
+  }
+
+}
