@@ -7,9 +7,22 @@
 
   const HOLD_TIME = 3000;
 
-  const logo = document.querySelector(".am-brand");
+  function initGodMode() {
 
-  if (!logo) return;
+    const logo = document.querySelector(".am-brand");
+
+    if (!logo) return;
+
+    // celý zbytek původního divine.js patří sem
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initGodMode);
+  } else {
+    initGodMode();
+  }
+
+})();
 
   /* -------------------------------------------------------
      DEKORACE
