@@ -2,152 +2,87 @@
    AIRSOFT MAPS - OLYMPUS GOD MODE
    ========================================================= */
 
-/* ---------------------------------------------------------
-   ZÁKLAD A POZADÍ (Zářící nebesa)
-   --------------------------------------------------------- */
 html[data-theme="god-mode"] body {
-  --divine-gold: #d4af37;
-  --divine-gold-light: #f9df9f;
-  --divine-marble: #fdfbf7;
+  --divine-gold: #ffd700;
   --divine-text: #2c3e50;
-  
   background: radial-gradient(circle at top center, #ffffff 0%, #f0eadd 50%, #dcd3c0 100%) !important;
   color: var(--divine-text) !important;
   font-family: 'Cinzel', serif !important;
 }
 
-html[data-theme="god-mode"] body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 8900;
-  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.4) 0%, transparent 80%);
-  animation: divineBreath 8s ease-in-out infinite alternate;
+/* Skrytí loga */
+html[data-theme="god-mode"] .am-brand {
+  display: none !important;
 }
 
-@keyframes divineBreath {
-  0% { opacity: 0.5; }
-  100% { opacity: 1; }
-}
-
-/* ---------------------------------------------------------
-   UI PRVKY (Vznášející se mramor)
-   --------------------------------------------------------- */
-html[data-theme="god-mode"] .am-header {
-  background: rgba(253, 251, 247, 0.85) !important;
-  backdrop-filter: blur(10px);
-  border-bottom: 2px solid var(--divine-gold);
-  box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);
-}
-
+/* Zlaté texty s černým stínem pro perfektní čitelnost na světlém pozadí */
+html[data-theme="god-mode"] .am-btn,
 html[data-theme="god-mode"] .am-menu-heading h1,
-html[data-theme="god-mode"] .am-menu-heading .am-menu-subtitle {
-  color: var(--divine-gold);
-  text-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
-  letter-spacing: 2px;
+html[data-theme="god-mode"] .am-menu-kicker,
+html[data-theme="god-mode"] .am-table-head,
+html[data-theme="god-mode"] .am-row-name b,
+html[data-theme="god-mode"] .am-field-count {
+  color: var(--divine-gold) !important;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9), 0px 0px 10px rgba(0, 0, 0, 0.5) !important;
+  letter-spacing: 1px;
 }
 
-html[data-theme="god-mode"] .am-table {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
+/* Přepis podnadpisu "Vyber bojiště..." na nesmrtelné uvítání */
+html[data-theme="god-mode"] .am-menu-subtitle {
+  font-size: 0 !important; /* Skryje původní text bez rozbití rozložení */
 }
 
-html[data-theme="god-mode"] .am-table-head {
+html[data-theme="god-mode"] .am-menu-subtitle::after {
+  content: "Vítej mezi nesmrtelnými";
+  font-size: 18px; /* Obnoví velikost pro nový text */
   color: var(--divine-gold);
-  border-bottom: 2px solid var(--divine-gold);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9);
+  display: block;
+  margin-top: 5px;
   font-weight: 700;
-  font-size: 1.1em;
 }
 
-/* Levitující karty hřišť */
+/* Ztmavení tlačítek pro lepší kontrast zlatého textu */
+html[data-theme="god-mode"] .am-btn {
+  background: rgba(0, 0, 0, 0.75) !important;
+  border: 1px solid var(--divine-gold) !important;
+}
+
+/* Levitující karty s hřišti */
 html[data-theme="god-mode"] .am-row {
   background: rgba(255, 255, 255, 0.9) !important;
-  border: 1px solid rgba(212, 175, 55, 0.3) !important;
+  border: 1px solid rgba(212, 175, 55, 0.4) !important;
   border-radius: 8px;
   margin-bottom: 12px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-  animation: levitate 6s ease-in-out infinite;
-  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
-html[data-theme="god-mode"] .am-row:hover {
-  transform: translateY(-5px) scale(1.02);
-  box-shadow: 0 15px 30px rgba(212, 175, 55, 0.2);
-  border-color: var(--divine-gold) !important;
+html[data-theme="god-mode"] .am-row-location {
+  color: #111 !important; /* Tmavá barva lokality pro čitelnost */
+  font-weight: 600;
 }
 
-html[data-theme="god-mode"] .am-row-name b {
-  color: #1a252f !important;
-  font-family: 'Cinzel', serif;
-  font-weight: 700;
+html[data-theme="god-mode"] .am-header {
+  background: rgba(253, 251, 247, 0.95) !important;
+  border-bottom: 2px solid var(--divine-gold);
+  box-shadow: 0 10px 30px rgba(212, 175, 55, 0.1);
 }
 
-@keyframes levitate {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-4px); }
+/* Vzhled vyhledávání */
+html[data-theme="god-mode"] .am-search input {
+  background: rgba(255, 255, 255, 0.9) !important;
+  color: #000 !important;
+  font-weight: bold;
+  border: 2px solid var(--divine-gold) !important;
 }
 
-/* ---------------------------------------------------------
-   ANTICKÉ SLOUPY
-   --------------------------------------------------------- */
-.divine-column {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  width: 70px;
-  pointer-events: none;
-  z-index: 8980;
-  opacity: 0;
-  transform: scaleY(0.96);
-  transition: opacity 1.5s ease, transform 1.5s ease;
-}
-
-html[data-theme="god-mode"] .divine-column {
-  opacity: 1;
-  transform: scaleY(1);
-}
-
-.divine-column.left { left: 20px; }
-.divine-column.right { right: 20px; }
-
-/* Tělo sloupu (Bílý mramor s drážkami) */
-.divine-column::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 10px;
-  right: 10px;
-  background: repeating-linear-gradient(90deg, #f0eadd, #ffffff 4px, #e3dccb 8px);
-  border-left: 1px solid #dcd3c0;
-  border-right: 1px solid #dcd3c0;
-  box-shadow: 5px 0 15px rgba(0,0,0,0.1);
-}
-
-/* Hlavice sloupu (Zlato) */
-.divine-column::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 20px;
-  height: 35px;
-  background: linear-gradient(135deg, #d4af37 0%, #fff7b0 50%, #aa8529 100%);
-  border-radius: 4px;
-  box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
-}
-
-/* ---------------------------------------------------------
-   BLESK A PŘECHOD
-   --------------------------------------------------------- */
+/* Blesk a přechod */
 .divine-lightning {
   position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: 9998;
-  background: #ffffff; /* Čistě bílý blesk Dia */
+  background: #ffffff;
   opacity: 0;
 }
 
@@ -175,9 +110,6 @@ html[data-theme="god-mode"] .divine-column {
 
 .divine-transition.active { opacity: 1; }
 
-/* ---------------------------------------------------------
-   HOLD INDICATOR
-   --------------------------------------------------------- */
 .divine-hold {
   position: fixed;
   top: 80px;
@@ -188,7 +120,8 @@ html[data-theme="god-mode"] .divine-column {
   text-align: center;
   font-family: 'Cinzel', serif;
   font-weight: 700;
-  color: var(--divine-gold);
+  color: #ffd700;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.9);
   opacity: 0;
   transition: opacity 0.2s ease;
 }
@@ -199,7 +132,7 @@ html[data-theme="god-mode"] .divine-column {
   margin-top: 5px;
   width: 150px;
   height: 4px;
-  background: rgba(0,0,0,0.1);
+  background: rgba(0,0,0,0.4);
   border-radius: 2px;
   overflow: hidden;
 }
@@ -207,12 +140,6 @@ html[data-theme="god-mode"] .divine-column {
 .divine-hold-progress {
   height: 100%;
   width: 0%;
-  background: var(--divine-gold);
-  box-shadow: 0 0 10px var(--divine-gold);
-}
-
-@media (max-width: 700px) {
-  .divine-column { width: 40px; }
-  .divine-column.left { left: 0px; }
-  .divine-column.right { right: 0px; }
+  background: #ffd700;
+  box-shadow: 0 0 10px #ffd700;
 }
