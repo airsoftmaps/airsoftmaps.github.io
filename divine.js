@@ -145,14 +145,23 @@
     }, 250);
   }
 
-  logo.addEventListener("pointerdown", startHold);
+  logo.addEventListener("contextmenu", (event) => {
+  event.preventDefault();
+});
 
-  logo.addEventListener("pointerup", cancelHold);
+logo.addEventListener("pointerdown", (event) => {
+  event.preventDefault();
+  startHold(event);
+});
 
-  logo.addEventListener("pointercancel", cancelHold);
+logo.addEventListener("pointerup", (event) => {
+  event.preventDefault();
+  cancelHold();
+});
 
-  logo.addEventListener("pointerleave", cancelHold);
+logo.addEventListener("pointercancel", cancelHold);
 
+logo.addEventListener("pointerleave", cancelHold);
   /* -------------------------------------------------------
      BOŽSKÝ REŽIM
      ------------------------------------------------------- */
