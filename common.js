@@ -39,12 +39,13 @@ AM.setTheme = function (theme) {
 
 AM.applyTheme = function (theme) {
   const validThemes = [
-    "dark",
-    "light",
-    "resident-evil",
-    "pubg",
-    "fortnite"
-  ];
+  "dark",
+  "light",
+  "resident-evil",
+  "pubg",
+  "fortnite",
+  "god-mode"
+];
 
   if (!validThemes.includes(theme)) {
     theme = "dark";
