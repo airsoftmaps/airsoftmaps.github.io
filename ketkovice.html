@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Airsoft Ketkovice - Mapa hřiště | Airsoft Maps</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="common.css">
+</head>
+<body>
+
+<header class="am-header">
+  <a class="am-brand" href="menu.html">
+    <img class="am-brand-logo" src="loga/tmavekulate.png" alt="Airsoft Maps">
+  </a>
+
+  <div class="am-field-title">Airsoft — <span>KETKOVICE</span></div>
+
+  <div class="am-controls">
+    <button class="am-btn" id="back-btn">← <span id="back-label">Zpět na hřiště</span></button>
+    <div class="am-dd" id="lang-dd">
+      <button class="am-btn">🌐 <span id="lang-current">CZ</span></button>
+      <div class="am-dd-menu">
+        <button data-lang="cs">Čeština</button>
+        <button data-lang="en">English</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="am-map-toolbar">
+  <div class="am-toggle">
+    <button id="btn-2d" class="active">2D</button>
+    <button id="btn-3d">3D</button>
+    <button class="am-locate-btn" id="locate-btn" style="margin-left:10px;">
+      <span class="dot"></span><span id="locate-label">Moje poloha</span>
+    </button>
+  </div>
+</div>
+<div class="am-locate-status" id="locate-status"></div>
+
+<div class="am-map-body">
+  <div class="am-map-canvas">
+    <svg id="map-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+  </div>
+  <div class="am-sidebar">
+    <div class="am-sidebar-title" id="sidebar-title">Místa na hřišti</div>
+    <div id="poi-list"></div>
+  </div>
+</div>
+
+<script src="common.js?v=3"></script>
+<script src="geo.js?v=3"></script>
+<script src="map-engine.js?v=8"></script>
+<script>
+const FIELD_DATA = {
+    viewBoxFlat: "0 0 2180 1980",
+
+    // GPS kotvy podle zadání (přepočteno na mřížku z ketkygrid.png)
+    geoAnchors: [
+      { col: 10.49, row: 10.25, lat: 49.16007134036873, lng: 16.24743775024007 }, // dole/vlevo
+      { col: 14.86, row: 5.3,  lat: 49.16037221828357, lng: 16.24952240413488 }, // nahoře/vlevo
+      { col: 21.35, row: 5.78, lat: 49.159521394100665, lng: 16.25120703374161 } // vpravo, u vstupu
+    ],
+
+    // Obvod hřiště podle červené obvodové čáry z gridu
+    boundary: [
+      [22.6, 2.7], [14.2, 3.4], [6.5, 3.7], [0.7, 10.6],
+      [9.1, 18.8], [15.6, 13.6], [15.6, 10.3], [23.1, 10.8],
+      [22.6, 2.7]
+    ],
+
+    // Oranžová šipka zvenku mířící na VSTUP (vpravo)
+    entrance: { col: 23.0, row: 4.65, angle: 180 },
+
+    // Cesty (fialové lomené čáry) - hlavní kmen k vstupu + dvě větve do "bludiště"
+    roads: [
+      { points: [[11.5, 5.3], [17.0, 5.06], [20.3, 4.52], [22.4, 4.52]] },
+      { points: [[11.5, 5.3], [11.2, 6.2], [11.25, 7.0], [10.5, 8.0], [9.6, 8.9], [8.7, 9.4], [8.15, 9.85]] },
+      { points: [[11.5, 5.3], [11.6, 6.8], [11.86, 8.6], [12.2, 9.6], [12.2, 10.7], [12.0, 11.5], [10.3, 11.5], [9.0, 12.0], [8.6, 12.8], [10.4, 13.0]] }
+    ],
+
+    walls: [],
+
+    // Modré plochy - budovy BEZ klikacího popisku (vykresleny jako "zóny")
+    zones: [
+      { rect: [15.7, 3.3, 17.7, 4.4], color: "#0064ff" },
+      { rect: [18.2, 3.55, 19.0, 4.25], color: "#0064ff" },
+      { rect: [18.2, 5.05, 19.0, 5.85], color: "#0064ff" },
+      { rect: [19.0, 5.03, 19.6, 5.78], color: "#0064ff" },
+      { rect: [18.3, 6.29, 19.0, 6.98], color: "#0064ff" },
+      { rect: [19.0, 6.23, 19.7, 6.98], color: "#0064ff" },
+      { rect: [20.6, 4.8, 22.0, 5.6], color: "#0064ff" },
+      { rect: [15.1, 5.47, 15.6, 5.81], color: "#0064ff" },
+      { rect: [11.03, 10.11, 11.74, 10.98], color: "#0064ff" },
+      { rect: [8.29, 11.04, 9.37, 11.98], color: "#0064ff" }
+    ],
+
+    // Červené budovy (2ks) - OFFZÓNA, klikací, zobrazí se v seznamu
+    buildings: [
+      { id: "offzone_1", code: "OZ", name: "Offzóna", nameEn: "Off-Zone", rect: [21.0, 3.25, 21.9, 3.96], color: "#e2231a", height: 0.2 },
+      { id: "offzone_2", code: "OZ", name: "Offzóna", nameEn: "Off-Zone", rect: [20.1, 3.34, 21.0, 3.96], color: "#e2231a", height: 0.2 }
+    ]
+  };
+
+  /* --------------------------------------------------------------------
+     STROMY — zelená plocha z ketkygrid.png držící mřížku. Místo ručního
+     výpisu stovek bodů generujeme mřížku stromů uvnitř obvodu hřiště a
+     vynecháváme "mýtinu" (cesty, budovy, vstupní koridor), přesně podle
+     bílé/zelené plochy z podkladového obrázku.
+     -------------------------------------------------------------------- */
+  const CLEARING = [
+    [22.6, 2.7], [6.49, 3.7], [6.26, 4.04], [15.76, 3.41], [15.52, 4.57],
+    [9.65, 4.98], [10.78, 6.8], [7.57, 11.7], [8.26, 13.19], [10.46, 13.02],
+    [11.49, 11.93], [12.46, 11.7], [12.21, 8.2], [12.97, 5.5], [15.78, 5.95],
+    [18.71, 7.2], [22.81, 7.03]
+  ];
+
+  function pointInPolygon(pt, poly) {
+    const x = pt[0], y = pt[1];
+    let inside = false;
+    for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+      const xi = poly[i][0], yi = poly[i][1];
+      const xj = poly[j][0], yj = poly[j][1];
+      const intersect = ((yi > y) !== (yj > y)) &&
+        (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+      if (intersect) inside = !inside;
+    }
+    return inside;
+  }
+
+  function generateTrees(boundary, clearing, spacing) {
+    const trees = [];
+    let minC = Infinity, maxC = -Infinity, minR = Infinity, maxR = -Infinity;
+    boundary.forEach(([c, r]) => {
+      minC = Math.min(minC, c); maxC = Math.max(maxC, c);
+      minR = Math.min(minR, r); maxR = Math.max(maxR, r);
+    });
+    for (let r = minR; r <= maxR; r += spacing) {
+      for (let c = minC; c <= maxC; c += spacing) {
+        // drobný "jitter", ať mřížka nevypadá roboticky
+        const jc = c + (Math.random() - 0.5) * spacing * 0.3;
+        const jr = r + (Math.random() - 0.5) * spacing * 0.3;
+        if (pointInPolygon([jc, jr], boundary) && !pointInPolygon([jc, jr], clearing)) {
+          trees.push([Math.round(jc * 100) / 100, Math.round(jr * 100) / 100]);
+        }
+      }
+    }
+    return trees;
+  }
+
+  FIELD_DATA.trees = generateTrees(FIELD_DATA.boundary, CLEARING, 0.45);
+
+  const svg = document.getElementById("map-svg");
+  const listEl = document.getElementById("poi-list");
+
+  const LABELS = {
+    cs: { back: "Zpět na hřiště", sidebar: "Místa na hřišti" },
+    en: { back: "Back to fields", sidebar: "Points of interest" }
+  };
+
+  function applyStaticText(lang) {
+    document.getElementById("back-label").textContent = LABELS[lang].back;
+    document.getElementById("sidebar-title").textContent = LABELS[lang].sidebar;
+  }
+
+  AM.wireDropdowns();
+
+  applyStaticText(AM.getLang());
+
+  document.getElementById("back-btn").addEventListener("click", () => {
+    window.location.href = "menu.html";
+  });
+
+  const engine = MapEngine.init({
+    svg,
+    listEl,
+    data: FIELD_DATA,
+    getLang: AM.getLang,
+    mountModeToggle: {
+      btn2d: document.getElementById("btn-2d"),
+      btn3d: document.getElementById("btn-3d")
+    }
+  });
+
+  AM.wireLangSwitch((lang) => {
+    applyStaticText(lang);
+    engine.redraw();
+  });
+
+  const LOCATE_TEXT = {
+    cs: { btn: "Moje poloha", on: "Sleduji polohu", outside: "Jsi mimo hřiště",
+          denied: "Poloha zamítnuta v prohlížeči", unavailable: "Polohu se nepodařilo zjistit",
+          noAnchors: "Pro toto hřiště není poloha dostupná" },
+    en: { btn: "My location", on: "Tracking location", outside: "You are outside the field",
+          denied: "Location permission denied", unavailable: "Could not get location",
+          noAnchors: "Location isn't available for this field" }
+  };
+
+  const locateBtn = document.getElementById("locate-btn");
+  const locateLabel = document.getElementById("locate-label");
+  const locateStatus = document.getElementById("locate-status");
+  let watchId = null, tracking = false;
+  let stopHeading = null, lastHeading = null, lastUpBearing = null, insideField = false;
+
+  const hasGeo = FIELD_DATA.geoAnchors && FIELD_DATA.geoAnchors.length >= 3
+    && FIELD_DATA.geoAnchors.every(a => a.lat && a.lng);
+
+  function applyCompassRotation() {
+    if (insideField && lastHeading != null && lastUpBearing != null) {
+      engine.setCompassRotation((lastUpBearing - lastHeading + 360) % 360);
+    } else {
+      engine.setCompassRotation(null);
+    }
+  }
+
+  if (!hasGeo) {
+    locateBtn.style.display = "none";
+  } else {
+    locateBtn.addEventListener("click", () => {
+      const lang = AM.getLang();
+      if (tracking) {
+        AMGeo.stop(watchId); watchId = null; tracking = false;
+        if (stopHeading) { stopHeading(); stopHeading = null; }
+        insideField = false;
+        lastHeading = null;
+        applyCompassRotation();
+        locateBtn.classList.remove("active", "outside");
+        locateLabel.textContent = LOCATE_TEXT[lang].btn;
+        locateStatus.textContent = "";
+        engine.setPlayer(null);
+        return;
+      }
+      tracking = true;
+      locateBtn.classList.add("active");
+      locateLabel.textContent = LOCATE_TEXT[lang].on;
+
+      stopHeading = AMGeo.watchHeading((heading) => {
+        lastHeading = heading;
+        applyCompassRotation();
+      });
+
+      watchId = AMGeo.watch(FIELD_DATA, (result) => {
+        const t = LOCATE_TEXT[AM.getLang()];
+        if (!result.ok) {
+          locateStatus.textContent = t[result.reason] || t.unavailable;
+          locateBtn.classList.remove("outside");
+          engine.setPlayer(null);
+          insideField = false;
+          applyCompassRotation();
+          return;
+        }
+        lastUpBearing = result.upBearing;
+        if (result.inside) {
+          locateBtn.classList.remove("outside");
+          locateStatus.textContent = "";
+          engine.setPlayer({ col: result.col, row: result.row });
+          insideField = true;
+        } else {
+          locateBtn.classList.add("outside");
+          locateStatus.textContent = t.outside;
+          engine.setPlayer(null);
+          insideField = false;
+        }
+        applyCompassRotation();
+      });
+    });
+  }
+</script>
+
+</body>
+</html>
