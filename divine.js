@@ -2,16 +2,20 @@
   const HOLD_TIME = 3000;
 
   function initGodMode() {
-    const logo = document.querySelector(".am-brand");
-    if (!logo) return;
+    /* ---------------------------------------------------------
+       1. AUTOMATICKÁ AKTIVACE PŘI NAČTENÍ STRÁNKY (pokud je zapnuto)
+       --------------------------------------------------------- */
+    const isGodMode = 
+      document.documentElement.getAttribute("data-theme") === "god-mode" || 
+      (typeof AM !== "undefined" && typeof AM.getTheme === "function" && AM.getTheme() === "god-mode");
 
-    /* DEKORACE OLYMPU */
-    const leftColumn = document.createElement("div");
-    leftColumn.className = "divine-column left";
+    if (isGodMode) {
+      document.documentElement.setAttribute("data-theme", "god-mode");
+    }
 
-    const rightColumn = document.createElement("div");
-    rightColumn.className = "divine-column right";
-
+    /* ---------------------------------------------------------
+       2. PŘÍPRAVA EFEKTŮ (Blesky, přechody, ukazatel)
+       --------------------------------------------------------- */
     const lightning = document.createElement("div");
     lightning.className = "divine-lightning";
 
@@ -27,10 +31,19 @@
       </div>
     `;
 
-    document.body.append(leftColumn, rightColumn, lightning, transition, hold);
+    document.body.append(lightning, transition, hold);
     const progress = hold.querySelector(".divine-hold-progress");
 
-    /* LOGIKA PODRŽENÍ */
+    if (isGodMode) {
+      scheduleLightning();
+    }
+
+    /* ---------------------------------------------------------
+       3. LOGIKA DLOUHÉHO STISKU LOGA (pro aktivaci z menu)
+       --------------------------------------------------------- */
+    const logo = document.querySelector(".am-brand");
+    if (!logo) return; // Pokud na stránce logo není, dál se skript pro stisk nevykonává
+
     let holding = false;
     let startTime = 0;
     let animationFrame = null;
@@ -79,7 +92,6 @@
       hold.classList.remove("active");
     }
 
-    /* AKTIVACE BOŽSKÉHO MÓDU */
     function activate() {
       if (!holding) return;
       holding = false;
@@ -105,12 +117,12 @@
       }, 350);
     }
 
-    /* BLESKY (ZEUS) */
+    /* BLESKY */
     let lightningTimer = null;
 
     function strikeLightning() {
-      const isGodMode = document.documentElement.getAttribute("data-theme") === "god-mode";
-      if (!isGodMode) {
+      const activeCheck = document.documentElement.getAttribute("data-theme") === "god-mode";
+      if (!activeCheck) {
         stopLightning();
         return;
       }
@@ -131,7 +143,7 @@
       lightning.classList.remove("flash");
     }
 
-    /* EVENTS */
+    /* EVENTS PRO LOGO */
     logo.addEventListener("contextmenu", e => e.preventDefault());
     logo.addEventListener("dragstart", e => e.preventDefault());
     logo.addEventListener("pointerdown", e => { e.preventDefault(); startHold(e); });
@@ -152,15 +164,3 @@
     initGodMode();
   }
 })();
-    /* =====================================================
-       KONTROLA PŘI NAČTENÍ NOVÉ STRÁNKY
-       ===================================================== */
-    const isGodMode = 
-      document.documentElement.getAttribute("data-theme") === "god-mode" || 
-      (typeof AM !== "undefined" && typeof AM.getTheme === "function" && AM.getTheme() === "god-mode");
-
-    if (isGodMode) {
-      // Pokud uživatel přišel s aktivním božským módem, 
-      // vizuály se aplikují přes CSS a my jen nahodíme blesky.
-      scheduleLightning();
-    }
