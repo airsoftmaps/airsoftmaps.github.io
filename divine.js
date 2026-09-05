@@ -1,6 +1,6 @@
 /* =========================================================
    AIRSOFT MAPS
-   DIVINE MODE
+   GOD MODE
    ========================================================= */
 
 (() => {
@@ -60,19 +60,28 @@
   const progress = hold.querySelector(".divine-hold-progress");
 
   /* -------------------------------------------------------
-     AKTIVACE PODRŽENÍM
+     PODRŽENÍ LOGA
      ------------------------------------------------------- */
 
-  let timer = null;
-  let startTime = null;
+  let startTime = 0;
   let holding = false;
   let animationFrame = null;
+  let timer = null;
+
+  // True pouze v okamžiku, kdy bylo dosaženo 3 sekund.
+  // Používá se k potlačení následného kliknutí na <a>.
+  let longPressTriggered = false;
 
   function startHold(event) {
 
-    if (event.button !== undefined && event.button !== 0) return;
+    if (event.button !== undefined && event.button !== 0) {
+      return;
+    }
+
+    if (holding) return;
 
     holding = true;
+    longPressTriggered = false;
     startTime = performance.now();
 
     hold.classList.add("active");
@@ -87,9 +96,7 @@
       progress.style.width = `${percent * 100}%`;
 
       if (percent >= 1) {
-
         finishHold();
-
         return;
       }
 
@@ -102,6 +109,8 @@
   }
 
   function cancelHold() {
+
+    if (!holding) return;
 
     holding = false;
 
@@ -124,6 +133,7 @@
     if (!holding) return;
 
     holding = false;
+    longPressTriggered = true;
 
     if (timer) {
       clearTimeout(timer);
@@ -137,7 +147,7 @@
 
     progress.style.width = "100%";
 
-    toggleDivineMode();
+    activateGodMode();
 
     setTimeout(() => {
       progress.style.width = "0%";
@@ -145,51 +155,81 @@
     }, 250);
   }
 
-  logo.addEventListener("contextmenu", (event) => {
-  event.preventDefault();
-});
-
-logo.addEventListener("pointerdown", (event) => {
-  event.preventDefault();
-  startHold(event);
-});
-
-logo.addEventListener("pointerup", (event) => {
-  event.preventDefault();
-  cancelHold();
-});
-
-logo.addEventListener("pointercancel", cancelHold);
-
-logo.addEventListener("pointerleave", cancelHold);
   /* -------------------------------------------------------
-     BOŽSKÝ REŽIM
+     MOBILNÍ DLOUHÝ STISK
      ------------------------------------------------------- */
 
-  function toggleDivineMode() {
+  logo.addEventListener("contextmenu", (event) => {
+    event.preventDefault();
+  });
 
-    const active =
-      document.body.classList.toggle("divine-mode");
+  logo.addEventListener("dragstart", (event) => {
+    event.preventDefault();
+  });
 
-    transition.classList.add("active");
+  logo.addEventListener("pointerdown", (event) => {
+    startHold(event);
+  });
 
-    setTimeout(() => {
-      transition.classList.remove("active");
-    }, 700);
+  logo.addEventListener("pointerup", (event) => {
 
-    if (active) {
+    if (longPressTriggered) {
+      event.preventDefault();
+    }
 
-      console.log("⚡ AIRSOFT MAPS // DIVINE MODE");
+    cancelHold();
+  });
+
+  logo.addEventListener("pointercancel", () => {
+    cancelHold();
+  });
+
+  logo.addEventListener("pointerleave", () => {
+    cancelHold();
+  });
+
+  /*
+     Krátké klepnutí:
+     normálně otevře menu.html.
+
+     Dlouhé podržení:
+     kliknutí se po dokončení podržení zablokuje.
+  */
+
+  logo.addEventListener("click", (event) => {
+
+    if (!longPressTriggered) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    longPressTriggered = false;
+  });
+
+  /* -------------------------------------------------------
+     GOD MODE
+     ------------------------------------------------------- */
+
+  function activateGodMode() {
+
+    if (typeof AM !== "undefined" && typeof AM.setTheme === "function") {
+
+      AM.setTheme("god-mode");
+
+      console.log("⚡ AIRSOFT MAPS // GOD MODE");
+
+      transition.classList.add("active");
+
+      setTimeout(() => {
+        transition.classList.remove("active");
+      }, 700);
 
       startLightning();
 
-    } else {
-
-      console.log("AIRSOFT MAPS // MORTAL MODE");
-
-      stopLightning();
-
     }
+
   }
 
   /* -------------------------------------------------------
@@ -200,7 +240,10 @@ logo.addEventListener("pointerleave", cancelHold);
 
   function strikeLightning() {
 
-    if (!document.body.classList.contains("divine-mode")) return;
+    if (AM.getTheme() !== "god-mode") {
+      stopLightning();
+      return;
+    }
 
     lightning.classList.remove("flash");
 
@@ -229,13 +272,9 @@ logo.addEventListener("pointerleave", cancelHold);
 
     scheduleLightning();
 
-    /* první blesk relativně brzy po vstupu */
-
     setTimeout(() => {
 
-      if (
-        document.body.classList.contains("divine-mode")
-      ) {
+      if (AM.getTheme() === "god-mode") {
         strikeLightning();
       }
 
