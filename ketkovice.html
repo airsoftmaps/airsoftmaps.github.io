@@ -74,33 +74,39 @@ const FIELD_DATA = {
     // Oranžová šipka zvenku mířící na VSTUP (vpravo)
     entrance: { col: 23.0, row: 4.65, angle: 180 },
 
-    // Cesty (fialové lomené čáry) - hlavní kmen k vstupu + dvě větve do "bludiště"
+    // Cesty (fialové lomené čáry) - hlavní kmen k vstupu + TŘI větve do "bludiště"
+    // (přepočteno přímo z ketkygrid.png; obrázek má reálně 2 rozvětvení/3 konce, ne 2)
     roads: [
-      { points: [[11.5, 5.3], [17.0, 5.06], [20.3, 4.52], [22.4, 4.52]] },
-      { points: [[11.5, 5.3], [11.2, 6.2], [11.25, 7.0], [10.5, 8.0], [9.6, 8.9], [8.7, 9.4], [8.15, 9.85]] },
-      { points: [[11.5, 5.3], [11.6, 6.8], [11.86, 8.6], [12.2, 9.6], [12.2, 10.7], [12.0, 11.5], [10.3, 11.5], [9.0, 12.0], [8.6, 12.8], [10.4, 13.0]] }
+      // hlavní kmen: od vstupu k prvnímu rozvětvení (J1)
+      { points: [[23.39, 4.49], [20.94, 4.51], [18.15, 4.93], [17.91, 5.04], [13.02, 5.02], [12.24, 5.92], [12.26, 6.61]] },
+      // větev A - krátká, odbočuje z J1 doleva dolů
+      { points: [[12.26, 6.61], [12.17, 6.68], [12.05, 7.28], [11.86, 7.75], [10.8, 8.92], [10.15, 9.75]] },
+      // větev B - střední, z J1 přes druhé rozvětvení (J2) dolů ke krátkému konci
+      { points: [[12.26, 6.61], [12.86, 8.71], [13.07, 8.99], [13.18, 9.36], [13.23, 10.59], [13.0, 11.51]] },
+      // větev C - dlouhá, z J1 přes J2 hluboko do bludiště
+      { points: [[12.26, 6.61], [12.86, 8.71], [12.61, 9.34], [10.9, 12.27], [9.56, 12.74], [9.1, 12.44], [9.09, 11.97], [9.32, 11.65]] }
     ],
 
     walls: [],
 
     // Modré plochy - budovy BEZ klikacího popisku (vykresleny jako "zóny")
+    // (přepočteno přímo z pixelů ketkygrid.png - 8 budov, ne 10)
     zones: [
-      { rect: [15.7, 3.3, 17.7, 4.4], color: "#0064ff" },
-      { rect: [18.2, 3.55, 19.0, 4.25], color: "#0064ff" },
-      { rect: [18.2, 5.05, 19.0, 5.85], color: "#0064ff" },
-      { rect: [19.0, 5.03, 19.6, 5.78], color: "#0064ff" },
-      { rect: [18.3, 6.29, 19.0, 6.98], color: "#0064ff" },
-      { rect: [19.0, 6.23, 19.7, 6.98], color: "#0064ff" },
-      { rect: [20.6, 4.8, 22.0, 5.6], color: "#0064ff" },
-      { rect: [15.1, 5.47, 15.6, 5.81], color: "#0064ff" },
-      { rect: [11.03, 10.11, 11.74, 10.98], color: "#0064ff" },
-      { rect: [8.29, 11.04, 9.37, 11.98], color: "#0064ff" }
+      { rect: [16.73, 3.35, 18.72, 4.40], color: "#0064ff" }, // velká horní (2 buňky)
+      { rect: [19.22, 3.56, 20.05, 4.21], color: "#0064ff" }, // malá vpravo od ní
+      { rect: [19.23, 5.02, 20.59, 5.83], color: "#0064ff" }, // prostřední řada - vlevo
+      { rect: [21.63, 4.79, 23.04, 5.59], color: "#0064ff" }, // prostřední řada - u vstupu
+      { rect: [16.13, 5.46, 16.59, 5.80], color: "#0064ff" }, // malá vlevo, pod cestou
+      { rect: [19.34, 6.24, 20.70, 7.07], color: "#0064ff" }, // spodní řada
+      { rect: [11.89, 10.15, 12.74, 11.11], color: "#0064ff" }, // v bludišti (horní)
+      { rect: [9.32, 11.07, 10.38, 11.99], color: "#0064ff" }  // v bludišti (dolní-levá)
     ],
 
     // Červené budovy (2ks) - OFFZÓNA, klikací, zobrazí se v seznamu
+    // (přepočteno přímo z pixelů ketkygrid.png)
     buildings: [
-      { id: "offzone_1", code: "OZ", name: "Offzóna", nameEn: "Off-Zone", rect: [21.0, 3.25, 21.9, 3.96], color: "#e2231a", height: 0.2 },
-      { id: "offzone_2", code: "OZ", name: "Offzóna", nameEn: "Off-Zone", rect: [20.1, 3.34, 21.0, 3.96], color: "#e2231a", height: 0.2 }
+      { id: "offzone_1", code: "OZ", name: "Offzóna", nameEn: "Off-Zone", rect: [21.11, 3.35, 22.90, 4.00], color: "#e2231a", height: 0.2 },
+      { id: "offzone_2", code: "OZ", name: "Offzóna", nameEn: "Off-Zone", rect: [23.09, 3.77, 23.62, 4.05], color: "#e2231a", height: 0.2 }
     ]
   };
 
