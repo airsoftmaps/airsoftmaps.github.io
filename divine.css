@@ -1,82 +1,114 @@
 /* =========================================================
-   AIRSOFT MAPS - OLYMPUS GOD MODE
+   AIRSOFT MAPS - OLYMPUS GOD MODE (LUXURY EDITION)
    ========================================================= */
 
 html[data-theme="god-mode"] body {
-  --divine-gold: #ffd700;
-  --divine-text: #2c3e50;
-  background: radial-gradient(circle at top center, #ffffff 0%, #f0eadd 50%, #dcd3c0 100%) !important;
-  color: var(--divine-text) !important;
+  /* Zářivé nebeské pozadí s přechodem do sluneční záře */
+  background: radial-gradient(circle at 50% 0%, #fffdf4 0%, #f3ece1 45%, #e2d7c3 100%) !important;
+  color: #2c3e50 !important;
   font-family: 'Cinzel', serif !important;
 }
 
-/* Skrytí loga */
+/* Skrytí původního loga */
 html[data-theme="god-mode"] .am-brand {
   display: none !important;
 }
 
-/* Zlaté texty s černým stínem pro perfektní čitelnost na světlém pozadí */
-html[data-theme="god-mode"] .am-btn,
+/* ---------------------------------------------------------
+   LUXUSNÍ ZLATÉ TEXTY S ODLESKEM
+   --------------------------------------------------------- */
 html[data-theme="god-mode"] .am-menu-heading h1,
 html[data-theme="god-mode"] .am-menu-kicker,
 html[data-theme="god-mode"] .am-table-head,
 html[data-theme="god-mode"] .am-row-name b,
 html[data-theme="god-mode"] .am-field-count {
-  color: var(--divine-gold) !important;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9), 0px 0px 10px rgba(0, 0, 0, 0.5) !important;
-  letter-spacing: 1px;
+  color: #d4af37 !important;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8), 0 0 15px rgba(212, 175, 55, 0.5) !important;
+  letter-spacing: 1.5px;
 }
 
-/* Přepis podnadpisu "Vyber bojiště..." na nesmrtelné uvítání */
+/* Božské uvítání pod nápisem Hřiště */
 html[data-theme="god-mode"] .am-menu-subtitle {
-  font-size: 0 !important; /* Skryje původní text bez rozbití rozložení */
+  font-size: 0 !important;
 }
 
 html[data-theme="god-mode"] .am-menu-subtitle::after {
   content: "Vítej mezi nesmrtelnými";
-  font-size: 18px; /* Obnoví velikost pro nový text */
-  color: var(--divine-gold);
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9);
+  font-size: 16px;
+  color: #d4af37;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8), 0 0 10px rgba(212, 175, 55, 0.4);
   display: block;
-  margin-top: 5px;
+  margin-top: 6px;
   font-weight: 700;
+  letter-spacing: 2px;
 }
 
-/* Ztmavení tlačítek pro lepší kontrast zlatého textu */
+/* ---------------------------------------------------------
+   HLAVIČKA JAKO ZLATÝ PORTÁL
+   --------------------------------------------------------- */
+html[data-theme="god-mode"] .am-header {
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.95), rgba(248, 244, 234, 0.9)) !important;
+  border-bottom: 3px solid #d4af37;
+  box-shadow: 0 10px 40px rgba(212, 175, 55, 0.3);
+}
+
+/* ---------------------------------------------------------
+   TLAČÍTKA JAKO KOVANÉ ZLATO
+   --------------------------------------------------------- */
 html[data-theme="god-mode"] .am-btn {
-  background: rgba(0, 0, 0, 0.75) !important;
-  border: 1px solid var(--divine-gold) !important;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 100%) !important;
+  color: #d4af37 !important;
+  border: 1px solid #d4af37 !important;
+  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+  font-family: 'Cinzel', serif;
 }
 
-/* Levitující karty s hřišti */
+html[data-theme="god-mode"] .am-btn:hover {
+  background: linear-gradient(135deg, #d4af37 0%, #aa8529 100%) !important;
+  color: #111 !important;
+  text-shadow: none !important;
+  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
+}
+
+/* ---------------------------------------------------------
+   KARTY HŘIŠTĚ JAKO MRAMOROVÉ DESKY S GOLD TRIMEM
+   --------------------------------------------------------- */
 html[data-theme="god-mode"] .am-row {
-  background: rgba(255, 255, 255, 0.9) !important;
+  background: linear-gradient(135deg, #ffffff 0%, #fcf9f2 100%) !important;
   border: 1px solid rgba(212, 175, 55, 0.4) !important;
-  border-radius: 8px;
+  border-left: 4px solid #d4af37 !important; /* Zlatý okraj vlevo */
+  border-radius: 6px;
   margin-bottom: 12px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255,255,255,0.9);
+  transition: all 0.3s ease;
+}
+
+html[data-theme="god-mode"] .am-row:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(212, 175, 55, 0.25);
+  border-color: #d4af37 !important;
 }
 
 html[data-theme="god-mode"] .am-row-location {
-  color: #111 !important; /* Tmavá barva lokality pro čitelnost */
+  color: #4a5568 !important;
   font-weight: 600;
 }
 
-html[data-theme="god-mode"] .am-header {
-  background: rgba(253, 251, 247, 0.95) !important;
-  border-bottom: 2px solid var(--divine-gold);
-  box-shadow: 0 10px 30px rgba(212, 175, 55, 0.1);
-}
-
-/* Vzhled vyhledávání */
+/* ---------------------------------------------------------
+   VYHLEDÁVÁNÍ V ANTICKÉM STYLU
+   --------------------------------------------------------- */
 html[data-theme="god-mode"] .am-search input {
-  background: rgba(255, 255, 255, 0.9) !important;
-  color: #000 !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  color: #1a202c !important;
   font-weight: bold;
-  border: 2px solid var(--divine-gold) !important;
+  border: 2px solid #d4af37 !important;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
 }
 
-/* Blesk a přechod */
+/* ---------------------------------------------------------
+   BLESK A PŘECHODY Z NEBES
+   --------------------------------------------------------- */
 .divine-lightning {
   position: fixed;
   inset: 0;
@@ -120,7 +152,7 @@ html[data-theme="god-mode"] .am-search input {
   text-align: center;
   font-family: 'Cinzel', serif;
   font-weight: 700;
-  color: #ffd700;
+  color: #d4af37;
   text-shadow: 2px 2px 4px rgba(0,0,0,0.9);
   opacity: 0;
   transition: opacity 0.2s ease;
@@ -140,6 +172,6 @@ html[data-theme="god-mode"] .am-search input {
 .divine-hold-progress {
   height: 100%;
   width: 0%;
-  background: #ffd700;
-  box-shadow: 0 0 10px #ffd700;
+  background: #d4af37;
+  box-shadow: 0 0 10px #d4af37;
 }
