@@ -10,10 +10,16 @@
       document.documentElement.setAttribute("data-theme", "god-mode");
     }
 
-    /* FUNKCE PRO AKTUALIZACI TEXTŮ PODLE JAZYKA */
+    /* FUNKCE PRO OKAMŽITOU AKTUALIZACI TEXTŮ */
+    let lastKnownLang = null;
+
     function updateTexts() {
       const currentLang = (typeof AM !== "undefined" && typeof AM.getLang === "function") ? AM.getLang() : "cs";
       
+      // Pokud se jazyk nezměnil, zbytečně to nepřepisujeme
+      if (currentLang === lastKnownLang) return;
+      lastKnownLang = currentLang;
+
       const subtitleEl = document.querySelector(".am-menu-subtitle");
       if (subtitleEl) {
         const subText = currentLang === "en" ? "⚡ WELCOME AMONG THE IMMORTALS ⚡" : "⚡ VÍTEJ MEZI NESMRTELNÝMI ⚡";
@@ -45,12 +51,11 @@
     document.body.append(lightning, transition, hold);
     const progress = hold.querySelector(".divine-hold-progress");
 
+    // Okamžité nastavení textů při startu
     updateTexts();
 
-    // Sledování kliknutí na tlačítka (pokud uživatel přepne jazyk, texty se ihned aktualizují)
-    document.addEventListener("click", () => {
-      setTimeout(updateTexts, 50);
-    });
+    // Sledování změny jazyka (watcher běží na pozadí a hned reaguje na kliknutí na CS/EN)
+    setInterval(updateTexts, 150);
 
     if (isGodMode) {
       scheduleLightning();
