@@ -259,3 +259,35 @@ html[data-theme="god-mode"] .event-title-art {
 html[data-theme="god-mode"] .event-light {
   background: radial-gradient(circle, rgba(255, 215, 0, 0.25), transparent 70%) !important;
 }
+/* Správné chování wallpaperu v God Mode na mobilech i PC */
+html[data-theme="god-mode"] .event-wallpaper {
+  background-image: url("godwall1.png") !important;
+  background-size: cover !important;
+  background-position: center !important;
+}
+
+@media (max-width: 760px) {
+  html[data-theme="god-mode"] .event-wallpaper {
+    background-size: cover !important;
+    background-position: center center !important;
+  }
+}
+
+/* V God Mode zapneme standardní, čistý typografický nápis (AIRSOFT AKCE), 
+   který drží stejnou koncepci jako na jiných stránkách */
+html[data-theme="god-mode"] .event-title-art {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: none;
+}
+
+/* Styl nápisu v God Mode (laděný do zlatých božských barev) */
+html[data-theme="god-mode"] .event-title-art__airsoft {
+  color: #ffd700 !important; /* Nebo můžeš nechat červenou, tohle víc září */
+  text-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+}
+
+html[data-theme="god-mode"] .event-title-art__akce {
+  color: #ffffff !important;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+}
