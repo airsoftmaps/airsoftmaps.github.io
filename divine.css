@@ -1,30 +1,29 @@
 /* =========================================================
-   AIRSOFT MAPS - OLYMPUS GOD MODE (LUXURY EDITION)
+   AIRSOFT MAPS - OLYMPUS GOD MODE (CLEAN & SHARP)
    ========================================================= */
 
 html[data-theme="god-mode"] body {
-  /* Zářivé nebeské pozadí s přechodem do sluneční záře */
-  background: radial-gradient(circle at 50% 0%, #fffdf4 0%, #f3ece1 45%, #e2d7c3 100%) !important;
-  color: #2c3e50 !important;
+  background: radial-gradient(circle at 50% 0%, #ffffff 0%, #f4ede2 60%, #ded2bd 100%) !important;
+  color: #1a202c !important;
   font-family: 'Cinzel', serif !important;
 }
 
-/* Skrytí původního loga */
+/* Skrytí loga */
 html[data-theme="god-mode"] .am-brand {
   display: none !important;
 }
 
 /* ---------------------------------------------------------
-   LUXUSNÍ ZLATÉ TEXTY S ODLESKEM
+   OSTRÉ ZLATÉ TEXTY (Bez rozmazaných stínů)
    --------------------------------------------------------- */
 html[data-theme="god-mode"] .am-menu-heading h1,
 html[data-theme="god-mode"] .am-menu-kicker,
 html[data-theme="god-mode"] .am-table-head,
 html[data-theme="god-mode"] .am-row-name b,
 html[data-theme="god-mode"] .am-field-count {
-  color: #d4af37 !important;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8), 0 0 15px rgba(212, 175, 55, 0.5) !important;
-  letter-spacing: 1.5px;
+  color: #bfa136 !important; /* Elegantní tmavší zlato pro maximální ostrost */
+  text-shadow: none !important;
+  letter-spacing: 1px;
 }
 
 /* Božské uvítání pod nápisem Hřiště */
@@ -34,80 +33,77 @@ html[data-theme="god-mode"] .am-menu-subtitle {
 
 html[data-theme="god-mode"] .am-menu-subtitle::after {
   content: "Vítej mezi nesmrtelnými";
-  font-size: 16px;
-  color: #d4af37;
-  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8), 0 0 10px rgba(212, 175, 55, 0.4);
+  font-size: 15px;
+  color: #8c7322;
   display: block;
   margin-top: 6px;
   font-weight: 700;
-  letter-spacing: 2px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
 }
 
 /* ---------------------------------------------------------
-   HLAVIČKA JAKO ZLATÝ PORTÁL
+   HLAVIČKA
    --------------------------------------------------------- */
 html[data-theme="god-mode"] .am-header {
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.95), rgba(248, 244, 234, 0.9)) !important;
-  border-bottom: 3px solid #d4af37;
-  box-shadow: 0 10px 40px rgba(212, 175, 55, 0.3);
+  background: #fffdf9 !important;
+  border-bottom: 2px solid #bfa136;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 
 /* ---------------------------------------------------------
-   TLAČÍTKA JAKO KOVANÉ ZLATO
+   TLAČÍTKA (Čistá černá se zlatým rámečkem)
    --------------------------------------------------------- */
 html[data-theme="god-mode"] .am-btn {
-  background: linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 100%) !important;
+  background: #111111 !important;
   color: #d4af37 !important;
   border: 1px solid #d4af37 !important;
-  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+  box-shadow: none !important;
   font-family: 'Cinzel', serif;
+  font-weight: 600;
 }
 
 html[data-theme="god-mode"] .am-btn:hover {
-  background: linear-gradient(135deg, #d4af37 0%, #aa8529 100%) !important;
-  color: #111 !important;
-  text-shadow: none !important;
-  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
+  background: #d4af37 !important;
+  color: #111111 !important;
 }
 
 /* ---------------------------------------------------------
-   KARTY HŘIŠTĚ JAKO MRAMOROVÉ DESKY S GOLD TRIMEM
+   KARTY HŘIŠTĚ (Čisté mramorové desky)
    --------------------------------------------------------- */
 html[data-theme="god-mode"] .am-row {
-  background: linear-gradient(135deg, #ffffff 0%, #fcf9f2 100%) !important;
-  border: 1px solid rgba(212, 175, 55, 0.4) !important;
-  border-left: 4px solid #d4af37 !important; /* Zlatý okraj vlevo */
-  border-radius: 6px;
-  margin-bottom: 12px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255,255,255,0.9);
-  transition: all 0.3s ease;
+  background: #ffffff !important;
+  border: 1px solid #e2d7c3 !important;
+  border-left: 3px solid #bfa136 !important;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  transition: transform 0.2s ease, border-color 0.2s ease;
 }
 
 html[data-theme="god-mode"] .am-row:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 30px rgba(212, 175, 55, 0.25);
-  border-color: #d4af37 !important;
+  transform: translateY(-2px);
+  border-color: #bfa136 !important;
+  box-shadow: 0 4px 12px rgba(191, 161, 54, 0.15);
 }
 
 html[data-theme="god-mode"] .am-row-location {
   color: #4a5568 !important;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 /* ---------------------------------------------------------
-   VYHLEDÁVÁNÍ V ANTICKÉM STYLU
+   VYHLEDÁVÁNÍ
    --------------------------------------------------------- */
 html[data-theme="god-mode"] .am-search input {
-  background: rgba(255, 255, 255, 0.95) !important;
+  background: #ffffff !important;
   color: #1a202c !important;
-  font-weight: bold;
-  border: 2px solid #d4af37 !important;
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+  border: 1px solid #bfa136 !important;
+  box-shadow: none !important;
 }
 
 /* ---------------------------------------------------------
-   BLESK A PŘECHODY Z NEBES
+   BLESK A PŘECHODY
    --------------------------------------------------------- */
 .divine-lightning {
   position: fixed;
@@ -137,7 +133,7 @@ html[data-theme="god-mode"] .am-search input {
   pointer-events: none;
   background: #ffffff;
   opacity: 0;
-  transition: opacity 1s ease;
+  transition: opacity 0.8s ease;
 }
 
 .divine-transition.active { opacity: 1; }
@@ -152,8 +148,7 @@ html[data-theme="god-mode"] .am-search input {
   text-align: center;
   font-family: 'Cinzel', serif;
   font-weight: 700;
-  color: #d4af37;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.9);
+  color: #bfa136;
   opacity: 0;
   transition: opacity 0.2s ease;
 }
@@ -163,8 +158,8 @@ html[data-theme="god-mode"] .am-search input {
 .divine-hold-bar {
   margin-top: 5px;
   width: 150px;
-  height: 4px;
-  background: rgba(0,0,0,0.4);
+  height: 3px;
+  background: rgba(0,0,0,0.1);
   border-radius: 2px;
   overflow: hidden;
 }
@@ -172,6 +167,5 @@ html[data-theme="god-mode"] .am-search input {
 .divine-hold-progress {
   height: 100%;
   width: 0%;
-  background: #d4af37;
-  box-shadow: 0 0 10px #d4af37;
+  background: #bfa136;
 }
