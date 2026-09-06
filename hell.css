@@ -1,0 +1,88 @@
+/* =========================================================
+   AIRSOFT MAPS - HELL MODE
+   TEST VERSION
+   ========================================================= */
+
+.hell-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: #050505;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  font-family: Arial, sans-serif;
+}
+
+.hell-message {
+  font-size: clamp(28px, 7vw, 70px);
+  font-weight: 900;
+  letter-spacing: 8px;
+  text-align: center;
+  color: #ff2222;
+}
+
+.hell-dots {
+  display: flex;
+  gap: 35px;
+  margin-top: 50px;
+}
+
+.hell-dot {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.hell-dot.black {
+  background: #000;
+  border: 2px solid #333;
+}
+
+.hell-dot.gold {
+  background: #ffd700;
+}
+
+.hell-dot.red {
+  background: #ff2020;
+}
+
+.hell-return {
+  position: fixed;
+  inset: 0;
+  z-index: 10001;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  color: white;
+  text-align: center;
+}
+
+.hell-return-title {
+  font-size: 30px;
+  font-weight: 900;
+  letter-spacing: 4px;
+}
+
+.hell-code {
+  margin-top: 20px;
+  font-size: 20px;
+  color: #ffd700;
+  letter-spacing: 3px;
+}
+
+.hell-close {
+  position: absolute;
+  top: 20px;
+  right: 25px;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 32px;
+  cursor: pointer;
+}
