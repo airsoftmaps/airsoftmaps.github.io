@@ -135,8 +135,11 @@
       }, 30);
     }
 
+    // Proměnná pro sledování aktuálně hrajícího hromu
+    let activeThunder = null;
+
     function triggerLightningBurst() {
-      // 1 až 3 blesky (každý si nese svůj načasovaný hrom)
+      // 1 až 3 blesky
       const strikes = 1 + Math.floor(Math.random() * 3);
       
       for (let i = 0; i < strikes; i++) {
@@ -147,11 +150,21 @@
           drawRealLightning();
         }, delay);
 
-        // Zvukový hrom pro každý blesk zvlášť pomocí klonování
+        // Zvukový hrom: předchozí utneme a necháme dohrát jen ten nejnovější
         setTimeout(() => {
-          const multiThunder = thunderSound.cloneNode();
-          multiThunder.volume = 0.5;
-          multiThunder.play().catch(e => {});
+          if (activeThunder) {
+            activeThunder.pause();
+            activeThunder.currentTime = 0;
+          }
+
+          activeThunder = thunderSound.cloneNode();
+          activeThunder.volume = 0.5;
+          activeThunder.play().catch(e => {});
+
+          // Jakmile dohraje, vyčistíme proměnnou
+          activeThunder.onended = () => {
+            if (activeThunder === this) activeThunder = null;
+          };
         }, delay + 80); 
       }
     }
