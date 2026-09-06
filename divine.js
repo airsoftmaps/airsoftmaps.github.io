@@ -136,26 +136,97 @@ thunderSound.volume = 0.5; // Ztlumeno na polovinu, ať to nepřebije zbytek apl
       }, 30);
     }
 
+/* GENERÁTOR SKUTEČNÝCH BLESKŮ A GRADUJLÍCÍHO HROMU */
+    function drawRealLightning() {
+      const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      svg.setAttribute("class", "real-lightning-svg");
+
+      let x = window.innerWidth * 0.1 + Math.random() * (window.innerWidth * 0.8);
+      let y = -20;
+      let pathD = `M ${x} ${y} `;
+      const branches = [];
+
+      while (y < window.innerHeight) {
+        y += 20 + Math.random() * 40;
+        x += (Math.random() - 0.5) * 100;
+        pathD += `L ${x} ${y} `;
+        
+        if (Math.random() > 0.65) {
+          let bx = x;
+          let by = y;
+          let branchD = `M ${bx} ${by} `;
+          for (let i = 0; i < 3 + Math.random() * 5; i++) {
+            by += 15 + Math.random() * 30;
+            bx += (Math.random() - 0.5) * 90;
+            branchD += `L ${bx} ${by} `;
+          }
+          branches.push(branchD);
+        }
+      }
+
+      const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      path.setAttribute("d", pathD + branches.join(" "));
+      path.setAttribute("class", "real-lightning-path");
+      
+      svg.appendChild(path);
+      document.body.appendChild(svg);
+
+      setTimeout(() => {
+        svg.style.opacity = "0.3";
+        setTimeout(() => {
+          svg.style.opacity = "1";
+          setTimeout(() => {
+            svg.style.transition = "opacity 0.2s ease-out";
+            svg.style.opacity = "0";
+            setTimeout(() => svg.remove(), 200);
+          }, 40);
+        }, 40);
+      }, 30);
+    }
+
     function triggerLightningBurst() {
-      // 1 až 3 blesky rychle po sobě
+      // 1 až 3 blesky
       const strikes = 1 + Math.floor(Math.random() * 3);
+      
       for (let i = 0; i < strikes; i++) {
-        setTimeout(drawRealLightning, i * 120 + Math.random() * 80);
+        const delay = i * 140 + Math.random() * 60; // postupné zpoždění pro bu-bu-búm
+
+        // Vizuální blesk
+        setTimeout(() => {
+          drawRealLightning();
+        }, delay);
+
+        // Zvukový hrom pro každý blesk zvlášť (naklonovaný, aby se tloukly do rytmu)
+        setTimeout(() => {
+          const multiThunder = thunderSound.cloneNode();
+          multiThunder.volume = 0.5; // Můžeš poladit hlasitost
+          multiThunder.play().catch(e => {});
+        }, delay + 80); // Malá fyzikální prodleva zvuku po záblesku
       }
     }
 
     let lightningTimer = null;
 
-function strikeLightning() {
-  const activeCheck = document.documentElement.getAttribute("data-theme") === "god-mode";
-  if (!activeCheck) {
-    stopLightning();
-    return;
-  }
+    function strikeLightning() {
+      const activeCheck = document.documentElement.getAttribute("data-theme") === "god-mode";
+      if (!activeCheck) {
+        stopLightning();
+        return;
+      }
+      
+      // Otřes pozadí celého okna
+      lightning.classList.remove("flash");
+      void lightning.offsetWidth; 
+      lightning.classList.add("flash");
+      
+      // Spuštění parciální bouřky (blesky + odpovídající počet hromů)
+      triggerLightningBurst();
+      scheduleLightning();
+    }
   
   // 🔊 Přehrání hromu (reset na začátek pro případ, že už hraje)
   thunderSound.currentTime = 0; 
-  thunderSound.play().catch(e => console.log("Zvuk blokován:", e));
+  
   
   // Otřes pozadí
   lightning.classList.remove("flash");
