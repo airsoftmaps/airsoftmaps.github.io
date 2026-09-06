@@ -241,3 +241,21 @@ html[data-theme="god-mode"] .am-map-canvas:hover {
   border-color: #ffaa00 !important;
   box-shadow: 0 0 25px rgba(255, 170, 0, 0.4), inset 0 0 20px rgba(255, 215, 0, 0.1) !important;
 }
+/* Registrace god-mode do systému wallpaperů */
+html[data-theme="god-mode"] .event-wallpaper {
+  background-image: url("GodWall.png") !important;
+  background-position: center !important;
+  background-size: cover !important;
+}
+
+/* Skrytí standardního textu "AKCE" v hlavičce, protože ho máš už velký přímo v tom vygenerovaném obrázku */
+html[data-theme="god-mode"] .event-title-art {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none;
+}
+
+/* Přizpůsobení záře a atmosféry pro God Mode */
+html[data-theme="god-mode"] .event-light {
+  background: radial-gradient(circle, rgba(255, 215, 0, 0.25), transparent 70%) !important;
+}
