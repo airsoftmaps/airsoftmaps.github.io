@@ -207,3 +207,16 @@ html[data-theme="god-mode"] .am-search input {
   background: #ffd700;
   box-shadow: 0 0 15px #ffd700;
 }
+/* Zlatý okraj pro okno mapy a boční panel */
+html[data-theme="god-mode"] .am-map-canvas,
+html[data-theme="god-mode"] .am-sidebar {
+  border: 1px solid #ffd700 !important;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.25), inset 0 0 15px rgba(255, 215, 0, 0.05) !important;
+  transition: all 0.3s ease;
+}
+
+/* Jemné zvýraznění při najetí myší na mapu */
+html[data-theme="god-mode"] .am-map-canvas:hover {
+  border-color: #ffaa00 !important;
+  box-shadow: 0 0 25px rgba(255, 170, 0, 0.4), inset 0 0 20px rgba(255, 215, 0, 0.1) !important;
+}
