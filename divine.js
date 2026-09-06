@@ -1,10 +1,18 @@
+/* =========================================================
+   AIRSOFT MAPS - OLYMPUS GOD MODE: WRATH OF ZEUS
+   + SECRET 6-6-6 HELL SEQUENCE
+   ========================================================= */
+
 (() => {
   const HOLD_TIME = 3000;
 
   function initGodMode() {
-    const isGodMode = 
-      document.documentElement.getAttribute("data-theme") === "god-mode" || 
-      (typeof AM !== "undefined" && typeof AM.getTheme === "function" && AM.getTheme() === "god-mode");
+
+    const isGodMode =
+      document.documentElement.getAttribute("data-theme") === "god-mode" ||
+      (typeof AM !== "undefined" &&
+       typeof AM.getTheme === "function" &&
+       AM.getTheme() === "god-mode");
 
     if (isGodMode) {
       document.documentElement.setAttribute("data-theme", "god-mode");
@@ -13,25 +21,47 @@
     let lastKnownLang = null;
 
     function updateTexts() {
-      const currentLang = (typeof AM !== "undefined" && typeof AM.getLang === "function") ? AM.getLang() : "cs";
-      
+      const currentLang =
+        (typeof AM !== "undefined" &&
+         typeof AM.getLang === "function")
+          ? AM.getLang()
+          : "cs";
+
       if (currentLang === lastKnownLang) return;
       lastKnownLang = currentLang;
 
-      const subtitleEl = document.querySelector(".am-menu-subtitle");
+      const subtitleEl =
+        document.querySelector(".am-menu-subtitle");
+
       if (subtitleEl) {
-        const subText = currentLang === "en" ? "⚡ WELCOME AMONG THE IMMORTALS ⚡" : "⚡ VÍTEJ MEZI NESMRTELNÝMI ⚡";
-        subtitleEl.setAttribute("data-divine-sub", subText);
+        const subText =
+          currentLang === "en"
+            ? "⚡ WELCOME AMONG THE IMMORTALS ⚡"
+            : "⚡ VÍTEJ MEZI NESMRTELNÝMI ⚡";
+
+        subtitleEl.setAttribute(
+          "data-divine-sub",
+          subText
+        );
       }
 
-      const holdTextEl = document.querySelector(".divine-hold-text");
+      const holdTextEl =
+        document.querySelector(".divine-hold-text");
+
       if (holdTextEl) {
-        holdTextEl.textContent = currentLang === "en" ? "ASCENDING TO OLYMPUS" : "VYSTUPUJEŠ NA OLYMP";
+        holdTextEl.textContent =
+          currentLang === "en"
+            ? "ASCENDING TO OLYMPUS"
+            : "VYSTUPUJEŠ NA OLYMP";
       }
     }
 
-    // Přehrávač hromu (uprav si cestu k souboru podle potřeby)
-    const thunderSound = new Audio("thunder.mp3"); 
+
+    /* =====================================================
+       THUNDER
+       ===================================================== */
+
+    const thunderSound = new Audio("thunder.mp3");
     thunderSound.volume = 0.5;
 
     const lightning = document.createElement("div");
@@ -42,164 +72,624 @@
 
     const hold = document.createElement("div");
     hold.className = "divine-hold";
+
     hold.innerHTML = `
-      <div class="divine-hold-text">VYSTUPUJEŠ NA OLYMP</div>
+      <div class="divine-hold-text">
+        VYSTUPUJEŠ NA OLYMP
+      </div>
+
       <div class="divine-hold-bar">
         <div class="divine-hold-progress"></div>
       </div>
     `;
 
-    document.body.append(lightning, transition, hold);
-    const progress = hold.querySelector(".divine-hold-progress");
+    document.body.append(
+      lightning,
+      transition,
+      hold
+    );
+
+    const progress =
+      hold.querySelector(".divine-hold-progress");
+
+
+    /* =====================================================
+       THEME
+       ===================================================== */
 
     updateTexts();
 
     let lastKnownTheme = null;
+
     function checkTheme() {
-      const themeNow = document.documentElement.getAttribute("data-theme");
+
+      const themeNow =
+        document.documentElement.getAttribute("data-theme");
+
       if (themeNow === lastKnownTheme) return;
+
       lastKnownTheme = themeNow;
 
       if (themeNow === "god-mode") {
+
         scheduleLightning();
         createDivineEmbers();
+
       } else {
+
         stopLightning();
-        document.querySelectorAll(".divine-ember, .real-lightning-svg").forEach(e => e.remove());
+
+        document
+          .querySelectorAll(
+            ".divine-ember, .real-lightning-svg"
+          )
+          .forEach(e => e.remove());
+
+        /*
+         * Pokud uživatel opustí GOD MODE,
+         * tajná sekvence se resetuje.
+         */
+        resetHellSequence();
       }
     }
+
 
     setInterval(() => {
       updateTexts();
       checkTheme();
     }, 150);
 
+
+    /* =====================================================
+       DIVINE EMBERS
+       ===================================================== */
+
     function createDivineEmbers() {
-      if (document.querySelectorAll(".divine-ember").length > 0) return;
+
+      if (
+        document.querySelectorAll(
+          ".divine-ember"
+        ).length > 0
+      ) return;
+
       const count = 18;
+
       for (let i = 0; i < count; i++) {
-        const ember = document.createElement("div");
+
+        const ember =
+          document.createElement("div");
+
         ember.className = "divine-ember";
-        ember.style.left = `${Math.random() * 100}vw`;
-        ember.style.animationDuration = `${6 + Math.random() * 8}s`;
-        ember.style.animationDelay = `${Math.random() * 5}s`;
+
+        ember.style.left =
+          `${Math.random() * 100}vw`;
+
+        ember.style.animationDuration =
+          `${6 + Math.random() * 8}s`;
+
+        ember.style.animationDelay =
+          `${Math.random() * 5}s`;
+
         document.body.appendChild(ember);
       }
     }
 
-    /* GENERÁTOR SKUTEČNÝCH BLESKŮ (FRAKTÁLOVÉ SVG) */
-    function drawRealLightning() {
-      const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-      svg.setAttribute("class", "real-lightning-svg");
 
-      let x = window.innerWidth * 0.1 + Math.random() * (window.innerWidth * 0.8);
+    /* =====================================================
+       REAL LIGHTNING
+       ===================================================== */
+
+    function drawRealLightning() {
+
+      const svg =
+        document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "svg"
+        );
+
+      svg.setAttribute(
+        "class",
+        "real-lightning-svg"
+      );
+
+      let x =
+        window.innerWidth * 0.1 +
+        Math.random() *
+        (window.innerWidth * 0.8);
+
       let y = -20;
-      let pathD = `M ${x} ${y} `;
+
+      let pathD =
+        `M ${x} ${y} `;
+
       const branches = [];
 
       while (y < window.innerHeight) {
-        y += 20 + Math.random() * 40;
-        x += (Math.random() - 0.5) * 100;
-        pathD += `L ${x} ${y} `;
-        
+
+        y +=
+          20 +
+          Math.random() * 40;
+
+        x +=
+          (Math.random() - 0.5) *
+          100;
+
+        pathD +=
+          `L ${x} ${y} `;
+
         if (Math.random() > 0.65) {
+
           let bx = x;
           let by = y;
-          let branchD = `M ${bx} ${by} `;
-          for (let i = 0; i < 3 + Math.random() * 5; i++) {
-            by += 15 + Math.random() * 30;
-            bx += (Math.random() - 0.5) * 90;
-            branchD += `L ${bx} ${by} `;
+
+          let branchD =
+            `M ${bx} ${by} `;
+
+          for (
+            let i = 0;
+            i < 3 + Math.random() * 5;
+            i++
+          ) {
+
+            by +=
+              15 +
+              Math.random() * 30;
+
+            bx +=
+              (Math.random() - 0.5) *
+              90;
+
+            branchD +=
+              `L ${bx} ${by} `;
           }
+
           branches.push(branchD);
         }
       }
 
-      const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-      path.setAttribute("d", pathD + branches.join(" "));
-      path.setAttribute("class", "real-lightning-path");
-      
+      const path =
+        document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "path"
+        );
+
+      path.setAttribute(
+        "d",
+        pathD + branches.join(" ")
+      );
+
+      path.setAttribute(
+        "class",
+        "real-lightning-path"
+      );
+
       svg.appendChild(path);
+
       document.body.appendChild(svg);
 
       setTimeout(() => {
+
         svg.style.opacity = "0.3";
+
         setTimeout(() => {
+
           svg.style.opacity = "1";
+
           setTimeout(() => {
-            svg.style.transition = "opacity 0.2s ease-out";
+
+            svg.style.transition =
+              "opacity 0.2s ease-out";
+
             svg.style.opacity = "0";
-            setTimeout(() => svg.remove(), 200);
+
+            setTimeout(() => {
+              svg.remove();
+            }, 200);
+
           }, 40);
+
         }, 40);
+
       }, 30);
     }
 
-    // Proměnná pro sledování aktuálně hrajícího hromu
+
+    /* =====================================================
+       THUNDER BURST
+       ===================================================== */
+
     let activeThunder = null;
 
     function triggerLightningBurst() {
-      // 1 až 3 blesky
-      const strikes = 1 + Math.floor(Math.random() * 3);
-      
-      for (let i = 0; i < strikes; i++) {
-        const delay = i * 140 + Math.random() * 60; // postupná prodleva pro bu-bu-búm
 
-        // Vizuální blesk
+      const strikes =
+        1 +
+        Math.floor(Math.random() * 3);
+
+      for (
+        let i = 0;
+        i < strikes;
+        i++
+      ) {
+
+        const delay =
+          i * 140 +
+          Math.random() * 60;
+
         setTimeout(() => {
           drawRealLightning();
         }, delay);
 
-        // Zvukový hrom: předchozí utneme a necháme dohrát jen ten nejnovější
         setTimeout(() => {
+
           if (activeThunder) {
             activeThunder.pause();
             activeThunder.currentTime = 0;
           }
 
-          activeThunder = thunderSound.cloneNode();
-          activeThunder.volume = 0.5;
-          activeThunder.play().catch(e => {});
+          activeThunder =
+            thunderSound.cloneNode();
 
-          // Jakmile dohraje, vyčistíme proměnnou
-          activeThunder.onended = () => {
-            if (activeThunder === this) activeThunder = null;
-          };
-        }, delay + 80); 
+          activeThunder.volume = 0.5;
+
+          activeThunder
+            .play()
+            .catch(e => {});
+
+          activeThunder.onended =
+            () => {
+              if (
+                activeThunder === this
+              ) {
+                activeThunder = null;
+              }
+            };
+
+        }, delay + 80);
       }
     }
+
 
     let lightningTimer = null;
 
     function strikeLightning() {
-      const activeCheck = document.documentElement.getAttribute("data-theme") === "god-mode";
+
+      const activeCheck =
+        document.documentElement
+          .getAttribute("data-theme") ===
+        "god-mode";
+
       if (!activeCheck) {
         stopLightning();
         return;
       }
-      
-      // Otřes pozadí celého okna
+
       lightning.classList.remove("flash");
-      void lightning.offsetWidth; 
+
+      void lightning.offsetWidth;
+
       lightning.classList.add("flash");
-      
-      // Spuštění bouřky (vícero blesků + gradující hromy)
+
       triggerLightningBurst();
+
       scheduleLightning();
     }
 
+
     function scheduleLightning() {
+
       clearTimeout(lightningTimer);
-      lightningTimer = setTimeout(strikeLightning, 8000 + Math.random() * 15000);
+
+      lightningTimer =
+        setTimeout(
+          strikeLightning,
+          8000 +
+          Math.random() * 15000
+        );
     }
 
+
     function stopLightning() {
+
       clearTimeout(lightningTimer);
+
       lightningTimer = null;
+
       lightning.classList.remove("flash");
     }
 
-    const logo = document.querySelector(".am-brand");
+
+    /* =====================================================
+       SECRET HELL SEQUENCE
+       ===================================================== */
+
+    let hellStage = 0;
+    let hellClicks = 0;
+
+    let hellHotspot = null;
+    let hellHintTop = null;
+    let hellHintBottom = null;
+
+
+    function isActuallyGodMode() {
+
+      return (
+        document.documentElement
+          .getAttribute("data-theme") ===
+        "god-mode"
+      );
+    }
+
+
+    function createHellHotspot() {
+
+      if (hellHotspot) return;
+
+      hellHotspot =
+        document.createElement("div");
+
+      hellHotspot.className =
+        "divine-hell-hotspot";
+
+      /*
+       * Začínáme dole.
+       */
+      hellHotspot.classList.add("bottom");
+
+      document.body.appendChild(
+        hellHotspot
+      );
+
+      hellHotspot.addEventListener(
+        "click",
+        handleHellClick
+      );
+    }
+
+
+    function handleHellClick(event) {
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      if (!isActuallyGodMode()) return;
+
+      hellClicks++;
+
+      console.log(
+        `HELL SEQUENCE: stage ${hellStage + 1}, click ${hellClicks}/6`
+      );
+
+      if (hellClicks >= 6) {
+
+        hellClicks = 0;
+
+        hellStage++;
+
+        advanceHellStage();
+      }
+    }
+
+
+    function advanceHellStage() {
+
+      /*
+       * STAGE 1
+       * Dole -> nahoru
+       */
+      if (hellStage === 1) {
+
+        moveHotspot("top");
+
+        showHellHint(
+          "nepokoušej...",
+          "bottom"
+        );
+
+        console.log(
+          "HELL SEQUENCE: hotspot moved TOP"
+        );
+
+        return;
+      }
+
+
+      /*
+       * STAGE 2
+       * Nahoře -> dolů
+       */
+      if (hellStage === 2) {
+
+        moveHotspot("bottom");
+
+        showHellHint(
+          "ty máš rád výzvy že?",
+          "top"
+        );
+
+        console.log(
+          "HELL SEQUENCE: hotspot moved BOTTOM"
+        );
+
+        return;
+      }
+
+
+      /*
+       * STAGE 3
+       * Dole -> HELL
+       */
+      if (hellStage === 3) {
+
+        console.log(
+          "HELL SEQUENCE: 6-6-6 COMPLETE"
+        );
+
+        triggerHell();
+
+        return;
+      }
+    }
+
+
+    function moveHotspot(position) {
+
+      if (!hellHotspot) return;
+
+      hellHotspot.classList.remove(
+        "top",
+        "bottom"
+      );
+
+      hellHotspot.classList.add(
+        position
+      );
+    }
+
+
+    function showHellHint(text, position) {
+
+      /*
+       * Zpráva zůstává na staré pozici.
+       */
+
+      const hint =
+        document.createElement("div");
+
+      hint.className =
+        "divine-hell-hint";
+
+      hint.textContent = text;
+
+      hint.classList.add(position);
+
+      document.body.appendChild(hint);
+
+      if (position === "top") {
+        hellHintTop = hint;
+      } else {
+        hellHintBottom = hint;
+      }
+    }
+
+
+    function resetHellSequence() {
+
+      hellStage = 0;
+      hellClicks = 0;
+
+      if (hellHotspot) {
+        hellHotspot.remove();
+        hellHotspot = null;
+      }
+
+      if (hellHintTop) {
+        hellHintTop.remove();
+        hellHintTop = null;
+      }
+
+      if (hellHintBottom) {
+        hellHintBottom.remove();
+        hellHintBottom = null;
+      }
+    }
+
+
+    function triggerHell() {
+
+      if (hellHotspot) {
+        hellHotspot.remove();
+        hellHotspot = null;
+      }
+
+      /*
+       * Poslední text.
+       */
+      const finalMessage =
+        document.createElement("div");
+
+      finalMessage.className =
+        "divine-hell-final";
+
+      finalMessage.textContent =
+        "řekl sis o to";
+
+      document.body.appendChild(
+        finalMessage
+      );
+
+
+      /*
+       * Krátké zatmění.
+       */
+      setTimeout(() => {
+
+        finalMessage.classList.add(
+          "active"
+        );
+
+      }, 50);
+
+
+      /*
+       * Po zatmění předáme řízení
+       * hell.js.
+       */
+      setTimeout(() => {
+
+        if (
+          typeof window.startHell ===
+          "function"
+        ) {
+
+          finalMessage.remove();
+
+          window.startHell();
+
+        } else {
+
+          /*
+           * Fallback pro případ,
+           * že hell.js ještě není načtený.
+           */
+          console.error(
+            "HELL ERROR: window.startHell() není dostupné."
+          );
+
+        }
+
+      }, 1800);
+    }
+
+
+    /*
+     * Hotspot vytvoříme až ve chvíli,
+     * kdy je skutečně aktivní GOD MODE.
+     */
+    function initializeHellSequence() {
+
+      if (!isActuallyGodMode()) return;
+
+      createHellHotspot();
+    }
+
+
+    /*
+     * Spustíme kontrolu po načtení.
+     */
+    setTimeout(
+      initializeHellSequence,
+      300
+    );
+
+
+    /* =====================================================
+       GOD MODE LONG PRESS
+       ===================================================== */
+
+    const logo =
+      document.querySelector(".am-brand");
+
     if (!logo) return;
 
     let holding = false;
@@ -207,92 +697,236 @@
     let animationFrame = null;
     let longPress = false;
 
+
     function startHold(event) {
-      if (event.pointerType === "mouse" && event.button !== 0) return;
+
+      if (
+        event.pointerType === "mouse" &&
+        event.button !== 0
+      ) return;
+
       if (holding) return;
-      
+
       holding = true;
       longPress = false;
-      startTime = performance.now();
+
+      startTime =
+        performance.now();
+
       hold.classList.add("active");
 
-      try { logo.setPointerCapture(event.pointerId); } catch (e) {}
+      try {
+        logo.setPointerCapture(
+          event.pointerId
+        );
+      } catch (e) {}
+
 
       function update() {
+
         if (!holding) return;
-        const elapsed = performance.now() - startTime;
-        const percent = Math.min(elapsed / HOLD_TIME, 1);
-        progress.style.width = `${percent * 100}%`;
+
+        const elapsed =
+          performance.now() -
+          startTime;
+
+        const percent =
+          Math.min(
+            elapsed / HOLD_TIME,
+            1
+          );
+
+        progress.style.width =
+          `${percent * 100}%`;
 
         if (percent >= 1) {
+
           activate();
+
           return;
         }
-        animationFrame = requestAnimationFrame(update);
+
+        animationFrame =
+          requestAnimationFrame(
+            update
+          );
       }
-      animationFrame = requestAnimationFrame(update);
+
+      animationFrame =
+        requestAnimationFrame(
+          update
+        );
     }
 
+
     function endHold(event) {
+
       if (longPress) {
+
         event.preventDefault();
         event.stopPropagation();
+
         longPress = false;
       }
+
       cancelHold();
     }
 
+
     function cancelHold() {
-      if (!holding) return;
-      holding = false;
-      if (animationFrame) cancelAnimationFrame(animationFrame);
-      progress.style.width = "0%";
-      hold.classList.remove("active");
-    }
 
-    function activate() {
       if (!holding) return;
-      holding = false;
-      longPress = true;
-      if (animationFrame) cancelAnimationFrame(animationFrame);
-      progress.style.width = "100%";
 
-      if (typeof AM !== "undefined" && typeof AM.setTheme === "function") {
-        AM.setTheme("god-mode");
-      } else {
-        document.documentElement.setAttribute("data-theme", "god-mode");
+      holding = false;
+
+      if (animationFrame) {
+        cancelAnimationFrame(
+          animationFrame
+        );
       }
 
-      transition.classList.add("active");
-      setTimeout(() => transition.classList.remove("active"), 1000);
-      
-      setTimeout(strikeLightning, 500);
-      scheduleLightning();
-      createDivineEmbers();
+      progress.style.width = "0%";
+
+      hold.classList.remove(
+        "active"
+      );
+    }
+
+
+    function activate() {
+
+      if (!holding) return;
+
+      holding = false;
+      longPress = true;
+
+      if (animationFrame) {
+        cancelAnimationFrame(
+          animationFrame
+        );
+      }
+
+      progress.style.width = "100%";
+
+
+      if (
+        typeof AM !== "undefined" &&
+        typeof AM.setTheme === "function"
+      ) {
+
+        AM.setTheme("god-mode");
+
+      } else {
+
+        document.documentElement
+          .setAttribute(
+            "data-theme",
+            "god-mode"
+          );
+      }
+
+
+      /*
+       * Tajná sekvence začíná
+       * vždy znovu při aktivaci GOD MODE.
+       */
+      resetHellSequence();
+
+      createHellHotspot();
+
+
+      transition.classList.add(
+        "active"
+      );
 
       setTimeout(() => {
+        transition.classList.remove(
+          "active"
+        );
+      }, 1000);
+
+
+      setTimeout(
+        strikeLightning,
+        500
+      );
+
+      scheduleLightning();
+
+      createDivineEmbers();
+
+
+      setTimeout(() => {
+
         progress.style.width = "0%";
-        hold.classList.remove("active");
+
+        hold.classList.remove(
+          "active"
+        );
+
       }, 350);
     }
 
-    logo.addEventListener("contextmenu", e => e.preventDefault());
-    logo.addEventListener("dragstart", e => e.preventDefault());
-    logo.addEventListener("pointerdown", e => { e.preventDefault(); startHold(e); });
-    logo.addEventListener("pointerup", endHold);
-    logo.addEventListener("pointercancel", cancelHold);
-    logo.addEventListener("click", e => {
-      if (longPress) {
+
+    logo.addEventListener(
+      "contextmenu",
+      e => e.preventDefault()
+    );
+
+    logo.addEventListener(
+      "dragstart",
+      e => e.preventDefault()
+    );
+
+    logo.addEventListener(
+      "pointerdown",
+      e => {
         e.preventDefault();
-        e.stopImmediatePropagation();
-        longPress = false;
+        startHold(e);
       }
-    }, true);
+    );
+
+    logo.addEventListener(
+      "pointerup",
+      endHold
+    );
+
+    logo.addEventListener(
+      "pointercancel",
+      cancelHold
+    );
+
+    logo.addEventListener(
+      "click",
+      e => {
+
+        if (longPress) {
+
+          e.preventDefault();
+          e.stopImmediatePropagation();
+
+          longPress = false;
+        }
+
+      },
+      true
+    );
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initGodMode, { once: true });
+
+  if (
+    document.readyState === "loading"
+  ) {
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      initGodMode,
+      { once: true }
+    );
+
   } else {
+
     initGodMode();
   }
+
 })();
