@@ -2,9 +2,6 @@
   const HOLD_TIME = 3000;
 
   function initGodMode() {
-    /* ---------------------------------------------------------
-       1. AUTOMATICKÁ AKTIVACE PŘI NAČTENÍ STRÁNKY (pokud je zapnuto)
-       --------------------------------------------------------- */
     const isGodMode = 
       document.documentElement.getAttribute("data-theme") === "god-mode" || 
       (typeof AM !== "undefined" && typeof AM.getTheme === "function" && AM.getTheme() === "god-mode");
@@ -13,9 +10,19 @@
       document.documentElement.setAttribute("data-theme", "god-mode");
     }
 
-    /* ---------------------------------------------------------
-       2. PŘÍPRAVA EFEKTŮ (Blesky, přechody, ukazatel)
-       --------------------------------------------------------- */
+    // Detekce jazyka (CZ / EN)
+    const currentLang = (typeof AM !== "undefined" && typeof AM.getLang === "function") ? AM.getLang() : "cs";
+    
+    // Nastavení lokalizovaného podnadpisu
+    const subtitleEl = document.querySelector(".am-menu-subtitle");
+    if (subtitleEl) {
+      const subText = currentLang === "en" ? "⚡ WELCOME AMONG THE IMMORTALS ⚡" : "⚡ VÍTEJ MEZI NESMRTELNÝMI ⚡";
+      subtitleEl.setAttribute("data-divine-sub", subText);
+    }
+
+    const holdText = currentLang === "en" ? "ASCENDING TO OLYMPUS" : "VYSTUPUJEŠ NA OLYMP";
+
+    /* PŘÍPRAVA EFEKTŮ */
     const lightning = document.createElement("div");
     lightning.className = "divine-lightning";
 
@@ -25,7 +32,7 @@
     const hold = document.createElement("div");
     hold.className = "divine-hold";
     hold.innerHTML = `
-      <div>ASCENDING TO OLYMPUS</div>
+      <div>${holdText}</div>
       <div class="divine-hold-bar">
         <div class="divine-hold-progress"></div>
       </div>
@@ -36,13 +43,25 @@
 
     if (isGodMode) {
       scheduleLightning();
+      createDivineEmbers();
     }
 
-    /* ---------------------------------------------------------
-       3. LOGIKA DLOUHÉHO STISKU LOGA (pro aktivaci z menu)
-       --------------------------------------------------------- */
+    /* GENERÁTOR ZLATÉHO PRACHU (JISEK) */
+    function createDivineEmbers() {
+      const count = 18; // Počet poletujících částic
+      for (let i = 0; i < count; i++) {
+        const ember = document.createElement("div");
+        ember.className = "divine-ember";
+        ember.style.left = `${Math.random() * 100}vw`;
+        ember.style.animationDuration = `${6 + Math.random() * 8}s`;
+        ember.style.animationDelay = `${Math.random() * 5}s`;
+        document.body.appendChild(ember);
+      }
+    }
+
+    /* LOGIKA DLOUHÉHO STISKU LOGA */
     const logo = document.querySelector(".am-brand");
-    if (!logo) return; // Pokud na stránce logo není, dál se skript pro stisk nevykonává
+    if (!logo) return;
 
     let holding = false;
     let startTime = 0;
@@ -110,6 +129,7 @@
       
       setTimeout(strikeLightning, 500);
       scheduleLightning();
+      createDivineEmbers();
 
       setTimeout(() => {
         progress.style.width = "0%";
@@ -134,7 +154,7 @@
 
     function scheduleLightning() {
       clearTimeout(lightningTimer);
-      lightningTimer = setTimeout(strikeLightning, 10000 + Math.random() * 20000);
+      lightningTimer = setTimeout(strikeLightning, 8000 + Math.random() * 15000);
     }
 
     function stopLightning() {
