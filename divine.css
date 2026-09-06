@@ -244,7 +244,7 @@ html[data-theme="god-mode"] .am-map-canvas:hover {
 
 /* Správné chování wallpaperu v God Mode na mobilech i PC */
 html[data-theme="god-mode"] .event-wallpaper {
-  background-image: url("godwall1.png") !important;
+  background-image: url("GodWall1.png") !important;
   background-size: cover !important;
   background-position: center !important;
 }
@@ -273,4 +273,18 @@ html[data-theme="god-mode"] .event-title-art__airsoft {
 html[data-theme="god-mode"] .event-title-art__akce {
   color: #ffffff !important;
   text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+}
+/* 1. Během načítání (dokud .event-content nezíská třídu .loaded) schováme božský nápis */
+.event-content:not(.loaded) ~ .event-title-art {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  transform: translate(-50%, -50%) scale(.96) !important;
+  pointer-events: none;
+}
+
+/* 2. Jakmile loading skončí a přidá se .visible, nápis se plynule ukáže */
+html[data-theme="god-mode"] .event-title-art.visible {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: translate(-50%, -50%) scale(1) !important;
 }
