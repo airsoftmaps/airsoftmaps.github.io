@@ -10,28 +10,25 @@
       document.documentElement.setAttribute("data-theme", "god-mode");
     }
 
-    /* UNIVERZÁLNÍ FUNKCE PRO AKTUALIZACI TEXTŮ */
-    function updateTexts() {
-      // Zjistíme jazyk z AM objektu nebo z atributu html elementu
-      let currentLang = "cs";
-      if (typeof AM !== "undefined" && typeof AM.getLang === "function") {
-        currentLang = AM.getLang();
-      } else {
-        const htmlLang = document.documentElement.getAttribute("lang");
-        if (htmlLang) currentLang = htmlLang.toLowerCase();
-      }
+    /* FUNKCE PRO OKAMŽITOU AKTUALIZACI TEXTŮ */
+    let lastKnownLang = null;
 
-      const isEnglish = currentLang.includes("en");
+    function updateTexts() {
+      const currentLang = (typeof AM !== "undefined" && typeof AM.getLang === "function") ? AM.getLang() : "cs";
+      
+      // Pokud se jazyk nezměnil, zbytečně to nepřepisujeme
+      if (currentLang === lastKnownLang) return;
+      lastKnownLang = currentLang;
 
       const subtitleEl = document.querySelector(".am-menu-subtitle");
       if (subtitleEl) {
-        const subText = isEnglish ? "⚡ WELCOME AMONG THE IMMORTALS ⚡" : "⚡ VÍTEJ MEZI NESMRTELNÝMI ⚡";
+        const subText = currentLang === "en" ? "⚡ WELCOME AMONG THE IMMORTALS ⚡" : "⚡ VÍTEJ MEZI NESMRTELNÝMI ⚡";
         subtitleEl.setAttribute("data-divine-sub", subText);
       }
 
       const holdTextEl = document.querySelector(".divine-hold-text");
       if (holdTextEl) {
-        holdTextEl.textContent = isEnglish ? "ASCENDING TO OLYMPUS" : "VYSTUPUJEŠ NA OLYMP";
+        holdTextEl.textContent = currentLang === "en" ? "ASCENDING TO OLYMPUS" : "VYSTUPUJEŠ NA OLYMP";
       }
     }
 
@@ -54,27 +51,11 @@
     document.body.append(lightning, transition, hold);
     const progress = hold.querySelector(".divine-hold-progress");
 
-    // Prvotní nastavení textů
+    // Okamžité nastavení textů při startu
     updateTexts();
 
-    /* SLEDOVÁNÍ ZMĚN V DOMU (MUTATION OBSERVER) */
-    // Jakmile hlavní aplikace cokoliv přepne v HTML/Body, hned to zkontrolujeme
-    const observer = new MutationObserver(() => {
-      updateTexts();
-    });
-
-    observer.observe(document.documentElement, {
-      attributes: true,
-      childList: true,
-      subtree: true,
-      attributeFilter: ['lang', 'data-lang', 'class']
-    });
-
-    // Pojistka pro kliknutí na tlačítka (pokud aplikace mění jazyk interně bez změny atributů)
-    document.addEventListener("click", () => {
-      setTimeout(updateTexts, 50);
-      setTimeout(updateTexts, 250);
-    });
+    // Sledování změny jazyka (watcher běží na pozadí a hned reaguje na kliknutí na CS/EN)
+    setInterval(updateTexts, 150);
 
     if (isGodMode) {
       scheduleLightning();
