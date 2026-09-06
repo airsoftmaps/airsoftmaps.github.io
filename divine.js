@@ -55,12 +55,26 @@
     updateTexts();
 
     // Sledování změny jazyka (watcher běží na pozadí a hned reaguje na kliknutí na CS/EN)
-    setInterval(updateTexts, 150);
+    let lastKnownTheme = null;
 
-    if (isGodMode) {
-      scheduleLightning();
-      createDivineEmbers();
+    function checkTheme() {
+      const themeNow = document.documentElement.getAttribute("data-theme");
+      if (themeNow === lastKnownTheme) return;
+      lastKnownTheme = themeNow;
+
+      if (themeNow === "god-mode") {
+        scheduleLightning();
+        createDivineEmbers();
+      } else {
+        stopLightning();
+        document.querySelectorAll(".divine-ember").forEach(e => e.remove());
+      }
     }
+
+    setInterval(() => {
+      updateTexts();
+      checkTheme();
+    }, 150);
 
     function createDivineEmbers() {
       if (document.querySelectorAll(".divine-ember").length > 0) return;
