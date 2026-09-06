@@ -10,17 +10,21 @@
       document.documentElement.setAttribute("data-theme", "god-mode");
     }
 
-    // Detekce jazyka (CZ / EN)
-    const currentLang = (typeof AM !== "undefined" && typeof AM.getLang === "function") ? AM.getLang() : "cs";
-    
-    // Nastavení lokalizovaného podnadpisu
-    const subtitleEl = document.querySelector(".am-menu-subtitle");
-    if (subtitleEl) {
-      const subText = currentLang === "en" ? "⚡ WELCOME AMONG THE IMMORTALS ⚡" : "⚡ VÍTEJ MEZI NESMRTELNÝMI ⚡";
-      subtitleEl.setAttribute("data-divine-sub", subText);
-    }
+    /* FUNKCE PRO AKTUALIZACI TEXTŮ PODLE JAZYKA */
+    function updateTexts() {
+      const currentLang = (typeof AM !== "undefined" && typeof AM.getLang === "function") ? AM.getLang() : "cs";
+      
+      const subtitleEl = document.querySelector(".am-menu-subtitle");
+      if (subtitleEl) {
+        const subText = currentLang === "en" ? "⚡ WELCOME AMONG THE IMMORTALS ⚡" : "⚡ VÍTEJ MEZI NESMRTELNÝMI ⚡";
+        subtitleEl.setAttribute("data-divine-sub", subText);
+      }
 
-    const holdText = currentLang === "en" ? "ASCENDING TO OLYMPUS" : "VYSTUPUJEŠ NA OLYMP";
+      const holdTextEl = document.querySelector(".divine-hold-text");
+      if (holdTextEl) {
+        holdTextEl.textContent = currentLang === "en" ? "ASCENDING TO OLYMPUS" : "VYSTUPUJEŠ NA OLYMP";
+      }
+    }
 
     /* PŘÍPRAVA EFEKTŮ */
     const lightning = document.createElement("div");
@@ -32,7 +36,7 @@
     const hold = document.createElement("div");
     hold.className = "divine-hold";
     hold.innerHTML = `
-      <div>${holdText}</div>
+      <div class="divine-hold-text">VYSTUPUJEŠ NA OLYMP</div>
       <div class="divine-hold-bar">
         <div class="divine-hold-progress"></div>
       </div>
@@ -41,14 +45,21 @@
     document.body.append(lightning, transition, hold);
     const progress = hold.querySelector(".divine-hold-progress");
 
+    updateTexts();
+
+    // Sledování kliknutí na tlačítka (pokud uživatel přepne jazyk, texty se ihned aktualizují)
+    document.addEventListener("click", () => {
+      setTimeout(updateTexts, 50);
+    });
+
     if (isGodMode) {
       scheduleLightning();
       createDivineEmbers();
     }
 
-    /* GENERÁTOR ZLATÉHO PRACHU (JISEK) */
     function createDivineEmbers() {
-      const count = 18; // Počet poletujících částic
+      if (document.querySelectorAll(".divine-ember").length > 0) return;
+      const count = 18;
       for (let i = 0; i < count; i++) {
         const ember = document.createElement("div");
         ember.className = "divine-ember";
@@ -163,7 +174,6 @@
       lightning.classList.remove("flash");
     }
 
-    /* EVENTS PRO LOGO */
     logo.addEventListener("contextmenu", e => e.preventDefault());
     logo.addEventListener("dragstart", e => e.preventDefault());
     logo.addEventListener("pointerdown", e => { e.preventDefault(); startHold(e); });
