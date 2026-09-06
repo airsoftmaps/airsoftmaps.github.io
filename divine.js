@@ -144,22 +144,26 @@
 
     let lightningTimer = null;
 
-    function strikeLightning() {
-      const activeCheck = document.documentElement.getAttribute("data-theme") === "god-mode";
-      if (!activeCheck) {
-        stopLightning();
-        return;
-      }
-      
-      // Otřes pozadí
-      lightning.classList.remove("flash");
-      void lightning.offsetWidth; 
-      lightning.classList.add("flash");
-      
-      // Vykreslení čar
-      triggerLightningBurst();
-      scheduleLightning();
-    }
+function strikeLightning() {
+  const activeCheck = document.documentElement.getAttribute("data-theme") === "god-mode";
+  if (!activeCheck) {
+    stopLightning();
+    return;
+  }
+  
+  // 🔊 Přehrání hromu (reset na začátek pro případ, že už hraje)
+  thunderSound.currentTime = 0; 
+  thunderSound.play().catch(e => console.log("Zvuk blokován:", e));
+  
+  // Otřes pozadí
+  lightning.classList.remove("flash");
+  void lightning.offsetWidth; 
+  lightning.classList.add("flash");
+  
+  // Vykreslení čar
+  triggerLightningBurst();
+  scheduleLightning();
+}
 
     function scheduleLightning() {
       clearTimeout(lightningTimer);
