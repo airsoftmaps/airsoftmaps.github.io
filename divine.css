@@ -1,11 +1,12 @@
 /* =========================================================
-   AIRSOFT MAPS - OLYMPUS GOD MODE: WRATH OF ZEUS (BRUTAL)
+   AIRSOFT MAPS - OLYMPUS GOD MODE: WRATH OF ZEUS (ULTIMATE)
    ========================================================= */
 
 html[data-theme="god-mode"] body {
   background: radial-gradient(circle at 50% 15%, #1a160d 0%, #08080a 55%, #030304 100%) !important;
   color: #e2e8f0 !important;
   font-family: 'Cinzel', serif !important;
+  overflow-x: hidden;
 }
 
 /* Skrytí původního loga */
@@ -14,7 +15,7 @@ html[data-theme="god-mode"] .am-brand {
 }
 
 /* ---------------------------------------------------------
-   TAVENÉ ZLATO A NEONOVÁ ZÁŘ
+   ZÁŘÍCÍ TEXTY
    --------------------------------------------------------- */
 html[data-theme="god-mode"] .am-menu-heading h1,
 html[data-theme="god-mode"] .am-menu-kicker,
@@ -26,13 +27,13 @@ html[data-theme="god-mode"] .am-field-count {
   letter-spacing: 2px;
 }
 
-/* Božské uvítání - proroctví v kameni */
+/* Božské uvítání (reaguje na jazyk přes JS/atributy) */
 html[data-theme="god-mode"] .am-menu-subtitle {
   font-size: 0 !important;
 }
 
 html[data-theme="god-mode"] .am-menu-subtitle::after {
-  content: "⚡ VÍTEJ MEZI NESMRTELNÝMI ⚡";
+  content: attr(data-divine-sub);
   font-size: 14px;
   color: #ffaa00;
   text-shadow: 0 0 12px rgba(255, 170, 0, 0.9);
@@ -43,7 +44,7 @@ html[data-theme="god-mode"] .am-menu-subtitle::after {
 }
 
 /* ---------------------------------------------------------
-   HLAVIČKA - OBSIDIÁNOVÝ PORTÁL
+   HLAVIČKA A TLAČÍTKA
    --------------------------------------------------------- */
 html[data-theme="god-mode"] .am-header {
   background: rgba(10, 10, 14, 0.95) !important;
@@ -51,9 +52,6 @@ html[data-theme="god-mode"] .am-header {
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9), 0 0 20px rgba(255, 215, 0, 0.25);
 }
 
-/* ---------------------------------------------------------
-   TLAČÍTKA - KOVANÁ ZBRAŇ BOHŮ
-   --------------------------------------------------------- */
 html[data-theme="god-mode"] .am-btn {
   background: linear-gradient(135deg, #121216 0%, #1f1f26 100%) !important;
   color: #ffd700 !important;
@@ -74,7 +72,7 @@ html[data-theme="god-mode"] .am-btn:hover {
 }
 
 /* ---------------------------------------------------------
-   KARTY HŘIŠTĚ - OBSIDIÁNOVÉ MONOLITY
+   KARTY HŘIŠTĚ
    --------------------------------------------------------- */
 html[data-theme="god-mode"] .am-row {
   background: rgba(14, 14, 18, 0.92) !important;
@@ -98,23 +96,47 @@ html[data-theme="god-mode"] .am-row-location {
   font-weight: 600;
 }
 
-/* ---------------------------------------------------------
-   VYHLEDÁVÁNÍ V PODSVĚTÍ
-   --------------------------------------------------------- */
 html[data-theme="god-mode"] .am-search input {
   background: rgba(10, 10, 14, 0.95) !important;
   color: #ffffff !important;
   border: 2px solid rgba(255, 215, 0, 0.6) !important;
-  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.9);
-}
-
-html[data-theme="god-mode"] .am-search input:focus {
-  border-color: #ffd700 !important;
-  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.9), 0 0 20px rgba(255, 215, 0, 0.5);
 }
 
 /* ---------------------------------------------------------
-   BLESKY A PŘECHODY
+   EFEKT: ZLATÝ PRACH (DIVINE EMBERS)
+   --------------------------------------------------------- */
+.divine-ember {
+  position: fixed;
+  width: 3px;
+  height: 3px;
+  background: #ffd700;
+  box-shadow: 0 0 8px #ff8c00, 0 0 12px #ffd700;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 8999;
+  opacity: 0;
+  animation: floatEmber linear infinite;
+}
+
+@keyframes floatEmber {
+  0% {
+    transform: translateY(105vh) translateX(0);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.8;
+  }
+  80% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(-10vh) translateX(30px);
+    opacity: 0;
+  }
+}
+
+/* ---------------------------------------------------------
+   BLESKY S OTŘESEM OBRAZOVKY
    --------------------------------------------------------- */
 .divine-lightning {
   position: fixed;
@@ -130,11 +152,12 @@ html[data-theme="god-mode"] .am-search input:focus {
 }
 
 @keyframes divineLightning {
-  0% { opacity: 0; }
-  15% { opacity: 1; filter: drop-shadow(0 0 60px #fff); }
-  30% { opacity: 0.1; }
-  45% { opacity: 0.95; }
-  100% { opacity: 0; }
+  0% { opacity: 0; transform: translate(0, 0); }
+  10% { opacity: 1; transform: translate(-4px, 3px); }
+  20% { opacity: 0.1; transform: translate(4px, -2px); }
+  35% { opacity: 0.95; transform: translate(-2px, -3px); }
+  50% { opacity: 0.2; transform: translate(2px, 2px); }
+  100% { opacity: 0; transform: translate(0, 0); }
 }
 
 .divine-transition {
