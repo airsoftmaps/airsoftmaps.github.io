@@ -10,13 +10,11 @@
       document.documentElement.setAttribute("data-theme", "god-mode");
     }
 
-    /* FUNKCE PRO OKAMŽITOU AKTUALIZACI TEXTŮ */
     let lastKnownLang = null;
 
     function updateTexts() {
       const currentLang = (typeof AM !== "undefined" && typeof AM.getLang === "function") ? AM.getLang() : "cs";
       
-      // Pokud se jazyk nezměnil, zbytečně to nepřepisujeme
       if (currentLang === lastKnownLang) return;
       lastKnownLang = currentLang;
 
@@ -32,7 +30,6 @@
       }
     }
 
-    /* PŘÍPRAVA EFEKTŮ */
     const lightning = document.createElement("div");
     lightning.className = "divine-lightning";
 
@@ -51,12 +48,9 @@
     document.body.append(lightning, transition, hold);
     const progress = hold.querySelector(".divine-hold-progress");
 
-    // Okamžité nastavení textů při startu
     updateTexts();
 
-    // Sledování změny jazyka (watcher běží na pozadí a hned reaguje na kliknutí na CS/EN)
     let lastKnownTheme = null;
-
     function checkTheme() {
       const themeNow = document.documentElement.getAttribute("data-theme");
       if (themeNow === lastKnownTheme) return;
@@ -67,7 +61,7 @@
         createDivineEmbers();
       } else {
         stopLightning();
-        document.querySelectorAll(".divine-ember").forEach(e => e.remove());
+        document.querySelectorAll(".divine-ember, .real-lightning-svg").forEach(e => e.remove());
       }
     }
 
@@ -89,7 +83,95 @@
       }
     }
 
-    /* LOGIKA DLOUHÉHO STISKU LOGA */
+    /* GENERÁTOR SKUTEČNÝCH BLESKŮ (FRAKTÁLOVÉ SVG) */
+    function drawRealLightning() {
+      const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      svg.setAttribute("class", "real-lightning-svg");
+
+      let x = window.innerWidth * 0.1 + Math.random() * (window.innerWidth * 0.8);
+      let y = -20;
+      let pathD = `M ${x} ${y} `;
+      const branches = [];
+
+      // Hlavní kmen
+      while (y < window.innerHeight) {
+        y += 20 + Math.random() * 40;
+        x += (Math.random() - 0.5) * 100;
+        pathD += `L ${x} ${y} `;
+        
+        // Větvení
+        if (Math.random() > 0.65) {
+          let bx = x;
+          let by = y;
+          let branchD = `M ${bx} ${by} `;
+          for (let i = 0; i < 3 + Math.random() * 5; i++) {
+            by += 15 + Math.random() * 30;
+            bx += (Math.random() - 0.5) * 90;
+            branchD += `L ${bx} ${by} `;
+          }
+          branches.push(branchD);
+        }
+      }
+
+      const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      path.setAttribute("d", pathD + branches.join(" "));
+      path.setAttribute("class", "real-lightning-path");
+      
+      svg.appendChild(path);
+      document.body.appendChild(svg);
+
+      // Přirozené mrkání blesku
+      setTimeout(() => {
+        svg.style.opacity = "0.3";
+        setTimeout(() => {
+          svg.style.opacity = "1";
+          setTimeout(() => {
+            svg.style.transition = "opacity 0.2s ease-out";
+            svg.style.opacity = "0";
+            setTimeout(() => svg.remove(), 200);
+          }, 40);
+        }, 40);
+      }, 30);
+    }
+
+    function triggerLightningBurst() {
+      // 1 až 3 blesky rychle po sobě
+      const strikes = 1 + Math.floor(Math.random() * 3);
+      for (let i = 0; i < strikes; i++) {
+        setTimeout(drawRealLightning, i * 120 + Math.random() * 80);
+      }
+    }
+
+    let lightningTimer = null;
+
+    function strikeLightning() {
+      const activeCheck = document.documentElement.getAttribute("data-theme") === "god-mode";
+      if (!activeCheck) {
+        stopLightning();
+        return;
+      }
+      
+      // Otřes pozadí
+      lightning.classList.remove("flash");
+      void lightning.offsetWidth; 
+      lightning.classList.add("flash");
+      
+      // Vykreslení čar
+      triggerLightningBurst();
+      scheduleLightning();
+    }
+
+    function scheduleLightning() {
+      clearTimeout(lightningTimer);
+      lightningTimer = setTimeout(strikeLightning, 8000 + Math.random() * 15000);
+    }
+
+    function stopLightning() {
+      clearTimeout(lightningTimer);
+      lightningTimer = null;
+      lightning.classList.remove("flash");
+    }
+
     const logo = document.querySelector(".am-brand");
     if (!logo) return;
 
@@ -165,32 +247,6 @@
         progress.style.width = "0%";
         hold.classList.remove("active");
       }, 350);
-    }
-
-    /* BLESKY */
-    let lightningTimer = null;
-
-    function strikeLightning() {
-      const activeCheck = document.documentElement.getAttribute("data-theme") === "god-mode";
-      if (!activeCheck) {
-        stopLightning();
-        return;
-      }
-      lightning.classList.remove("flash");
-      void lightning.offsetWidth; 
-      lightning.classList.add("flash");
-      scheduleLightning();
-    }
-
-    function scheduleLightning() {
-      clearTimeout(lightningTimer);
-      lightningTimer = setTimeout(strikeLightning, 8000 + Math.random() * 15000);
-    }
-
-    function stopLightning() {
-      clearTimeout(lightningTimer);
-      lightningTimer = null;
-      lightning.classList.remove("flash");
     }
 
     logo.addEventListener("contextmenu", e => e.preventDefault());
