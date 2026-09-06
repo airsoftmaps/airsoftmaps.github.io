@@ -29,7 +29,9 @@
         holdTextEl.textContent = currentLang === "en" ? "ASCENDING TO OLYMPUS" : "VYSTUPUJEŠ NA OLYMP";
       }
     }
-
+// Přehrávač hromu
+const thunderSound = new Audio("thunder.mp3"); 
+thunderSound.volume = 0.5; // Ztlumeno na polovinu, ať to nepřebije zbytek aplikace
     const lightning = document.createElement("div");
     lightning.className = "divine-lightning";
 
