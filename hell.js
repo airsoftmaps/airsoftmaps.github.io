@@ -261,20 +261,23 @@
     showParchment();
   }
 
-  function showParchment() {
+ function showParchment() {
     const parchment = document.createElement("div");
     parchment.className = "hell-parchment-modal";
 
     parchment.innerHTML = `
-      <div class="parchment-card">
-        <button class="parchment-seal" title="Opustit peklo">
-          <span>✕</span>
+      <div class="parchment-scroll">
+        <!-- VOSKOVÁ PEČEŤ -->
+        <button class="parchment-seal" title="Zlomit pečeť a opustit peklo">
+          <span class="seal-mark">🕇</span>
         </button>
+
+        <!-- TĚLO PERGAMENU -->
         <div class="parchment-body">
           <p class="blood-line line-1"></p>
           <p class="blood-line line-2"></p>
           <p class="blood-line line-3"></p>
-          <div class="code-box">
+          <div class="code-carving">
             <p class="blood-line line-code"></p>
           </div>
         </div>
@@ -283,11 +286,9 @@
 
     overlay.querySelector(".hell-world").appendChild(parchment);
 
-    // Tlačítko ukončení
     const sealBtn = parchment.querySelector(".parchment-seal");
     sealBtn.addEventListener("click", exitHellToDarkMode);
 
-    // Spuštění postupné animace psaní krví
     runBloodTyping(parchment);
   }
 
