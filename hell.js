@@ -323,10 +323,9 @@
     });
   }
 
-  /* Dekódování skrytého kódu z Base64 */
+
   function getSecretCode() {
-    // Nahraď vlastním řetězcem z btoa("TVUJ-KOD")
-    const obfuscated = "VFZVSi1UQUpOWS1LT0QtMTIzNA=="; 
+    const obfuscated = "'TmFrYXNoaQ=='"; 
     
     try {
       return atob(obfuscated);
