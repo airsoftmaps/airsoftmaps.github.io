@@ -429,6 +429,12 @@ window.stopDivineMode = function () {
 
   stopLightning();
 
+  if (activeThunder) {
+    activeThunder.pause();
+    activeThunder.currentTime = 0;
+    activeThunder = null;
+  }
+
   document
     .querySelectorAll(
       ".divine-ember, .real-lightning-svg"
@@ -702,6 +708,8 @@ function resetHellSequence() {
    ----------------------------------------------------- */
 
 function triggerHell() {
+
+  window.stopDivineMode();
 
   if (hellHotspot) {
     hellHotspot.remove();
