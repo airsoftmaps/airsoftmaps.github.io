@@ -504,7 +504,6 @@ function handleHellClick(event) {
    ----------------------------------------------------- */
 
 function moveHotspot(position) {
-function moveHotspot(position) {
 
   if (!hellHotspot) return;
 
