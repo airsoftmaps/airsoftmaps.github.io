@@ -698,36 +698,113 @@
 }
 
 
+```css
 /* =========================================================
-   MOBILE
+   MOBILE HELL
    ========================================================= */
 
 @media (max-width: 700px) {
 
+  /*
+   * Celá scéna se musí vejít do displeje.
+   * Žádné ořezávání stran.
+   */
+
+  .hell-scene {
+
+    width: 100vw;
+
+    height: 100vh;
+
+  }
+
+
+  /*
+   * Menší nápisy,
+   * aby nebyly mimo obrazovku.
+   */
+
   .hell-inscriptions text {
 
-    font-size: 17px;
+    font-size: 15px;
+
+    letter-spacing: .4px;
 
   }
 
 
-  .hell-warning {
-
-    font-size: 11px;
-
-    letter-spacing: 3px;
-
-    bottom: 18px;
-
-  }
-
+  /*
+   * Mobilní pochodeň.
+   * Menší než desktopová.
+   */
 
   .hell-torch {
 
-    width: 430px;
+    width: 330px;
 
-    height: 430px;
+    height: 330px;
+
+  }
+
+
+  /*
+   * WARNING
+   */
+
+  .hell-warning {
+
+    bottom: 15px;
+
+    font-size: 10px;
+
+    letter-spacing: 2px;
+
+    max-width: 90vw;
+
+    text-align: center;
+
+  }
+
+
+  /*
+   * Menší pentagramy na mobilu.
+   *
+   * SVG je 1600×1000, proto ho
+   * vizuálně zmenšíme přes transform-origin.
+   */
+
+  .hell-symbol {
+
+    transform-box: fill-box;
+
+    transform-origin: center;
+
+  }
+
+
+  .symbol-black {
+
+    transform:
+      scale(.62);
+
+  }
+
+
+  .symbol-gold {
+
+    transform:
+      scale(.62);
+
+  }
+
+
+  .symbol-red {
+
+    transform:
+      scale(.62);
 
   }
 
 }
+```
+
