@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap');
 /* =========================================================
    AIRSOFT MAPS - FULL COVER HELL MODE
    ========================================================= */
@@ -329,8 +330,10 @@
     text-shadow: 0 0 8px rgba(255, 100, 0, 0.4);
   }
 }
+
+
 /* =========================================================
-   FOTOREALISTICKÝ PERGAMEN S PNG TEXTUROU
+   PERGAMEN A SPLYTÍ TEXTU S T KÁNÍ PAPÍRU
    ========================================================= */
 
 .hell-parchment-modal {
@@ -340,97 +343,98 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.88);
+  background: rgba(0, 0, 0, 0.90);
   backdrop-filter: blur(10px);
-  padding: 20px;
-  animation: parchment-appear 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  padding: 15px;
+  animation: parchment-appear 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @keyframes parchment-appear {
-  from { opacity: 0; transform: scale(0.85) rotate(-2deg); }
-  to { opacity: 1; transform: scale(1) rotate(0deg); }
+  from { opacity: 0; transform: scale(0.8) translateY(30px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
 }
 
-/* SAMOTNÝ PERGAMEN */
+/* SAMOTNÝ SVITEK S DĚDĚNÝM POMĚREM STRAN OBRÁZKU */
 .parchment-scroll {
   position: relative;
-  width: 100%;
-  max-width: 650px;
-  min-height: 420px;
-  padding: 80px 60px 60px 60px;
-  text-align: center;
+  width: 90vw;
+  max-width: 440px; /* Přizpůsobeno poměru stran 3447 x 4828 */
+  aspect-ratio: 3447 / 4828;
+  
+  /* Textura pergamenu */
+  background: url("./parchment.png") no-repeat center center / 100% 100%;
+  filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.98)) drop-shadow(0 0 25px rgba(120, 0, 0, 0.5));
+  
   display: flex;
   align-items: center;
   justify-content: center;
-
-  /* NAHRANÝ TEXTUROVÝ OBRÁZEK PERGAMENU */
-  background: url("./parchment.png") no-repeat center center / contain;
-  filter: drop-shadow(0 0 35px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 15px rgba(150, 0, 0, 0.4));
+  box-sizing: border-box;
+  
+  /* Přesné okraje, aby text zůstal na papíře */
+  padding: 24% 14% 20% 14%;
 }
 
 .parchment-body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  justify-content: center;
+  gap: 14px;
   width: 100%;
+  text-align: center;
 }
 
-/* KRVAVÝ TEXT */
+/* PÍSMO - USCHLÁ KREV VPRANÁ DO PAPÍRU */
 .blood-line {
-  color: #8a0303;
-  font-family: "Cinzel Decorative", Georgia, serif;
-  font-size: clamp(15px, 2.1vw, 21px);
-  font-weight: 900;
-  letter-spacing: 2px;
-  min-height: 1.4em;
+  color: #4a0202; /* Tmavá uschlá krev */
+  font-family: 'UnifrakturMaguntia', Georgia, serif;
+  font-size: clamp(16px, 2.2vw, 22px);
+  line-height: 1.25;
   margin: 0;
-  text-shadow: 
-    0 0 3px #ff0000, 
-    1px 1px 2px rgba(0, 0, 0, 0.9);
+  min-height: 1.3em;
+  
+  /* Propojení textu s vlákny papíru */
+  mix-blend-mode: multiply;
+  opacity: 0.92;
+  text-shadow: 0 0 1px rgba(80, 0, 0, 0.6);
+  filter: contrast(140%);
+}
+
+.blood-line.line-code {
+  margin-top: 10px;
+  color: #3b0000;
+  font-size: clamp(18px, 2.5vw, 25px);
+  font-weight: bold;
+  letter-spacing: 1px;
 }
 
 .blood-line.typing::after {
-  content: "💧";
-  font-size: 14px;
+  content: "✒️";
+  font-size: 13px;
   margin-left: 4px;
-  animation: drop-blink 0.5s infinite alternate;
+  opacity: 0.7;
+  animation: drop-blink 0.4s infinite alternate;
 }
 
 @keyframes drop-blink {
-  0% { opacity: 1; transform: translateY(0); }
-  100% { opacity: 0.2; transform: translateY(4px); }
+  0% { opacity: 0.8; }
+  100% { opacity: 0.2; }
 }
 
-/* VYRYTÝ KÓD */
-.code-carving {
-  margin-top: 10px;
-  padding: 10px 24px;
-  background: rgba(0, 0, 0, 0.65);
-  border-radius: 4px;
-  box-shadow: inset 0 0 10px #000;
-  border: 1px solid rgba(100, 0, 0, 0.4);
-}
-
-.code-carving .blood-line {
-  color: #d97706;
-  text-shadow: 0 0 8px #ff4500, 0 0 15px #8b0000;
-}
-
-/* VOSKOVÁ PEČEŤ (ZAVÍRÁNÍ) */
+/* VOSKOVÁ PEČEŤ PŘÍMO NA PERGAMENU */
 .parchment-seal {
   position: absolute;
-  top: 25px;
-  right: 35px;
-  width: 65px;
-  height: 65px;
+  top: 7%;
+  right: 8%;
+  width: 17%;
+  aspect-ratio: 1 / 1;
   border: none;
   background: url("./wax_seal.png") no-repeat center center / contain;
   cursor: pointer;
   opacity: 0.2;
   pointer-events: none;
   transition: all 0.4s ease;
-  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.8));
+  filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.8));
 }
 
 .parchment-seal.active {
@@ -440,11 +444,11 @@
 }
 
 .parchment-seal.active:hover {
-  transform: scale(1.15) rotate(10deg);
-  filter: drop-shadow(0 0 15px rgba(255, 0, 0, 0.8));
+  transform: scale(1.15) rotate(8deg);
+  filter: drop-shadow(0 0 15px rgba(255, 0, 0, 0.9));
 }
 
 @keyframes seal-pulse {
-  0% { filter: drop-shadow(0 0 5px rgba(150, 0, 0, 0.5)); }
-  100% { filter: drop-shadow(0 0 18px rgba(255, 0, 0, 0.9)); }
+  0% { filter: drop-shadow(0 0 4px rgba(150, 0, 0, 0.5)); }
+  100% { filter: drop-shadow(0 0 16px rgba(255, 0, 0, 0.9)); }
 }
