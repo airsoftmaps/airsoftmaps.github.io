@@ -288,39 +288,49 @@ html[data-theme="god-mode"] .event-title-art.visible {
   visibility: visible !important;
   transform: translate(-50%, -50%) scale(1) !important;
 }
+/* =====================================================
+   SECRET HELL HOTSPOT - PENTAGRAM
+   ===================================================== */
+
 .divine-hell-hotspot {
   position: absolute;
-
-  width: 45px;
-  height: 45px;
-
+  width: 46px;
+  height: 46px;
   left: 50%;
-
   transform: translateX(-50%);
 
   z-index: 10020;
-
   cursor: pointer;
 
-  background: #ff2020;
+  background: transparent;
+  border: none;
 
-  border: 2px solid #ffffff;
+  /* Velmi nenápadný světlý stín */
+  filter:
+    drop-shadow(0 0 2px rgba(255, 255, 255, 0.28))
+    drop-shadow(0 0 5px rgba(255, 255, 255, 0.06));
 
-  border-radius: 50%;
+  opacity: 0.55;
 
-  box-shadow:
-    0 0 10px #ff2020,
-    0 0 25px rgba(255, 0, 0, 0.7);
+  /* SVG pentagram */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 5 L61 38 L96 38 L68 58 L79 93 L50 72 L21 93 L32 58 L4 38 L39 38 Z' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linejoin='round'/%3E%3C/svg%3E");
 
-  opacity: 1;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+
+/* =====================================================
+   POZICE
+   ===================================================== */
+
+.divine-hell-hotspot.top {
+  top: 15px;
 }
 
 .divine-hell-hotspot.bottom {
   top: calc(100% - 60px);
-}
-
-.divine-hell-hotspot.top {
-  top: 15px;
 }
 
 .divine-hell-hint {
