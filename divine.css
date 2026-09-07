@@ -2,13 +2,15 @@
    AIRSOFT MAPS - OLYMPUS GOD MODE: WRATH OF ZEUS (UNIFIED)
    ========================================================= */
 
+html[data-theme="god-mode"],
 html[data-theme="god-mode"] body {
   background: radial-gradient(circle at 50% 15%, #1a160d 0%, #08080a 55%, #030304 100%) !important;
   color: #e2e8f0 !important;
   font-family: 'Cinzel', serif !important;
   overflow-x: hidden;
-  position: relative !important; /* Přidáno */
-  min-height: 100vh !important;  /* Přidáno */
+  height: auto !important;
+  min-height: 100vh !important;
+  position: relative !important;
 }
 
 html[data-theme="god-mode"] .am-brand {
@@ -345,8 +347,8 @@ html[data-theme="god-mode"] .event-title-art.visible {
 }
 
 .divine-hell-hotspot.bottom {
-  top: auto;      /* Vynulování původní vlastnosti */
-  bottom: 20px;   /* Ukotvení na úplný spodek stránky */
+  top: auto !important;
+  bottom: 25px !important;
 }
 
 .divine-hell-hint {
@@ -368,8 +370,8 @@ html[data-theme="god-mode"] .event-title-art.visible {
 }
 
 .divine-hell-hint.bottom {
-  top: auto;
-  bottom: 75px;   /* Textová nápověda bezpečně nad pentagramem */
+  top: auto !important;
+  bottom: 80px !important;
 }
 
 .divine-hell-hint.top {
