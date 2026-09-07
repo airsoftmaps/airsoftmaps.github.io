@@ -399,288 +399,356 @@
     }
 
 
-    /* =====================================================
-       SECRET HELL SEQUENCE
-       ===================================================== */
+    
+/* =====================================================
+   SECRET HELL SEQUENCE
+   ===================================================== */
 
-    let hellStage = 0;
-    let hellClicks = 0;
+let hellStage = 0;
+let hellClicks = 0;
 
-    let hellHotspot = null;
-    let hellHintTop = null;
-    let hellHintBottom = null;
+let hellHotspot = null;
+let hellHintTop = null;
+let hellHintBottom = null;
 
 
-    function isActuallyGodMode() {
+/* -----------------------------------------------------
+   Kontrola GOD MODE
+   ----------------------------------------------------- */
 
-      return (
-        document.documentElement
-          .getAttribute("data-theme") ===
-        "god-mode"
-      );
+function isActuallyGodMode() {
+  return (
+    document.documentElement.getAttribute("data-theme") ===
+    "god-mode"
+  );
+}
+
+
+/* -----------------------------------------------------
+   Vytvoření hotspotu
+   ----------------------------------------------------- */
+
+function createHellHotspot() {
+
+  if (hellHotspot) return;
+
+  hellHotspot =
+    document.createElement("div");
+
+  hellHotspot.className =
+    "divine-hell-hotspot";
+
+  /*
+   * První hotspot je úplně dole
+   * v dokumentu.
+   */
+  hellHotspot.classList.add("bottom");
+
+  document.body.appendChild(
+    hellHotspot
+  );
+
+  hellHotspot.addEventListener(
+    "click",
+    handleHellClick
+  );
+}
+
+
+/* -----------------------------------------------------
+   Kliknutí na hotspot
+   ----------------------------------------------------- */
+
+function handleHellClick(event) {
+
+  event.preventDefault();
+  event.stopPropagation();
+
+  if (!isActuallyGodMode()) return;
+
+  /*
+   * Při prvním kliknutí na nový hotspot
+   * odstraníme předchozí nápovědu.
+   */
+  if (hellClicks === 0) {
+
+    if (hellStage === 1 && hellHintBottom) {
+      hellHintBottom.remove();
+      hellHintBottom = null;
     }
 
-
-    function createHellHotspot() {
-
-      if (hellHotspot) return;
-
-      hellHotspot =
-        document.createElement("div");
-
-      hellHotspot.className =
-        "divine-hell-hotspot";
-
-      /*
-       * Začínáme dole.
-       */
-      hellHotspot.classList.add("bottom");
-
-      document.body.appendChild(
-        hellHotspot
-      );
-
-      hellHotspot.addEventListener(
-        "click",
-        handleHellClick
-      );
+    if (hellStage === 2 && hellHintTop) {
+      hellHintTop.remove();
+      hellHintTop = null;
     }
+  }
 
+  hellClicks++;
 
-    function handleHellClick(event) {
+  console.log(
+    `HELL SEQUENCE: stage ${hellStage + 1}, click ${hellClicks}/6`
+  );
 
-      event.preventDefault();
-      event.stopPropagation();
+  if (hellClicks >= 6) {
 
-      if (!isActuallyGodMode()) return;
+    hellClicks = 0;
+    hellStage++;
 
-      hellClicks++;
+    advanceHellStage();
+  }
+}
 
-      console.log(
-        `HELL SEQUENCE: stage ${hellStage + 1}, click ${hellClicks}/6`
-      );
 
-      if (hellClicks >= 6) {
+/* -----------------------------------------------------
+   Posun hotspotu
+   ----------------------------------------------------- */
 
-        hellClicks = 0;
+function moveHotspot(position) {
 
-        hellStage++;
+  if (!hellHotspot) return;
 
-        advanceHellStage();
-      }
-    }
+  hellHotspot.classList.remove(
+    "top",
+    "bottom"
+  );
 
+  hellHotspot.classList.add(
+    position
+  );
 
-    function advanceHellStage() {
+  /*
+   * Vynutíme nový layout.
+   */
+  void hellHotspot.offsetHeight;
 
-      /*
-       * STAGE 1
-       * Dole -> nahoru
-       */
-      if (hellStage === 1) {
+  /*
+   * Skutečný přesun na začátek/konec
+   * stránky.
+   */
+  if (position === "top") {
 
-        moveHotspot("top");
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
 
-        showHellHint(
-          "nepokoušej...",
-          "bottom"
-        );
+  } else {
 
-        console.log(
-          "HELL SEQUENCE: hotspot moved TOP"
-        );
+    window.scrollTo({
+      top: document.documentElement.scrollHeight,
+      behavior: "smooth"
+    });
+  }
+}
 
-        return;
-      }
 
+/* -----------------------------------------------------
+   Postup jednotlivými fázemi
+   ----------------------------------------------------- */
 
-      /*
-       * STAGE 2
-       * Nahoře -> dolů
-       */
-      if (hellStage === 2) {
+function advanceHellStage() {
 
-        moveHotspot("bottom");
+  /*
+   * STAGE 1
+   *
+   * Dole → nahoru
+   */
 
-        showHellHint(
-          "ty máš rád výzvy že?",
-          "top"
-        );
-
-        console.log(
-          "HELL SEQUENCE: hotspot moved BOTTOM"
-        );
-
-        return;
-      }
-
-
-      /*
-       * STAGE 3
-       * Dole -> HELL
-       */
-      if (hellStage === 3) {
-
-        console.log(
-          "HELL SEQUENCE: 6-6-6 COMPLETE"
-        );
-
-        triggerHell();
-
-        return;
-      }
-    }
-
-
-    function moveHotspot(position) {
-
-      if (!hellHotspot) return;
-
-      hellHotspot.classList.remove(
-        "top",
-        "bottom"
-      );
-
-      hellHotspot.classList.add(
-        position
-      );
-    }
-
-
-    function showHellHint(text, position) {
-
-      /*
-       * Zpráva zůstává na staré pozici.
-       */
-
-      const hint =
-        document.createElement("div");
-
-      hint.className =
-        "divine-hell-hint";
-
-      hint.textContent = text;
-
-      hint.classList.add(position);
-
-      document.body.appendChild(hint);
-
-      if (position === "top") {
-        hellHintTop = hint;
-      } else {
-        hellHintBottom = hint;
-      }
-    }
-
-
-    function resetHellSequence() {
-
-      hellStage = 0;
-      hellClicks = 0;
-
-      if (hellHotspot) {
-        hellHotspot.remove();
-        hellHotspot = null;
-      }
-
-      if (hellHintTop) {
-        hellHintTop.remove();
-        hellHintTop = null;
-      }
-
-      if (hellHintBottom) {
-        hellHintBottom.remove();
-        hellHintBottom = null;
-      }
-    }
-
-
-    function triggerHell() {
-
-      if (hellHotspot) {
-        hellHotspot.remove();
-        hellHotspot = null;
-      }
-
-      /*
-       * Poslední text.
-       */
-      const finalMessage =
-        document.createElement("div");
-
-      finalMessage.className =
-        "divine-hell-final";
-
-      finalMessage.textContent =
-        "řekl sis o to";
-
-      document.body.appendChild(
-        finalMessage
-      );
-
-
-      /*
-       * Krátké zatmění.
-       */
-      setTimeout(() => {
-
-        finalMessage.classList.add(
-          "active"
-        );
-
-      }, 50);
-
-
-      /*
-       * Po zatmění předáme řízení
-       * hell.js.
-       */
-      setTimeout(() => {
-
-        if (
-          typeof window.startHell ===
-          "function"
-        ) {
-
-          finalMessage.remove();
-
-          window.startHell();
-
-        } else {
-
-          /*
-           * Fallback pro případ,
-           * že hell.js ještě není načtený.
-           */
-          console.error(
-            "HELL ERROR: window.startHell() není dostupné."
-          );
-
-        }
-
-      }, 1800);
-    }
-
+  if (hellStage === 1) {
 
     /*
-     * Hotspot vytvoříme až ve chvíli,
-     * kdy je skutečně aktivní GOD MODE.
+     * Zpráva zůstane na původním místě.
      */
-    function initializeHellSequence() {
-
-      if (!isActuallyGodMode()) return;
-
-      createHellHotspot();
-    }
-
-
-    /*
-     * Spustíme kontrolu po načtení.
-     */
-    setTimeout(
-      initializeHellSequence,
-      300
+    showHellHint(
+      "nepokoušej...",
+      "bottom"
     );
+
+    /*
+     * Hotspot skočí nahoru.
+     */
+    moveHotspot("top");
+
+    console.log(
+      "HELL SEQUENCE: hotspot moved TOP"
+    );
+
+    return;
+  }
+
+
+  /*
+   * STAGE 2
+   *
+   * Nahoře → dolů
+   */
+
+  if (hellStage === 2) {
+
+    /*
+     * Zpráva zůstane nahoře.
+     */
+    showHellHint(
+      "ty máš rád výzvy že?",
+      "top"
+    );
+
+    /*
+     * Hotspot zpět dolů.
+     */
+    moveHotspot("bottom");
+
+    console.log(
+      "HELL SEQUENCE: hotspot moved BOTTOM"
+    );
+
+    return;
+  }
+
+
+  /*
+   * STAGE 3
+   *
+   * Dole → HELL
+   */
+
+  if (hellStage === 3) {
+
+    console.log(
+      "HELL SEQUENCE: 6-6-6 COMPLETE"
+    );
+
+    triggerHell();
+
+    return;
+  }
+}
+
+
+/* -----------------------------------------------------
+   Nápovědy
+   ----------------------------------------------------- */
+
+function showHellHint(text, position) {
+
+  const hint =
+    document.createElement("div");
+
+  hint.className =
+    "divine-hell-hint";
+
+  hint.textContent = text;
+
+  hint.classList.add(position);
+
+  document.body.appendChild(hint);
+
+  if (position === "top") {
+    hellHintTop = hint;
+  } else {
+    hellHintBottom = hint;
+  }
+}
+
+
+/* -----------------------------------------------------
+   Reset celé sekvence
+   ----------------------------------------------------- */
+
+function resetHellSequence() {
+
+  hellStage = 0;
+  hellClicks = 0;
+
+  if (hellHotspot) {
+    hellHotspot.remove();
+    hellHotspot = null;
+  }
+
+  if (hellHintTop) {
+    hellHintTop.remove();
+    hellHintTop = null;
+  }
+
+  if (hellHintBottom) {
+    hellHintBottom.remove();
+    hellHintBottom = null;
+  }
+}
+
+
+/* -----------------------------------------------------
+   Přechod do HELL
+   ----------------------------------------------------- */
+
+function triggerHell() {
+
+  if (hellHotspot) {
+    hellHotspot.remove();
+    hellHotspot = null;
+  }
+
+  const finalMessage =
+    document.createElement("div");
+
+  finalMessage.className =
+    "divine-hell-final";
+
+  finalMessage.textContent =
+    "řekl sis o to";
+
+  document.body.appendChild(
+    finalMessage
+  );
+
+  setTimeout(() => {
+
+    finalMessage.classList.add(
+      "active"
+    );
+
+  }, 50);
+
+
+  setTimeout(() => {
+
+    if (
+      typeof window.startHell ===
+      "function"
+    ) {
+
+      finalMessage.remove();
+
+      window.startHell();
+
+    } else {
+
+      console.error(
+        "HELL ERROR: window.startHell() není dostupné."
+      );
+
+    }
+
+  }, 1800);
+}
+
+
+/* -----------------------------------------------------
+   Inicializace
+   ----------------------------------------------------- */
+
+function initializeHellSequence() {
+
+  if (!isActuallyGodMode()) return;
+
+  createHellHotspot();
+}
+
+setTimeout(
+  initializeHellSequence,
+  300
+);
+
 
 
     /* =====================================================
