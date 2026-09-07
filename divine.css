@@ -294,11 +294,12 @@ html[data-theme="god-mode"] .event-title-art.visible {
 
 .divine-hell-hotspot {
   position: absolute;
-  width: 46px;
-  height: 46px;
+  width: 48px;
+  height: 48px;
   left: 50%;
-  transform: translateX(-50%);
-   rotate(180deg);
+
+  /* Otočení pentagramu */
+  transform: translateX(-50%) rotate(180deg);
 
   z-index: 10020;
   cursor: pointer;
