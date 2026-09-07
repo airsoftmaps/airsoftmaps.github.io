@@ -261,13 +261,17 @@
     showParchment();
   }
 
-function showParchment() {
+/* =====================================================
+     ZOBRAZENÍ PERGAMENU S PRELOADEM
+     ===================================================== */
+
+  function showParchment() {
     const parchment = document.createElement("div");
     parchment.className = "hell-parchment-modal";
 
     parchment.innerHTML = `
       <div class="parchment-scroll">
-        <!-- REÁLNÁ VOSKOVÁ PEČEŤ JAKO TLAČÍTKO -->
+        <!-- VOSKOVÁ PEČEŤ ROVNĚŽ NA PAPÍŘE -->
         <button class="parchment-seal" title="Zlomit pečeť a opustit peklo"></button>
 
         <!-- OBSAH PERGAMENU -->
@@ -275,9 +279,7 @@ function showParchment() {
           <p class="blood-line line-1"></p>
           <p class="blood-line line-2"></p>
           <p class="blood-line line-3"></p>
-          <div class="code-carving">
-            <p class="blood-line line-code"></p>
-          </div>
+          <p class="blood-line line-code"></p>
         </div>
       </div>
     `;
@@ -287,7 +289,44 @@ function showParchment() {
     const sealBtn = parchment.querySelector(".parchment-seal");
     sealBtn.addEventListener("click", exitHellToDarkMode);
 
-    runBloodTyping(parchment);
+    // Načtení obrázku před spuštěním psaní
+    const img = new Image();
+    img.src = "./parchment.png";
+    
+    // Počkej na načtení obrázku + dokončení CSS animace příletu (800ms)
+    const startTyping = () => {
+      setTimeout(() => {
+        runBloodTyping(parchment);
+      }, 700);
+    };
+
+    if (img.complete) {
+      startTyping();
+    } else {
+      img.onload = startTyping;
+      img.onerror = startTyping; // Fallback
+    }
+  }
+
+  async function runBloodTyping(parchment) {
+    const l1 = parchment.querySelector(".line-1");
+    const l2 = parchment.querySelector(".line-2");
+    const l3 = parchment.querySelector(".line-3");
+    const lCode = parchment.querySelector(".line-code");
+    const sealBtn = parchment.querySelector(".parchment-seal");
+
+    await typeText(l1, "chtěl jsi znát hřiště", 65);
+    await new Promise((r) => setTimeout(r, 250));
+    
+    await typeText(l2, "podíval ses bohům do tváře", 65);
+    await new Promise((r) => setTimeout(r, 250));
+    
+    await typeText(l3, "a prošel jsi peklem...", 65);
+    await new Promise((r) => setTimeout(r, 400));
+    
+    await typeText(lCode, "kód : XXXXX-XXXX", 75);
+
+    sealBtn.classList.add("active");
   }
 
   /* Efekt psaní psaného písma/krve */
