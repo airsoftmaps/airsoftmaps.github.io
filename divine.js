@@ -75,7 +75,7 @@
 
     hold.innerHTML = `
       <div class="divine-hold-text">
-        VYSTUPUJEŠ NA OLYMP
+        DÍVÁŠ SE BOHŮM DO TVÁŘE
       </div>
 
       <div class="divine-hold-bar">
@@ -180,7 +180,7 @@
        ===================================================== */
 
     function drawRealLightning() {
-if (divineStopped) return;
+
       const svg =
         document.createElementNS(
           "http://www.w3.org/2000/svg",
@@ -301,7 +301,7 @@ if (divineStopped) return;
     let activeThunder = null;
 
     function triggerLightningBurst() {
-if (divineStopped) return;
+
       const strikes =
         1 +
         Math.floor(Math.random() * 3);
@@ -354,7 +354,14 @@ if (divineStopped) return;
 
     function strikeLightning() {
 
-      const activeCheck =
+  if (
+    document.documentElement.getAttribute("data-hell") === "true"
+  ) {
+    stopLightning();
+    return;
+  }
+
+  const activeCheck =
         document.documentElement
           .getAttribute("data-theme") ===
         "god-mode";
@@ -401,7 +408,7 @@ if (divineStopped) return;
 /* =====================================================
    HELL MODE OVERRIDES GOD MODE
    ===================================================== */
-let divineStopped = false;
+
 window.stopDivineMode = function () {
 
   divineStopped = true;
