@@ -1,27 +1,29 @@
 /* =========================================================
-   AIRSOFT MAPS - HELL
+   AIRSOFT MAPS
+   HELL MODE
    ========================================================= */
 
 
 /* =========================================================
-   ROOT
+   FULLSCREEN HELL
    ========================================================= */
 
 .hell-overlay {
 
   position: fixed;
+
   inset: 0;
 
   z-index: 999999;
 
   overflow: hidden;
 
-  background: #050403;
+  background: #020202;
 
   opacity: 0;
 
   transition:
-    opacity 0.9s ease;
+    opacity 1s ease;
 
   user-select: none;
 
@@ -44,42 +46,28 @@
 .hell-world {
 
   position: absolute;
+
   inset: 0;
 
   overflow: hidden;
 
-}
-
-
-.hell-wall {
-
-  position: absolute;
-  inset: 0;
-
-  overflow: hidden;
-
-  background:
-    radial-gradient(
-      circle at 50% 45%,
-      #21150f 0%,
-      #0d0a08 38%,
-      #030303 100%
-    );
+  background: #050403;
 
 }
 
 
 /* =========================================================
-   STONE SVG
+   STONE SCENE
    ========================================================= */
 
-.hell-stone-svg {
+.hell-scene {
 
   position: absolute;
 
   inset: 0;
 
   width: 100%;
+
   height: 100%;
 
   display: block;
@@ -87,39 +75,68 @@
 }
 
 
-.hell-stone-lines {
+/* =========================================================
+   MASONRY
+   ========================================================= */
+
+.hell-masonry {
 
   fill: none;
 
-  stroke: #000;
+  stroke: #020202;
 
-  stroke-width: 5;
+  stroke-width: 7;
+
+  opacity: .65;
 
 }
 
 
-.hell-carvings text {
+/* =========================================================
+   CRACKS
+   ========================================================= */
 
-  fill: #16120f;
+.hell-cracks {
 
-  stroke: #050403;
+  stroke: #020202;
 
-  stroke-width: 2;
+  stroke-width: 6;
 
-  paint-order: stroke;
+  stroke-linecap: round;
+
+  stroke-linejoin: round;
+
+  opacity: .85;
+
+}
+
+
+/* =========================================================
+   CARVED INSCRIPTIONS
+   ========================================================= */
+
+.hell-inscriptions text {
 
   font-family:
     Georgia,
     "Times New Roman",
     serif;
 
-  font-size: 25px;
+  font-size: 23px;
 
   font-weight: 700;
 
   letter-spacing: 1px;
 
-  opacity: 0.85;
+  fill: #151210;
+
+  stroke: #050403;
+
+  stroke-width: 3;
+
+  paint-order: stroke;
+
+  opacity: .78;
 
 }
 
@@ -128,18 +145,20 @@
    PENTAGRAMS
    ========================================================= */
 
-.hell-pentagram {
+.hell-symbol {
 
   cursor: pointer;
+
+  pointer-events: auto;
 
 }
 
 
-.hell-pentagram path {
+.hell-symbol path {
 
   fill: none;
 
-  stroke-width: 8;
+  stroke-width: 9;
 
   stroke-linecap: round;
 
@@ -147,38 +166,54 @@
 
   filter:
     drop-shadow(
-      0 2px 2px rgba(0,0,0,0.95)
+      0 3px 3px rgba(0,0,0,.95)
     );
 
 }
 
 
-.pentagram-black path {
+/* =========================================================
+   BLACK PENTAGRAM
+   ========================================================= */
 
-  stroke: #050505;
+.symbol-black path {
 
-}
-
-
-.pentagram-gold path {
-
-  stroke: #8d6b25;
+  stroke: #070707;
 
 }
 
 
-.pentagram-red path {
+/* =========================================================
+   GOLD PENTAGRAM
+   ========================================================= */
 
-  stroke: #8b1717;
+.symbol-gold path {
+
+  stroke: #8b6a2c;
 
 }
 
 
-.hell-symbol-hit path {
+/* =========================================================
+   RED PENTAGRAM
+   ========================================================= */
+
+.symbol-red path {
+
+  stroke: #781914;
+
+}
+
+
+/* =========================================================
+   CLICKED SYMBOL
+   ========================================================= */
+
+.hell-symbol.symbol-hit path {
 
   filter:
     drop-shadow(
-      0 0 7px rgba(255,130,35,0.9)
+      0 0 5px rgba(255,145,45,.85)
     );
 
 }
@@ -192,23 +227,30 @@
 
   position: absolute;
 
-  width: 430px;
-  height: 430px;
+  left: 50%;
+
+  top: 50%;
+
+  width: 440px;
+
+  height: 440px;
 
   transform:
     translate(-50%, -50%);
 
+  border-radius: 50%;
+
   pointer-events: none;
 
-  border-radius: 50%;
+  z-index: 20;
 
   background:
     radial-gradient(
       circle,
-      rgba(255,235,180,0.28) 0%,
-      rgba(255,170,70,0.17) 17%,
-      rgba(130,55,15,0.09) 38%,
-      rgba(0,0,0,0) 70%
+      rgba(255,244,207,.34) 0%,
+      rgba(255,185,76,.19) 20%,
+      rgba(146,58,13,.08) 45%,
+      rgba(0,0,0,0) 72%
     );
 
   mix-blend-mode: screen;
@@ -216,7 +258,33 @@
   filter:
     blur(3px);
 
-  z-index: 20;
+}
+
+
+/* =========================================================
+   DARKNESS
+   ========================================================= */
+
+.hell-world::after {
+
+  content: "";
+
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 15;
+
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      ellipse at center,
+      transparent 0%,
+      rgba(0,0,0,.18) 25%,
+      rgba(0,0,0,.66) 68%,
+      rgba(0,0,0,.97) 100%
+    );
 
 }
 
@@ -231,9 +299,9 @@
 
   inset: 0;
 
-  pointer-events: none;
+  z-index: 40;
 
-  z-index: 30;
+  pointer-events: none;
 
 }
 
@@ -242,47 +310,58 @@
 
   position: absolute;
 
-  bottom: -10px;
+  bottom: -15px;
 
   width: 2px;
+
   height: 2px;
 
   border-radius: 50%;
 
-  background: #6b6965;
-
-  opacity: 0.35;
-
   animation:
-    ashRise linear infinite;
+    ash-rise linear infinite;
 
 }
 
 
-.hell-ash span.hot {
+.ash-gray {
 
-  width: 3px;
-  height: 3px;
+  background: #77736d;
 
-  background: #ff6a1a;
+  opacity: .30;
 
-  opacity: 0.9;
+}
+
+
+.ash-hot {
+
+  width: 3px !important;
+
+  height: 3px !important;
+
+  background: #ff651b;
+
+  opacity: .85;
 
   box-shadow:
-    0 0 5px #ff4d0a,
-    0 0 12px rgba(255,70,10,0.55);
+    0 0 4px #ff4910,
+    0 0 11px rgba(255,70,10,.45);
 
 }
 
 
-@keyframes ashRise {
+/* =========================================================
+   ASH MOVEMENT
+   ========================================================= */
+
+@keyframes ash-rise {
 
   0% {
 
     transform:
       translate3d(
         0,
-        10vh,
+        20px,
         0
       );
 
@@ -290,15 +369,15 @@
 
   }
 
-  20% {
+  15% {
 
-    opacity: 0.45;
+    opacity: .45;
 
   }
 
-  70% {
+  65% {
 
-    opacity: 0.25;
+    opacity: .25;
 
   }
 
@@ -306,7 +385,7 @@
 
     transform:
       translate3d(
-        30px,
+        var(--drift),
         -110vh,
         0
       );
@@ -328,44 +407,46 @@
 
   inset: 0;
 
-  pointer-events: none;
+  z-index: 41;
 
-  z-index: 31;
+  pointer-events: none;
 
 }
 
 
-.hell-embers .ember {
+.ember {
 
   position: absolute;
 
   width: 5px;
+
   height: 5px;
 
   border-radius: 50%;
 
-  background: #ff4b0a;
+  background: #ff5410;
 
   box-shadow:
-    0 0 8px #ff3b00,
-    0 0 22px rgba(255,65,0,0.55);
+    0 0 7px #ff3d08,
+    0 0 18px rgba(255,60,5,.55);
 
   animation:
-    emberPulse 1.7s
+    ember-pulse
+    1.6s
     ease-in-out
     infinite alternate;
 
 }
 
 
-@keyframes emberPulse {
+@keyframes ember-pulse {
 
   0% {
 
-    opacity: 0.15;
+    opacity: .12;
 
     transform:
-      scale(0.6);
+      scale(.5);
 
   }
 
@@ -391,12 +472,14 @@
 
   left: 50%;
 
-  bottom: 24px;
+  bottom: 22px;
 
   transform:
     translateX(-50%);
 
   z-index: 100;
+
+  pointer-events: none;
 
   color: #aaa;
 
@@ -406,41 +489,39 @@
     serif;
 
   font-size:
-    clamp(12px, 1.5vw, 18px);
+    clamp(12px, 1.5vw, 17px);
 
   letter-spacing: 4px;
 
   white-space: nowrap;
 
   text-shadow:
-    0 1px 3px #000,
-    0 0 8px #000;
+    0 2px 4px #000,
+    0 0 12px #000;
 
 }
 
 
 /* =========================================================
-   VIGNETTE
+   MOBILE
    ========================================================= */
 
-.hell-wall::after {
+@media (max-width: 700px) {
 
-  content: "";
+  .hell-inscriptions text {
 
-  position: absolute;
+    font-size: 17px;
 
-  inset: 0;
+  }
 
-  pointer-events: none;
+  .hell-warning {
 
-  z-index: 50;
+    font-size: 11px;
 
-  background:
-    radial-gradient(
-      ellipse at center,
-      transparent 25%,
-      rgba(0,0,0,0.42) 65%,
-      rgba(0,0,0,0.92) 100%
-    );
+    letter-spacing: 3px;
+
+    bottom: 18px;
+
+  }
 
 }
