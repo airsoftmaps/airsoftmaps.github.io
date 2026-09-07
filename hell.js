@@ -253,9 +253,93 @@
     }
   }
 
+  /* =====================================================
+     DOKONČENÍ HELL MÓDU & PERGAMEN S KÓDEM
+     ===================================================== */
+
   function completeHell() {
+    showParchment();
+  }
+
+  function showParchment() {
+    const parchment = document.createElement("div");
+    parchment.className = "hell-parchment-modal";
+
+    parchment.innerHTML = `
+      <div class="parchment-card">
+        <button class="parchment-seal" title="Opustit peklo">
+          <span>✕</span>
+        </button>
+        <div class="parchment-body">
+          <p class="blood-line line-1"></p>
+          <p class="blood-line line-2"></p>
+          <p class="blood-line line-3"></p>
+          <div class="code-box">
+            <p class="blood-line line-code"></p>
+          </div>
+        </div>
+      </div>
+    `;
+
+    overlay.querySelector(".hell-world").appendChild(parchment);
+
+    // Tlačítko ukončení
+    const sealBtn = parchment.querySelector(".parchment-seal");
+    sealBtn.addEventListener("click", exitHellToDarkMode);
+
+    // Spuštění postupné animace psaní krví
+    runBloodTyping(parchment);
+  }
+
+  /* Efekt psaní psaného písma/krve */
+  function typeText(element, text, speed = 65) {
+    return new Promise((resolve) => {
+      let i = 0;
+      element.classList.add("typing");
+      const timer = setInterval(() => {
+        if (i < text.length) {
+          element.textContent += text.charAt(i);
+          i++;
+        } else {
+          clearInterval(timer);
+          element.classList.remove("typing");
+          resolve();
+        }
+      }, speed);
+    });
+  }
+
+  async function runBloodTyping(parchment) {
+    const l1 = parchment.querySelector(".line-1");
+    const l2 = parchment.querySelector(".line-2");
+    const l3 = parchment.querySelector(".line-3");
+    const lCode = parchment.querySelector(".line-code");
+    const sealBtn = parchment.querySelector(".parchment-seal");
+
+    await new Promise((r) => setTimeout(r, 400));
+    await typeText(l1, "chtěl jsi znát hřiště", 60);
+    
+    await new Promise((r) => setTimeout(r, 300));
+    await typeText(l2, "podíval ses bohům do tváře", 60);
+    
+    await new Promise((r) => setTimeout(r, 300));
+    await typeText(l3, "a prošel jsi peklem...", 60);
+    
+    await new Promise((r) => setTimeout(r, 500));
+    await typeText(lCode, "kód : XXXXX-XXXX", 70);
+
+    // Po dopsání se rozsvítí a zpřístupní pečeť ke klepnutí
+    sealBtn.classList.add("active");
+  }
+
+  /* Ukončení Hell módu a návrat do tmavého režimu */
+  function exitHellToDarkMode() {
     localStorage.removeItem(HELL_KEY);
     document.documentElement.removeAttribute("data-hell");
+
+    // Nastavení standardního tmavého módu na hlavní stránce
+    localStorage.setItem("theme", "dark");
+    document.documentElement.setAttribute("data-theme", "dark");
 
     if (!overlay) return;
 
