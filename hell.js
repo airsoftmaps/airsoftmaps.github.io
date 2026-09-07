@@ -351,6 +351,22 @@
     });
   }
 
+/* =====================================================
+     DEKÓDOVÁNÍ SKRYTÉHO KÓDU
+     ===================================================== */
+
+  function getSecretCode() {
+    // Sem vlož svůj zakódovaný hash z btoa()
+    const obfuscated = "VFZVSi1UQUpOWS1LT0QtMTIzNA=="; 
+    
+    try {
+      return atob(obfuscated);
+    } catch (e) {
+      return "XXXXX-XXXX"; // Fallback při chybě
+    }
+  }
+
+  /* Upravená funkce pro psaní krví */
   async function runBloodTyping(parchment) {
     const l1 = parchment.querySelector(".line-1");
     const l2 = parchment.querySelector(".line-2");
@@ -358,17 +374,21 @@
     const lCode = parchment.querySelector(".line-code");
     const sealBtn = parchment.querySelector(".parchment-seal");
 
+    await typeText(l1, "chtěl jsi znát hřiště", 65);
+    await new Promise((r) => setTimeout(r, 250));
+    
+    await typeText(l2, "podíval ses bohům do tváře", 65);
+    await new Promise((r) => setTimeout(r, 250));
+    
+    await typeText(l3, "a prošel jsi peklem...", 65);
     await new Promise((r) => setTimeout(r, 400));
-    await typeText(l1, "chtěl jsi znát hřiště", 60);
     
-    await new Promise((r) => setTimeout(r, 300));
-    await typeText(l2, "podíval ses bohům do tváře", 60);
-    
-    await new Promise((r) => setTimeout(r, 300));
-    await typeText(l3, "a prošel jsi peklem...", 60);
-    
-    await new Promise((r) => setTimeout(r, 500));
-    await typeText(lCode, "kód : XXXXX-XXXX", 70);
+    // Načtení dekódovaného kódu z Base64
+    const finalCode = getSecretCode();
+    await typeText(lCode, "kód : " + finalCode, 75);
+
+    sealBtn.classList.add("active");
+  }
 
     // Po dopsání se rozsvítí a zpřístupní pečeť ke klepnutí
     sealBtn.classList.add("active");
