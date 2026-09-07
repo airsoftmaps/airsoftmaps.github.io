@@ -178,9 +178,9 @@
     /* =====================================================
        REAL LIGHTNING
        ===================================================== */
-if (divineStopped) return;
-    function drawRealLightning() {
 
+    function drawRealLightning() {
+if (divineStopped) return;
       const svg =
         document.createElementNS(
           "http://www.w3.org/2000/svg",
@@ -297,11 +297,11 @@ if (divineStopped) return;
     /* =====================================================
        THUNDER BURST
        ===================================================== */
-if (divineStopped) return;
+
     let activeThunder = null;
 
     function triggerLightningBurst() {
-
+if (divineStopped) return;
       const strikes =
         1 +
         Math.floor(Math.random() * 3);
