@@ -317,12 +317,26 @@
           Math.random() * 60;
 
         setTimeout(() => {
-          drawRealLightning();
-        }, delay);
+
+  if (
+    document.documentElement.getAttribute("data-hell") === "true"
+  ) {
+    return;
+  }
+
+  drawRealLightning();
+
+}, delay);
 
         setTimeout(() => {
 
-          if (activeThunder) {
+  if (
+    document.documentElement.getAttribute("data-hell") === "true"
+  ) {
+    return;
+  }
+
+  if (activeThunder) {
             activeThunder.pause();
             activeThunder.currentTime = 0;
           }
@@ -362,9 +376,9 @@
   }
 
   const activeCheck =
-        document.documentElement
-          .getAttribute("data-theme") ===
-        "god-mode";
+    document.documentElement
+      .getAttribute("data-theme") ===
+    "god-mode";
 
       if (!activeCheck) {
         stopLightning();
