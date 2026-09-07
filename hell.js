@@ -1,24 +1,40 @@
 /* =========================================================
-   AIRSOFT MAPS - HELL MODE
-   INFERNO / FINAL VERSION
+   AIRSOFT MAPS - HELL
+   VISIT TO HELL
+
+   PC:
+   mouse = torch
+
+   MOBILE:
+   finger = torch
    ========================================================= */
 
 (() => {
 
+  let hellActive = false;
+
+  let sequence = [];
+  let torchX = window.innerWidth / 2;
+  let torchY = window.innerHeight / 2;
+
+  const correctSequence = [
+    "black",
+    "gold",
+    "red",
+    "gold",
+    "black"
+  ];
+
+
+  /* =======================================================
+     START HELL
+     ======================================================= */
+
   window.startHell = function () {
 
-    /* ---------------------------------------------
-       Ochrana proti dvojímu spuštění
-       --------------------------------------------- */
+    if (hellActive) return;
 
-    if (document.querySelector(".hell-overlay")) {
-      return;
-    }
-
-
-    /* ---------------------------------------------
-       Hlavní overlay
-       --------------------------------------------- */
+    hellActive = true;
 
     const overlay =
       document.createElement("div");
@@ -26,451 +42,729 @@
     overlay.className =
       "hell-overlay";
 
+    overlay.innerHTML = `
 
-    /* ---------------------------------------------
-       Pentagram + prostředí
-       --------------------------------------------- */
+      <div class="hell-world">
 
-    const pentagram =
-      document.createElement("div");
+        <div class="hell-stone"></div>
 
-    pentagram.className =
-      "hell-pentagram";
+        <div class="hell-inscriptions">
+
+          <div
+            class="hell-inscription hell-i1"
+            data-text="LA DIABLO ESTAS VIVANTA ENE DE MIA KORPO!"
+          >
+            LA DIABLO ESTAS VIVANTA ENE DE MIA KORPO!
+          </div>
+
+          <div
+            class="hell-inscription hell-i2"
+            data-text="MI SANGAS PRO LA VUNDoJ DE INFERAJ TRANĈOJ!"
+          >
+            MI SANGAS PRO LA VUNDOJ DE INFERAJ TRANĈOJ!
+          </div>
+
+          <div
+            class="hell-inscription hell-i3"
+            data-text="LAŬNOME DE NIA DIO SATANO LA PLEJ BRILANTA!"
+          >
+            LAŬNOME DE NIA DIO SATANO LA PLEJ BRILANTA!
+          </div>
+
+          <div
+            class="hell-inscription hell-i4"
+            data-text="NI VEKIGU LA LORDON DE LA ABISMO!"
+          >
+            NI VEKIGU LA LORDON DE LA ABISMO!
+          </div>
+
+          <div
+            class="hell-inscription hell-i5"
+            data-text="MI GLUTOS VIAN ANIMON!"
+          >
+            MI GLUTOS VIAN ANIMON!
+          </div>
+
+        </div>
+
+      </div>
 
 
-    const center =
-      document.createElement("div");
+      <div class="hell-ash-field"></div>
 
-    center.className =
-      "hell-center";
+      <div class="hell-red-pulse"></div>
 
+      <div
+        class="hell-torch"
+        style="
+          --torch-x: 50vw;
+          --torch-y: 50vh;
+        "
+      ></div>
 
-    /* ---------------------------------------------
-       Nadpis
-       --------------------------------------------- */
+      <div class="hell-vignette"></div>
 
-    const title =
-      document.createElement("div");
+      <div class="hell-exit">
+        NENÍ CESTY ZPĚT...
+      </div>
 
-    title.className =
-      "hell-message";
+      <div class="hell-final-flash"></div>
 
-    title.textContent =
-      "HELL";
+      <div class="hell-return">
 
+        <div class="hell-return-inner">
 
-    /* ---------------------------------------------
-       Podtitulek
-       --------------------------------------------- */
+          <div class="hell-return-title">
+            VÍTEJ ZPĚT Z PEKLA
+          </div>
 
-    const subtitle =
-      document.createElement("div");
+          <div class="hell-return-code"></div>
 
-    subtitle.className =
-      "hell-subtitle";
+          <button
+            class="hell-return-close"
+            type="button"
+            aria-label="Zavřít"
+          >
+            ×
+          </button>
 
-    subtitle.textContent =
-      "YOU CROSSED THE THRESHOLD";
+        </div>
 
-
-    /* ---------------------------------------------
-       Text + tajné tečky
-       --------------------------------------------- */
-
-    const returnText =
-      document.createElement("div");
-
-    returnText.className =
-      "hell-return-text";
-
-    returnText.innerHTML = `
-      <span>NENÍ CESTY ZPĚT</span>
-
-      <span class="hell-dots">
-
-        <button
-          class="hell-dot black"
-          data-color="black"
-          aria-label="black">
-        </button>
-
-        <button
-          class="hell-dot gold"
-          data-color="gold"
-          aria-label="gold">
-        </button>
-
-        <button
-          class="hell-dot red"
-          data-color="red"
-          aria-label="red">
-        </button>
-
-      </span>
+      </div>
     `;
 
+    document.body.appendChild(overlay);
 
-    /* ---------------------------------------------
-       Progress
-       --------------------------------------------- */
+    createAsh(overlay);
+    createEmbers(overlay);
 
-    const progress =
-      document.createElement("div");
+    const torch =
+      overlay.querySelector(".hell-torch");
 
-    progress.className =
-      "hell-progress";
+    const exitText =
+      overlay.querySelector(".hell-exit");
 
-    progress.innerHTML = `
-      <div class="hell-progress-bar"></div>
-    `;
+    const returnScreen =
+      overlay.querySelector(".hell-return");
 
+    const returnCode =
+      overlay.querySelector(".hell-return-code");
 
-    /* ---------------------------------------------
-       Složení scény
-       --------------------------------------------- */
+    const finalFlash =
+      overlay.querySelector(".hell-final-flash");
 
-    center.append(
-      title,
-      subtitle,
-      returnText
-    );
-
-    overlay.append(
-      pentagram,
-      center,
-      progress
-    );
-
-    document.body.appendChild(
-      overlay
-    );
+    const closeButton =
+      overlay.querySelector(".hell-return-close");
 
 
-    /* ---------------------------------------------
-       Částice
-       --------------------------------------------- */
+    /* ===================================================
+       TORCH POSITION
+       =================================================== */
 
-    createParticles(
-      overlay
-    );
+    function updateTorch(x, y) {
 
+      torchX = x;
+      torchY = y;
 
-    /* ---------------------------------------------
-       Sekvence
-       --------------------------------------------- */
-
-    const dots =
-      overlay.querySelectorAll(
-        ".hell-dot"
+      torch.style.setProperty(
+        "--torch-x",
+        `${x}px`
       );
 
-    const progressBar =
-      overlay.querySelector(
-        ".hell-progress-bar"
+      torch.style.setProperty(
+        "--torch-y",
+        `${y}px`
       );
+    }
 
 
-    const correctSequence = [
-      "black",
-      "gold",
-      "red",
-      "gold",
-      "black"
-    ];
+    /*
+     * PC
+     */
+    overlay.addEventListener(
+      "pointermove",
+      event => {
+
+        updateTorch(
+          event.clientX,
+          event.clientY
+        );
+
+      },
+      { passive: true }
+    );
 
 
-    let currentSequence = [];
+    /*
+     * MOBILE
+     *
+     * Pochodeň následuje prst.
+     */
+    overlay.addEventListener(
+      "touchstart",
+      event => {
+
+        const touch =
+          event.touches[0];
+
+        if (!touch) return;
+
+        updateTorch(
+          touch.clientX,
+          touch.clientY
+        );
+
+      },
+      { passive: true }
+    );
 
 
-    /* ---------------------------------------------
-       Klikání
-       --------------------------------------------- */
+    overlay.addEventListener(
+      "touchmove",
+      event => {
 
-    dots.forEach(dot => {
+        const touch =
+          event.touches[0];
 
-      dot.addEventListener(
-        "click",
-        () => {
+        if (!touch) return;
 
-          const color =
-            dot.dataset.color;
+        updateTorch(
+          touch.clientX,
+          touch.clientY
+        );
 
-
-          const expected =
-            correctSequence[
-              currentSequence.length
-            ];
-
-
-          /* -----------------------------
-             SPRÁVNĚ
-             ----------------------------- */
-
-          if (color === expected) {
-
-            currentSequence.push(
-              color
-            );
+      },
+      { passive: true }
+    );
 
 
-            dot.classList.add(
-              "correct"
-            );
+    /*
+     * Kliknutí / dotyk používáme také
+     * jako ovládání sekvence.
+     */
+    overlay.addEventListener(
+      "click",
+      event => {
+
+        handleHellInteraction(
+          event,
+          overlay
+        );
+
+      }
+    );
 
 
-            setTimeout(() => {
+    overlay.addEventListener(
+      "touchend",
+      event => {
 
-              dot.classList.remove(
-                "correct"
-              );
+        const touch =
+          event.changedTouches[0];
 
-            }, 350);
+        if (!touch) return;
 
+        handleHellInteraction(
+          {
+            clientX: touch.clientX,
+            clientY: touch.clientY,
+            preventDefault() {}
+          },
+          overlay
+        );
 
-            const percent =
-              (
-                currentSequence.length /
-                correctSequence.length
-              ) * 100;
-
-
-            progressBar.style.width =
-              `${percent}%`;
-
-
-            console.log(
-              "HELL:",
-              currentSequence.join(" → ")
-            );
+      },
+      { passive: true }
+    );
 
 
-            /* -----------------------------
-               HOTOVO
-               ----------------------------- */
+    /* ===================================================
+       CLOSE
+       =================================================== */
 
-            if (
-              currentSequence.length ===
-              correctSequence.length
-            ) {
+    closeButton.addEventListener(
+      "click",
+      event => {
 
-              completeHell(
-                overlay
-              );
+        event.stopPropagation();
 
-            }
+        overlay.remove();
 
-            return;
-          }
+        hellActive = false;
 
-
-          /* -----------------------------
-             ŠPATNĚ
-             ----------------------------- */
-
-          dot.classList.add(
-            "wrong"
-          );
+      }
+    );
 
 
-          setTimeout(() => {
+    /* ===================================================
+       INITIAL POSITION
+       =================================================== */
 
-            dot.classList.remove(
-              "wrong"
-            );
-
-          }, 400);
-
-
-          currentSequence = [];
-
-          progressBar.style.width =
-            "0%";
+    updateTorch(
+      window.innerWidth / 2,
+      window.innerHeight / 2
+    );
 
 
-          console.log(
-            "HELL: WRONG"
-          );
+    /*
+     * Jemné zpoždění po vstupu,
+     * aby první frame nebyl okamžitě ostrý.
+     */
+    requestAnimationFrame(() => {
 
-        }
+      overlay.classList.add(
+        "hell-ready"
       );
 
     });
 
+  };
 
-    /* ---------------------------------------------
-       Particle generator
-       --------------------------------------------- */
 
-    function createParticles(
-      parent
+  /* =======================================================
+     ASH
+     ======================================================= */
+
+  function createAsh(overlay) {
+
+    const field =
+      overlay.querySelector(
+        ".hell-ash-field"
+      );
+
+    const count =
+      window.innerWidth < 700
+        ? 70
+        : 110;
+
+    for (
+      let i = 0;
+      i < count;
+      i++
     ) {
 
-      const count =
-        window.innerWidth < 600
-          ? 18
-          : 32;
+      const ash =
+        document.createElement("div");
+
+      ash.className =
+        "hell-ash";
+
+      ash.style.setProperty(
+        "--x",
+        `${Math.random() * 100}%`
+      );
+
+      ash.style.setProperty(
+        "--size",
+        `${1 + Math.random() * 3}px`
+      );
+
+      ash.style.setProperty(
+        "--opacity",
+        `${0.12 + Math.random() * 0.45}`
+      );
+
+      ash.style.setProperty(
+        "--blur",
+        `${Math.random() * 1.5}px`
+      );
+
+      ash.style.setProperty(
+        "--duration",
+        `${7 + Math.random() * 15}s`
+      );
+
+      ash.style.setProperty(
+        "--delay",
+        `${Math.random() * -20}s`
+      );
+
+      ash.style.setProperty(
+        "--drift",
+        `${-80 + Math.random() * 160}px`
+      );
+
+      field.appendChild(ash);
+    }
+
+  }
 
 
-      for (
-        let i = 0;
-        i < count;
-        i++
+  /* =======================================================
+     HOT EMBERS
+     ======================================================= */
+
+  function createEmbers(overlay) {
+
+    const field =
+      overlay.querySelector(
+        ".hell-ash-field"
+      );
+
+    const count =
+      window.innerWidth < 700
+        ? 16
+        : 28;
+
+    for (
+      let i = 0;
+      i < count;
+      i++
+    ) {
+
+      const ember =
+        document.createElement("div");
+
+      ember.className =
+        "hell-ash hell-ember";
+
+      ember.style.setProperty(
+        "--x",
+        `${Math.random() * 100}%`
+      );
+
+      ember.style.setProperty(
+        "--size",
+        `${2 + Math.random() * 4}px`
+      );
+
+      ember.style.setProperty(
+        "--opacity",
+        `${0.35 + Math.random() * 0.6}`
+      );
+
+      ember.style.setProperty(
+        "--blur",
+        `${Math.random() * 0.8}px`
+      );
+
+      ember.style.setProperty(
+        "--duration",
+        `${5 + Math.random() * 12}s`
+      );
+
+      ember.style.setProperty(
+        "--delay",
+        `${Math.random() * -15}s`
+      );
+
+      ember.style.setProperty(
+        "--drift",
+        `${-120 + Math.random() * 240}px`
+      );
+
+      field.appendChild(ember);
+    }
+
+  }
+
+
+  /* =======================================================
+     SECRET HELL INTERACTION
+     ======================================================= */
+
+  function handleHellInteraction(
+    event,
+    overlay
+  ) {
+
+    if (!hellActive) return;
+
+    /*
+     * Nedovolíme kliknutí na tlačítko
+     * návratu, aby ho pohltila sekvence.
+     */
+    if (
+      event.target.closest &&
+      event.target.closest(
+        ".hell-return-close"
+      )
+    ) {
+      return;
+    }
+
+
+    /*
+     * Náhodně určujeme, který symbol
+     * hráč právě „aktivoval“.
+     *
+     * Barvy nejsou vidět jako UI.
+     * Jsou reprezentované krátkým
+     * světelným zábleskem.
+     */
+    const options = [
+      "black",
+      "gold",
+      "red"
+    ];
+
+    const chosen =
+      options[
+        Math.floor(
+          Math.random() *
+          options.length
+        )
+      ];
+
+
+    sequence.push(chosen);
+
+    const expected =
+      correctSequence[
+        sequence.length - 1
+      ];
+
+
+    /*
+     * SPRÁVNĚ
+     */
+    if (chosen === expected) {
+
+      correctPulse(
+        overlay,
+        chosen
+      );
+
+      if (
+        sequence.length >=
+        correctSequence.length
       ) {
 
-        const particle =
-          document.createElement("div");
-
-        particle.className =
-          "hell-particle";
-
-
-        particle.style.left =
-          `${Math.random() * 100}%`;
-
-
-        particle.style.animationDuration =
-          `${7 + Math.random() * 10}s`;
-
-
-        particle.style.animationDelay =
-          `${Math.random() * 8}s`;
-
-
-        const size =
-          1 +
-          Math.random() * 2;
-
-
-        particle.style.width =
-          `${size}px`;
-
-        particle.style.height =
-          `${size}px`;
-
-
-        parent.appendChild(
-          particle
+        finishHell(
+          overlay
         );
 
       }
 
+      return;
     }
 
 
-    /* ---------------------------------------------
-       Dokončení HELL sekvence
-       --------------------------------------------- */
+    /*
+     * ŠPATNĚ
+     */
+    sequence = [];
 
-    function completeHell(
+    wrongPulse(
       overlay
-    ) {
+    );
 
-      console.log(
-        "HELL: 6-6-6 COMPLETE"
-      );
+  }
 
 
-      /* Zhasnutí prostředí */
+  /* =======================================================
+     CORRECT
+     ======================================================= */
 
-      overlay.style.transition =
-        "opacity 1.2s ease";
+  function correctPulse(
+    overlay,
+    type
+  ) {
 
-      overlay.style.opacity =
-        "0";
+    const flash =
+      document.createElement("div");
 
+    flash.style.position =
+      "fixed";
+
+    flash.style.inset = "0";
+
+    flash.style.zIndex = "80";
+
+    flash.style.pointerEvents =
+      "none";
+
+    flash.style.background =
+      type === "red"
+        ? "rgba(160,0,0,.18)"
+        : type === "gold"
+          ? "rgba(255,170,40,.12)"
+          : "rgba(255,255,255,.06)";
+
+    flash.style.opacity = "0";
+
+    flash.style.transition =
+      "opacity .12s ease";
+
+    overlay.appendChild(flash);
+
+    requestAnimationFrame(() => {
+
+      flash.style.opacity = "1";
 
       setTimeout(() => {
 
-        overlay.remove();
+        flash.style.opacity = "0";
 
-        showHellReturn();
+        setTimeout(() => {
+          flash.remove();
+        }, 180);
 
-      }, 1200);
+      }, 90);
 
-    }
+    });
+
+  }
 
 
-    /* ---------------------------------------------
-       Návrat
-       --------------------------------------------- */
+  /* =======================================================
+     WRONG
+     ======================================================= */
 
-    function showHellReturn() {
+  function wrongPulse(overlay) {
+
+    const flash =
+      document.createElement("div");
+
+    flash.style.position =
+      "fixed";
+
+    flash.style.inset = "0";
+
+    flash.style.zIndex = "80";
+
+    flash.style.pointerEvents =
+      "none";
+
+    flash.style.background =
+      "rgba(120,0,0,.22)";
+
+    overlay.appendChild(flash);
+
+    requestAnimationFrame(() => {
+
+      flash.style.opacity = "0";
+
+      flash.style.transition =
+        "opacity .4s ease";
+
+      setTimeout(() => {
+        flash.remove();
+      }, 450);
+
+    });
+
+  }
+
+
+  /* =======================================================
+     FINISH
+     ======================================================= */
+
+  function finishHell(overlay) {
+
+    const flash =
+      overlay.querySelector(
+        ".hell-final-flash"
+      );
+
+    /*
+     * Krátký brutální záblesk.
+     */
+
+    flash.style.transition =
+      "opacity .08s ease";
+
+    flash.style.opacity = "1";
+
+
+    setTimeout(() => {
+
+      flash.style.transition =
+        "opacity .7s ease";
+
+      flash.style.opacity = "0";
+
+    }, 90);
+
+
+    /*
+     * Celé peklo zmizí do černé.
+     */
+
+    setTimeout(() => {
+
+      overlay
+        .querySelector(".hell-world")
+        .style.opacity = "0";
+
+      overlay
+        .querySelector(".hell-ash-field")
+        .style.opacity = "0";
+
+      overlay
+        .querySelector(".hell-torch")
+        .style.opacity = "0";
+
+      overlay
+        .querySelector(".hell-red-pulse")
+        .style.opacity = "0";
+
+      overlay
+        .querySelector(".hell-exit")
+        .style.opacity = "0";
+
+    }, 180);
+
+
+    /*
+     * Návratová obrazovka.
+     */
+
+    setTimeout(() => {
 
       const returnScreen =
-        document.createElement("div");
-
-      returnScreen.className =
-        "hell-return";
-
-
-      /* -----------------------------------------
-         Kód
-         ----------------------------------------- */
-
-      const code =
-        "AM-HELL-" +
-        Math.random()
-          .toString(36)
-          .substring(2, 6)
-          .toUpperCase();
-
-
-      returnScreen.innerHTML = `
-
-        <button
-          class="hell-close"
-          aria-label="Close">
-          ×
-        </button>
-
-        <div class="hell-return-title">
-          VÍTEJ ZPĚT Z PEKLA
-        </div>
-
-        <div class="hell-code">
-          ${code}
-        </div>
-
-      `;
-
-
-      document.body.appendChild(
-        returnScreen
-      );
-
-
-      /* -----------------------------------------
-         Zavření
-         ----------------------------------------- */
-
-      const close =
-        returnScreen.querySelector(
-          ".hell-close"
+        overlay.querySelector(
+          ".hell-return"
         );
 
+      const code =
+        overlay.querySelector(
+          ".hell-return-code"
+        );
 
-      close.addEventListener(
-        "click",
-        () => {
+      code.textContent =
+        generateHellCode();
 
-          returnScreen.style.transition =
-            "opacity 0.5s ease";
-
-          returnScreen.style.opacity =
-            "0";
-
-
-          setTimeout(() => {
-
-            returnScreen.remove();
-
-          }, 500);
-
-        }
+      returnScreen.classList.add(
+        "active"
       );
+
+    }, 1200);
+
+  }
+
+
+  /* =======================================================
+     CODE
+     ======================================================= */
+
+  function generateHellCode() {
+
+    const chars =
+      "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+
+    let result = "AM-HELL-";
+
+    for (
+      let i = 0;
+      i < 4;
+      i++
+    ) {
+
+      result +=
+        chars[
+          Math.floor(
+            Math.random() *
+            chars.length
+          )
+        ];
 
     }
 
-  };
+    return result;
+
+  }
+
 
 })();
