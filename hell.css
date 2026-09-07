@@ -5,7 +5,7 @@
 
 
 /* =========================================================
-   FULLSCREEN HELL
+   FULLSCREEN
    ========================================================= */
 
 .hell-overlay {
@@ -18,7 +18,7 @@
 
   overflow: hidden;
 
-  background: #020202;
+  background: #000;
 
   opacity: 0;
 
@@ -39,11 +39,25 @@
 }
 
 
+.hell-overlay.hell-escape {
+
+  opacity: 0;
+
+  transition:
+    opacity 1.2s ease;
+
+}
+
+
 /* =========================================================
    WORLD
    ========================================================= */
 
 .hell-world {
+
+  --torch-x: 50vw;
+
+  --torch-y: 50vh;
 
   position: absolute;
 
@@ -51,7 +65,7 @@
 
   overflow: hidden;
 
-  background: #050403;
+  background: #11100e;
 
 }
 
@@ -83,11 +97,11 @@
 
   fill: none;
 
-  stroke: #020202;
+  stroke: #050403;
 
-  stroke-width: 7;
+  stroke-width: 8;
 
-  opacity: .65;
+  opacity: .78;
 
 }
 
@@ -98,9 +112,9 @@
 
 .hell-cracks {
 
-  stroke: #020202;
+  stroke: #030302;
 
-  stroke-width: 6;
+  stroke-width: 7;
 
   stroke-linecap: round;
 
@@ -112,7 +126,7 @@
 
 
 /* =========================================================
-   CARVED INSCRIPTIONS
+   INSCRIPTIONS
    ========================================================= */
 
 .hell-inscriptions text {
@@ -128,21 +142,21 @@
 
   letter-spacing: 1px;
 
-  fill: #151210;
+  fill: #302a25;
 
-  stroke: #050403;
+  stroke: #080706;
 
-  stroke-width: 3;
+  stroke-width: 4;
 
   paint-order: stroke;
 
-  opacity: .78;
+  opacity: .72;
 
 }
 
 
 /* =========================================================
-   PENTAGRAMS
+   PENTAGRAM BASE
    ========================================================= */
 
 .hell-symbol {
@@ -151,89 +165,217 @@
 
   pointer-events: auto;
 
+  opacity: .08;
+
+  transition:
+    opacity .18s ease,
+    filter .18s ease;
+
 }
 
 
-.hell-symbol path {
+/*
+ * The symbols physically exist even when
+ * the player cannot see them.
+ */
+
+.hell-symbol.torch-lit {
+
+  opacity: .95;
+
+}
+
+
+/* =========================================================
+   PENTAGRAM GROOVE
+   ========================================================= */
+
+.pentagram-groove {
 
   fill: none;
 
-  stroke-width: 9;
+  stroke-width: 13;
 
   stroke-linecap: round;
 
   stroke-linejoin: round;
 
+  stroke: #030302;
+
+}
+
+
+/* =========================================================
+   PENTAGRAM EDGE
+   ========================================================= */
+
+.pentagram-edge {
+
+  fill: none;
+
+  stroke-width: 5;
+
+  stroke-linecap: round;
+
+  stroke-linejoin: round;
+
+}
+
+
+/* =========================================================
+   BLACK
+   ========================================================= */
+
+.symbol-black .pentagram-edge {
+
+  stroke: #292521;
+
+}
+
+
+.symbol-black.torch-lit .pentagram-edge {
+
+  stroke: #57504a;
+
+}
+
+
+/* =========================================================
+   GOLD
+   ========================================================= */
+
+.symbol-gold .pentagram-edge {
+
+  stroke: #4d3b20;
+
+}
+
+
+.symbol-gold.torch-lit .pentagram-edge {
+
+  stroke: #b68b3b;
+
   filter:
     drop-shadow(
-      0 3px 3px rgba(0,0,0,.95)
+      0 0 5px rgba(255,184,74,.28)
     );
 
 }
 
 
 /* =========================================================
-   BLACK PENTAGRAM
+   RED
    ========================================================= */
 
-.symbol-black path {
+.symbol-red .pentagram-edge {
 
-  stroke: #070707;
+  stroke: #431512;
 
 }
 
 
-/* =========================================================
-   GOLD PENTAGRAM
-   ========================================================= */
+.symbol-red.torch-lit .pentagram-edge {
 
-.symbol-gold path {
-
-  stroke: #8b6a2c;
-
-}
-
-
-/* =========================================================
-   RED PENTAGRAM
-   ========================================================= */
-
-.symbol-red path {
-
-  stroke: #781914;
-
-}
-
-
-/* =========================================================
-   CLICKED SYMBOL
-   ========================================================= */
-
-.hell-symbol.symbol-hit path {
+  stroke: #8d241b;
 
   filter:
     drop-shadow(
-      0 0 5px rgba(255,145,45,.85)
+      0 0 5px rgba(160,40,25,.30)
     );
 
 }
 
 
 /* =========================================================
-   TORCH
+   CORRECT CLICK
+   ========================================================= */
+
+.hell-symbol.symbol-hit {
+
+  opacity: 1;
+
+}
+
+
+.hell-symbol.symbol-hit .pentagram-edge {
+
+  filter:
+    drop-shadow(
+      0 0 5px rgba(255,145,45,.75)
+    );
+
+}
+
+
+/* =========================================================
+   WRONG CLICK
+   ========================================================= */
+
+.hell-symbol.symbol-wrong {
+
+  animation:
+    symbol-wrong
+    .45s
+    ease;
+
+}
+
+
+@keyframes symbol-wrong {
+
+  0% {
+
+    transform:
+      translateX(0);
+
+  }
+
+  25% {
+
+    transform:
+      translateX(-4px);
+
+  }
+
+  50% {
+
+    transform:
+      translateX(4px);
+
+  }
+
+  75% {
+
+    transform:
+      translateX(-3px);
+
+  }
+
+  100% {
+
+    transform:
+      translateX(0);
+
+  }
+
+}
+
+
+/* =========================================================
+   REAL MOVING TORCH
    ========================================================= */
 
 .hell-torch {
 
   position: absolute;
 
-  left: 50%;
+  left: var(--torch-x);
 
-  top: 50%;
+  top: var(--torch-y);
 
-  width: 440px;
+  width: 520px;
 
-  height: 440px;
+  height: 520px;
 
   transform:
     translate(-50%, -50%);
@@ -242,27 +384,38 @@
 
   pointer-events: none;
 
-  z-index: 20;
+  z-index: 30;
 
   background:
     radial-gradient(
       circle,
-      rgba(255,244,207,.34) 0%,
-      rgba(255,185,76,.19) 20%,
-      rgba(146,58,13,.08) 45%,
-      rgba(0,0,0,0) 72%
+
+      rgba(255,248,218,.38)
+      0%,
+
+      rgba(255,209,123,.25)
+      15%,
+
+      rgba(255,145,45,.12)
+      35%,
+
+      rgba(155,64,17,.045)
+      55%,
+
+      rgba(0,0,0,0)
+      72%
     );
 
   mix-blend-mode: screen;
 
   filter:
-    blur(3px);
+    blur(2px);
 
 }
 
 
 /* =========================================================
-   DARKNESS
+   THE ACTUAL DARKNESS
    ========================================================= */
 
 .hell-world::after {
@@ -273,17 +426,46 @@
 
   inset: 0;
 
-  z-index: 15;
+  z-index: 20;
 
   pointer-events: none;
 
+  /*
+   * IMPORTANT:
+   *
+   * The transparent hole follows
+   * --torch-x / --torch-y.
+   */
+
   background:
     radial-gradient(
-      ellipse at center,
-      transparent 0%,
-      rgba(0,0,0,.18) 25%,
-      rgba(0,0,0,.66) 68%,
-      rgba(0,0,0,.97) 100%
+      circle at
+      var(--torch-x)
+      var(--torch-y),
+
+      rgba(0,0,0,0)
+      0px,
+
+      rgba(0,0,0,.05)
+      70px,
+
+      rgba(0,0,0,.25)
+      125px,
+
+      rgba(0,0,0,.60)
+      210px,
+
+      rgba(0,0,0,.86)
+      300px,
+
+      rgba(0,0,0,.96)
+      390px,
+
+      rgba(0,0,0,.985)
+      500px,
+
+      rgba(0,0,0,1)
+      680px
     );
 
 }
@@ -299,7 +481,7 @@
 
   inset: 0;
 
-  z-index: 40;
+  z-index: 45;
 
   pointer-events: none;
 
@@ -310,7 +492,7 @@
 
   position: absolute;
 
-  bottom: -15px;
+  bottom: -20px;
 
   width: 2px;
 
@@ -319,14 +501,16 @@
   border-radius: 50%;
 
   animation:
-    ash-rise linear infinite;
+    ash-rise
+    linear
+    infinite;
 
 }
 
 
 .ash-gray {
 
-  background: #77736d;
+  background: #77736c;
 
   opacity: .30;
 
@@ -339,13 +523,14 @@
 
   height: 3px !important;
 
-  background: #ff651b;
+  background: #ff641d;
 
-  opacity: .85;
+  opacity: .9;
 
   box-shadow:
-    0 0 4px #ff4910,
-    0 0 11px rgba(255,70,10,.45);
+    0 0 4px rgba(255,90,15,.9),
+    0 0 10px rgba(255,65,8,.65),
+    0 0 22px rgba(255,50,5,.22);
 
 }
 
@@ -369,15 +554,15 @@
 
   }
 
-  15% {
+  12% {
 
     opacity: .45;
 
   }
 
-  65% {
+  55% {
 
-    opacity: .25;
+    opacity: .30;
 
   }
 
@@ -407,7 +592,7 @@
 
   inset: 0;
 
-  z-index: 41;
+  z-index: 46;
 
   pointer-events: none;
 
@@ -424,29 +609,40 @@
 
   border-radius: 50%;
 
-  background: #ff5410;
+  background: #ff5715;
 
   box-shadow:
-    0 0 7px #ff3d08,
-    0 0 18px rgba(255,60,5,.55);
+    0 0 6px rgba(255,75,10,.95),
+    0 0 15px rgba(255,65,5,.65),
+    0 0 32px rgba(255,55,5,.22);
 
   animation:
     ember-pulse
-    1.6s
     ease-in-out
-    infinite alternate;
+    infinite
+    alternate;
 
 }
 
+
+/* =========================================================
+   EMBER PULSE
+   ========================================================= */
 
 @keyframes ember-pulse {
 
   0% {
 
-    opacity: .12;
+    opacity: .10;
 
     transform:
-      scale(.5);
+      scale(.45);
+
+  }
+
+  35% {
+
+    opacity: .55;
 
   }
 
@@ -455,7 +651,7 @@
     opacity: 1;
 
     transform:
-      scale(1.25);
+      scale(1.3);
 
   }
 
@@ -481,7 +677,7 @@
 
   pointer-events: none;
 
-  color: #aaa;
+  color: #aaa39c;
 
   font-family:
     Georgia,
@@ -496,8 +692,8 @@
   white-space: nowrap;
 
   text-shadow:
-    0 2px 4px #000,
-    0 0 12px #000;
+    0 2px 5px #000,
+    0 0 14px #000;
 
 }
 
@@ -514,6 +710,7 @@
 
   }
 
+
   .hell-warning {
 
     font-size: 11px;
@@ -521,6 +718,15 @@
     letter-spacing: 3px;
 
     bottom: 18px;
+
+  }
+
+
+  .hell-torch {
+
+    width: 430px;
+
+    height: 430px;
 
   }
 
