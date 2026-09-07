@@ -1,650 +1,664 @@
 /* =========================================================
-   AIRSOFT MAPS - HELL MODE
-   INFERNO / FINAL VERSION
+   AIRSOFT MAPS - HELL
+   "A VISIT TO HELL"
    ========================================================= */
 
 .hell-overlay {
   position: fixed;
   inset: 0;
   z-index: 10000;
-
   overflow: hidden;
 
   background:
     radial-gradient(
-      ellipse at 50% 110%,
-      rgba(130, 0, 0, 0.28) 0%,
-      rgba(45, 0, 0, 0.16) 28%,
-      rgba(5, 5, 7, 0.96) 72%
-    ),
-    #030304;
+      ellipse at 50% 75%,
+      rgba(80, 10, 5, 0.34),
+      rgba(0, 0, 0, 0.96) 58%,
+      #000 100%
+    );
 
-  color: #fff;
+  color: #ddd;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  opacity: 0;
+  animation: hell-enter 2.8s ease forwards;
 
-  font-family: 'Cinzel', serif;
-
-  animation: hellAppear 1.8s ease forwards;
+  touch-action: none;
+  user-select: none;
 }
 
 
 /* =========================================================
-   ATMOSFÉRA
+   STONE WORLD
    ========================================================= */
 
-.hell-overlay::before {
-  content: "";
-
+.hell-world {
   position: absolute;
-  inset: -20%;
+  inset: -5%;
 
   background:
     radial-gradient(
       ellipse at 50% 100%,
-      rgba(180, 0, 0, 0.18),
-      transparent 55%
-    );
+      rgba(115, 18, 8, 0.16),
+      transparent 45%
+    ),
+    radial-gradient(
+      ellipse at 20% 35%,
+      rgba(80, 80, 80, 0.08),
+      transparent 30%
+    ),
+    repeating-linear-gradient(
+      91deg,
+      rgba(255,255,255,0.015) 0,
+      rgba(255,255,255,0.015) 1px,
+      transparent 1px,
+      transparent 37px
+    ),
+    #111;
 
-  filter: blur(35px);
+  transform:
+    scale(1.04)
+    translate3d(0,0,0);
 
   animation:
-    hellBreath 5s ease-in-out infinite;
+    hell-camera 30s ease-in-out infinite alternate;
+}
+
+
+/*
+ * Falešná hloubka kamene.
+ * Vypadá jako nepravidelná, stará stěna.
+ */
+.hell-stone {
+  position: absolute;
+  inset: 0;
+
+  opacity: 0.75;
+
+  background:
+    radial-gradient(
+      circle at 15% 20%,
+      transparent 0 2%,
+      rgba(0,0,0,.35) 2.2% 2.8%,
+      transparent 3%
+    ),
+    radial-gradient(
+      circle at 75% 65%,
+      transparent 0 3%,
+      rgba(0,0,0,.4) 3.2% 4%,
+      transparent 4.2%
+    ),
+    repeating-linear-gradient(
+      168deg,
+      transparent 0 75px,
+      rgba(0,0,0,.18) 76px,
+      transparent 79px
+    );
+
+  filter: blur(0.4px);
+}
+
+
+/* =========================================================
+   CARVED INSCRIPTIONS
+   ========================================================= */
+
+.hell-inscriptions {
+  position: absolute;
+  inset: 0;
+
+  pointer-events: none;
+
+  opacity: 0.62;
+}
+
+.hell-inscription {
+  position: absolute;
+
+  color: rgba(25,25,25,.95);
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-weight: 700;
+
+  letter-spacing: 2px;
+
+  /*
+   * Nejde o klasický textový glow.
+   * Tmavá barva + více vrstev vytváří iluzi
+   * vyrytého kamene.
+   */
+  text-shadow:
+    1px 1px 0 rgba(0,0,0,.95),
+    -1px -1px 0 rgba(255,255,255,.06);
+
+  filter:
+    contrast(1.15);
+
+  transform-origin: center;
+}
+
+
+/*
+ * Umístění jednotlivých nápisů.
+ */
+.hell-i1 {
+  left: 8%;
+  top: 20%;
+  transform: rotate(-5deg);
+  font-size: clamp(13px, 1.3vw, 21px);
+}
+
+.hell-i2 {
+  right: 5%;
+  top: 31%;
+  transform: rotate(4deg);
+  font-size: clamp(12px, 1.15vw, 19px);
+}
+
+.hell-i3 {
+  left: 15%;
+  top: 58%;
+  transform: rotate(2deg);
+  font-size: clamp(12px, 1.1vw, 18px);
+}
+
+.hell-i4 {
+  right: 12%;
+  top: 67%;
+  transform: rotate(-3deg);
+  font-size: clamp(12px, 1.2vw, 20px);
+}
+
+.hell-i5 {
+  left: 42%;
+  top: 12%;
+  transform: rotate(-1deg);
+  font-size: clamp(10px, 0.9vw, 15px);
+}
+
+
+/*
+ * Druhá vrstva simulující odštěpenou hranu vrypu.
+ */
+.hell-inscription::before {
+  content: attr(data-text);
+
+  position: absolute;
+
+  left: 1px;
+  top: 1px;
+
+  color: rgba(0,0,0,.9);
+
+  pointer-events: none;
+}
+
+.hell-inscription::after {
+  content: attr(data-text);
+
+  position: absolute;
+
+  left: -0.5px;
+  top: -0.5px;
+
+  color: rgba(160,160,160,.07);
 
   pointer-events: none;
 }
 
 
-.hell-overlay::after {
+/* =========================================================
+   TORCH / FLASHLIGHT
+   ========================================================= */
+
+.hell-torch {
+  position: fixed;
+  inset: 0;
+
+  pointer-events: none;
+
+  z-index: 30;
+
+  /*
+   * Střed je průhledný.
+   * Okolí je prakticky černé.
+   */
+  background:
+    radial-gradient(
+      circle 145px at var(--torch-x) var(--torch-y),
+      rgba(255, 195, 80, 0.14) 0,
+      rgba(255, 150, 45, 0.08) 25%,
+      rgba(0,0,0,0.18) 45%,
+      rgba(0,0,0,0.68) 70%,
+      rgba(0,0,0,0.94) 100%
+    );
+
+  mix-blend-mode: normal;
+
+  animation: torch-breathe 3s ease-in-out infinite;
+}
+
+
+/*
+ * Druhý světelný kužel.
+ * Dává světlu teplejší okraj.
+ */
+.hell-torch::before {
   content: "";
 
   position: absolute;
   inset: 0;
 
   background:
-    repeating-linear-gradient(
-      0deg,
-      rgba(255,255,255,0.018) 0px,
-      rgba(255,255,255,0.018) 1px,
-      transparent 1px,
-      transparent 4px
+    radial-gradient(
+      circle 105px at var(--torch-x) var(--torch-y),
+      rgba(255, 185, 75, 0.10),
+      transparent 72%
     );
 
-  opacity: 0.25;
+  filter: blur(8px);
+}
+
+
+/*
+ * Tmavý okraj scény.
+ */
+.hell-vignette {
+  position: fixed;
+  inset: 0;
+
+  z-index: 40;
+
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      ellipse at center,
+      transparent 25%,
+      rgba(0,0,0,.35) 60%,
+      rgba(0,0,0,.88) 100%
+    );
+}
+
+
+/* =========================================================
+   ASH / EMBERS
+   ========================================================= */
+
+.hell-ash-field {
+  position: absolute;
+  inset: 0;
+
+  z-index: 20;
 
   pointer-events: none;
 }
 
-
-/* =========================================================
-   PENTAGRAM V POZADÍ
-   ========================================================= */
-
-.hell-pentagram {
+.hell-ash {
   position: absolute;
 
-  width: min(75vw, 620px);
-  height: min(75vw, 620px);
+  width: var(--size);
+  height: var(--size);
 
-  left: 50%;
-  top: 50%;
+  left: var(--x);
+  bottom: -10px;
 
-  transform:
-    translate(-50%, -50%)
-    rotate(0deg);
+  border-radius: 50%;
 
-  opacity: 0;
+  background: #777;
+
+  opacity: var(--opacity);
+
+  animation:
+    ash-rise var(--duration) linear var(--delay) infinite;
+
+  filter: blur(var(--blur));
+}
+
+
+/*
+ * Žhavý popílek.
+ */
+.hell-ember {
+  background:
+    radial-gradient(
+      circle,
+      #fff0b0 0%,
+      #ff9d20 25%,
+      #d52b08 55%,
+      transparent 72%
+    );
+
+  box-shadow:
+    0 0 5px rgba(255,100,15,.7),
+    0 0 12px rgba(255,40,0,.35);
+
+  opacity: var(--opacity);
+
+  animation:
+    ember-rise var(--duration) linear var(--delay) infinite;
+}
+
+
+/* =========================================================
+   AMBIENT RED GLOW
+   ========================================================= */
+
+.hell-red-pulse {
+  position: fixed;
+  inset: 0;
+
+  z-index: 25;
 
   pointer-events: none;
 
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 4 L20 92 L96 38 L4 38 L80 92 Z' fill='none' stroke='%23a00000' stroke-width='0.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='50' cy='50' r='43' fill='none' stroke='%23700000' stroke-width='0.35'/%3E%3Ccircle cx='50' cy='50' r='47' fill='none' stroke='%23500000' stroke-width='0.25'/%3E%3C/svg%3E");
-
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-
-  filter:
-    drop-shadow(0 0 8px rgba(180,0,0,0.35))
-    drop-shadow(0 0 25px rgba(120,0,0,0.18));
+  background:
+    radial-gradient(
+      ellipse at 50% 110%,
+      rgba(130, 10, 0, 0.18),
+      transparent 48%
+    );
 
   animation:
-    hellPentagramAppear 3s ease forwards,
-    hellPentagramRotate 45s linear infinite;
+    red-pulse 5s ease-in-out infinite;
 }
 
 
 /* =========================================================
-   STŘED
+   EXIT TEXT
    ========================================================= */
 
-.hell-center {
-  position: relative;
+.hell-exit {
+  position: fixed;
 
-  z-index: 5;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
-  text-align: center;
-
-  padding: 30px;
-}
-
-
-/* =========================================================
-   HELL
-   ========================================================= */
-
-.hell-message {
-  position: relative;
-
-  font-size: clamp(48px, 13vw, 150px);
-
-  font-weight: 900;
-
-  letter-spacing:
-    clamp(8px, 2vw, 22px);
-
-  color: #b30000;
-
-  text-shadow:
-    0 0 8px rgba(255,0,0,0.45),
-    0 0 25px rgba(180,0,0,0.35),
-    0 0 60px rgba(100,0,0,0.25);
-
-  opacity: 0;
-
-  animation:
-    hellTitleReveal 2s ease 0.7s forwards,
-    hellTitlePulse 4s ease-in-out 2.7s infinite;
-}
-
-
-/* =========================================================
-   PODTITULEK
-   ========================================================= */
-
-.hell-subtitle {
-  margin-top: 2px;
-
-  color: rgba(255,255,255,0.38);
-
-  font-size: clamp(9px, 2vw, 12px);
-
-  letter-spacing:
-    clamp(3px, 1vw, 7px);
-
-  text-transform: uppercase;
-
-  opacity: 0;
-
-  animation:
-    hellSubtitleReveal 2s ease 1.5s forwards;
-}
-
-
-/* =========================================================
-   NENÍ CESTY ZPĚT
-   ========================================================= */
-
-.hell-return-text {
-  margin-top: 65px;
-
-  color: rgba(255,255,255,0.72);
-
-  font-family: 'Cinzel', serif;
-
-  font-size: clamp(13px, 3vw, 19px);
-
-  letter-spacing:
-    clamp(2px, 0.8vw, 5px);
-
-  text-transform: uppercase;
-
-  opacity: 0;
-
-  animation:
-    hellTextReveal 1.5s ease 2s forwards;
-}
-
-
-/* =========================================================
-   TŘI TAJNÉ TEČKY
-   ========================================================= */
-
-.hell-dots {
-  display: inline-flex;
-
-  align-items: center;
-
-  gap: 13px;
-
-  margin-left: 9px;
-}
-
-
-.hell-dot {
-  position: relative;
-
-  width: 10px;
-  height: 10px;
-
-  padding: 0;
-
-  border: none;
-  border-radius: 50%;
-
-  cursor: pointer;
-
-  opacity: 0.58;
-
-  transform: scale(1);
-
-  transition:
-    transform 0.25s ease,
-    opacity 0.25s ease,
-    box-shadow 0.25s ease;
-}
-
-
-.hell-dot::after {
-  content: "";
-
-  position: absolute;
-
-  inset: -8px;
-
-  border-radius: 50%;
-
-  opacity: 0;
-
-  transition: opacity 0.25s ease;
-}
-
-
-.hell-dot:hover {
-  opacity: 1;
-  transform: scale(1.35);
-}
-
-
-.hell-dot:active {
-  transform: scale(0.85);
-}
-
-
-.hell-dot.black {
-  background: #151515;
-
-  box-shadow:
-    0 0 2px rgba(255,255,255,0.45);
-}
-
-
-.hell-dot.black::after {
-  box-shadow:
-    0 0 10px rgba(255,255,255,0.35);
-}
-
-
-.hell-dot.gold {
-  background: #a98200;
-
-  box-shadow:
-    0 0 4px rgba(255,215,0,0.35);
-}
-
-
-.hell-dot.gold::after {
-  box-shadow:
-    0 0 12px rgba(255,215,0,0.35);
-}
-
-
-.hell-dot.red {
-  background: #8b0000;
-
-  box-shadow:
-    0 0 5px rgba(255,0,0,0.4);
-}
-
-
-.hell-dot.red::after {
-  box-shadow:
-    0 0 14px rgba(255,0,0,0.45);
-}
-
-
-/* správný klik */
-
-.hell-dot.correct {
-  opacity: 1;
-
-  transform: scale(1.5);
-
-  box-shadow:
-    0 0 10px currentColor,
-    0 0 25px currentColor;
-}
-
-
-/* špatný klik */
-
-.hell-dot.wrong {
-  animation:
-    hellWrong 0.35s ease;
-}
-
-
-/* =========================================================
-   PROGRESS
-   ========================================================= */
-
-.hell-progress {
-  position: absolute;
-
-  bottom: 28px;
   left: 50%;
+  bottom: 72px;
 
   transform: translateX(-50%);
 
-  width: 120px;
-  height: 1px;
+  z-index: 50;
 
-  background: rgba(255,255,255,0.08);
+  color: rgba(215,215,215,.48);
 
-  overflow: hidden;
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
 
-  opacity: 0;
+  font-size: 14px;
+
+  letter-spacing: 3px;
+
+  white-space: nowrap;
+
+  pointer-events: none;
+
+  text-shadow:
+    0 1px 2px #000;
 
   animation:
-    hellProgressAppear 1s ease 2.5s forwards;
-}
-
-
-.hell-progress-bar {
-  width: 0%;
-  height: 100%;
-
-  background: #7d0000;
-
-  box-shadow:
-    0 0 8px rgba(255,0,0,0.6);
-
-  transition:
-    width 0.35s ease;
+    exit-pulse 5s ease-in-out infinite;
 }
 
 
 /* =========================================================
-   NÁVRAT
+   FINAL RETURN
    ========================================================= */
 
 .hell-return {
   position: fixed;
   inset: 0;
 
-  z-index: 10001;
-
-  background:
-    radial-gradient(
-      circle at center,
-      #170000 0%,
-      #050000 48%,
-      #000 100%
-    );
+  z-index: 100;
 
   display: flex;
-
   align-items: center;
   justify-content: center;
 
-  flex-direction: column;
+  background: #000;
 
-  color: white;
+  opacity: 0;
+  pointer-events: none;
 
+  transition: opacity 1.5s ease;
+}
+
+.hell-return.active {
+  opacity: 1;
+}
+
+.hell-return-inner {
   text-align: center;
-
-  font-family: 'Cinzel', serif;
-
-  animation:
-    hellReturnAppear 1.5s ease forwards;
 }
-
-
-.hell-return::before {
-  content: "";
-
-  position: absolute;
-  inset: 0;
-
-  background:
-    radial-gradient(
-      circle,
-      rgba(150,0,0,0.12),
-      transparent 55%
-    );
-
-  animation:
-    hellReturnPulse 4s ease-in-out infinite;
-}
-
 
 .hell-return-title {
-  position: relative;
+  color: #ddd;
 
-  font-size: clamp(25px, 7vw, 65px);
+  font-family: Georgia, serif;
 
-  font-weight: 900;
+  font-size: clamp(24px, 5vw, 54px);
 
-  letter-spacing:
-    clamp(3px, 1vw, 8px);
+  letter-spacing: 8px;
 
-  color: #fff;
+  opacity: 0;
 
-  text-shadow:
-    0 0 15px rgba(255,255,255,0.25),
-    0 0 40px rgba(150,0,0,0.5);
+  animation: none;
 }
 
-
-.hell-code {
-  position: relative;
-
-  margin-top: 22px;
-
-  font-size: clamp(13px, 3vw, 21px);
-
-  color: #9b0000;
-
-  letter-spacing: 5px;
-
-  text-shadow:
-    0 0 12px rgba(255,0,0,0.5);
+.hell-return.active .hell-return-title {
+  animation: return-title 2s ease forwards;
 }
 
+.hell-return-code {
+  margin-top: 18px;
 
-.hell-close {
-  position: absolute;
+  color: rgba(180,180,180,.5);
 
-  top: 20px;
-  right: 24px;
+  font-family: monospace;
 
-  width: 42px;
-  height: 42px;
+  font-size: 12px;
+
+  letter-spacing: 3px;
+
+  opacity: 0;
+}
+
+.hell-return.active .hell-return-code {
+  animation: return-code 2s ease 0.5s forwards;
+}
+
+.hell-return-close {
+  margin-top: 35px;
+
+  width: 38px;
+  height: 38px;
+
+  border: 1px solid rgba(255,255,255,.25);
+
+  border-radius: 50%;
 
   background: transparent;
 
-  border: 1px solid rgba(255,255,255,0.12);
+  color: #aaa;
 
-  border-radius: 50%;
-
-  color: rgba(255,255,255,0.55);
-
-  font-size: 26px;
+  font-size: 20px;
 
   cursor: pointer;
 
+  opacity: 0;
+
   transition:
-    all 0.25s ease;
+    background .2s,
+    color .2s,
+    border-color .2s;
+
+  animation: return-close 1s ease 1.3s forwards;
 }
 
-
-.hell-close:hover {
+.hell-return-close:hover {
+  background: rgba(255,255,255,.08);
   color: white;
-
-  border-color: rgba(255,255,255,0.4);
-
-  transform: rotate(90deg);
+  border-color: rgba(255,255,255,.5);
 }
 
 
 /* =========================================================
-   PARTICLES
+   FINAL FLASH
    ========================================================= */
 
-.hell-particle {
-  position: absolute;
+.hell-final-flash {
+  position: fixed;
+  inset: 0;
 
-  width: 2px;
-  height: 2px;
+  z-index: 90;
 
-  border-radius: 50%;
+  background: #fff;
 
-  background: #720000;
-
-  box-shadow:
-    0 0 6px rgba(255,0,0,0.45);
+  opacity: 0;
 
   pointer-events: none;
-
-  animation:
-    hellParticleFloat linear infinite;
 }
 
 
 /* =========================================================
-   ANIMACE
+   ANIMATIONS
    ========================================================= */
 
-@keyframes hellAppear {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
-
-@keyframes hellBreath {
-  0%, 100% {
-    transform: scale(1);
-    opacity: 0.55;
-  }
-
-  50% {
-    transform: scale(1.08);
-    opacity: 0.9;
-  }
-}
-
-
-@keyframes hellPentagramAppear {
+@keyframes hell-enter {
   0% {
     opacity: 0;
-    transform:
-      translate(-50%, -50%)
-      scale(0.65)
-      rotate(-15deg);
+    background: #000;
+  }
+
+  55% {
+    opacity: 1;
   }
 
   100% {
-    opacity: 0.23;
-    transform:
-      translate(-50%, -50%)
-      scale(1)
-      rotate(0deg);
+    opacity: 1;
   }
 }
 
-
-@keyframes hellPentagramRotate {
+@keyframes hell-camera {
   from {
-    transform:
-      translate(-50%, -50%)
-      rotate(0deg);
+    transform: scale(1.04) translate3d(-1%, -1%, 0);
   }
 
   to {
+    transform: scale(1.11) translate3d(1%, 1%, 0);
+  }
+}
+
+@keyframes torch-breathe {
+  0%,100% {
+    filter: brightness(.96);
+  }
+
+  50% {
+    filter: brightness(1.08);
+  }
+}
+
+@keyframes ash-rise {
+  0% {
     transform:
-      translate(-50%, -50%)
+      translate3d(0, 0, 0)
+      rotate(0deg);
+
+    opacity: 0;
+  }
+
+  10% {
+    opacity: var(--opacity);
+  }
+
+  50% {
+    transform:
+      translate3d(var(--drift), -50vh, 0)
+      rotate(180deg);
+  }
+
+  100% {
+    transform:
+      translate3d(calc(var(--drift) * -0.5), -115vh, 0)
       rotate(360deg);
-  }
-}
 
-
-@keyframes hellTitleReveal {
-  from {
     opacity: 0;
-    transform: scale(0.85);
-    filter: blur(10px);
-  }
-
-  to {
-    opacity: 1;
-    transform: scale(1);
-    filter: blur(0);
   }
 }
 
+@keyframes ember-rise {
+  0% {
+    transform:
+      translate3d(0,0,0)
+      scale(.7);
 
-@keyframes hellTitlePulse {
-  0%, 100% {
-    text-shadow:
-      0 0 8px rgba(255,0,0,0.4),
-      0 0 25px rgba(180,0,0,0.3);
+    opacity: 0;
+  }
+
+  12% {
+    opacity: var(--opacity);
+  }
+
+  30% {
+    transform:
+      translate3d(var(--drift), -30vh, 0)
+      scale(1);
+  }
+
+  65% {
+    transform:
+      translate3d(calc(var(--drift) * -.5), -70vh, 0)
+      scale(.75);
+  }
+
+  100% {
+    transform:
+      translate3d(var(--drift), -120vh, 0)
+      scale(.2);
+
+    opacity: 0;
+  }
+}
+
+@keyframes red-pulse {
+  0%,100% {
+    opacity: .25;
   }
 
   50% {
-    text-shadow:
-      0 0 12px rgba(255,0,0,0.7),
-      0 0 45px rgba(180,0,0,0.5);
+    opacity: .65;
   }
 }
 
+@keyframes exit-pulse {
+  0%,100% {
+    opacity: .28;
+  }
 
-@keyframes hellSubtitleReveal {
+  50% {
+    opacity: .58;
+  }
+}
+
+@keyframes return-title {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(15px);
+    letter-spacing: 18px;
   }
 
   to {
     opacity: 1;
     transform: translateY(0);
+    letter-spacing: 8px;
   }
 }
 
-
-@keyframes hellTextReveal {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-
-@keyframes hellProgressAppear {
+@keyframes return-code {
   from {
     opacity: 0;
   }
@@ -654,69 +668,13 @@
   }
 }
 
-
-@keyframes hellWrong {
-  0%, 100% {
-    transform: translateX(0);
-  }
-
-  25% {
-    transform: translateX(-5px);
-  }
-
-  75% {
-    transform: translateX(5px);
-  }
-}
-
-
-@keyframes hellParticleFloat {
-  from {
-    transform:
-      translateY(105vh)
-      translateX(0);
-
-    opacity: 0;
-  }
-
-  15% {
-    opacity: 0.65;
-  }
-
-  85% {
-    opacity: 0.4;
-  }
-
-  to {
-    transform:
-      translateY(-10vh)
-      translateX(50px);
-
-    opacity: 0;
-  }
-}
-
-
-@keyframes hellReturnAppear {
+@keyframes return-close {
   from {
     opacity: 0;
   }
 
   to {
-    opacity: 1;
-  }
-}
-
-
-@keyframes hellReturnPulse {
-  0%, 100% {
-    opacity: 0.4;
-    transform: scale(1);
-  }
-
-  50% {
-    opacity: 0.8;
-    transform: scale(1.08);
+    opacity: .8;
   }
 }
 
@@ -725,28 +683,53 @@
    MOBILE
    ========================================================= */
 
-@media (max-width: 600px) {
+@media (max-width: 700px) {
 
-  .hell-pentagram {
-    width: 95vw;
-    height: 95vw;
+  .hell-torch {
+    background:
+      radial-gradient(
+        circle 115px at var(--torch-x) var(--torch-y),
+        rgba(255,195,80,.14),
+        rgba(255,150,45,.07) 30%,
+        rgba(0,0,0,.25) 52%,
+        rgba(0,0,0,.94) 100%
+      );
   }
 
-  .hell-center {
-    padding: 20px;
+  .hell-exit {
+    bottom: 92px;
+
+    font-size: 11px;
+
+    letter-spacing: 2px;
   }
 
-  .hell-return-text {
-    margin-top: 45px;
+  .hell-inscription {
+    letter-spacing: 1px;
   }
 
-  .hell-dots {
-    gap: 10px;
-    margin-left: 6px;
+  .hell-i1 {
+    left: 5%;
+    top: 18%;
   }
 
-  .hell-dot {
-    width: 9px;
-    height: 9px;
+  .hell-i2 {
+    right: 4%;
+    top: 35%;
+  }
+
+  .hell-i3 {
+    left: 6%;
+    top: 60%;
+  }
+
+  .hell-i4 {
+    right: 6%;
+    top: 70%;
+  }
+
+  .hell-i5 {
+    left: 25%;
+    top: 11%;
   }
 }
