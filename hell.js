@@ -44,7 +44,7 @@
         <div class="hell-fog-layer hell-fog-1"></div>
         <div class="hell-fog-layer hell-fog-2"></div>
 
-        <!-- SVG VERSTVA PENTAGRAMŮ A NÁPISŮ -->
+        <!-- SVG VRSTVA PENTAGRAMŮ A NÁPISŮ -->
         <svg class="hell-scene" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice">
           <defs>
             <filter id="glow-red" x="-50%" y="-50%" width="200%" height="200%">
@@ -102,11 +102,12 @@
         <div class="hell-ash"></div>
         <div class="hell-embers"></div>
 
-<!-- VAROVÁNÍ A NÁPOVĚDA -->
+        <!-- VAROVÁNÍ A NÁPOVĚDA -->
         <div class="hell-warning">
           <span class="hell-title">NENÍ CESTY ZPĚT...</span>
           <span class="hell-hint">pokud nevidíš cestu, zkus otočit směr</span>
         </div>
+      </div>
     `;
 
     document.body.appendChild(overlay);
@@ -261,27 +262,19 @@
     showParchment();
   }
 
-/* =====================================================
-     ZOBRAZENÍ PERGAMENU S PRELOADEM
-     ===================================================== */
-
-/* =====================================================
-     ZOBRAZENÍ PERGAMENU (FIX STRETCHINGU)
-     ===================================================== */
-
   function showParchment() {
     const parchment = document.createElement("div");
     parchment.className = "hell-parchment-modal";
 
     parchment.innerHTML = `
       <div class="parchment-container">
-        <!-- SKUTEČNÝ OBRÁZEK, KTERÝ NELZE DEFORMOVAT -->
+        <!-- OBRÁZEK PERGAMENU -->
         <img src="./parchment.png" class="parchment-img" alt="Parchment" />
 
-        <!-- PEČEŤ SÍDLÍCÍ PŘÍMO NA OBRÁZKU -->
+        <!-- PEČEŤ NA PERGAMENU -->
         <img src="./wax_seal.png" class="parchment-seal" title="Zlomit pečeť a opustit peklo" alt="Seal" />
 
-        <!-- TEXTOVÁ VRSTVA NAKRYTÁ PŘES OBRÁZEK -->
+        <!-- TEXTOVÁ VRSTVA -->
         <div class="parchment-overlay">
           <p class="blood-line line-1"></p>
           <p class="blood-line line-2"></p>
@@ -312,27 +305,6 @@
     }
   }
 
-  async function runBloodTyping(parchment) {
-    const l1 = parchment.querySelector(".line-1");
-    const l2 = parchment.querySelector(".line-2");
-    const l3 = parchment.querySelector(".line-3");
-    const lCode = parchment.querySelector(".line-code");
-    const sealBtn = parchment.querySelector(".parchment-seal");
-
-    await typeText(l1, "chtěl jsi znát hřiště", 65);
-    await new Promise((r) => setTimeout(r, 250));
-    
-    await typeText(l2, "podíval ses bohům do tváře", 65);
-    await new Promise((r) => setTimeout(r, 250));
-    
-    await typeText(l3, "a prošel jsi peklem...", 65);
-    await new Promise((r) => setTimeout(r, 400));
-    
-    await typeText(lCode, "kód : XXXXX-XXXX", 75);
-
-    sealBtn.classList.add("active");
-  }
-
   /* Efekt psaní psaného písma/krve */
   function typeText(element, text, speed = 65) {
     return new Promise((resolve) => {
@@ -351,22 +323,19 @@
     });
   }
 
-/* =====================================================
-     DEKÓDOVÁNÍ SKRYTÉHO KÓDU
-     ===================================================== */
-
+  /* Dekódování skrytého kódu z Base64 */
   function getSecretCode() {
-    // Sem vlož svůj zakódovaný hash z btoa()
+    // Nahraď vlastním řetězcem z btoa("TVUJ-KOD")
     const obfuscated = "VFZVSi1UQUpOWS1LT0QtMTIzNA=="; 
     
     try {
       return atob(obfuscated);
     } catch (e) {
-      return "XXXXX-XXXX"; // Fallback při chybě
+      return "XXXXX-XXXX";
     }
   }
 
-  /* Upravená funkce pro psaní krví */
+  /* Postupné psaní textu krví */
   async function runBloodTyping(parchment) {
     const l1 = parchment.querySelector(".line-1");
     const l2 = parchment.querySelector(".line-2");
@@ -383,14 +352,9 @@
     await typeText(l3, "a prošel jsi peklem...", 65);
     await new Promise((r) => setTimeout(r, 400));
     
-    // Načtení dekódovaného kódu z Base64
     const finalCode = getSecretCode();
     await typeText(lCode, "kód : " + finalCode, 75);
 
-    sealBtn.classList.add("active");
-  }
-
-    // Po dopsání se rozsvítí a zpřístupní pečeť ke klepnutí
     sealBtn.classList.add("active");
   }
 
@@ -399,7 +363,6 @@
     localStorage.removeItem(HELL_KEY);
     document.documentElement.removeAttribute("data-hell");
 
-    // Nastavení standardního tmavého módu na hlavní stránce
     localStorage.setItem("theme", "dark");
     document.documentElement.setAttribute("data-theme", "dark");
 
