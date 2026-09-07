@@ -178,7 +178,7 @@
     /* =====================================================
        REAL LIGHTNING
        ===================================================== */
-
+if (divineStopped) return;
     function drawRealLightning() {
 
       const svg =
@@ -297,7 +297,7 @@
     /* =====================================================
        THUNDER BURST
        ===================================================== */
-
+if (divineStopped) return;
     let activeThunder = null;
 
     function triggerLightningBurst() {
@@ -401,8 +401,10 @@
 /* =====================================================
    HELL MODE OVERRIDES GOD MODE
    ===================================================== */
-
+let divineStopped = false;
 window.stopDivineMode = function () {
+
+  divineStopped = true;
 
   stopLightning();
 
