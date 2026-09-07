@@ -332,8 +332,11 @@
 }
 
 
+/* IMPORT GOTICKÉHO PÍSMA */
+@import url('https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap');
+
 /* =========================================================
-   PERGAMEN A SPLYTÍ TEXTU S T KÁNÍ PAPÍRU
+   PERGAMEN MODAL - STABILNÍ A NEDEFORMOVATELNÝ
    ========================================================= */
 
 .hell-parchment-modal {
@@ -345,72 +348,78 @@
   justify-content: center;
   background: rgba(0, 0, 0, 0.90);
   backdrop-filter: blur(10px);
-  padding: 15px;
-  animation: parchment-appear 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  padding: 20px;
+  box-sizing: border-box;
+  animation: parchment-appear 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @keyframes parchment-appear {
-  from { opacity: 0; transform: scale(0.8) translateY(30px); }
-  to { opacity: 1; transform: scale(1) translateY(0); }
+  from { opacity: 0; transform: scale(0.85); }
+  to { opacity: 1; transform: scale(1); }
 }
 
-/* SAMOTNÝ SVITEK S DĚDĚNÝM POMĚREM STRAN OBRÁZKU */
-.parchment-scroll {
+/* OBRÁZKOVÝ KONTAJNER DŽÍCÍ SMYSLUPLNÝ POMĚR STRAN */
+.parchment-container {
   position: relative;
-  width: 90vw;
-  max-width: 440px; /* Přizpůsobeno poměru stran 3447 x 4828 */
-  aspect-ratio: 3447 / 4828;
-  
-  /* Textura pergamenu */
-  background: url("./parchment.png") no-repeat center center / 100% 100%;
-  filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.98)) drop-shadow(0 0 25px rgba(120, 0, 0, 0.5));
-  
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
-  
-  /* Přesné okraje, aby text zůstal na papíře */
-  padding: 24% 14% 20% 14%;
+  display: inline-block;
+  max-width: 90vw;
+  max-height: 85vh;
 }
 
-.parchment-body {
+/* HLAVNÍ OBRÁZEK - ABSOLUTNÍ ZÁKAZ DEFORMACE */
+.parchment-img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 90vw;
+  max-height: 85vh;
+  object-fit: contain;
+  filter: drop-shadow(0 15px 35px rgba(0, 0, 0, 0.98)) drop-shadow(0 0 20px rgba(120, 0, 0, 0.5));
+}
+
+/* VRSTVA OBSAHU UVNITŘ BOUNDING BOXU OBRÁZKU */
+.parchment-overlay {
+  position: absolute;
+  /* Vymezení bezpečné plochy textu přímo v těle svitku */
+  top: 22%;
+  bottom: 18%;
+  left: 12%;
+  right: 12%;
+  
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 14px;
-  width: 100%;
+  gap: 12px;
   text-align: center;
+  pointer-events: none;
 }
 
-/* PÍSMO - USCHLÁ KREV VPRANÁ DO PAPÍRU */
+/* KRVAVÝ TEXT PSANÝ DO JEDNOHO ŘÁDKU */
 .blood-line {
-  color: #4a0202; /* Tmavá uschlá krev */
+  color: #4a0202;
   font-family: 'UnifrakturMaguntia', Georgia, serif;
-  font-size: clamp(16px, 2.2vw, 22px);
-  line-height: 1.25;
+  font-size: clamp(14px, 2.6vh, 23px);
+  line-height: 1.2;
   margin: 0;
-  min-height: 1.3em;
+  min-height: 1.2em;
+  white-space: nowrap; /* Zakáže lámání po jednom slově */
   
-  /* Propojení textu s vlákny papíru */
   mix-blend-mode: multiply;
-  opacity: 0.92;
-  text-shadow: 0 0 1px rgba(80, 0, 0, 0.6);
-  filter: contrast(140%);
+  opacity: 0.95;
+  filter: contrast(150%);
 }
 
 .blood-line.line-code {
-  margin-top: 10px;
+  margin-top: 8px;
   color: #3b0000;
-  font-size: clamp(18px, 2.5vw, 25px);
+  font-size: clamp(16px, 3vh, 26px);
   font-weight: bold;
-  letter-spacing: 1px;
 }
 
 .blood-line.typing::after {
   content: "✒️";
-  font-size: 13px;
+  font-size: 12px;
   margin-left: 4px;
   opacity: 0.7;
   animation: drop-blink 0.4s infinite alternate;
@@ -421,19 +430,18 @@
   100% { opacity: 0.2; }
 }
 
-/* VOSKOVÁ PEČEŤ PŘÍMO NA PERGAMENU */
+/* VOSKOVÁ PEČEŤ UPEVNĚNÁ ROVNĚŽ NA CONTAINER OBRÁZKU */
 .parchment-seal {
   position: absolute;
-  top: 7%;
+  top: 6%;
   right: 8%;
-  width: 17%;
-  aspect-ratio: 1 / 1;
-  border: none;
-  background: url("./wax_seal.png") no-repeat center center / contain;
+  width: 15%;
+  height: auto;
   cursor: pointer;
   opacity: 0.2;
   pointer-events: none;
-  transition: all 0.4s ease;
+  transition: all 0.3s ease;
+  z-index: 10;
   filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.8));
 }
 
@@ -445,10 +453,10 @@
 
 .parchment-seal.active:hover {
   transform: scale(1.15) rotate(8deg);
-  filter: drop-shadow(0 0 15px rgba(255, 0, 0, 0.9));
+  filter: drop-shadow(0 0 18px rgba(255, 0, 0, 0.9));
 }
 
 @keyframes seal-pulse {
   0% { filter: drop-shadow(0 0 4px rgba(150, 0, 0, 0.5)); }
-  100% { filter: drop-shadow(0 0 16px rgba(255, 0, 0, 0.9)); }
+  100% { filter: drop-shadow(0 0 16px rgba(255, 0, 0, 0.95)); }
 }
