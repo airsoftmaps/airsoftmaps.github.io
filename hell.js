@@ -102,10 +102,11 @@
         <div class="hell-ash"></div>
         <div class="hell-embers"></div>
 
-        <!-- VAROVÁNÍ -->
-        <div class="hell-warning">NENÍ CESTY ZPĚT...</div>
-        <span class="hell-hint">pokud nevidíš cestu, zkus otočit směr</span>
-      </div>
+<!-- VAROVÁNÍ A NÁPOVĚDA -->
+        <div class="hell-warning">
+          <span class="hell-title">NENÍ CESTY ZPĚT...</span>
+          <span class="hell-hint">pokud nevidíš cestu, zkus otočit směr</span>
+        </div>
     `;
 
     document.body.appendChild(overlay);
