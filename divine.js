@@ -398,7 +398,23 @@
       lightning.classList.remove("flash");
     }
 
+/* =====================================================
+   HELL MODE OVERRIDES GOD MODE
+   ===================================================== */
 
+window.stopDivineMode = function () {
+
+  stopLightning();
+
+  document
+    .querySelectorAll(
+      ".divine-ember, .real-lightning-svg"
+    )
+    .forEach(e => e.remove());
+
+  lightning.classList.remove("flash");
+
+};
     
 /* =====================================================
    SECRET HELL SEQUENCE
