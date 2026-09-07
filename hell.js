@@ -265,17 +265,24 @@
      ZOBRAZENÍ PERGAMENU S PRELOADEM
      ===================================================== */
 
+/* =====================================================
+     ZOBRAZENÍ PERGAMENU (FIX STRETCHINGU)
+     ===================================================== */
+
   function showParchment() {
     const parchment = document.createElement("div");
     parchment.className = "hell-parchment-modal";
 
     parchment.innerHTML = `
-      <div class="parchment-scroll">
-        <!-- VOSKOVÁ PEČEŤ ROVNĚŽ NA PAPÍŘE -->
-        <button class="parchment-seal" title="Zlomit pečeť a opustit peklo"></button>
+      <div class="parchment-container">
+        <!-- SKUTEČNÝ OBRÁZEK, KTERÝ NELZE DEFORMOVAT -->
+        <img src="./parchment.png" class="parchment-img" alt="Parchment" />
 
-        <!-- OBSAH PERGAMENU -->
-        <div class="parchment-body">
+        <!-- PEČEŤ SÍDLÍCÍ PŘÍMO NA OBRÁZKU -->
+        <img src="./wax_seal.png" class="parchment-seal" title="Zlomit pečeť a opustit peklo" alt="Seal" />
+
+        <!-- TEXTOVÁ VRSTVA NAKRYTÁ PŘES OBRÁZEK -->
+        <div class="parchment-overlay">
           <p class="blood-line line-1"></p>
           <p class="blood-line line-2"></p>
           <p class="blood-line line-3"></p>
@@ -289,22 +296,19 @@
     const sealBtn = parchment.querySelector(".parchment-seal");
     sealBtn.addEventListener("click", exitHellToDarkMode);
 
-    // Načtení obrázku před spuštěním psaní
-    const img = new Image();
-    img.src = "./parchment.png";
-    
-    // Počkej na načtení obrázku + dokončení CSS animace příletu (800ms)
+    const img = parchment.querySelector(".parchment-img");
+
     const startTyping = () => {
       setTimeout(() => {
         runBloodTyping(parchment);
-      }, 700);
+      }, 500);
     };
 
     if (img.complete) {
       startTyping();
     } else {
       img.onload = startTyping;
-      img.onerror = startTyping; // Fallback
+      img.onerror = startTyping;
     }
   }
 
