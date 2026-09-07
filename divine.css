@@ -7,6 +7,8 @@ html[data-theme="god-mode"] body {
   color: #e2e8f0 !important;
   font-family: 'Cinzel', serif !important;
   overflow-x: hidden;
+  position: relative !important; /* Přidáno */
+  min-height: 100vh !important;  /* Přidáno */
 }
 
 html[data-theme="god-mode"] .am-brand {
@@ -343,7 +345,8 @@ html[data-theme="god-mode"] .event-title-art.visible {
 }
 
 .divine-hell-hotspot.bottom {
-  top: calc(100% - 60px);
+  top: auto;      /* Vynulování původní vlastnosti */
+  bottom: 20px;   /* Ukotvení na úplný spodek stránky */
 }
 
 .divine-hell-hint {
@@ -365,7 +368,8 @@ html[data-theme="god-mode"] .event-title-art.visible {
 }
 
 .divine-hell-hint.bottom {
-  top: calc(100% - 85px);
+  top: auto;
+  bottom: 75px;   /* Textová nápověda bezpečně nad pentagramem */
 }
 
 .divine-hell-hint.top {
