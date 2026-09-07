@@ -504,6 +504,7 @@ function handleHellClick(event) {
    ----------------------------------------------------- */
 
 function moveHotspot(position) {
+function moveHotspot(position) {
 
   if (!hellHotspot) return;
 
@@ -517,28 +518,9 @@ function moveHotspot(position) {
   );
 
   /*
-   * Vynutíme nový layout.
+   * Stránka se NEPOSOUVÁ.
+   * Hráč musí hotspot najít sám.
    */
-  void hellHotspot.offsetHeight;
-
-  /*
-   * Skutečný přesun na začátek/konec
-   * stránky.
-   */
-  if (position === "top") {
-
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth"
-    });
-
-  } else {
-
-    window.scrollTo({
-      top: document.documentElement.scrollHeight,
-      behavior: "smooth"
-    });
-  }
 }
 
 
