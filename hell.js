@@ -261,18 +261,16 @@
     showParchment();
   }
 
- function showParchment() {
+function showParchment() {
     const parchment = document.createElement("div");
     parchment.className = "hell-parchment-modal";
 
     parchment.innerHTML = `
       <div class="parchment-scroll">
-        <!-- VOSKOVÁ PEČEŤ -->
-        <button class="parchment-seal" title="Zlomit pečeť a opustit peklo">
-          <span class="seal-mark">🕇</span>
-        </button>
+        <!-- REÁLNÁ VOSKOVÁ PEČEŤ JAKO TLAČÍTKO -->
+        <button class="parchment-seal" title="Zlomit pečeť a opustit peklo"></button>
 
-        <!-- TĚLO PERGAMENU -->
+        <!-- OBSAH PERGAMENU -->
         <div class="parchment-body">
           <p class="blood-line line-1"></p>
           <p class="blood-line line-2"></p>
