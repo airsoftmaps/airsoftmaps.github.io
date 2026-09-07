@@ -9,15 +9,14 @@
 
   let active = false;
   let overlay = null;
+  let world = null;
   let torch = null;
 
+  let torchX = window.innerWidth / 2;
+  let torchY = window.innerHeight / 2;
+
   /*
-   * EXACT ESCAPE SEQUENCE
-   *
-   * Three physical pentagrams:
-   * black, gold, red
-   *
-   * The player must visit them:
+   * THREE FIXED PENTAGRAMS
    *
    * BLACK → GOLD → RED → GOLD → BLACK
    */
@@ -69,21 +68,23 @@
 
 
   /* =====================================================
-     CREATE WORLD
+     CREATE HELL
      ===================================================== */
 
   function createHell() {
 
-    overlay =
-      document.createElement("div");
+    overlay = document.createElement("div");
 
-    overlay.className =
-      "hell-overlay";
+    overlay.className = "hell-overlay";
 
 
     overlay.innerHTML = `
 
       <div class="hell-world">
+
+        <!-- =========================================
+             STONE WORLD
+             ========================================= -->
 
         <svg
           class="hell-scene"
@@ -93,12 +94,12 @@
 
           <defs>
 
-            <!-- =========================================
+            <!-- =====================================
                  STONE TEXTURE
-                 ========================================= -->
+                 ===================================== -->
 
             <filter
-              id="hell-stone"
+              id="stone-noise"
               x="-20%"
               y="-20%"
               width="140%"
@@ -107,30 +108,53 @@
 
               <feTurbulence
                 type="fractalNoise"
-                baseFrequency="0.014"
-                numOctaves="5"
-                seed="37"
+                baseFrequency="0.018"
+                numOctaves="4"
+                seed="19"
+                result="noise"
               />
 
               <feColorMatrix
-                type="matrix"
-                values="
-                  .24 0 0 0 0
-                  0 .22 0 0 0
-                  0 0 .20 0 0
-                  0 0 0 1 0
-                "
+                in="noise"
+                type="saturate"
+                values="0"
+                result="gray"
               />
+
+              <feComponentTransfer
+                in="gray"
+                result="stone"
+              >
+
+                <feFuncR
+                  type="linear"
+                  slope=".20"
+                  intercept=".035"
+                />
+
+                <feFuncG
+                  type="linear"
+                  slope=".18"
+                  intercept=".03"
+                />
+
+                <feFuncB
+                  type="linear"
+                  slope=".16"
+                  intercept=".025"
+                />
+
+              </feComponentTransfer>
 
             </filter>
 
 
-            <!-- =========================================
-                 CARVED STONE
-                 ========================================= -->
+            <!-- =====================================
+                 CARVED EDGE
+                 ===================================== -->
 
             <filter
-              id="hell-carving"
+              id="carved-edge"
               x="-30%"
               y="-30%"
               width="160%"
@@ -139,80 +163,51 @@
 
               <feGaussianBlur
                 in="SourceAlpha"
-                stdDeviation="1.3"
+                stdDeviation="1.2"
                 result="blur"
               />
 
               <feOffset
+                in="blur"
                 dx="2"
                 dy="3"
-                result="offset"
+                result="shadow"
               />
 
               <feFlood
                 flood-color="#000000"
                 flood-opacity=".95"
-                result="shadow"
+                result="shadowColor"
               />
 
               <feComposite
-                in="shadow"
-                in2="offset"
+                in="shadowColor"
+                in2="shadow"
                 operator="in"
-                result="cut"
+                result="shadowFinal"
               />
 
               <feMerge>
 
-                <feMergeNode in="cut"/>
-                <feMergeNode in="SourceGraphic"/>
+                <feMergeNode
+                  in="shadowFinal"
+                />
+
+                <feMergeNode
+                  in="SourceGraphic"
+                />
 
               </feMerge>
 
             </filter>
 
 
-            <!-- =========================================
-                 TORCH
-                 ========================================= -->
-
-            <radialGradient
-              id="torch-light"
-            >
-
-              <stop
-                offset="0%"
-                stop-color="#fff4cf"
-                stop-opacity=".90"
-              />
-
-              <stop
-                offset="18%"
-                stop-color="#ffbf68"
-                stop-opacity=".42"
-              />
-
-              <stop
-                offset="48%"
-                stop-color="#a74b15"
-                stop-opacity=".13"
-              />
-
-              <stop
-                offset="100%"
-                stop-color="#000"
-                stop-opacity="0"
-              />
-
-            </radialGradient>
-
-
-            <!-- =========================================
+            <!-- =====================================
                  PENTAGRAM GLOW
-                 ========================================= -->
+                 ===================================== -->
 
             <filter
-              id="symbol-glow"
+              id="pentagram-glow"
               x="-100%"
               y="-100%"
               width="300%"
@@ -242,25 +237,30 @@
 
 
           <!-- =========================================
-               DARK STONE WALL
+               BASE STONE
                ========================================= -->
 
           <rect
             width="1600"
             height="1000"
-            fill="#080706"
-          />
-
-          <rect
-            width="1600"
-            height="1000"
-            filter="url(#hell-stone)"
-            opacity=".72"
+            fill="#171513"
           />
 
 
           <!-- =========================================
-               MASONRY
+               STONE VARIATION
+               ========================================= -->
+
+          <rect
+            width="1600"
+            height="1000"
+            filter="url(#stone-noise)"
+            opacity=".70"
+          />
+
+
+          <!-- =========================================
+               DARK STONE BLOCKS
                ========================================= -->
 
           <g class="hell-masonry">
@@ -329,6 +329,18 @@
               L1375 770
             "/>
 
+            <path d="
+              M720 80
+              L700 125
+              L725 165
+            "/>
+
+            <path d="
+              M320 650
+              L295 690
+              L315 735
+            "/>
+
           </g>
 
 
@@ -338,34 +350,34 @@
 
           <g
             class="hell-inscriptions"
-            filter="url(#hell-carving)"
+            filter="url(#carved-edge)"
           >
 
-            <text x="80" y="150">
+            <text x="70" y="145">
               La Diablo estas vivanta ene de mia korpo!
             </text>
 
-            <text x="840" y="330">
+            <text x="850" y="335">
               Mi sangas pro la vundoj de inferaj trancxoj!
             </text>
 
-            <text x="75" y="570">
+            <text x="70" y="565">
               Lauxnome de nia dio Satano la plej brilanta!
             </text>
 
-            <text x="920" y="785">
+            <text x="900" y="785">
               Ni vekigu la lordon de la abismo!
             </text>
 
-            <text x="210" y="920">
+            <text x="200" y="915">
               Mi glutos vian animon!
             </text>
 
-            <text x="1090" y="145">
+            <text x="1080" y="140">
               Aligxu al ni.
             </text>
 
-            <text x="520" y="500">
+            <text x="515" y="505">
               Mia nomo estas Legio, cxar ni estas multaj.
             </text>
 
@@ -373,8 +385,8 @@
 
 
           <!-- =========================================
-               PENTAGRAM 1
-               BLACK
+               BLACK PENTAGRAM
+               FIXED POSITION
                ========================================= -->
 
           <g
@@ -382,7 +394,29 @@
             data-symbol="black"
           >
 
+            <!-- deep carved groove -->
+
             <path
+              class="pentagram-groove"
+              d="
+                M300 220
+                L338 330
+                L455 330
+                L360 400
+                L398 515
+                L300 445
+                L202 515
+                L240 400
+                L145 330
+                L262 330
+                Z
+              "
+            />
+
+            <!-- stone edge -->
+
+            <path
+              class="pentagram-edge"
               d="
                 M300 220
                 L338 330
@@ -402,8 +436,8 @@
 
 
           <!-- =========================================
-               PENTAGRAM 2
-               GOLD
+               GOLD PENTAGRAM
+               FIXED POSITION
                ========================================= -->
 
           <g
@@ -412,6 +446,24 @@
           >
 
             <path
+              class="pentagram-groove"
+              d="
+                M805 270
+                L840 375
+                L952 375
+                L862 442
+                L897 548
+                L805 482
+                L713 548
+                L748 442
+                L658 375
+                L770 375
+                Z
+              "
+            />
+
+            <path
+              class="pentagram-edge"
               d="
                 M805 270
                 L840 375
@@ -431,8 +483,8 @@
 
 
           <!-- =========================================
-               PENTAGRAM 3
-               RED
+               RED PENTAGRAM
+               FIXED POSITION
                ========================================= -->
 
           <g
@@ -441,6 +493,24 @@
           >
 
             <path
+              class="pentagram-groove"
+              d="
+                M1285 205
+                L1320 310
+                L1432 310
+                L1342 377
+                L1377 483
+                L1285 417
+                L1193 483
+                L1228 377
+                L1138 310
+                L1250 310
+                Z
+              "
+            />
+
+            <path
+              class="pentagram-edge"
               d="
                 M1285 205
                 L1320 310
@@ -458,23 +528,11 @@
 
           </g>
 
-
-          <!-- =========================================
-               TORCH LIGHT SOURCE
-               ========================================= -->
-
-          <circle
-            class="hell-torch-svg"
-            cx="800"
-            cy="500"
-            r="350"
-          />
-
         </svg>
 
 
         <!-- =========================================
-             MOVING LIGHT
+             MOVING TORCH LIGHT
              ========================================= -->
 
         <div class="hell-torch"></div>
@@ -512,6 +570,12 @@
     );
 
 
+    world =
+      overlay.querySelector(
+        ".hell-world"
+      );
+
+
     torch =
       overlay.querySelector(
         ".hell-torch"
@@ -521,6 +585,11 @@
     setupTorch();
     setupPentagrams();
     createParticles();
+
+    updateTorch(
+      torchX,
+      torchY
+    );
 
 
     requestAnimationFrame(() => {
@@ -540,9 +609,46 @@
 
   function setupTorch() {
 
-    function moveTorch(x, y) {
+    const move = event => {
 
-      if (!torch) return;
+      updateTorch(
+        event.clientX,
+        event.clientY
+      );
+
+    };
+
+
+    overlay.addEventListener(
+      "pointermove",
+      move,
+      {
+        passive: true
+      }
+    );
+
+
+    overlay.addEventListener(
+      "pointerdown",
+      move,
+      {
+        passive: true
+      }
+    );
+
+  }
+
+
+  function updateTorch(
+    x,
+    y
+  ) {
+
+    torchX = x;
+    torchY = y;
+
+
+    if (torch) {
 
       torch.style.left =
         `${x}px`;
@@ -553,48 +659,96 @@
     }
 
 
-    overlay.addEventListener(
-      "pointermove",
-      event => {
+    if (world) {
 
-        moveTorch(
-          event.clientX,
-          event.clientY
+      world.style.setProperty(
+        "--torch-x",
+        `${x}px`
+      );
+
+      world.style.setProperty(
+        "--torch-y",
+        `${y}px`
+      );
+
+    }
+
+
+    updatePentagramLighting();
+
+  }
+
+
+  /* =====================================================
+     PENTAGRAM LIGHTING
+     ===================================================== */
+
+  function updatePentagramLighting() {
+
+    if (!overlay) return;
+
+
+    const symbols =
+      overlay.querySelectorAll(
+        ".hell-symbol"
+      );
+
+
+    symbols.forEach(
+      symbol => {
+
+        const rect =
+          symbol.getBoundingClientRect();
+
+
+        const centerX =
+          rect.left +
+          rect.width / 2;
+
+
+        const centerY =
+          rect.top +
+          rect.height / 2;
+
+
+        const dx =
+          torchX -
+          centerX;
+
+
+        const dy =
+          torchY -
+          centerY;
+
+
+        const distance =
+          Math.sqrt(
+            dx * dx +
+            dy * dy
+          );
+
+
+        /*
+         * Pentagram is physically present
+         * all the time.
+         *
+         * It becomes readable only
+         * inside the torch.
+         */
+
+        symbol.classList.toggle(
+          "torch-lit",
+          distance < 300
         );
 
-      },
-      {
-        passive: true
       }
-    );
-
-
-    overlay.addEventListener(
-      "pointerdown",
-      event => {
-
-        moveTorch(
-          event.clientX,
-          event.clientY
-        );
-
-      },
-      {
-        passive: true
-      }
-    );
-
-
-    moveTorch(
-      window.innerWidth / 2,
-      window.innerHeight / 2
     );
 
   }
 
 
   /* =====================================================
-     PENTAGRAMS
+     PENTAGRAM INTERACTION
      ===================================================== */
 
   function setupPentagrams() {
@@ -605,89 +759,123 @@
       );
 
 
-    symbols.forEach(symbol => {
+    symbols.forEach(
+      symbol => {
 
-      symbol.addEventListener(
-        "click",
-        event => {
+        symbol.addEventListener(
+          "click",
+          event => {
 
-          event.stopPropagation();
-
-
-          const clicked =
-            symbol.dataset.symbol;
+            event.stopPropagation();
 
 
-          /*
-           * ---------------------------------------------
-           * WRONG SYMBOL
-           * ---------------------------------------------
-           */
+            /*
+             * Must actually be illuminated
+             * by the torch.
+             */
 
-          if (
-            clicked !==
-            sequence[sequenceIndex]
-          ) {
+            if (
+              !symbol.classList.contains(
+                "torch-lit"
+              )
+            ) {
 
-            sequenceIndex = 0;
+              return;
 
-            symbols.forEach(
-              item => {
+            }
 
-                item.classList.remove(
-                  "symbol-hit"
+
+            const clicked =
+              symbol.dataset.symbol;
+
+
+            /*
+             * =========================================
+             * WRONG SYMBOL
+             * =========================================
+             */
+
+            if (
+              clicked !==
+              sequence[sequenceIndex]
+            ) {
+
+              sequenceIndex = 0;
+
+
+              symbols.forEach(
+                item => {
+
+                  item.classList.remove(
+                    "symbol-hit"
+                  );
+
+                }
+              );
+
+
+              symbol.classList.add(
+                "symbol-wrong"
+              );
+
+
+              setTimeout(() => {
+
+                symbol.classList.remove(
+                  "symbol-wrong"
                 );
 
-              }
-            );
-
-            return;
-
-          }
+              }, 500);
 
 
-          /*
-           * ---------------------------------------------
-           * CORRECT SYMBOL
-           * ---------------------------------------------
-           */
+              return;
 
-          symbol.classList.add(
-            "symbol-hit"
-          );
+            }
 
 
-          setTimeout(() => {
+            /*
+             * =========================================
+             * CORRECT SYMBOL
+             * =========================================
+             */
 
-            symbol.classList.remove(
+            symbol.classList.add(
               "symbol-hit"
             );
 
-          }, 700);
+
+            setTimeout(() => {
+
+              symbol.classList.remove(
+                "symbol-hit"
+              );
+
+            }, 800);
 
 
-          sequenceIndex++;
+            sequenceIndex++;
 
 
-          /*
-           * ---------------------------------------------
-           * ESCAPE
-           * ---------------------------------------------
-           */
+            /*
+             * =========================================
+             * ESCAPE
+             * =========================================
+             */
 
-          if (
-            sequenceIndex >=
-            sequence.length
-          ) {
+            if (
+              sequenceIndex >=
+              sequence.length
+            ) {
 
-            completeHell();
+              completeHell();
+
+            }
 
           }
+        );
 
-        }
-      );
-
-    });
+      }
+    );
 
   }
 
@@ -703,6 +891,7 @@
         ".hell-ash"
       );
 
+
     const embers =
       overlay.querySelector(
         ".hell-embers"
@@ -710,34 +899,42 @@
 
 
     /*
-     * GRAY ASH
+     * DEAD GRAY ASH
      */
 
     for (
       let i = 0;
-      i < 75;
+      i < 85;
       i++
     ) {
 
       const particle =
-        document.createElement("span");
+        document.createElement(
+          "span"
+        );
+
 
       particle.className =
         "ash-gray";
 
+
       particle.style.left =
         `${Math.random() * 100}%`;
+
 
       particle.style.animationDelay =
         `${Math.random() * 12}s`;
 
+
       particle.style.animationDuration =
-        `${7 + Math.random() * 11}s`;
+        `${8 + Math.random() * 12}s`;
+
 
       particle.style.setProperty(
         "--drift",
-        `${-60 + Math.random() * 120}px`
+        `${-70 + Math.random() * 140}px`
       );
+
 
       ash.appendChild(
         particle
@@ -752,29 +949,37 @@
 
     for (
       let i = 0;
-      i < 18;
+      i < 22;
       i++
     ) {
 
       const particle =
-        document.createElement("span");
+        document.createElement(
+          "span"
+        );
+
 
       particle.className =
         "ash-hot";
 
+
       particle.style.left =
         `${Math.random() * 100}%`;
 
+
       particle.style.animationDelay =
-        `${Math.random() * 9}s`;
+        `${Math.random() * 10}s`;
+
 
       particle.style.animationDuration =
-        `${5 + Math.random() * 9}s`;
+        `${6 + Math.random() * 10}s`;
+
 
       particle.style.setProperty(
         "--drift",
-        `${-70 + Math.random() * 140}px`
+        `${-80 + Math.random() * 160}px`
       );
+
 
       ash.appendChild(
         particle
@@ -789,24 +994,35 @@
 
     for (
       let i = 0;
-      i < 10;
+      i < 12;
       i++
     ) {
 
       const ember =
-        document.createElement("span");
+        document.createElement(
+          "span"
+        );
+
 
       ember.className =
         "ember";
 
+
       ember.style.left =
         `${Math.random() * 100}%`;
 
+
       ember.style.top =
-        `${55 + Math.random() * 45}%`;
+        `${50 + Math.random() * 50}%`;
+
 
       ember.style.animationDelay =
         `${Math.random() * 5}s`;
+
+
+      ember.style.animationDuration =
+        `${1.1 + Math.random() * 2.2}s`;
+
 
       embers.appendChild(
         ember
@@ -818,18 +1034,15 @@
 
 
   /* =====================================================
-     COMPLETE
+     COMPLETE HELL
      ===================================================== */
 
   function completeHell() {
 
-    /*
-     * HELL IS OVER
-     */
-
     localStorage.removeItem(
       HELL_KEY
     );
+
 
     document.documentElement.removeAttribute(
       "data-hell"
@@ -839,23 +1052,29 @@
     if (!overlay) return;
 
 
-    overlay.classList.remove(
-      "active"
+    overlay.classList.add(
+      "hell-escape"
     );
 
 
     setTimeout(() => {
 
       if (overlay) {
+
         overlay.remove();
+
       }
 
+
       overlay = null;
+      world = null;
       torch = null;
+
       active = false;
+
       sequenceIndex = 0;
 
-    }, 1000);
+    }, 1200);
 
   }
 
@@ -873,7 +1092,11 @@
 
       document.addEventListener(
         "DOMContentLoaded",
-        () => window.startHell(),
+        () => {
+
+          window.startHell();
+
+        },
         {
           once: true
         }
