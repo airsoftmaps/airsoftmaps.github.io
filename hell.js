@@ -104,6 +104,7 @@
 
         <!-- VAROVÁNÍ -->
         <div class="hell-warning">NENÍ CESTY ZPĚT...</div>
+        <span class="hell-hint">pokud nevidíš cestu, zkus otočit směr</span>
       </div>
     `;
 
