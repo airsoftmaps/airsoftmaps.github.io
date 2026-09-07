@@ -89,7 +89,7 @@
         <svg
           class="hell-scene"
           viewBox="0 0 1600 1000"
-          preserveAspectRatio="xMidYMid slice"
+          preserveAspectRatio="none"
         >
 
           <defs>
