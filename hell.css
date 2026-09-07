@@ -1,735 +1,446 @@
 /* =========================================================
    AIRSOFT MAPS - HELL
-   "A VISIT TO HELL"
+   ========================================================= */
+
+
+/* =========================================================
+   ROOT
    ========================================================= */
 
 .hell-overlay {
+
   position: fixed;
   inset: 0;
-  z-index: 10000;
+
+  z-index: 999999;
+
+  overflow: hidden;
+
+  background: #050403;
+
+  opacity: 0;
+
+  transition:
+    opacity 0.9s ease;
+
+  user-select: none;
+
+  touch-action: none;
+
+}
+
+
+.hell-overlay.active {
+
+  opacity: 1;
+
+}
+
+
+/* =========================================================
+   WORLD
+   ========================================================= */
+
+.hell-world {
+
+  position: absolute;
+  inset: 0;
+
+  overflow: hidden;
+
+}
+
+
+.hell-wall {
+
+  position: absolute;
+  inset: 0;
+
   overflow: hidden;
 
   background:
     radial-gradient(
-      ellipse at 50% 75%,
-      rgba(80, 10, 5, 0.34),
-      rgba(0, 0, 0, 0.96) 58%,
-      #000 100%
+      circle at 50% 45%,
+      #21150f 0%,
+      #0d0a08 38%,
+      #030303 100%
     );
 
-  color: #ddd;
-
-  opacity: 0;
-  animation: hell-enter 2.8s ease forwards;
-
-  touch-action: none;
-  user-select: none;
 }
 
 
 /* =========================================================
-   STONE WORLD
+   STONE SVG
    ========================================================= */
 
-.hell-world {
+.hell-stone-svg {
+
   position: absolute;
-  inset: -5%;
 
-  background:
-    radial-gradient(
-      ellipse at 50% 100%,
-      rgba(115, 18, 8, 0.16),
-      transparent 45%
-    ),
-    radial-gradient(
-      ellipse at 20% 35%,
-      rgba(80, 80, 80, 0.08),
-      transparent 30%
-    ),
-    repeating-linear-gradient(
-      91deg,
-      rgba(255,255,255,0.015) 0,
-      rgba(255,255,255,0.015) 1px,
-      transparent 1px,
-      transparent 37px
-    ),
-    #111;
-
-  transform:
-    scale(1.04)
-    translate3d(0,0,0);
-
-  animation:
-    hell-camera 30s ease-in-out infinite alternate;
-}
-
-
-/*
- * Falešná hloubka kamene.
- * Vypadá jako nepravidelná, stará stěna.
- */
-.hell-stone {
-  position: absolute;
   inset: 0;
 
-  opacity: 0.75;
+  width: 100%;
+  height: 100%;
 
-  background:
-    radial-gradient(
-      circle at 15% 20%,
-      transparent 0 2%,
-      rgba(0,0,0,.35) 2.2% 2.8%,
-      transparent 3%
-    ),
-    radial-gradient(
-      circle at 75% 65%,
-      transparent 0 3%,
-      rgba(0,0,0,.4) 3.2% 4%,
-      transparent 4.2%
-    ),
-    repeating-linear-gradient(
-      168deg,
-      transparent 0 75px,
-      rgba(0,0,0,.18) 76px,
-      transparent 79px
-    );
+  display: block;
 
-  filter: blur(0.4px);
 }
 
 
-/* =========================================================
-   CARVED INSCRIPTIONS
-   ========================================================= */
+.hell-stone-lines {
 
-.hell-inscriptions {
-  position: absolute;
-  inset: 0;
+  fill: none;
 
-  pointer-events: none;
+  stroke: #000;
 
-  opacity: 0.62;
+  stroke-width: 5;
+
 }
 
-.hell-inscription {
-  position: absolute;
 
-  color: rgba(25,25,25,.95);
+.hell-carvings text {
+
+  fill: #16120f;
+
+  stroke: #050403;
+
+  stroke-width: 2;
+
+  paint-order: stroke;
 
   font-family:
     Georgia,
     "Times New Roman",
     serif;
 
+  font-size: 25px;
+
   font-weight: 700;
 
-  letter-spacing: 2px;
+  letter-spacing: 1px;
 
-  /*
-   * Nejde o klasický textový glow.
-   * Tmavá barva + více vrstev vytváří iluzi
-   * vyrytého kamene.
-   */
-  text-shadow:
-    1px 1px 0 rgba(0,0,0,.95),
-    -1px -1px 0 rgba(255,255,255,.06);
+  opacity: 0.85;
 
-  filter:
-    contrast(1.15);
-
-  transform-origin: center;
-}
-
-
-/*
- * Umístění jednotlivých nápisů.
- */
-.hell-i1 {
-  left: 8%;
-  top: 20%;
-  transform: rotate(-5deg);
-  font-size: clamp(13px, 1.3vw, 21px);
-}
-
-.hell-i2 {
-  right: 5%;
-  top: 31%;
-  transform: rotate(4deg);
-  font-size: clamp(12px, 1.15vw, 19px);
-}
-
-.hell-i3 {
-  left: 15%;
-  top: 58%;
-  transform: rotate(2deg);
-  font-size: clamp(12px, 1.1vw, 18px);
-}
-
-.hell-i4 {
-  right: 12%;
-  top: 67%;
-  transform: rotate(-3deg);
-  font-size: clamp(12px, 1.2vw, 20px);
-}
-
-.hell-i5 {
-  left: 42%;
-  top: 12%;
-  transform: rotate(-1deg);
-  font-size: clamp(10px, 0.9vw, 15px);
-}
-
-
-/*
- * Druhá vrstva simulující odštěpenou hranu vrypu.
- */
-.hell-inscription::before {
-  content: attr(data-text);
-
-  position: absolute;
-
-  left: 1px;
-  top: 1px;
-
-  color: rgba(0,0,0,.9);
-
-  pointer-events: none;
-}
-
-.hell-inscription::after {
-  content: attr(data-text);
-
-  position: absolute;
-
-  left: -0.5px;
-  top: -0.5px;
-
-  color: rgba(160,160,160,.07);
-
-  pointer-events: none;
 }
 
 
 /* =========================================================
-   TORCH / FLASHLIGHT
+   PENTAGRAMS
+   ========================================================= */
+
+.hell-pentagram {
+
+  cursor: pointer;
+
+}
+
+
+.hell-pentagram path {
+
+  fill: none;
+
+  stroke-width: 8;
+
+  stroke-linecap: round;
+
+  stroke-linejoin: round;
+
+  filter:
+    drop-shadow(
+      0 2px 2px rgba(0,0,0,0.95)
+    );
+
+}
+
+
+.pentagram-black path {
+
+  stroke: #050505;
+
+}
+
+
+.pentagram-gold path {
+
+  stroke: #8d6b25;
+
+}
+
+
+.pentagram-red path {
+
+  stroke: #8b1717;
+
+}
+
+
+.hell-symbol-hit path {
+
+  filter:
+    drop-shadow(
+      0 0 7px rgba(255,130,35,0.9)
+    );
+
+}
+
+
+/* =========================================================
+   TORCH
    ========================================================= */
 
 .hell-torch {
-  position: fixed;
+
+  position: absolute;
+
+  width: 430px;
+  height: 430px;
+
+  transform:
+    translate(-50%, -50%);
+
+  pointer-events: none;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(255,235,180,0.28) 0%,
+      rgba(255,170,70,0.17) 17%,
+      rgba(130,55,15,0.09) 38%,
+      rgba(0,0,0,0) 70%
+    );
+
+  mix-blend-mode: screen;
+
+  filter:
+    blur(3px);
+
+  z-index: 20;
+
+}
+
+
+/* =========================================================
+   ASH
+   ========================================================= */
+
+.hell-ash {
+
+  position: absolute;
+
   inset: 0;
 
   pointer-events: none;
 
   z-index: 30;
 
-  /*
-   * Střed je průhledný.
-   * Okolí je prakticky černé.
-   */
-  background:
-    radial-gradient(
-      circle 145px at var(--torch-x) var(--torch-y),
-      rgba(255, 195, 80, 0.14) 0,
-      rgba(255, 150, 45, 0.08) 25%,
-      rgba(0,0,0,0.18) 45%,
-      rgba(0,0,0,0.68) 70%,
-      rgba(0,0,0,0.94) 100%
-    );
-
-  mix-blend-mode: normal;
-
-  animation: torch-breathe 3s ease-in-out infinite;
 }
 
 
-/*
- * Druhý světelný kužel.
- * Dává světlu teplejší okraj.
- */
-.hell-torch::before {
-  content: "";
+.hell-ash span {
 
   position: absolute;
-  inset: 0;
 
-  background:
-    radial-gradient(
-      circle 105px at var(--torch-x) var(--torch-y),
-      rgba(255, 185, 75, 0.10),
-      transparent 72%
-    );
-
-  filter: blur(8px);
-}
-
-
-/*
- * Tmavý okraj scény.
- */
-.hell-vignette {
-  position: fixed;
-  inset: 0;
-
-  z-index: 40;
-
-  pointer-events: none;
-
-  background:
-    radial-gradient(
-      ellipse at center,
-      transparent 25%,
-      rgba(0,0,0,.35) 60%,
-      rgba(0,0,0,.88) 100%
-    );
-}
-
-
-/* =========================================================
-   ASH / EMBERS
-   ========================================================= */
-
-.hell-ash-field {
-  position: absolute;
-  inset: 0;
-
-  z-index: 20;
-
-  pointer-events: none;
-}
-
-.hell-ash {
-  position: absolute;
-
-  width: var(--size);
-  height: var(--size);
-
-  left: var(--x);
   bottom: -10px;
+
+  width: 2px;
+  height: 2px;
 
   border-radius: 50%;
 
-  background: #777;
+  background: #6b6965;
 
-  opacity: var(--opacity);
+  opacity: 0.35;
 
   animation:
-    ash-rise var(--duration) linear var(--delay) infinite;
+    ashRise linear infinite;
 
-  filter: blur(var(--blur));
 }
 
 
-/*
- * Žhavý popílek.
- */
-.hell-ember {
-  background:
-    radial-gradient(
-      circle,
-      #fff0b0 0%,
-      #ff9d20 25%,
-      #d52b08 55%,
-      transparent 72%
-    );
+.hell-ash span.hot {
+
+  width: 3px;
+  height: 3px;
+
+  background: #ff6a1a;
+
+  opacity: 0.9;
 
   box-shadow:
-    0 0 5px rgba(255,100,15,.7),
-    0 0 12px rgba(255,40,0,.35);
+    0 0 5px #ff4d0a,
+    0 0 12px rgba(255,70,10,0.55);
 
-  opacity: var(--opacity);
+}
 
-  animation:
-    ember-rise var(--duration) linear var(--delay) infinite;
+
+@keyframes ashRise {
+
+  0% {
+
+    transform:
+      translate3d(
+        0,
+        10vh,
+        0
+      );
+
+    opacity: 0;
+
+  }
+
+  20% {
+
+    opacity: 0.45;
+
+  }
+
+  70% {
+
+    opacity: 0.25;
+
+  }
+
+  100% {
+
+    transform:
+      translate3d(
+        30px,
+        -110vh,
+        0
+      );
+
+    opacity: 0;
+
+  }
+
 }
 
 
 /* =========================================================
-   AMBIENT RED GLOW
+   EMBERS
    ========================================================= */
 
-.hell-red-pulse {
-  position: fixed;
-  inset: 0;
+.hell-embers {
 
-  z-index: 25;
+  position: absolute;
+
+  inset: 0;
 
   pointer-events: none;
 
-  background:
-    radial-gradient(
-      ellipse at 50% 110%,
-      rgba(130, 10, 0, 0.18),
-      transparent 48%
-    );
+  z-index: 31;
+
+}
+
+
+.hell-embers .ember {
+
+  position: absolute;
+
+  width: 5px;
+  height: 5px;
+
+  border-radius: 50%;
+
+  background: #ff4b0a;
+
+  box-shadow:
+    0 0 8px #ff3b00,
+    0 0 22px rgba(255,65,0,0.55);
 
   animation:
-    red-pulse 5s ease-in-out infinite;
+    emberPulse 1.7s
+    ease-in-out
+    infinite alternate;
+
+}
+
+
+@keyframes emberPulse {
+
+  0% {
+
+    opacity: 0.15;
+
+    transform:
+      scale(0.6);
+
+  }
+
+  100% {
+
+    opacity: 1;
+
+    transform:
+      scale(1.25);
+
+  }
+
 }
 
 
 /* =========================================================
-   EXIT TEXT
+   WARNING
    ========================================================= */
 
-.hell-exit {
-  position: fixed;
+.hell-warning {
+
+  position: absolute;
 
   left: 50%;
-  bottom: 72px;
 
-  transform: translateX(-50%);
+  bottom: 24px;
 
-  z-index: 50;
+  transform:
+    translateX(-50%);
 
-  color: rgba(215,215,215,.48);
+  z-index: 100;
+
+  color: #aaa;
 
   font-family:
     Georgia,
     "Times New Roman",
     serif;
 
-  font-size: 14px;
+  font-size:
+    clamp(12px, 1.5vw, 18px);
 
-  letter-spacing: 3px;
+  letter-spacing: 4px;
 
   white-space: nowrap;
 
-  pointer-events: none;
-
   text-shadow:
-    0 1px 2px #000;
+    0 1px 3px #000,
+    0 0 8px #000;
 
-  animation:
-    exit-pulse 5s ease-in-out infinite;
 }
 
 
 /* =========================================================
-   FINAL RETURN
+   VIGNETTE
    ========================================================= */
 
-.hell-return {
-  position: fixed;
+.hell-wall::after {
+
+  content: "";
+
+  position: absolute;
+
   inset: 0;
 
-  z-index: 100;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  background: #000;
-
-  opacity: 0;
   pointer-events: none;
 
-  transition: opacity 1.5s ease;
-}
+  z-index: 50;
+
+  background:
+    radial-gradient(
+      ellipse at center,
+      transparent 25%,
+      rgba(0,0,0,0.42) 65%,
+      rgba(0,0,0,0.92) 100%
+    );
 
-.hell-return.active {
-  opacity: 1;
-}
-
-.hell-return-inner {
-  text-align: center;
-}
-
-.hell-return-title {
-  color: #ddd;
-
-  font-family: Georgia, serif;
-
-  font-size: clamp(24px, 5vw, 54px);
-
-  letter-spacing: 8px;
-
-  opacity: 0;
-
-  animation: none;
-}
-
-.hell-return.active .hell-return-title {
-  animation: return-title 2s ease forwards;
-}
-
-.hell-return-code {
-  margin-top: 18px;
-
-  color: rgba(180,180,180,.5);
-
-  font-family: monospace;
-
-  font-size: 12px;
-
-  letter-spacing: 3px;
-
-  opacity: 0;
-}
-
-.hell-return.active .hell-return-code {
-  animation: return-code 2s ease 0.5s forwards;
-}
-
-.hell-return-close {
-  margin-top: 35px;
-
-  width: 38px;
-  height: 38px;
-
-  border: 1px solid rgba(255,255,255,.25);
-
-  border-radius: 50%;
-
-  background: transparent;
-
-  color: #aaa;
-
-  font-size: 20px;
-
-  cursor: pointer;
-
-  opacity: 0;
-
-  transition:
-    background .2s,
-    color .2s,
-    border-color .2s;
-
-  animation: return-close 1s ease 1.3s forwards;
-}
-
-.hell-return-close:hover {
-  background: rgba(255,255,255,.08);
-  color: white;
-  border-color: rgba(255,255,255,.5);
-}
-
-
-/* =========================================================
-   FINAL FLASH
-   ========================================================= */
-
-.hell-final-flash {
-  position: fixed;
-  inset: 0;
-
-  z-index: 90;
-
-  background: #fff;
-
-  opacity: 0;
-
-  pointer-events: none;
-}
-
-
-/* =========================================================
-   ANIMATIONS
-   ========================================================= */
-
-@keyframes hell-enter {
-  0% {
-    opacity: 0;
-    background: #000;
-  }
-
-  55% {
-    opacity: 1;
-  }
-
-  100% {
-    opacity: 1;
-  }
-}
-
-@keyframes hell-camera {
-  from {
-    transform: scale(1.04) translate3d(-1%, -1%, 0);
-  }
-
-  to {
-    transform: scale(1.11) translate3d(1%, 1%, 0);
-  }
-}
-
-@keyframes torch-breathe {
-  0%,100% {
-    filter: brightness(.96);
-  }
-
-  50% {
-    filter: brightness(1.08);
-  }
-}
-
-@keyframes ash-rise {
-  0% {
-    transform:
-      translate3d(0, 0, 0)
-      rotate(0deg);
-
-    opacity: 0;
-  }
-
-  10% {
-    opacity: var(--opacity);
-  }
-
-  50% {
-    transform:
-      translate3d(var(--drift), -50vh, 0)
-      rotate(180deg);
-  }
-
-  100% {
-    transform:
-      translate3d(calc(var(--drift) * -0.5), -115vh, 0)
-      rotate(360deg);
-
-    opacity: 0;
-  }
-}
-
-@keyframes ember-rise {
-  0% {
-    transform:
-      translate3d(0,0,0)
-      scale(.7);
-
-    opacity: 0;
-  }
-
-  12% {
-    opacity: var(--opacity);
-  }
-
-  30% {
-    transform:
-      translate3d(var(--drift), -30vh, 0)
-      scale(1);
-  }
-
-  65% {
-    transform:
-      translate3d(calc(var(--drift) * -.5), -70vh, 0)
-      scale(.75);
-  }
-
-  100% {
-    transform:
-      translate3d(var(--drift), -120vh, 0)
-      scale(.2);
-
-    opacity: 0;
-  }
-}
-
-@keyframes red-pulse {
-  0%,100% {
-    opacity: .25;
-  }
-
-  50% {
-    opacity: .65;
-  }
-}
-
-@keyframes exit-pulse {
-  0%,100% {
-    opacity: .28;
-  }
-
-  50% {
-    opacity: .58;
-  }
-}
-
-@keyframes return-title {
-  from {
-    opacity: 0;
-    transform: translateY(15px);
-    letter-spacing: 18px;
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-    letter-spacing: 8px;
-  }
-}
-
-@keyframes return-code {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes return-close {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: .8;
-  }
-}
-
-
-/* =========================================================
-   MOBILE
-   ========================================================= */
-
-@media (max-width: 700px) {
-
-  .hell-torch {
-    background:
-      radial-gradient(
-        circle 115px at var(--torch-x) var(--torch-y),
-        rgba(255,195,80,.14),
-        rgba(255,150,45,.07) 30%,
-        rgba(0,0,0,.25) 52%,
-        rgba(0,0,0,.94) 100%
-      );
-  }
-
-  .hell-exit {
-    bottom: 92px;
-
-    font-size: 11px;
-
-    letter-spacing: 2px;
-  }
-
-  .hell-inscription {
-    letter-spacing: 1px;
-  }
-
-  .hell-i1 {
-    left: 5%;
-    top: 18%;
-  }
-
-  .hell-i2 {
-    right: 4%;
-    top: 35%;
-  }
-
-  .hell-i3 {
-    left: 6%;
-    top: 60%;
-  }
-
-  .hell-i4 {
-    right: 6%;
-    top: 70%;
-  }
-
-  .hell-i5 {
-    left: 25%;
-    top: 11%;
-  }
 }
