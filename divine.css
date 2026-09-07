@@ -289,18 +289,25 @@ html[data-theme="god-mode"] .event-title-art.visible {
   transform: translate(-50%, -50%) scale(1) !important;
 }
 .divine-hell-hotspot {
-  position: fixed;
+  position: absolute;
+
   width: 45px;
   height: 45px;
+
   left: 50%;
+
   transform: translateX(-50%);
+
   z-index: 10020;
+
   cursor: pointer;
 
-  /* TESTOVACÍ VZHLED */
   background: #ff2020;
+
   border: 2px solid #ffffff;
+
   border-radius: 50%;
+
   box-shadow:
     0 0 10px #ff2020,
     0 0 25px rgba(255, 0, 0, 0.7);
@@ -309,7 +316,7 @@ html[data-theme="god-mode"] .event-title-art.visible {
 }
 
 .divine-hell-hotspot.bottom {
-  bottom: 15px;
+  top: calc(100% - 60px);
 }
 
 .divine-hell-hotspot.top {
@@ -317,18 +324,25 @@ html[data-theme="god-mode"] .event-title-art.visible {
 }
 
 .divine-hell-hint {
-  position: fixed;
+  position: absolute;
+
   left: 50%;
+
   transform: translateX(-50%);
+
   z-index: 10019;
+
   color: #666;
+
   font-size: 10px;
+
   pointer-events: none;
+
   user-select: none;
 }
 
 .divine-hell-hint.bottom {
-  bottom: 65px;
+  top: calc(100% - 85px);
 }
 
 .divine-hell-hint.top {
