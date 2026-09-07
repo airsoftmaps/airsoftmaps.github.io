@@ -330,7 +330,7 @@
   }
 }
 /* =========================================================
-   SKUTEČNÝ DEMONICKÝ PERGAMEN (CHARRED SCROLL)
+   FOTOREALISTICKÝ PERGAMEN S PNG TEXTUROU
    ========================================================= */
 
 .hell-parchment-modal {
@@ -343,7 +343,7 @@
   background: rgba(0, 0, 0, 0.88);
   backdrop-filter: blur(10px);
   padding: 20px;
-  animation: parchment-appear 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: parchment-appear 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @keyframes parchment-appear {
@@ -351,134 +351,100 @@
   to { opacity: 1; transform: scale(1) rotate(0deg); }
 }
 
-/* SAMOTNÝ PERGAMEN S NEPRAVIDELNÝM OHOŘELÝM OKRAJEM */
+/* SAMOTNÝ PERGAMEN */
 .parchment-scroll {
   position: relative;
   width: 100%;
-  max-width: 620px;
-  padding: 60px 45px 50px 45px;
+  max-width: 650px;
+  min-height: 420px;
+  padding: 80px 60px 60px 60px;
   text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-  /* Textura kůže + spálený střed a černé ohořelé okraje */
-  background: 
-    radial-gradient(ellipse at center, rgba(60, 30, 15, 0.95) 0%, rgba(25, 10, 5, 0.98) 60%, rgba(5, 1, 1, 1) 100%),
-    repeating-linear-gradient(45deg, rgba(0,0,0,0.08) 0px, rgba(0,0,0,0.08) 2px, transparent 2px, transparent 5px);
-
-  /* Nepravidelné sežrané okraje ohněm */
-  clip-path: polygon(
-    2% 0%, 8% 2%, 18% 0%, 28% 3%, 39% 0%, 52% 2%, 65% 0%, 78% 3%, 89% 1%, 98% 0%,
-    100% 12%, 97% 25%, 99% 38%, 96% 51%, 100% 64%, 97% 78%, 99% 89%, 97% 100%,
-    88% 97%, 75% 100%, 61% 97%, 48% 99%, 35% 96%, 22% 99%, 10% 96%, 0% 100%,
-    2% 87%, 0% 72%, 3% 58%, 0% 43%, 2% 29%, 0% 14%
-  );
-
-  /* Vnitřní stíny spáleniny */
-  box-shadow: 
-    inset 0 0 80px #000,
-    inset 0 0 35px rgba(180, 30, 0, 0.35);
-  border: 1px solid rgba(90, 20, 5, 0.4);
+  /* NAHRANÝ TEXTUROVÝ OBRÁZEK PERGAMENU */
+  background: url("./parchment.png") no-repeat center center / contain;
+  filter: drop-shadow(0 0 35px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 15px rgba(150, 0, 0, 0.4));
 }
 
 .parchment-body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 18px;
+  gap: 16px;
+  width: 100%;
 }
 
-/* PÍSMO PSANÉ KRVÍ (VYSÁTÝ TUK A LESK Krve) */
+/* KRVAVÝ TEXT */
 .blood-line {
-  color: #ff2200;
+  color: #8a0303;
   font-family: "Cinzel Decorative", Georgia, serif;
-  font-size: clamp(16px, 2.2vw, 22px);
+  font-size: clamp(15px, 2.1vw, 21px);
   font-weight: 900;
-  letter-spacing: 2.5px;
+  letter-spacing: 2px;
   min-height: 1.4em;
   margin: 0;
   text-shadow: 
-    0 0 6px #ff0000, 
-    0 0 15px rgba(255, 30, 0, 0.8),
-    2px 2px 3px rgba(0, 0, 0, 0.9);
+    0 0 3px #ff0000, 
+    1px 1px 2px rgba(0, 0, 0, 0.9);
 }
 
 .blood-line.typing::after {
   content: "💧";
   font-size: 14px;
-  margin-left: 5px;
+  margin-left: 4px;
   animation: drop-blink 0.5s infinite alternate;
 }
 
 @keyframes drop-blink {
   0% { opacity: 1; transform: translateY(0); }
-  100% { opacity: 0.3; transform: translateY(4px); }
+  100% { opacity: 0.2; transform: translateY(4px); }
 }
 
-/* VYRYTÝ KÓD V KŮŽI */
+/* VYRYTÝ KÓD */
 .code-carving {
   margin-top: 10px;
-  padding: 14px 28px;
-  background: rgba(0, 0, 0, 0.85);
-  border-radius: 2px;
-  box-shadow: 
-    inset 0 0 15px #000,
-    0 0 10px rgba(255, 50, 0, 0.2);
-  border: 1px solid rgba(150, 20, 0, 0.5);
+  padding: 10px 24px;
+  background: rgba(0, 0, 0, 0.65);
+  border-radius: 4px;
+  box-shadow: inset 0 0 10px #000;
+  border: 1px solid rgba(100, 0, 0, 0.4);
 }
 
 .code-carving .blood-line {
-  color: #ff9900;
-  text-shadow: 0 0 10px #ff5500, 0 0 22px #ff1100;
+  color: #d97706;
+  text-shadow: 0 0 8px #ff4500, 0 0 15px #8b0000;
 }
 
-/* ROZTEKLÁ VOSKOVÁ PEČEŤ (TLACITKO ZAVRENI) */
+/* VOSKOVÁ PEČEŤ (ZAVÍRÁNÍ) */
 .parchment-seal {
   position: absolute;
-  top: 15px;
-  right: 25px;
-  width: 54px;
-  height: 54px;
-  
-  /* Nepravidelný tvar voskové kapky */
-  border-radius: 48% 52% 45% 55% / 52% 48% 52% 48%;
-  
-  background: radial-gradient(circle at 35% 35%, #cc1100 0%, #660000 65%, #220000 100%);
+  top: 25px;
+  right: 35px;
+  width: 65px;
+  height: 65px;
   border: none;
+  background: url("./wax_seal.png") no-repeat center center / contain;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   opacity: 0.2;
   pointer-events: none;
-  transition: all 0.5s ease;
-  
-  box-shadow: 
-    0 4px 10px rgba(0,0,0,0.9),
-    inset 2px 2px 4px rgba(255, 255, 255, 0.3),
-    inset -3px -3px 6px rgba(0, 0, 0, 0.8);
-}
-
-.parchment-seal .seal-mark {
-  font-size: 24px;
-  color: #1a0000;
-  text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.2), -1px -1px 2px #000;
-  transition: transform 0.3s ease;
+  transition: all 0.4s ease;
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.8));
 }
 
 .parchment-seal.active {
   opacity: 1;
   pointer-events: auto;
-  animation: wax-glow 2s infinite alternate ease-in-out;
+  animation: seal-pulse 2s infinite alternate ease-in-out;
 }
 
 .parchment-seal.active:hover {
-  transform: scale(1.15) rotate(12deg);
-  background: radial-gradient(circle at 35% 35%, #ff2200 0%, #880000 65%, #330000 100%);
-  box-shadow: 
-    0 0 25px rgba(255, 30, 0, 0.8),
-    inset 2px 2px 5px rgba(255, 255, 255, 0.5);
+  transform: scale(1.15) rotate(10deg);
+  filter: drop-shadow(0 0 15px rgba(255, 0, 0, 0.8));
 }
 
-@keyframes wax-glow {
-  0% { filter: drop-shadow(0 0 4px rgba(200, 0, 0, 0.4)); }
-  100% { filter: drop-shadow(0 0 14px rgba(255, 0, 0, 0.9)); }
+@keyframes seal-pulse {
+  0% { filter: drop-shadow(0 0 5px rgba(150, 0, 0, 0.5)); }
+  100% { filter: drop-shadow(0 0 18px rgba(255, 0, 0, 0.9)); }
 }
