@@ -329,3 +329,121 @@
     text-shadow: 0 0 8px rgba(255, 100, 0, 0.4);
   }
 }
+/* =========================================================
+   PERGAMEN / RITUÁLNÍ TABULKA S KÓDEM
+   ========================================================= */
+
+.hell-parchment-modal {
+  position: absolute;
+  inset: 0;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  animation: parchment-fade-in 0.8s ease forwards;
+  padding: 20px;
+}
+
+@keyframes parchment-fade-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.parchment-card {
+  position: relative;
+  width: 100%;
+  max-width: 580px;
+  background: radial-gradient(circle, #1a0808 0%, #0d0404 80%, #000000 100%);
+  border: 2px solid #660000;
+  border-radius: 8px;
+  box-shadow: 0 0 35px rgba(255, 0, 0, 0.4), inset 0 0 30px #000;
+  padding: 40px 30px 30px 30px;
+  text-align: center;
+}
+
+.parchment-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+/* NÁPISY PSANÉ KRVÍ */
+.blood-line {
+  color: #ff2200;
+  font-family: "Cinzel Decorative", Georgia, serif;
+  font-size: clamp(16px, 2.2vw, 22px);
+  font-weight: bold;
+  letter-spacing: 2px;
+  min-height: 1.4em;
+  margin: 0;
+  text-shadow: 0 0 8px #ff0000, 0 0 18px rgba(200, 0, 0, 0.8);
+}
+
+.blood-line.typing::after {
+  content: "▊";
+  margin-left: 4px;
+  color: #ff0000;
+  animation: cursor-blink 0.6s infinite;
+}
+
+@keyframes cursor-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.code-box {
+  margin-top: 15px;
+  padding: 12px 24px;
+  background: rgba(0, 0, 0, 0.7);
+  border: 1px dashed #aa0000;
+  border-radius: 4px;
+  box-shadow: inset 0 0 10px #220000;
+}
+
+.code-box .blood-line {
+  color: #ffaa00;
+  text-shadow: 0 0 10px #ff6600, 0 0 20px #ff3300;
+}
+
+/* KRVAVÁ PEČEŤ / KŘÍŽEK PRO ZAVŘENÍ */
+.parchment-seal {
+  position: absolute;
+  top: -22px;
+  right: -22px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #880000 0%, #330000 100%);
+  border: 2px solid #ff3300;
+  color: #ffcccc;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.3;
+  pointer-events: none;
+  transition: all 0.4s ease;
+  box-shadow: 0 0 10px #000;
+}
+
+.parchment-seal.active {
+  opacity: 1;
+  pointer-events: auto;
+  animation: seal-pulse 2s infinite alternate ease-in-out;
+}
+
+.parchment-seal.active:hover {
+  transform: scale(1.15) rotate(90deg);
+  background: radial-gradient(circle, #bb0000 0%, #550000 100%);
+  box-shadow: 0 0 20px #ff0000;
+}
+
+@keyframes seal-pulse {
+  0% { box-shadow: 0 0 8px rgba(255, 0, 0, 0.6); }
+  100% { box-shadow: 0 0 22px rgba(255, 0, 0, 1); }
+}
