@@ -298,6 +298,7 @@ html[data-theme="god-mode"] .event-title-art.visible {
   height: 46px;
   left: 50%;
   transform: translateX(-50%);
+   rotate(180deg);
 
   z-index: 10020;
   cursor: pointer;
