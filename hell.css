@@ -1,810 +1,353 @@
 /* =========================================================
-   AIRSOFT MAPS
-   HELL MODE
+   AIRSOFT MAPS - HELL MODE CSS
    ========================================================= */
 
-
 /* =========================================================
-   FULLSCREEN
+   FULLSCREEN OVERLAY
    ========================================================= */
 
 .hell-overlay {
-
   position: fixed;
-
   inset: 0;
-
   z-index: 999999;
-
   overflow: hidden;
-
   background: #000;
-
   opacity: 0;
-
-  transition:
-    opacity 1s ease;
-
+  transition: opacity 1s ease;
   user-select: none;
-
   touch-action: none;
-
 }
-
 
 .hell-overlay.active {
-
   opacity: 1;
-
 }
-
 
 .hell-overlay.hell-escape {
-
   opacity: 0;
-
-  transition:
-    opacity 1.2s ease;
-
+  transition: opacity 1.2s ease;
 }
 
-
 /* =========================================================
-   WORLD
+   WORLD CONTAINER
    ========================================================= */
 
 .hell-world {
-
   --torch-x: 50vw;
-
   --torch-y: 50vh;
-
   position: absolute;
-
   inset: 0;
-
   overflow: hidden;
-
   background: #11100e;
-
 }
 
-
 /* =========================================================
-   STONE SCENE
+   STONE SCENE (SVG)
    ========================================================= */
 
 .hell-scene {
-
   position: absolute;
-
   inset: 0;
-
   width: 100%;
-
   height: 100%;
-
   display: block;
-
 }
 
-
 /* =========================================================
-   MASONRY
+   MASONRY & CRACKS
    ========================================================= */
 
 .hell-masonry {
-
   fill: none;
-
   stroke: #050403;
-
   stroke-width: 8;
-
-  opacity: .78;
-
+  opacity: 0.78;
 }
-
-
-/* =========================================================
-   CRACKS
-   ========================================================= */
 
 .hell-cracks {
-
   stroke: #030302;
-
   stroke-width: 7;
-
   stroke-linecap: round;
-
   stroke-linejoin: round;
-
-  opacity: .85;
-
+  opacity: 0.85;
 }
 
-
 /* =========================================================
-   INSCRIPTIONS
+   CARVED INSCRIPTIONS
    ========================================================= */
 
 .hell-inscriptions text {
-
-  font-family:
-    Georgia,
-    "Times New Roman",
-    serif;
-
+  font-family: Georgia, "Times New Roman", serif;
   font-size: 23px;
-
   font-weight: 700;
-
   letter-spacing: 1px;
-
   fill: #302a25;
-
   stroke: #080706;
-
   stroke-width: 4;
-
   paint-order: stroke;
-
-  opacity: .72;
-
+  opacity: 0.72;
 }
-
 
 /* =========================================================
    PENTAGRAM BASE
    ========================================================= */
 
 .hell-symbol {
-
   cursor: pointer;
-
   pointer-events: auto;
-
-  opacity: .08;
-
-  transition:
-    opacity .18s ease,
-    filter .18s ease;
-
+  opacity: 0.08;
+  transition: opacity 0.2s ease, filter 0.2s ease, transform 0.2s ease;
 }
-
-
-/*
- * The symbols physically exist even when
- * the player cannot see them.
- */
 
 .hell-symbol.torch-lit {
-
-  opacity: .95;
-
+  opacity: 0.95;
 }
 
-
-/* =========================================================
-   PENTAGRAM GROOVE
-   ========================================================= */
-
+/* GROOVE & EDGE */
 .pentagram-groove {
-
   fill: none;
-
   stroke-width: 13;
-
   stroke-linecap: round;
-
   stroke-linejoin: round;
-
   stroke: #030302;
-
 }
-
-
-/* =========================================================
-   PENTAGRAM EDGE
-   ========================================================= */
 
 .pentagram-edge {
-
   fill: none;
-
   stroke-width: 5;
-
   stroke-linecap: round;
-
   stroke-linejoin: round;
-
 }
 
-
-/* =========================================================
-   BLACK
-   ========================================================= */
-
+/* BLACK SYMBOL */
 .symbol-black .pentagram-edge {
-
   stroke: #292521;
-
 }
-
 
 .symbol-black.torch-lit .pentagram-edge {
-
-  stroke: #57504a;
-
+  stroke: #665e57;
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.15));
 }
 
-
-/* =========================================================
-   GOLD
-   ========================================================= */
-
+/* GOLD SYMBOL */
 .symbol-gold .pentagram-edge {
-
   stroke: #4d3b20;
-
 }
-
 
 .symbol-gold.torch-lit .pentagram-edge {
-
-  stroke: #b68b3b;
-
-  filter:
-    drop-shadow(
-      0 0 5px rgba(255,184,74,.28)
-    );
-
+  stroke: #d4a343;
+  filter: drop-shadow(0 0 8px rgba(255, 184, 74, 0.5));
 }
 
-
-/* =========================================================
-   RED
-   ========================================================= */
-
+/* RED SYMBOL */
 .symbol-red .pentagram-edge {
-
   stroke: #431512;
-
 }
-
 
 .symbol-red.torch-lit .pentagram-edge {
-
-  stroke: #8d241b;
-
-  filter:
-    drop-shadow(
-      0 0 5px rgba(160,40,25,.30)
-    );
-
+  stroke: #b32d22;
+  filter: drop-shadow(0 0 8px rgba(200, 40, 25, 0.6));
 }
 
-
 /* =========================================================
-   CORRECT CLICK
+   INTERACTION STATES (HIT & WRONG)
    ========================================================= */
 
 .hell-symbol.symbol-hit {
-
   opacity: 1;
-
 }
-
 
 .hell-symbol.symbol-hit .pentagram-edge {
-
-  filter:
-    drop-shadow(
-      0 0 5px rgba(255,145,45,.75)
-    );
-
+  stroke: #ff912d !important;
+  filter: drop-shadow(0 0 14px rgba(255, 145, 45, 0.9)) drop-shadow(0 0 25px rgba(255, 80, 0, 0.6));
 }
-
-
-/* =========================================================
-   WRONG CLICK
-   ========================================================= */
 
 .hell-symbol.symbol-wrong {
-
-  animation:
-    symbol-wrong
-    .45s
-    ease;
-
+  animation: symbol-wrong 0.45s ease;
 }
-
 
 @keyframes symbol-wrong {
-
-  0% {
-
-    transform:
-      translateX(0);
-
-  }
-
-  25% {
-
-    transform:
-      translateX(-4px);
-
-  }
-
-  50% {
-
-    transform:
-      translateX(4px);
-
-  }
-
-  75% {
-
-    transform:
-      translateX(-3px);
-
-  }
-
-  100% {
-
-    transform:
-      translateX(0);
-
-  }
-
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  50% { transform: translateX(6px); }
+  75% { transform: translateX(-4px); }
+  100% { transform: translateX(0); }
 }
 
-
 /* =========================================================
-   REAL MOVING TORCH
+   MOVING TORCH & DARKNESS MASK
    ========================================================= */
 
 .hell-torch {
-
   position: absolute;
-
   left: var(--torch-x);
-
   top: var(--torch-y);
-
   width: 520px;
-
   height: 520px;
-
-  transform:
-    translate(-50%, -50%);
-
+  transform: translate(-50%, -50%);
   border-radius: 50%;
-
   pointer-events: none;
-
   z-index: 30;
-
-  background:
-    radial-gradient(
-      circle,
-
-      rgba(255,248,218,.38)
-      0%,
-
-      rgba(255,209,123,.25)
-      15%,
-
-      rgba(255,145,45,.12)
-      35%,
-
-      rgba(155,64,17,.045)
-      55%,
-
-      rgba(0,0,0,0)
-      72%
-    );
-
+  background: radial-gradient(
+    circle,
+    rgba(255, 248, 218, 0.38) 0%,
+    rgba(255, 209, 123, 0.25) 15%,
+    rgba(255, 145, 45, 0.12) 35%,
+    rgba(155, 64, 17, 0.045) 55%,
+    rgba(0, 0, 0, 0) 72%
+  );
   mix-blend-mode: screen;
-
-  filter:
-    blur(2px);
-
+  filter: blur(2px);
 }
-
-
-/* =========================================================
-   THE ACTUAL DARKNESS
-   ========================================================= */
 
 .hell-world::after {
-
   content: "";
-
   position: absolute;
-
   inset: 0;
-
   z-index: 20;
-
   pointer-events: none;
-
-  /*
-   * IMPORTANT:
-   *
-   * The transparent hole follows
-   * --torch-x / --torch-y.
-   */
-
-  background:
-    radial-gradient(
-      circle at
-      var(--torch-x)
-      var(--torch-y),
-
-      rgba(0,0,0,0)
-      0px,
-
-      rgba(0,0,0,.05)
-      70px,
-
-      rgba(0,0,0,.25)
-      125px,
-
-      rgba(0,0,0,.60)
-      210px,
-
-      rgba(0,0,0,.86)
-      300px,
-
-      rgba(0,0,0,.96)
-      390px,
-
-      rgba(0,0,0,.985)
-      500px,
-
-      rgba(0,0,0,1)
-      680px
-    );
-
+  background: radial-gradient(
+    circle at var(--torch-x) var(--torch-y),
+    rgba(0, 0, 0, 0) 0px,
+    rgba(0, 0, 0, 0.05) 70px,
+    rgba(0, 0, 0, 0.25) 125px,
+    rgba(0, 0, 0, 0.60) 210px,
+    rgba(0, 0, 0, 0.86) 300px,
+    rgba(0, 0, 0, 0.96) 390px,
+    rgba(0, 0, 0, 0.985) 500px,
+    rgba(0, 0, 0, 1) 680px
+  );
 }
-
 
 /* =========================================================
-   ASH
+   ASH & EMBERS PARTICLES
    ========================================================= */
 
-.hell-ash {
-
+.hell-ash,
+.hell-embers {
   position: absolute;
-
   inset: 0;
-
-  z-index: 45;
-
   pointer-events: none;
-
 }
 
+.hell-ash { z-index: 45; }
+.hell-embers { z-index: 46; }
 
 .hell-ash span {
-
   position: absolute;
-
   bottom: -20px;
-
   width: 2px;
-
   height: 2px;
-
   border-radius: 50%;
-
-  animation:
-    ash-rise
-    linear
-    infinite;
-
+  animation: ash-rise linear infinite;
 }
-
 
 .ash-gray {
-
   background: #77736c;
-
-  opacity: .30;
-
+  opacity: 0.3;
 }
-
 
 .ash-hot {
-
   width: 3px !important;
-
   height: 3px !important;
-
   background: #ff641d;
-
-  opacity: .9;
-
-  box-shadow:
-    0 0 4px rgba(255,90,15,.9),
-    0 0 10px rgba(255,65,8,.65),
-    0 0 22px rgba(255,50,5,.22);
-
+  opacity: 0.9;
+  box-shadow: 0 0 4px rgba(255, 90, 15, 0.9),
+              0 0 10px rgba(255, 65, 8, 0.65),
+              0 0 22px rgba(255, 50, 5, 0.22);
 }
-
-
-/* =========================================================
-   ASH MOVEMENT
-   ========================================================= */
 
 @keyframes ash-rise {
-
   0% {
-
-    transform:
-      translate3d(
-        0,
-        20px,
-        0
-      );
-
+    transform: translate3d(0, 20px, 0);
     opacity: 0;
-
   }
-
-  12% {
-
-    opacity: .45;
-
-  }
-
-  55% {
-
-    opacity: .30;
-
-  }
-
+  12% { opacity: 0.45; }
+  55% { opacity: 0.3; }
   100% {
-
-    transform:
-      translate3d(
-        var(--drift),
-        -110vh,
-        0
-      );
-
+    transform: translate3d(var(--drift), -110vh, 0);
     opacity: 0;
-
   }
-
 }
-
-
-/* =========================================================
-   EMBERS
-   ========================================================= */
-
-.hell-embers {
-
-  position: absolute;
-
-  inset: 0;
-
-  z-index: 46;
-
-  pointer-events: none;
-
-}
-
 
 .ember {
-
   position: absolute;
-
   width: 5px;
-
   height: 5px;
-
   border-radius: 50%;
-
   background: #ff5715;
-
-  box-shadow:
-    0 0 6px rgba(255,75,10,.95),
-    0 0 15px rgba(255,65,5,.65),
-    0 0 32px rgba(255,55,5,.22);
-
-  animation:
-    ember-pulse
-    ease-in-out
-    infinite
-    alternate;
-
+  box-shadow: 0 0 6px rgba(255, 75, 10, 0.95),
+              0 0 15px rgba(255, 65, 5, 0.65),
+              0 0 32px rgba(255, 55, 5, 0.22);
+  animation: ember-pulse ease-in-out infinite alternate;
 }
-
-
-/* =========================================================
-   EMBER PULSE
-   ========================================================= */
 
 @keyframes ember-pulse {
-
   0% {
-
-    opacity: .10;
-
-    transform:
-      scale(.45);
-
+    opacity: 0.1;
+    transform: scale(0.45);
   }
-
-  35% {
-
-    opacity: .55;
-
-  }
-
+  35% { opacity: 0.55; }
   100% {
-
     opacity: 1;
-
-    transform:
-      scale(1.3);
-
+    transform: scale(1.3);
   }
-
 }
 
-
 /* =========================================================
-   WARNING
+   WARNING FOOTER
    ========================================================= */
 
 .hell-warning {
-
   position: absolute;
-
   left: 50%;
-
   bottom: 22px;
-
-  transform:
-    translateX(-50%);
-
+  transform: translateX(-50%);
   z-index: 100;
-
   pointer-events: none;
-
   color: #aaa39c;
-
-  font-family:
-    Georgia,
-    "Times New Roman",
-    serif;
-
-  font-size:
-    clamp(12px, 1.5vw, 17px);
-
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(12px, 1.5vw, 17px);
   letter-spacing: 4px;
-
   white-space: nowrap;
-
-  text-shadow:
-    0 2px 5px #000,
-    0 0 14px #000;
-
+  text-shadow: 0 2px 5px #000, 0 0 14px #000;
 }
 
-
-```css
 /* =========================================================
-   MOBILE HELL
+   RESPONSIVE / MOBILE ADAPTABILITY
    ========================================================= */
 
 @media (max-width: 700px) {
-
-  /*
-   * Celá scéna se musí vejít do displeje.
-   * Žádné ořezávání stran.
-   */
-
   .hell-scene {
-
     width: 100vw;
-
     height: 100vh;
-
   }
-
-
-  /*
-   * Menší nápisy,
-   * aby nebyly mimo obrazovku.
-   */
 
   .hell-inscriptions text {
-
     font-size: 15px;
-
-    letter-spacing: .4px;
-
+    letter-spacing: 0.4px;
   }
-
-
-  /*
-   * Mobilní pochodeň.
-   * Menší než desktopová.
-   */
 
   .hell-torch {
-
     width: 330px;
-
     height: 330px;
-
   }
-
-
-  /*
-   * WARNING
-   */
 
   .hell-warning {
-
     bottom: 15px;
-
     font-size: 10px;
-
     letter-spacing: 2px;
-
     max-width: 90vw;
-
     text-align: center;
-
   }
-
-
-  /*
-   * Menší pentagramy na mobilu.
-   *
-   * SVG je 1600×1000, proto ho
-   * vizuálně zmenšíme přes transform-origin.
-   */
 
   .hell-symbol {
-
     transform-box: fill-box;
-
     transform-origin: center;
-
   }
 
-
-  .symbol-black {
-
-    transform:
-      scale(.62);
-
-  }
-
-
-  .symbol-gold {
-
-    transform:
-      scale(.62);
-
-  }
-
-
+  .symbol-black,
+  .symbol-gold,
   .symbol-red {
-
-    transform:
-      scale(.62);
-
+    transform: scale(0.65);
   }
-
 }
-```
-
