@@ -324,11 +324,20 @@
   }
 
 
+
   function getSecretCode() {
-    const obfuscated = "'TmFrYXNoaQ=='"; 
+    const codes = [
+      "VFJJQUdF", 
+      "S9NELTEyMzQ=",
+      "Y2hjaSB2eWhyYXQ=", 
+      "cG91eml2YW0gQWlyc29mdE1hcHM="
+    ]; 
     
+    // Náhodný výběr jednoho z indexů 0 až 3
+    const randomIndex = Math.floor(Math.random() * codes.length);
+
     try {
-      return atob(obfuscated);
+      return atob(codes[randomIndex]);
     } catch (e) {
       return "XXXXX-XXXX";
     }
