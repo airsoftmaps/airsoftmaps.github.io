@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap');
 /* =========================================================
    AIRSOFT MAPS - FULL COVER HELL MODE
    ========================================================= */
@@ -395,16 +395,16 @@
   pointer-events: none;
 }
 
-/* KRVAVÝ TEXT PSANÝ DO JEDNOHO ŘÁDKU */
 .blood-line {
   color: #4a0202;
-  font-family: 'UnifrakturMaguntia', Georgia, serif;
-  font-size: clamp(14px, 2.6vh, 23px);
-  line-height: 1.2;
+  font-family: 'MedievalSharp', cursive, Georgia, serif;
+  font-size: clamp(14px, 2.6vh, 22px);
+  line-height: 1.25;
   margin: 0;
   min-height: 1.2em;
-  white-space: nowrap; /* Zakáže lámání po jednom slově */
+  white-space: nowrap;
   
+ 
   mix-blend-mode: multiply;
   opacity: 0.95;
   filter: contrast(150%);
@@ -413,7 +413,7 @@
 .blood-line.line-code {
   margin-top: 8px;
   color: #3b0000;
-  font-size: clamp(16px, 3vh, 26px);
+  font-size: clamp(16px, 3vh, 25px);
   font-weight: bold;
 }
 
