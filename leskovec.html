@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Airsoft Leskovec | Mapa hřiště | Airsoft Maps</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="common.css">
+</head>
+<body>
+
+<header class="am-header">
+  <a class="am-brand" href="menu.html">
+    <img class="am-brand-logo" src="loga/tmavekulate.png" alt="Airsoft Maps">
+  </a>
+
+  <div class="am-field-title">Airsoft — <span>LESKOVEC</span></div>
+
+  <div class="am-controls">
+    <button class="am-btn" id="back-btn">← <span id="back-label">Zpět na hřiště</span></button>
+    <div class="am-dd" id="lang-dd">
+      <button class="am-btn">🌐 <span id="lang-current">CZ</span></button>
+      <div class="am-dd-menu">
+        <button data-lang="cs">Čeština</button>
+        <button data-lang="en">English</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="am-map-toolbar">
+  <div class="am-toggle">
+    <button id="btn-2d" class="active">2D</button>
+    <button id="btn-3d">3D</button>
+    <button class="am-locate-btn" id="locate-btn" style="margin-left:10px;">
+      <span class="dot"></span><span id="locate-label">Moje poloha</span>
+    </button>
+  </div>
+</div>
+<div class="am-locate-status" id="locate-status"></div>
+
+<div class="am-map-body">
+  <div class="am-map-canvas">
+    <svg id="map-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+  </div>
+  <div class="am-sidebar">
+    <div class="am-sidebar-title" id="sidebar-title">Místa na hřišti</div>
+    <div id="poi-list"></div>
+  </div>
+</div>
+
+<script src="common.js?v=3"></script>
+<script src="geo.js?v=3"></script>
+<script src="map-engine.js?v=8"></script>
+<script>
+const FIELD_DATA = {
+    viewBoxFlat: "-40 -90 1020 1420",
+
+    // GPS kotvy (aktualizovat podle realneho zamereni)
+    geoAnchors: [
+      { col: 8.41, row: 1.97, lat: 49.780188888039326, lng: 17.91572750317565 },
+      { col: -0.19, row: 3.46, lat: 49.7797265453139, lng: 17.911185751724776 },
+      { col: 2.05, row: 11.89, lat: 49.7768759948698, lng: 17.91219471583032 }
+    ],
+
+    // Obvod hriste podle cervene linky z gridu
+    boundary: [
+      [7.71, 1.75],
+      [7.67, 1.33],
+      [8.52, 2.50],
+      [9.74, 2.81],
+      [8.51, 10.12],
+      [1.87, 12.18],
+      [-0.49, 3.31],
+      [7.71, 1.75]
+    ],
+
+    // Vstup do hriste (oranzova sipka na gridu)
+    entrance: { col: 8.72, row: -0.32, angle: 80 },
+
+    // Cesty podle cernych linek z gridu (vetveni zachovano)
+    roads: [
+      { points: [[6.53, 8.19], [7.11, 6.72]] },
+      { points: [[8.64, -0.19], [8.61, -0.37]] },
+      { points: [[8.48, -1.01], [8.59, -0.62]] },
+      { points: [[5.71, 7.18], [5.52, 7.50], [4.43, 7.76]] },
+      { points: [[4.39, 7.75], [4.09, 6.71]] },
+      { points: [[4.39, 7.78], [3.88, 7.96], [3.44, 8.28]] },
+      { points: [[4.73, 8.70], [4.41, 7.78]] },
+      { points: [[4.36, 10.80], [5.24, 10.61]] },
+      { points: [[4.34, 10.78], [2.52, 9.86], [1.68, 9.11]] },
+      { points: [[2.19, 10.22], [2.98, 10.75], [4.07, 10.85], [4.34, 10.80]] },
+      { points: [[5.01, 6.21], [4.09, 6.67]] },
+      { points: [[5.01, 6.18], [3.83, 5.49], [3.74, 5.36]] },
+      { points: [[6.10, 5.82], [5.03, 6.19]] },
+      { points: [[7.81, 6.90], [8.41, 7.29]] },
+      { points: [[5.71, 7.16], [5.91, 7.04]] },
+      { points: [[5.68, 7.15], [5.45, 7.18]] },
+      { points: [[8.78, 0.14], [8.92, 0.69], [8.92, 1.06], [8.80, 1.50]] },
+      { points: [[5.26, 10.57], [4.89, 9.46]] },
+      { points: [[5.27, 10.57], [5.68, 10.43]] },
+      { points: [[8.80, 1.50], [7.99, 1.84], [7.85, 1.80]] },
+      { points: [[7.23, 2.08], [7.80, 1.94]] },
+      { points: [[4.02, 2.86], [2.65, 3.25]] },
+      { points: [[2.26, 3.32], [2.65, 3.25]] },
+      { points: [[2.13, 4.20], [2.65, 3.25]] },
+      { points: [[4.07, 6.69], [3.17, 6.69], [3.07, 6.76]] },
+      { points: [[4.69, 4.48], [4.30, 4.18], [3.95, 3.48], [4.04, 2.88]] },
+      { points: [[4.06, 2.86], [4.83, 2.68]] },
+      { points: [[7.78, 6.92], [7.92, 8.65], [7.28, 9.85], [5.70, 10.41]] },
+      { points: [[7.80, 6.88], [7.64, 5.70]] },
+      { points: [[6.10, 5.82], [5.33, 5.03]] },
+      { points: [[1.46, 4.34], [0.74, 5.63], [1.04, 6.99], [1.16, 7.04]] },
+      { points: [[2.45, 6.86], [1.64, 7.09], [1.20, 7.04]] },
+      { points: [[1.18, 7.06], [1.46, 8.47], [2.65, 8.73], [2.80, 8.59]] },
+      { points: [[8.66, 2.42], [8.80, 1.50]] },
+      { points: [[7.65, 5.31], [8.57, 2.65]] },
+      { points: [[4.85, 2.70], [5.34, 3.04], [6.88, 2.63], [7.23, 2.10]] },
+      { points: [[6.33, 8.84], [5.68, 10.39]] },
+      { points: [[5.93, 7.02], [7.09, 6.71]] },
+      { points: [[5.77, 6.46], [5.91, 7.01]] },
+      { points: [[3.09, 5.12], [2.68, 4.84], [2.13, 4.24]] },
+      { points: [[7.60, 5.70], [7.11, 6.71]] },
+      { points: [[6.10, 5.82], [7.62, 5.31]] },
+      { points: [[2.26, 3.32], [1.60, 4.02], [1.48, 4.32]] },
+      { points: [[7.62, 5.68], [7.64, 5.33]] },
+      { points: [[2.12, 4.22], [1.50, 4.34]] }
+    ],
+
+    // Zalesnene plochy (zelene bunky gridu) vyplnene stromy
+    trees: [
+      [0.25, 3.25], [0.25, 3.5], [0.25, 3.75], [0.5, 3.25], [0.5, 3.5], [0.5, 3.75], [0.75, 3.25], [0.75, 3.5], [0.75, 3.75],
+      [0.25, 4.25], [0.25, 4.5], [0.25, 4.75], [0.5, 4.25], [0.5, 4.5], [0.5, 4.75], [0.75, 4.25], [0.75, 4.5], [0.75, 4.75],
+      [0.25, 5.25], [0.25, 5.5], [0.25, 5.75], [0.5, 5.25], [0.5, 5.5], [0.5, 5.75], [0.75, 5.25], [0.75, 5.5], [0.75, 5.75],
+      [0.25, 6.25], [0.25, 6.5], [0.25, 6.75], [0.5, 6.25], [0.5, 6.5], [0.5, 6.75], [0.75, 6.25], [0.75, 6.5], [0.75, 6.75],
+      [1.25, 3.25], [1.25, 3.5], [1.25, 3.75], [1.5, 3.25], [1.5, 3.5], [1.5, 3.75], [1.75, 3.25], [1.75, 3.5], [1.75, 3.75],
+      [1.25, 4.25], [1.25, 4.5], [1.25, 4.75], [1.5, 4.25], [1.5, 4.5], [1.5, 4.75], [1.75, 4.25], [1.75, 4.5], [1.75, 4.75],
+      [1.25, 5.25], [1.25, 5.5], [1.25, 5.75], [1.5, 5.25], [1.5, 5.5], [1.5, 5.75], [1.75, 5.25], [1.75, 5.5], [1.75, 5.75],
+      [1.25, 6.25], [1.25, 6.5], [1.25, 6.75], [1.5, 6.25], [1.5, 6.5], [1.5, 6.75], [1.75, 6.25], [1.75, 6.5], [1.75, 6.75],
+      [1.25, 7.25], [1.25, 7.5], [1.25, 7.75], [1.5, 7.25], [1.5, 7.5], [1.5, 7.75], [1.75, 7.25], [1.75, 7.5], [1.75, 7.75],
+      [1.25, 8.25], [1.25, 8.5], [1.25, 8.75], [1.5, 8.25], [1.5, 8.5], [1.5, 8.75], [1.75, 8.25], [1.75, 8.5], [1.75, 8.75],
+      [1.25, 9.25], [1.25, 9.5], [1.25, 9.75], [1.5, 9.25], [1.5, 9.5], [1.5, 9.75], [1.75, 9.25], [1.75, 9.5], [1.75, 9.75],
+      [1.25, 10.25], [1.25, 10.5], [1.25, 10.75], [1.5, 10.25], [1.5, 10.5], [1.5, 10.75], [1.75, 10.25], [1.75, 10.5], [1.75, 10.75],
+      [2.25, 3.25], [2.25, 3.5], [2.25, 3.75], [2.5, 3.25], [2.5, 3.5], [2.5, 3.75], [2.75, 3.25], [2.75, 3.5], [2.75, 3.75],
+      [2.25, 4.25], [2.25, 4.5], [2.25, 4.75], [2.5, 4.25], [2.5, 4.5], [2.5, 4.75], [2.75, 4.25], [2.75, 4.5], [2.75, 4.75],
+      [2.25, 8.25], [2.25, 8.5], [2.25, 8.75], [2.5, 8.25], [2.5, 8.5], [2.5, 8.75], [2.75, 8.25], [2.75, 8.5], [2.75, 8.75],
+      [2.25, 9.25], [2.25, 9.5], [2.25, 9.75], [2.5, 9.25], [2.5, 9.5], [2.5, 9.75], [2.75, 9.25], [2.75, 9.5], [2.75, 9.75],
+      [2.25, 10.25], [2.25, 10.5], [2.25, 10.75], [2.5, 10.25], [2.5, 10.5], [2.5, 10.75], [2.75, 10.25], [2.75, 10.5], [2.75, 10.75],
+      [2.25, 11.25], [2.25, 11.5], [2.25, 11.75], [2.5, 11.25], [2.5, 11.5], [2.5, 11.75], [2.75, 11.25], [2.75, 11.5], [2.75, 11.75],
+      [3.25, 2.25], [3.25, 2.5], [3.25, 2.75], [3.5, 2.25], [3.5, 2.5], [3.5, 2.75], [3.75, 2.25], [3.75, 2.5], [3.75, 2.75],
+      [3.25, 3.25], [3.25, 3.5], [3.25, 3.75], [3.5, 3.25], [3.5, 3.5], [3.5, 3.75], [3.75, 3.25], [3.75, 3.5], [3.75, 3.75],
+      [3.25, 8.25], [3.25, 8.5], [3.25, 8.75], [3.5, 8.25], [3.5, 8.5], [3.5, 8.75], [3.75, 8.25], [3.75, 8.5], [3.75, 8.75],
+      [3.25, 9.25], [3.25, 9.5], [3.25, 9.75], [3.5, 9.25], [3.5, 9.5], [3.5, 9.75], [3.75, 9.25], [3.75, 9.5], [3.75, 9.75],
+      [3.25, 10.25], [3.25, 10.5], [3.25, 10.75], [3.5, 10.25], [3.5, 10.5], [3.5, 10.75], [3.75, 10.25], [3.75, 10.5], [3.75, 10.75],
+      [3.25, 11.25], [3.25, 11.5], [3.25, 11.75], [3.5, 11.25], [3.5, 11.5], [3.5, 11.75], [3.75, 11.25], [3.75, 11.5], [3.75, 11.75],
+      [4.25, 2.25], [4.25, 2.5], [4.25, 2.75], [4.5, 2.25], [4.5, 2.5], [4.5, 2.75], [4.75, 2.25], [4.75, 2.5], [4.75, 2.75],
+      [4.25, 3.25], [4.25, 3.5], [4.25, 3.75], [4.5, 3.25], [4.5, 3.5], [4.5, 3.75], [4.75, 3.25], [4.75, 3.5], [4.75, 3.75],
+      [4.25, 4.25], [4.25, 4.5], [4.25, 4.75], [4.5, 4.25], [4.5, 4.5], [4.5, 4.75], [4.75, 4.25], [4.75, 4.5], [4.75, 4.75],
+      [4.25, 8.25], [4.25, 8.5], [4.25, 8.75], [4.5, 8.25], [4.5, 8.5], [4.5, 8.75], [4.75, 8.25], [4.75, 8.5], [4.75, 8.75],
+      [4.25, 9.25], [4.25, 9.5], [4.25, 9.75], [4.5, 9.25], [4.5, 9.5], [4.5, 9.75], [4.75, 9.25], [4.75, 9.5], [4.75, 9.75],
+      [4.25, 10.25], [4.25, 10.5], [4.25, 10.75], [4.5, 10.25], [4.5, 10.5], [4.5, 10.75], [4.75, 10.25], [4.75, 10.5], [4.75, 10.75],
+      [5.25, 2.25], [5.25, 2.5], [5.25, 2.75], [5.5, 2.25], [5.5, 2.5], [5.5, 2.75], [5.75, 2.25], [5.75, 2.5], [5.75, 2.75],
+      [5.25, 3.25], [5.25, 3.5], [5.25, 3.75], [5.5, 3.25], [5.5, 3.5], [5.5, 3.75], [5.75, 3.25], [5.75, 3.5], [5.75, 3.75],
+      [5.25, 9.25], [5.25, 9.5], [5.25, 9.75], [5.5, 9.25], [5.5, 9.5], [5.5, 9.75], [5.75, 9.25], [5.75, 9.5], [5.75, 9.75],
+      [5.25, 10.25], [5.25, 10.5], [5.25, 10.75], [5.5, 10.25], [5.5, 10.5], [5.5, 10.75], [5.75, 10.25], [5.75, 10.5], [5.75, 10.75],
+      [6.25, 2.25], [6.25, 2.5], [6.25, 2.75], [6.5, 2.25], [6.5, 2.5], [6.5, 2.75], [6.75, 2.25], [6.75, 2.5], [6.75, 2.75],
+      [6.25, 3.25], [6.25, 3.5], [6.25, 3.75], [6.5, 3.25], [6.5, 3.5], [6.5, 3.75], [6.75, 3.25], [6.75, 3.5], [6.75, 3.75],
+      [6.25, 9.25], [6.25, 9.5], [6.25, 9.75], [6.5, 9.25], [6.5, 9.5], [6.5, 9.75], [6.75, 9.25], [6.75, 9.5], [6.75, 9.75],
+      [6.25, 10.25], [6.25, 10.5], [6.25, 10.75], [6.5, 10.25], [6.5, 10.5], [6.5, 10.75], [6.75, 10.25], [6.75, 10.5], [6.75, 10.75],
+      [7.25, 2.25], [7.25, 2.5], [7.25, 2.75], [7.5, 2.25], [7.5, 2.5], [7.5, 2.75], [7.75, 2.25], [7.75, 2.5], [7.75, 2.75],
+      [7.25, 5.25], [7.25, 5.5], [7.25, 5.75], [7.5, 5.25], [7.5, 5.5], [7.5, 5.75], [7.75, 5.25], [7.75, 5.5], [7.75, 5.75],
+      [7.25, 6.25], [7.25, 6.5], [7.25, 6.75], [7.5, 6.25], [7.5, 6.5], [7.5, 6.75], [7.75, 6.25], [7.75, 6.5], [7.75, 6.75],
+      [7.25, 7.25], [7.25, 7.5], [7.25, 7.75], [7.5, 7.25], [7.5, 7.5], [7.5, 7.75], [7.75, 7.25], [7.75, 7.5], [7.75, 7.75],
+      [8.25, 4.25], [8.25, 4.5], [8.25, 4.75], [8.5, 4.25], [8.5, 4.5], [8.5, 4.75], [8.75, 4.25], [8.75, 4.5], [8.75, 4.75],
+      [8.25, 5.25], [8.25, 5.5], [8.25, 5.75], [8.5, 5.25], [8.5, 5.5], [8.5, 5.75], [8.75, 5.25], [8.75, 5.5], [8.75, 5.75],
+      [8.25, 6.25], [8.25, 6.5], [8.25, 6.75], [8.5, 6.25], [8.5, 6.5], [8.5, 6.75], [8.75, 6.25], [8.75, 6.5], [8.75, 6.75],
+      [8.25, 7.25], [8.25, 7.5], [8.25, 7.75], [8.5, 7.25], [8.5, 7.5], [8.5, 7.75], [8.75, 7.25], [8.75, 7.5], [8.75, 7.75],
+    ],
+
+    walls: [],
+
+    // Budovy/plochy podle modrych tvaru z gridu - nazvy doplnite pozdeji
+    buildings: [
+      { id: "bud1", code: "B1", name: "Budova 1", nameEn: "Building 1", rect: [8.28, 0.14, 8.77, 0.39], rotate: -72.7, color: "#0064ff", height: 0.2 },
+      { id: "bud2", code: "B2", name: "Budova 2", nameEn: "Building 2", rect: [8.82, -0.02, 9.42, 0.43], rotate: 72.3, color: "#0064ff", height: 0.2 },
+      { id: "bud3", code: "B3", name: "Budova 3", nameEn: "Building 3", rect: [7.56, 0.73, 9.11, 1.49], rotate: -57.1, color: "#0064ff", height: 0.2 },
+      { id: "bud4", code: "B4", name: "Budova 4", nameEn: "Building 4", rect: [8.97, 0.50, 9.63, 0.73], rotate: -11.0, color: "#0064ff", height: 0.2 },
+      { id: "bud5", code: "B5", name: "Budova 5", nameEn: "Building 5", rect: [6.82, 1.91, 7.15, 2.08], rotate: -17.1, color: "#0064ff", height: 0.2 },
+      { id: "bud6", code: "B6", name: "Budova 6", nameEn: "Building 6", rect: [8.54, 2.73, 9.62, 3.48], rotate: 10.0, color: "#0064ff", height: 0.2 },
+      { id: "bud7", code: "B7", name: "Budova 7", nameEn: "Building 7", rect: [4.60, 4.50, 5.31, 5.21], color: "#0064ff", height: 0.2 },
+      { id: "bud8", code: "B8", name: "Budova 8", nameEn: "Building 8", rect: [3.10, 4.91, 3.72, 5.51], color: "#0064ff", height: 0.2 },
+      { id: "bud9", code: "B9", name: "Budova 9", nameEn: "Building 9", rect: [2.40, 6.48, 3.10, 7.01], rotate: 90.0, color: "#0064ff", height: 0.2 },
+      { id: "bud10", code: "B10", name: "Budova 10", nameEn: "Building 10", rect: [4.41, 7.20, 5.43, 7.50], rotate: -12.3, color: "#0064ff", height: 0.2 },
+      { id: "bud11", code: "B11", name: "Budova 11", nameEn: "Building 11", rect: [2.78, 8.07, 3.47, 8.67], rotate: 90.0, color: "#0064ff", height: 0.2 },
+      { id: "bud12", code: "B12", name: "Budova 12", nameEn: "Building 12", rect: [5.96, 8.24, 6.67, 8.82], color: "#0064ff", height: 0.2 },
+      { id: "bud13", code: "B13", name: "Budova 13", nameEn: "Building 13", rect: [4.31, 8.76, 5.02, 9.41], rotate: 90.0, color: "#0064ff", height: 0.2 },
+      { id: "bud14", code: "B14", name: "Budova 14", nameEn: "Building 14", rect: [7.70, 9.18, 8.14, 9.54], rotate: -59.0, color: "#0064ff", height: 0.2 }
+    ]
+  };
+
+  const svg = document.getElementById("map-svg");
+  const listEl = document.getElementById("poi-list");
+
+  const LABELS = {
+    cs: { back: "Zpět na hřiště", sidebar: "Místa na hřišti" },
+    en: { back: "Back to fields", sidebar: "Points of interest" }
+  };
+
+  function applyStaticText(lang) {
+    document.getElementById("back-label").textContent = LABELS[lang].back;
+    document.getElementById("sidebar-title").textContent = LABELS[lang].sidebar;
+  }
+
+  AM.wireDropdowns();
+
+  applyStaticText(AM.getLang());
+
+  document.getElementById("back-btn").addEventListener("click", () => {
+    window.location.href = "menu.html";
+  });
+
+  const engine = MapEngine.init({
+    svg,
+    listEl,
+    data: FIELD_DATA,
+    getLang: AM.getLang,
+    mountModeToggle: {
+      btn2d: document.getElementById("btn-2d"),
+      btn3d: document.getElementById("btn-3d")
+    }
+  });
+
+  AM.wireLangSwitch((lang) => {
+    applyStaticText(lang);
+    engine.redraw();
+  });
+
+  const LOCATE_TEXT = {
+    cs: { btn: "Moje poloha", on: "Sleduji polohu", outside: "Jsi mimo hřiště",
+          denied: "Poloha zamítnuta v prohlížeči", unavailable: "Polohu se nepodařilo zjistit",
+          noAnchors: "Pro toto hřiště není poloha dostupná" },
+    en: { btn: "My location", on: "Tracking location", outside: "You are outside the field",
+          denied: "Location permission denied", unavailable: "Could not get location",
+          noAnchors: "Location isn't available for this field" }
+  };
+
+  const locateBtn = document.getElementById("locate-btn");
+  const locateLabel = document.getElementById("locate-label");
+  const locateStatus = document.getElementById("locate-status");
+  let watchId = null, tracking = false;
+  let stopHeading = null, lastHeading = null, lastUpBearing = null, insideField = false;
+
+  const hasGeo = FIELD_DATA.geoAnchors && FIELD_DATA.geoAnchors.length >= 3
+    && FIELD_DATA.geoAnchors.every(a => a.lat && a.lng);
+
+  function applyCompassRotation() {
+    if (insideField && lastHeading != null && lastUpBearing != null) {
+      engine.setCompassRotation((lastUpBearing - lastHeading + 360) % 360);
+    } else {
+      engine.setCompassRotation(null);
+    }
+  }
+
+  if (!hasGeo) {
+    locateBtn.style.display = "none";
+  } else {
+    locateBtn.addEventListener("click", () => {
+      const lang = AM.getLang();
+      if (tracking) {
+        AMGeo.stop(watchId); watchId = null; tracking = false;
+        if (stopHeading) { stopHeading(); stopHeading = null; }
+        insideField = false;
+        lastHeading = null;
+        applyCompassRotation();
+        locateBtn.classList.remove("active", "outside");
+        locateLabel.textContent = LOCATE_TEXT[lang].btn;
+        locateStatus.textContent = "";
+        engine.setPlayer(null);
+        return;
+      }
+      tracking = true;
+      locateBtn.classList.add("active");
+      locateLabel.textContent = LOCATE_TEXT[lang].on;
+
+      stopHeading = AMGeo.watchHeading((heading) => {
+        lastHeading = heading;
+        applyCompassRotation();
+      });
+
+      watchId = AMGeo.watch(FIELD_DATA, (result) => {
+        const t = LOCATE_TEXT[AM.getLang()];
+        if (!result.ok) {
+          locateStatus.textContent = t[result.reason] || t.unavailable;
+          locateBtn.classList.remove("outside");
+          engine.setPlayer(null);
+          insideField = false;
+          applyCompassRotation();
+          return;
+        }
+        lastUpBearing = result.upBearing;
+        if (result.inside) {
+          locateBtn.classList.remove("outside");
+          locateStatus.textContent = "";
+          engine.setPlayer({ col: result.col, row: result.row });
+          insideField = true;
+        } else {
+          locateBtn.classList.add("outside");
+          locateStatus.textContent = t.outside;
+          engine.setPlayer(null);
+          insideField = false;
+        }
+        applyCompassRotation();
+      });
+    });
+  }
+</script>
+
+</body>
+</html>
