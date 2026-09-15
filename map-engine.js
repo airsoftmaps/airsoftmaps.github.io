@@ -1256,7 +1256,7 @@ if (data.boundary) {
      SIDEBAR
      ======================================================================== */
 
-  function renderList(
+    function renderList(
     listEl,
     data,
     lang,
@@ -1268,6 +1268,9 @@ if (data.boundary) {
 
     (data.buildings || []).forEach(
       building => {
+
+        // Přeskočí nevýznamné/neklikací stavby
+        if (!building.id || (!building.name && !building.code)) return;
 
         const name =
           lang === "en"
