@@ -26,6 +26,52 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Airsoft Maps">
 <link rel="apple-touch-icon" href="/loga/tmavekulate.png">
+<style>
+.am-footer-tools {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 24px;
+}
+
+.am-coffee-btn {
+  appearance: none;
+  border: 1px solid rgba(255,122,26,.55);
+  border-radius: 8px;
+  background: rgba(255,122,26,.07);
+  color: inherit;
+  padding: 9px 15px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  cursor: pointer;
+  transition:
+    background .2s ease,
+    border-color .2s ease,
+    color .2s ease,
+    transform .2s ease;
+}
+
+.am-coffee-btn:hover {
+  background: rgba(255,122,26,.14);
+  border-color: #ff7a1a;
+  color: #ff7a1a;
+  transform: translateY(-1px);
+}
+
+.am-coffee-btn:active {
+  transform: translateY(0);
+}
+
+.am-visit-count {
+  font-size: 12px;
+  letter-spacing: .1em;
+  color: #7f8790;
+}
+</style>
 </head>
 <body>
 
@@ -109,9 +155,17 @@
 
     <div id="field-rows"></div>
 
+<div class="am-footer-tools">
+
+  <button class="am-coffee-btn" id="coffee-btn">
+    ☕ <span data-i18n="coffee">Kup nám kafe</span>
+  </button>
+
+  <div class="am-visit-count">
+    👁 <span id="visit-count">–</span>
+    <span data-i18n="visits">návštěv</span>
   </div>
-<div style="text-align:center; margin-top:24px; font-size:12px; letter-spacing:.1em; color:#7f8790;">
-  👁 <span id="visit-count">–</span> návštěv
+
 </div>
 </main>
 
@@ -199,6 +253,8 @@
     active: "Aktivní",
     soon: "Připravujeme",
     empty: "Žádné hřiště nenalezeno."
+    coffee: "Kup nám kafe",
+    visits: "návštěv"
   },
 
   en: {
@@ -214,6 +270,8 @@
     active: "Active",
     soon: "Coming soon",
     empty: "No battlefields found."
+    coffee: "Buy us a coffee",
+    visits: "visits"
   }
 };
 
@@ -280,6 +338,9 @@ if (countEl) {
   AM.wireLangSwitch(() => render(searchEl.value));
   searchEl.addEventListener("input", e => render(e.target.value));
   render("");
+  document.getElementById("coffee-btn")?.addEventListener("click", () => {
+  window.location.href = "coffee.html";
+});
 </script>
 <script>
 if ("serviceWorker" in navigator) {
