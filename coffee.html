@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>Kup nám kafe | Airsoft Maps</title>
+
   <meta
     name="description"
     content="Dobrovolný dar na provoz a další vývoj projektu Airsoft Maps."
@@ -211,6 +212,24 @@
       text-align: center;
     }
 
+    .coffee-contact {
+      max-width: 700px;
+      margin: 18px auto 0;
+      color: #9aa2ab;
+      font-size: 12px;
+      line-height: 1.7;
+      text-align: center;
+    }
+
+    .coffee-contact a {
+      color: #ff7a1a;
+      text-decoration: none;
+    }
+
+    .coffee-contact a:hover {
+      text-decoration: underline;
+    }
+
     .coffee-back {
       display: block;
       width: fit-content;
@@ -257,26 +276,12 @@
   <div class="am-breadcrumb">
     <span>Airsoft Maps</span>
     <span class="sep">/</span>
-    <span class="current">Kup nám kafe</span>
+    <span class="current" id="coffee-breadcrumb">
+      Kup nám kafe
+    </span>
   </div>
 
   <div class="am-controls">
-
-    <a
-      class="am-btn"
-      href="feedback.html"
-      title="Nahlásit chybu nebo nápad"
-    >
-      💬 Feedback
-    </a>
-
-    <a
-      class="am-btn"
-      href="akce.html"
-      title="Akce"
-    >
-      🎯 Akce
-    </a>
 
     <div class="am-dd" id="lang-dd">
 
@@ -291,22 +296,6 @@
 
     </div>
 
-    <div class="am-dd" id="style-dd">
-
-      <button class="am-btn">
-        🎨 <span data-i18n="style">Styl</span>
-      </button>
-
-      <div class="am-dd-menu">
-        <button data-theme="dark" class="active">Tmavý</button>
-        <button data-theme="light">Světlý</button>
-        <button data-theme="resident-evil">Resident Evil</button>
-        <button data-theme="pubg">PUBG</button>
-        <button data-theme="fortnite">Fortnite</button>
-      </div>
-
-    </div>
-
   </div>
 
 </header>
@@ -316,9 +305,11 @@
 
   <section class="coffee-heading">
 
-    <h1>☕ KUP NÁM KAFE</h1>
+    <h1 id="coffee-title">
+      ☕ KUP NÁM KAFE
+    </h1>
 
-    <p>
+    <p id="coffee-intro">
       Airsoft Maps tvoříme ve volném čase pro airsoftovou komunitu.
       Pokud se ti projekt líbí, můžeš nám poslat dobrovolný dar
       na jeho provoz, údržbu a další vývoj.
@@ -334,7 +325,13 @@
       data-amount="50"
     >
       <span class="coffee-amount">50 Kč</span>
-      <span class="coffee-label">☕ KAFE</span>
+
+      <span
+        class="coffee-label"
+        id="label-50"
+      >
+        ☕ KAFE
+      </span>
     </button>
 
 
@@ -343,7 +340,11 @@
       data-amount="100"
     >
       <span class="coffee-amount">100 Kč</span>
-      <span class="coffee-label">
+
+      <span
+        class="coffee-label"
+        id="label-100"
+      >
         ☕ KAFE + PROTEINOVÁ TYČINKA
       </span>
     </button>
@@ -354,7 +355,11 @@
       data-amount="200"
     >
       <span class="coffee-amount">200 Kč</span>
-      <span class="coffee-label">
+
+      <span
+        class="coffee-label"
+        id="label-200"
+      >
         ⚡ BALENÍ ENERGIE
       </span>
     </button>
@@ -394,7 +399,9 @@
 
   <section class="coffee-payment">
 
-    <h2>DAR NA AIRSOFT MAPS</h2>
+    <h2 id="payment-title">
+      DAR NA AIRSOFT MAPS
+    </h2>
 
     <div
       class="coffee-selected"
@@ -405,7 +412,10 @@
 
     <div id="coffee-qr"></div>
 
-    <div class="coffee-instruction">
+    <div
+      class="coffee-instruction"
+      id="coffee-instruction"
+    >
       Naskenuj QR kód v bankovní aplikaci
       a odešli platbu na účet spolku.
     </div>
@@ -417,7 +427,10 @@
   </section>
 
 
-  <p class="coffee-legal">
+  <p
+    class="coffee-legal"
+    id="coffee-legal"
+  >
     Příspěvek je dobrovolným darem pro Umbrella Corporation Ostrava z.s.
     Za poskytnutý dar nevzniká nárok na žádné zboží, služby ani jiné
     protiplnění. Označení „kafe“, „proteinová tyčinka“ nebo
@@ -425,9 +438,21 @@
   </p>
 
 
+  <p
+    class="coffee-contact"
+    id="coffee-contact"
+  >
+    Pro potvrzení potvrzení o daru či jiné dotazy nás kontaktuj na emailu
+    <a href="mailto:umbrellacorporationairsoft@seznam.cz">
+      umbrellacorporationairsoft@seznam.cz
+    </a>
+  </p>
+
+
   <a
     href="menu.html"
     class="coffee-back"
+    id="coffee-back"
   >
     ← ZPĚT NA HŘIŠTĚ
   </a>
@@ -443,7 +468,6 @@
 <script>
   /* =========================================================
      AIRSOFT MAPS — KUP NÁM KAFE
-     QR platba
      ========================================================= */
 
   const ACCOUNT_IBAN =
@@ -478,9 +502,9 @@
   let currentAmount = null;
 
 
-  /* ---------------------------------------------------------
+  /* =========================================================
      QR KÓD
-     --------------------------------------------------------- */
+     ========================================================= */
 
   function createQR(amount) {
 
@@ -509,9 +533,9 @@
   }
 
 
-  /* ---------------------------------------------------------
+  /* =========================================================
      VÝBĚR ČÁSTKY
-     --------------------------------------------------------- */
+     ========================================================= */
 
   function selectAmount(
     amount,
@@ -527,9 +551,12 @@
     ) {
 
       errorBox.textContent =
-        "Minimální částka je 50 Kč.";
+        currentLanguage === "en"
+          ? "The minimum amount is 50 CZK."
+          : "Minimální částka je 50 Kč.";
 
       return;
+
     }
 
 
@@ -553,8 +580,11 @@
 
 
     selectedAmount.textContent =
-      amount.toLocaleString("cs-CZ") +
-      " Kč";
+      amount.toLocaleString(
+        currentLanguage === "en"
+          ? "en-US"
+          : "cs-CZ"
+      ) + " CZK";
 
 
     createQR(amount);
@@ -562,9 +592,9 @@
   }
 
 
-  /* ---------------------------------------------------------
+  /* =========================================================
      PŘEDVOLENÉ ČÁSTKY
-     --------------------------------------------------------- */
+     ========================================================= */
 
   options.forEach(button => {
 
@@ -587,9 +617,9 @@
   });
 
 
-  /* ---------------------------------------------------------
+  /* =========================================================
      VLASTNÍ ČÁSTKA
-     --------------------------------------------------------- */
+     ========================================================= */
 
   customBtn.addEventListener(
     "click",
@@ -642,7 +672,9 @@
       if (value < 50) {
 
         errorBox.textContent =
-          "Minimální částka je 50 Kč.";
+          currentLanguage === "en"
+            ? "The minimum amount is 50 CZK."
+            : "Minimální částka je 50 Kč.";
 
         return;
 
@@ -657,35 +689,273 @@
   );
 
 
-  /* ---------------------------------------------------------
-     VÝCHOZÍ ČÁSTKA
-     --------------------------------------------------------- */
+  /* =========================================================
+     JAZYK
+     ========================================================= */
+
+  let currentLanguage = "cs";
+
+
+  const translations = {
+
+    cs: {
+
+      breadcrumb:
+        "Kup nám kafe",
+
+      title:
+        "☕ KUP NÁM KAFE",
+
+      intro:
+        "Airsoft Maps tvoříme ve volném čase pro airsoftovou komunitu. Pokud se ti projekt líbí, můžeš nám poslat dobrovolný dar na jeho provoz, údržbu a další vývoj.",
+
+      label50:
+        "☕ KAFE",
+
+      label100:
+        "☕ KAFE + PROTEINOVÁ TYČINKA",
+
+      label200:
+        "⚡ BALENÍ ENERGIE",
+
+      custom:
+        "JINÁ ČÁSTKA",
+
+      placeholder:
+        "Částka v Kč",
+
+      payment:
+        "DAR NA AIRSOFT MAPS",
+
+      choose:
+        "Vyber částku",
+
+      instruction:
+        "Naskenuj QR kód v bankovní aplikaci a odešli platbu na účet spolku.",
+
+      legal:
+        "Příspěvek je dobrovolným darem pro Umbrella Corporation Ostrava z.s. Za poskytnutý dar nevzniká nárok na žádné zboží, služby ani jiné protiplnění. Označení „kafe“, „proteinová tyčinka“ nebo „balení energie“ je pouze symbolické.",
+
+      contact:
+        "Pro potvrzení potvrzení o daru či jiné dotazy nás kontaktuj na emailu",
+
+      back:
+        "← ZPĚT NA HŘIŠTĚ"
+
+    },
+
+
+    en: {
+
+      breadcrumb:
+        "Buy us a coffee",
+
+      title:
+        "☕ BUY US A COFFEE",
+
+      intro:
+        "Airsoft Maps is created in our free time for the airsoft community. If you like the project, you can send us a voluntary donation to support its operation, maintenance and further development.",
+
+      label50:
+        "☕ COFFEE",
+
+      label100:
+        "☕ COFFEE + PROTEIN BAR",
+
+      label200:
+        "⚡ ENERGY PACK",
+
+      custom:
+        "OTHER AMOUNT",
+
+      placeholder:
+        "Amount in CZK",
+
+      payment:
+        "DONATION TO AIRSOFT MAPS",
+
+      choose:
+        "Choose an amount",
+
+      instruction:
+        "Scan the QR code in your banking app and send the payment to the association's account.",
+
+      legal:
+        "The contribution is a voluntary donation to Umbrella Corporation Ostrava z.s. The donation does not entitle the donor to any goods, services or other consideration. The terms “coffee”, “protein bar” and “energy pack” are symbolic only.",
+
+      contact:
+        "For a donation confirmation or any other questions, please contact us at",
+
+      back:
+        "← BACK TO FIELDS"
+
+    }
+
+  };
+
+
+  function applyLanguage(language) {
+
+    currentLanguage = language;
+
+    const t =
+      translations[language];
+
+
+    document.documentElement.lang =
+      language;
+
+
+    document.title =
+      language === "en"
+        ? "Buy us a coffee | Airsoft Maps"
+        : "Kup nám kafe | Airsoft Maps";
+
+
+    document.getElementById(
+      "coffee-breadcrumb"
+    ).textContent =
+      t.breadcrumb;
+
+
+    document.getElementById(
+      "coffee-title"
+    ).textContent =
+      t.title;
+
+
+    document.getElementById(
+      "coffee-intro"
+    ).textContent =
+      t.intro;
+
+
+    document.getElementById(
+      "label-50"
+    ).textContent =
+      t.label50;
+
+
+    document.getElementById(
+      "label-100"
+    ).textContent =
+      t.label100;
+
+
+    document.getElementById(
+      "label-200"
+    ).textContent =
+      t.label200;
+
+
+    document.getElementById(
+      "custom-btn"
+    ).textContent =
+      t.custom;
+
+
+    document.getElementById(
+      "custom-amount"
+    ).placeholder =
+      t.placeholder;
+
+
+    document.getElementById(
+      "payment-title"
+    ).textContent =
+      t.payment;
+
+
+    document.getElementById(
+      "coffee-instruction"
+    ).textContent =
+      t.instruction;
+
+
+    document.getElementById(
+      "coffee-legal"
+    ).textContent =
+      t.legal;
+
+
+    document.getElementById(
+      "coffee-back"
+    ).textContent =
+      t.back;
+
+
+    document.getElementById(
+      "lang-current"
+    ).textContent =
+      language === "en"
+        ? "EN"
+        : "CZ";
+
+
+    if (currentAmount !== null) {
+
+      selectedAmount.textContent =
+        currentAmount.toLocaleString(
+          language === "en"
+            ? "en-US"
+            : "cs-CZ"
+        ) + " CZK";
+
+    } else {
+
+      selectedAmount.textContent =
+        t.choose;
+
+    }
+
+  }
+
+
+  /* =========================================================
+     LANGUAGE DROPDOWN
+     ========================================================= */
+
+  document.querySelectorAll(
+    "#lang-dd [data-lang]"
+  ).forEach(button => {
+
+    button.addEventListener(
+      "click",
+      () => {
+
+        applyLanguage(
+          button.dataset.lang
+        );
+
+      }
+    );
+
+  });
+
+
+  /* =========================================================
+     AIRSOFT MAPS HEADER DROPDOWN
+     ========================================================= */
+
+  if (
+    typeof AM !== "undefined" &&
+    typeof AM.wireDropdowns === "function"
+  ) {
+
+    AM.wireDropdowns();
+
+  }
+
+
+  /* =========================================================
+     VÝCHOZÍ STAV
+     ========================================================= */
 
   selectAmount(
     50,
     options[0]
   );
 
-</script>
-
-
-<script>
-  /* =========================================================
-     AIRSOFT MAPS — HEADER
-     Dropdowny + styl
-     ========================================================= */
-
-  if (typeof AM !== "undefined") {
-
-    if (typeof AM.wireDropdowns === "function") {
-      AM.wireDropdowns();
-    }
-
-    if (typeof AM.wireStyleSwitch === "function") {
-      AM.wireStyleSwitch();
-    }
-
-  }
 </script>
 
 
