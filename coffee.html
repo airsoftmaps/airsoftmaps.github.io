@@ -1,25 +1,14 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <meta property="og:title" content="Kup nám kafe | Airsoft Maps">
-  <meta property="og:description" content="Dobrovolný dar na provoz a další vývoj projektu Airsoft Maps.">
-  <meta property="og:image" content="https://airsoftmaps.github.io/loga/bilekulate.png">
-  <meta property="og:url" content="https://airsoftmaps.github.io/coffee.html">
-  <meta property="og:type" content="website">
-
-  <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="Kup nám kafe | Airsoft Maps">
-  <meta name="twitter:description" content="Dobrovolný dar na provoz a další vývoj projektu Airsoft Maps.">
-  <meta name="twitter:image" content="https://airsoftmaps.github.io/loga/bilekulate.png">
-
   <title>Kup nám kafe | Airsoft Maps</title>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <meta
+    name="description"
+    content="Dobrovolný dar na provoz a další vývoj projektu Airsoft Maps."
+  >
 
   <link rel="stylesheet" href="common.css?v=3">
   <link rel="stylesheet" href="hell.css?v=1">
@@ -27,29 +16,12 @@
 
   <link rel="manifest" href="/manifest.json">
 
-  <meta name="theme-color" content="#ff7a1a">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="Airsoft Maps">
-  <link rel="apple-touch-icon" href="/loga/tmavekulate.png">
-
-
   <style>
-
-    /* =========================================================
-       AIRSOFT MAPS — COFFEE / SUPPORT
-       ========================================================= */
-
     .coffee-page {
       width: min(900px, calc(100% - 32px));
       margin: 0 auto;
       padding: 42px 0 70px;
     }
-
-
-    /* ---------------------------------------------------------
-       NADPIS
-       --------------------------------------------------------- */
 
     .coffee-heading {
       text-align: center;
@@ -69,11 +41,6 @@
       line-height: 1.7;
       font-size: 14px;
     }
-
-
-    /* ---------------------------------------------------------
-       ČÁSTKY
-       --------------------------------------------------------- */
 
     .coffee-options {
       display: grid;
@@ -95,8 +62,7 @@
       transition:
         border-color .2s ease,
         background .2s ease,
-        transform .2s ease,
-        box-shadow .2s ease;
+        transform .2s ease;
     }
 
     .coffee-option:hover {
@@ -126,11 +92,6 @@
       line-height: 1.4;
     }
 
-
-    /* ---------------------------------------------------------
-       VLASTNÍ ČÁSTKA
-       --------------------------------------------------------- */
-
     .coffee-custom {
       margin-top: 14px;
       text-align: center;
@@ -146,11 +107,7 @@
       cursor: pointer;
       letter-spacing: .08em;
       font-size: 12px;
-
-      transition:
-        border-color .2s ease,
-        color .2s ease,
-        background .2s ease;
+      transition: .2s ease;
     }
 
     .coffee-custom button:hover,
@@ -192,11 +149,6 @@
       font-size: 12px;
     }
 
-
-    /* ---------------------------------------------------------
-       PLATBA / QR
-       --------------------------------------------------------- */
-
     .coffee-payment {
       margin: 34px auto 0;
       max-width: 520px;
@@ -224,16 +176,14 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 280px;
+      min-height: 260px;
       margin: 10px auto 18px;
     }
 
     #coffee-qr img,
     #coffee-qr canvas {
-      display: block;
-      width: 260px;
-      height: 260px;
-      box-sizing: border-box;
+      max-width: 260px;
+      height: auto;
       background: #fff;
       padding: 10px;
       border-radius: 8px;
@@ -252,11 +202,6 @@
       letter-spacing: .05em;
     }
 
-
-    /* ---------------------------------------------------------
-       PRÁVNÍ TEXT
-       --------------------------------------------------------- */
-
     .coffee-legal {
       max-width: 700px;
       margin: 30px auto 0;
@@ -266,11 +211,6 @@
       text-align: center;
     }
 
-
-    /* ---------------------------------------------------------
-       ZPĚT
-       --------------------------------------------------------- */
-
     .coffee-back {
       display: block;
       width: fit-content;
@@ -279,7 +219,6 @@
       text-decoration: none;
       font-size: 12px;
       letter-spacing: .08em;
-
       transition: color .2s ease;
     }
 
@@ -287,18 +226,7 @@
       color: #ff7a1a;
     }
 
-
-    /* ---------------------------------------------------------
-       MOBILE
-       --------------------------------------------------------- */
-
     @media (max-width: 700px) {
-
-      .coffee-page {
-        width: min(100% - 24px, 900px);
-        padding-top: 30px;
-      }
-
       .coffee-options {
         grid-template-columns: 1fr;
       }
@@ -310,49 +238,29 @@
       .coffee-payment {
         padding: 22px 16px;
       }
-
-      #coffee-qr {
-        min-height: 260px;
-      }
-
     }
-
   </style>
-
 </head>
 
-
 <body>
-
-
-<!-- =========================================================
-     HEADER
-     ========================================================= -->
 
 <header class="am-header">
 
   <a class="am-brand" href="menu.html">
-
     <img
       class="am-brand-logo"
       src="loga/tmavekulate.png"
       alt="Airsoft Maps"
     >
-
   </a>
 
-
   <div class="am-breadcrumb">
-
     <span>Airsoft Maps</span>
     <span class="sep">/</span>
     <span class="current">Kup nám kafe</span>
-
   </div>
 
-
   <div class="am-controls">
-
 
     <a
       class="am-btn"
@@ -362,7 +270,6 @@
       💬 Feedback
     </a>
 
-
     <a
       class="am-btn"
       href="akce.html"
@@ -371,7 +278,6 @@
       🎯 Akce
     </a>
 
-
     <div class="am-dd" id="lang-dd">
 
       <button class="am-btn">
@@ -379,19 +285,11 @@
       </button>
 
       <div class="am-dd-menu">
-
-        <button data-lang="cs">
-          Čeština
-        </button>
-
-        <button data-lang="en">
-          English
-        </button>
-
+        <button data-lang="cs">Čeština</button>
+        <button data-lang="en">English</button>
       </div>
 
     </div>
-
 
     <div class="am-dd" id="style-dd">
 
@@ -400,44 +298,21 @@
       </button>
 
       <div class="am-dd-menu">
-
-        <button data-theme="dark" class="active">
-          Tmavý
-        </button>
-
-        <button data-theme="light">
-          Světlý
-        </button>
-
-        <button data-theme="resident-evil">
-          Resident Evil
-        </button>
-
-        <button data-theme="pubg">
-          PUBG
-        </button>
-
-        <button data-theme="fortnite">
-          Fortnite
-        </button>
-
+        <button data-theme="dark" class="active">Tmavý</button>
+        <button data-theme="light">Světlý</button>
+        <button data-theme="resident-evil">Resident Evil</button>
+        <button data-theme="pubg">PUBG</button>
+        <button data-theme="fortnite">Fortnite</button>
       </div>
 
     </div>
-
 
   </div>
 
 </header>
 
 
-
-<!-- =========================================================
-     CONTENT
-     ========================================================= -->
-
 <main class="coffee-page">
-
 
   <section class="coffee-heading">
 
@@ -452,79 +327,46 @@
   </section>
 
 
-
-  <!-- =======================================================
-       PŘEDVOLENÉ ČÁSTKY
-       ======================================================= -->
-
   <section class="coffee-options">
-
 
     <button
       class="coffee-option"
       data-amount="50"
     >
-
-      <span class="coffee-amount">
-        50 Kč
-      </span>
-
-      <span class="coffee-label">
-        ☕ KAFE
-      </span>
-
+      <span class="coffee-amount">50 Kč</span>
+      <span class="coffee-label">☕ KAFE</span>
     </button>
-
 
 
     <button
       class="coffee-option"
       data-amount="100"
     >
-
-      <span class="coffee-amount">
-        100 Kč
-      </span>
-
+      <span class="coffee-amount">100 Kč</span>
       <span class="coffee-label">
         ☕ KAFE + PROTEINOVÁ TYČINKA
       </span>
-
     </button>
-
 
 
     <button
       class="coffee-option"
       data-amount="200"
     >
-
-      <span class="coffee-amount">
-        200 Kč
-      </span>
-
+      <span class="coffee-amount">200 Kč</span>
       <span class="coffee-label">
         ⚡ BALENÍ ENERGIE
       </span>
-
     </button>
-
 
   </section>
 
 
-
-  <!-- =======================================================
-       JINÁ ČÁSTKA
-       ======================================================= -->
-
   <div class="coffee-custom">
-
 
     <button id="custom-btn">
       JINÁ ČÁSTKA
     </button>
-
 
     <div
       class="coffee-custom-input"
@@ -547,22 +389,12 @@
 
     </div>
 
-
   </div>
 
 
-
-  <!-- =======================================================
-       PLATBA
-       ======================================================= -->
-
   <section class="coffee-payment">
 
-
-    <h2>
-      DAR NA AIRSOFT MAPS
-    </h2>
-
+    <h2>DAR NA AIRSOFT MAPS</h2>
 
     <div
       class="coffee-selected"
@@ -571,45 +403,27 @@
       Vyber částku
     </div>
 
-
     <div id="coffee-qr"></div>
 
-
     <div class="coffee-instruction">
-
       Naskenuj QR kód v bankovní aplikaci
       a odešli platbu na účet spolku.
-
     </div>
-
 
     <div class="coffee-account">
       7922244003 / 5500
     </div>
 
-
   </section>
 
 
-
-  <!-- =======================================================
-       PRÁVNÍ TEXT
-       ======================================================= -->
-
   <p class="coffee-legal">
-
     Příspěvek je dobrovolným darem pro Umbrella Corporation Ostrava z.s.
     Za poskytnutý dar nevzniká nárok na žádné zboží, služby ani jiné
     protiplnění. Označení „kafe“, „proteinová tyčinka“ nebo
     „balení energie“ je pouze symbolické.
-
   </p>
 
-
-
-  <!-- =======================================================
-       ZPĚT
-       ======================================================= -->
 
   <a
     href="menu.html"
@@ -618,76 +432,44 @@
     ← ZPĚT NA HŘIŠTĚ
   </a>
 
-
 </main>
 
 
-
-<!-- =========================================================
-     COMMON JS
-     ========================================================= -->
-
 <script src="common.js?v=3"></script>
-
-
-<!-- =========================================================
-     QR CODE LIBRARY
-     ========================================================= -->
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
 
-
-<!-- =========================================================
-     COFFEE LOGIC
-     ========================================================= -->
-
 <script>
+  /* =========================================================
+     AIRSOFT MAPS — KUP NÁM KAFE
+     QR platba
+     ========================================================= */
 
-  /*
-   * ==========================================================
-   * AIRSOFT MAPS — COFFEE PAYMENT
-   * ==========================================================
-   *
-   * Účet:
-   * 7922244003 / 5500
-   *
-   * IBAN:
-   * CZ4155000000007922244003
-   *
-   * Minimální dar:
-   * 50 Kč
-   * ==========================================================
-   */
+  const ACCOUNT_IBAN =
+    "CZ4155000000007922244003";
 
-
-const ACCOUNT_IBAN =
-  "CZ4155000000007922244003";
+  const ACCOUNT_BIC =
+    "RZBCCZPP";
 
 
   const options =
     document.querySelectorAll(".coffee-option");
 
-
   const customBtn =
     document.getElementById("custom-btn");
-
 
   const customWrap =
     document.getElementById("custom-wrap");
 
-
   const customInput =
     document.getElementById("custom-amount");
-
 
   const errorBox =
     document.getElementById("coffee-error");
 
-
   const selectedAmount =
     document.getElementById("selected-amount");
-
 
   const qrBox =
     document.getElementById("coffee-qr");
@@ -696,21 +478,17 @@ const ACCOUNT_IBAN =
   let currentAmount = null;
 
 
-
-  /*
-   * ==========================================================
-   * VYTVOŘENÍ QR
-   * ==========================================================
-   */
+  /* ---------------------------------------------------------
+     QR KÓD
+     --------------------------------------------------------- */
 
   function createQR(amount) {
 
     qrBox.innerHTML = "";
 
-
     const spayd =
       "SPD*1.0" +
-      "*ACC:" + ACCOUNT_IBAN +
+      "*ACC:" + ACCOUNT_IBAN + "+" + ACCOUNT_BIC +
       "*AM:" + Number(amount).toFixed(2) +
       "*CC:CZK" +
       "*MSG:DAR AIRSOFT MAPS";
@@ -721,22 +499,19 @@ const ACCOUNT_IBAN =
       text: spayd,
 
       width: 260,
-
       height: 260,
 
-      correctLevel: QRCode.CorrectLevel.M
+      correctLevel:
+        QRCode.CorrectLevel.M
 
     });
 
   }
 
 
-
-  /*
-   * ==========================================================
-   * VÝBĚR ČÁSTKY
-   * ==========================================================
-   */
+  /* ---------------------------------------------------------
+     VÝBĚR ČÁSTKY
+     --------------------------------------------------------- */
 
   function selectAmount(
     amount,
@@ -755,12 +530,10 @@ const ACCOUNT_IBAN =
         "Minimální částka je 50 Kč.";
 
       return;
-
     }
 
 
     errorBox.textContent = "";
-
 
     currentAmount = amount;
 
@@ -780,7 +553,8 @@ const ACCOUNT_IBAN =
 
 
     selectedAmount.textContent =
-      amount.toLocaleString("cs-CZ") + " Kč";
+      amount.toLocaleString("cs-CZ") +
+      " Kč";
 
 
     createQR(amount);
@@ -788,12 +562,9 @@ const ACCOUNT_IBAN =
   }
 
 
-
-  /*
-   * ==========================================================
-   * PŘEDVOLENÉ ČÁSTKY
-   * ==========================================================
-   */
+  /* ---------------------------------------------------------
+     PŘEDVOLENÉ ČÁSTKY
+     --------------------------------------------------------- */
 
   options.forEach(button => {
 
@@ -804,7 +575,6 @@ const ACCOUNT_IBAN =
         customWrap.classList.remove("show");
 
         customBtn.classList.remove("active");
-
 
         selectAmount(
           button.dataset.amount,
@@ -817,12 +587,9 @@ const ACCOUNT_IBAN =
   });
 
 
-
-  /*
-   * ==========================================================
-   * JINÁ ČÁSTKA
-   * ==========================================================
-   */
+  /* ---------------------------------------------------------
+     VLASTNÍ ČÁSTKA
+     --------------------------------------------------------- */
 
   customBtn.addEventListener(
     "click",
@@ -855,13 +622,6 @@ const ACCOUNT_IBAN =
   );
 
 
-
-  /*
-   * ==========================================================
-   * ZMĚNA VLASTNÍ ČÁSTKY
-   * ==========================================================
-   */
-
   customInput.addEventListener(
     "input",
     () => {
@@ -891,19 +651,15 @@ const ACCOUNT_IBAN =
 
       errorBox.textContent = "";
 
-
       selectAmount(value);
 
     }
   );
 
 
-
-  /*
-   * ==========================================================
-   * VÝCHOZÍ ČÁSTKA
-   * ==========================================================
-   */
+  /* ---------------------------------------------------------
+     VÝCHOZÍ ČÁSTKA
+     --------------------------------------------------------- */
 
   selectAmount(
     50,
@@ -913,14 +669,28 @@ const ACCOUNT_IBAN =
 </script>
 
 
+<script>
+  /* =========================================================
+     AIRSOFT MAPS — HEADER
+     Dropdowny + styl
+     ========================================================= */
 
-<!-- =========================================================
-     EASTER EGGS / THEMES
-     ========================================================= -->
+  if (typeof AM !== "undefined") {
+
+    if (typeof AM.wireDropdowns === "function") {
+      AM.wireDropdowns();
+    }
+
+    if (typeof AM.wireStyleSwitch === "function") {
+      AM.wireStyleSwitch();
+    }
+
+  }
+</script>
+
 
 <script src="hell.js?v=1"></script>
 <script src="divine.js?v=1"></script>
-
 
 </body>
 </html>
