@@ -457,43 +457,54 @@ stroke:
         group
       );
 
-      el(
-        "text",
-        {
-          x: cx,
-          y: cy + 5,
-          "text-anchor": "middle",
-          "font-family":
-            "Anton, sans-serif",
-          "font-size":
-            Math.max(
-              11,
-              Math.min(
-                20,
-                width /
-                (building.code.length * 1.3)
-              )
-            ),
-          fill:
-  active
-    ? "var(--accent)"
-    : "var(--map-text)",
-          style:
-            "pointer-events:none;"
-        },
-        group
-      ).textContent =
-        building.code;
+      if (building.code) {
 
-      group.style.cursor = "pointer";
+        el(
+          "text",
+          {
+            x: cx,
+            y: cy + 5,
+            "text-anchor": "middle",
+            "font-family":
+              "Anton, sans-serif",
+            "font-size":
+              Math.max(
+                11,
+                Math.min(
+                  20,
+                  width /
+                  (building.code.length * 1.3)
+                )
+              ),
+            fill:
+    active
+      ? "var(--accent)"
+      : "var(--map-text)",
+            style:
+              "pointer-events:none;"
+          },
+          group
+        ).textContent =
+          building.code;
+      }
 
-      group.addEventListener(
-        "click",
-        e => {
-          e.stopPropagation();
-          onBuildingClick(building.id);
-        }
-      );
+      /*
+         Budovy BEZ "id" jsou jen vizuální (nízké budovy/plochy) —
+         nejsou klikací, nemají kurzor a nejdou do seznamu vpravo
+         (viz renderList níže).
+      */
+      if (building.id) {
+
+        group.style.cursor = "pointer";
+
+        group.addEventListener(
+          "click",
+          e => {
+            e.stopPropagation();
+            onBuildingClick(building.id);
+          }
+        );
+      }
     });
 
     /* --------------------------------------------------------
@@ -713,15 +724,18 @@ const strokeColor =
       group
     );
 
-    group.style.cursor = "pointer";
+    group.style.cursor = onClick ? "pointer" : "default";
 
-    group.addEventListener(
-      "click",
-      e => {
-        e.stopPropagation();
-        onClick(id);
-      }
-    );
+    if (onClick) {
+
+      group.addEventListener(
+        "click",
+        e => {
+          e.stopPropagation();
+          onClick(id);
+        }
+      );
+    }
 
     return group;
   }
@@ -1162,34 +1176,37 @@ if (data.boundary) {
           height,
           building.id,
           active,
-          onBuildingClick,
+          building.id ? onBuildingClick : null,
           building.rotate || 0,
           building.color
         );
 
-        const center =
-          isoPoint(
-            (c1 + c2) / 2,
-            (r1 + r2) / 2,
-            height
-          );
+        if (building.code) {
 
-        el(
-          "text",
-          {
-            x: center.x,
-            y: center.y - 6,
-            "text-anchor": "middle",
-            "font-family": "Anton, sans-serif",
-            "font-size": 12,
-            fill:
-              active
-                ? "#ff7a1a"
-                : mapColor("--map-text", "#eef1f0"),
-            style: "pointer-events:none;"
-          },
-          labels
-        ).textContent = building.code;
+          const center =
+            isoPoint(
+              (c1 + c2) / 2,
+              (r1 + r2) / 2,
+              height
+            );
+
+          el(
+            "text",
+            {
+              x: center.x,
+              y: center.y - 6,
+              "text-anchor": "middle",
+              "font-family": "Anton, sans-serif",
+              "font-size": 12,
+              fill:
+                active
+                  ? "#ff7a1a"
+                  : mapColor("--map-text", "#eef1f0"),
+              style: "pointer-events:none;"
+            },
+            labels
+          ).textContent = building.code;
+        }
       });
 
     /* --------------------------------------------------------
