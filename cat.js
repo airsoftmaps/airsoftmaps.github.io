@@ -399,19 +399,241 @@
     );
   }
 
+  /* ------------------------------------------------------------------------
+     YARN BALL + RUNNING CAT
+     ------------------------------------------------------------------------ */
 
+  let yarnTimer = null;
+
+  function spawnYarn() {
+
+    if (!isCatTheme()) return;
+
+    // Pokud už něco běží, nic dalšího nespouštíme.
+    if (document.querySelector(".cat-yarn-event")) {
+      return;
+    }
+
+    const event = document.createElement("div");
+    event.className = "cat-yarn-event";
+
+    const yarn = document.createElement("div");
+    yarn.className = "cat-yarn";
+    yarn.textContent = "🧶";
+
+    const cat = document.createElement("div");
+    cat.className = "cat-runner";
+    cat.textContent = "🐈‍⬛";
+
+    event.appendChild(yarn);
+    event.appendChild(cat);
+
+    document.body.appendChild(event);
+
+    // Náhodný směr
+    const fromLeft = Math.random() < 0.5;
+
+    if (fromLeft) {
+
+      yarn.style.left = "8%";
+      yarn.style.top =
+        `${25 + Math.random() * 50}%`;
+
+      cat.classList.add("cat-run-left");
+
+    } else {
+
+      yarn.style.right = "8%";
+      yarn.style.top =
+        `${25 + Math.random() * 50}%`;
+
+      cat.classList.add("cat-run-right");
+    }
+
+    // Kočka se po krátké chvíli rozběhne.
+    setTimeout(() => {
+
+      cat.classList.add("cat-running");
+
+    }, 700);
+
+    // Celou scénu uklidíme.
+    setTimeout(() => {
+
+      event.classList.add("cat-yarn-fade");
+
+      setTimeout(() => {
+        event.remove();
+      }, 500);
+
+    }, 4200);
+  }
+
+
+  /* ------------------------------------------------------------------------
+     YARN / CAT CSS
+     ------------------------------------------------------------------------ */
+
+  function injectYarnStyle() {
+
+    if (document.getElementById("cat-yarn-style")) {
+      return;
+    }
+
+    const style = document.createElement("style");
+
+    style.id = "cat-yarn-style";
+
+    style.textContent = `
+
+      .cat-yarn-event {
+        position: fixed;
+
+        inset: 0;
+
+        pointer-events: none;
+
+        z-index: 9997;
+
+        overflow: hidden;
+
+        opacity: 1;
+
+        transition: opacity .5s ease;
+      }
+
+      .cat-yarn-event.cat-yarn-fade {
+        opacity: 0;
+      }
+
+      .cat-yarn {
+        position: absolute;
+
+        font-size: 34px;
+
+        filter:
+          drop-shadow(
+            0 3px 8px rgba(0,0,0,.45)
+          );
+
+        animation:
+          cat-yarn-bounce
+          .8s ease-in-out infinite;
+      }
+
+      .cat-runner {
+        position: absolute;
+
+        font-size: 42px;
+
+        opacity: 0;
+
+        filter:
+          drop-shadow(
+            0 3px 8px rgba(0,0,0,.5)
+          );
+
+        transition:
+          transform 2.2s cubic-bezier(.2,.8,.2,1),
+          opacity .2s ease;
+      }
+
+      .cat-runner.cat-running {
+        opacity: 1;
+      }
+
+      .cat-run-left {
+        left: -80px;
+      }
+
+      .cat-run-right {
+        right: -80px;
+
+        transform:
+          scaleX(-1);
+      }
+
+      .cat-run-left.cat-running {
+        transform:
+          translateX(calc(100vw + 160px));
+      }
+
+      .cat-run-right.cat-running {
+        transform:
+          translateX(calc(-100vw - 160px))
+          scaleX(-1);
+      }
+
+      @keyframes cat-yarn-bounce {
+
+        0%, 100% {
+          transform:
+            translateY(0)
+            rotate(0deg);
+        }
+
+        50% {
+          transform:
+            translateY(-7px)
+            rotate(18deg);
+        }
+
+      }
+
+    `;
+
+    document.head.appendChild(style);
+  }
+
+
+  /* ------------------------------------------------------------------------
+     RANDOM YARN SCHEDULER
+     ------------------------------------------------------------------------ */
+
+  function startYarnScheduler() {
+
+    if (yarnTimer) {
+      return;
+    }
+
+    const schedule = () => {
+
+      if (!isCatTheme()) {
+        yarnTimer = null;
+        return;
+      }
+
+      // Přibližně 25% šance při každém intervalu.
+      if (Math.random() < 0.25) {
+        spawnYarn();
+      }
+
+      yarnTimer = setTimeout(
+        schedule,
+        12000 + Math.random() * 18000
+      );
+    };
+
+    yarnTimer = setTimeout(
+      schedule,
+      8000 + Math.random() * 12000
+    );
+  }
   /* ------------------------------------------------------------------------
      START
      ------------------------------------------------------------------------ */
 
-  document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener("DOMContentLoaded", () => {
 
     injectMessageStyle();
     injectPawStyle();
+    injectYarnStyle();
 
     wireBattlefields();
     wireGlobalClicks();
     observeTheme();
+
+    startYarnScheduler();
 
   });
 
