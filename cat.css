@@ -392,3 +392,177 @@ html[data-theme="cat"] ::-webkit-scrollbar-thumb:hover {
     font-size: 16px;
   }
 }
+/* =========================================================
+   AIRSOFT MAPS — CAT WALK CYCLE
+   ========================================================= */
+
+/* BODY */
+
+html[data-theme="cat"] .cat-event-walk #cat-body {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  animation: cat-body-walk .48s ease-in-out infinite;
+}
+
+
+/* HEAD */
+
+html[data-theme="cat"] .cat-event-walk #cat-head {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  animation: cat-head-walk .48s ease-in-out infinite;
+}
+
+
+/* FRONT LEFT */
+
+html[data-theme="cat"] .cat-event-walk #cat-front-leg-left {
+  transform-box: fill-box;
+  transform-origin: center top;
+  animation: cat-leg-left .48s ease-in-out infinite;
+}
+
+
+/* FRONT RIGHT */
+
+html[data-theme="cat"] .cat-event-walk #cat-front-leg-right {
+  transform-box: fill-box;
+  transform-origin: center top;
+  animation: cat-leg-right .48s ease-in-out infinite;
+}
+
+
+/* REAR LEFT */
+
+html[data-theme="cat"] .cat-event-walk #cat-rear-leg-left {
+  transform-box: fill-box;
+  transform-origin: center top;
+  animation: cat-leg-right .48s ease-in-out infinite;
+}
+
+
+/* REAR RIGHT */
+
+html[data-theme="cat"] .cat-event-walk #cat-rear-leg-right {
+  transform-box: fill-box;
+  transform-origin: center top;
+  animation: cat-leg-left .48s ease-in-out infinite;
+}
+
+
+/* TAIL */
+
+html[data-theme="cat"] .cat-event-walk #cat-tail {
+  transform-box: fill-box;
+  transform-origin: left center;
+  animation: cat-tail-walk .75s ease-in-out infinite;
+}
+
+
+/* EARS */
+
+html[data-theme="cat"] .cat-event-walk #cat-ear-left,
+html[data-theme="cat"] .cat-event-walk #cat-ear-right {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  animation: cat-ear-walk .9s ease-in-out infinite;
+}
+
+
+/* =========================================================
+   ANIMATIONS
+   ========================================================= */
+
+
+/* BODY */
+
+@keyframes cat-body-walk {
+
+  0%, 100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-3px);
+  }
+
+}
+
+
+/* HEAD */
+
+@keyframes cat-head-walk {
+
+  0%, 100% {
+    transform:
+      translateY(0)
+      rotate(0deg);
+  }
+
+  50% {
+    transform:
+      translateY(-2px)
+      rotate(-1deg);
+  }
+
+}
+
+
+/* LEFT PHASE */
+
+@keyframes cat-leg-left {
+
+  0%, 100% {
+    transform: rotate(10deg);
+  }
+
+  50% {
+    transform: rotate(-10deg);
+  }
+
+}
+
+
+/* RIGHT PHASE */
+
+@keyframes cat-leg-right {
+
+  0%, 100% {
+    transform: rotate(-10deg);
+  }
+
+  50% {
+    transform: rotate(10deg);
+  }
+
+}
+
+
+/* TAIL */
+
+@keyframes cat-tail-walk {
+
+  0%, 100% {
+    transform: rotate(-7deg);
+  }
+
+  50% {
+    transform: rotate(10deg);
+  }
+
+}
+
+
+/* EARS */
+
+@keyframes cat-ear-walk {
+
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+
+  50% {
+    transform: rotate(-2deg);
+  }
+
+}
