@@ -375,29 +375,48 @@
 
 
   /* ------------------------------------------------------------------------
-     THEME CHANGE OBSERVER
-     ------------------------------------------------------------------------ */
+  /* ------------------------------------------------------------------------
+   THEME CHANGE OBSERVER
+   ------------------------------------------------------------------------ */
 
-  function observeTheme() {
+function observeTheme() {
 
-    const observer = new MutationObserver(() => {
+  const observer = new MutationObserver(() => {
 
-      if (!isCatTheme()) {
-        document
-          .querySelectorAll(".cat-floating-paw")
-          .forEach(el => el.remove());
+    if (isCatTheme()) {
+
+      // Kočka právě nastoupila do služby.
+      startYarnScheduler();
+
+    } else {
+
+      // Opouštíme Cat Theme.
+      document
+        .querySelectorAll(".cat-floating-paw")
+        .forEach(el => el.remove());
+
+      document
+        .querySelectorAll(".cat-yarn-event")
+        .forEach(el => el.remove());
+
+      // Pokud běží scheduler, zastavíme ho.
+      if (yarnTimer) {
+        clearTimeout(yarnTimer);
+        yarnTimer = null;
       }
 
-    });
+    }
 
-    observer.observe(
-      document.documentElement,
-      {
-        attributes: true,
-        attributeFilter: ["data-theme"]
-      }
-    );
-  }
+  });
+
+  observer.observe(
+    document.documentElement,
+    {
+      attributes: true,
+      attributeFilter: ["data-theme"]
+    }
+  );
+}
 
   /* ------------------------------------------------------------------------
      YARN BALL + RUNNING CAT
@@ -591,34 +610,32 @@
      ------------------------------------------------------------------------ */
 
   function startYarnScheduler() {
+function startYarnScheduler() {
 
-    if (yarnTimer) {
+  if (yarnTimer) {
+    return;
+  }
+
+  const schedule = () => {
+
+    if (!isCatTheme()) {
+      yarnTimer = null;
       return;
     }
 
-    const schedule = () => {
-
-      if (!isCatTheme()) {
-        yarnTimer = null;
-        return;
-      }
-
-      // Přibližně 25% šance při každém intervalu.
-      if (Math.random() < 0.25) {
-        spawnYarn();
-      }
-
-      yarnTimer = setTimeout(
-        schedule,
-        12000 + Math.random() * 18000
-      );
-    };
+    spawnYarn();
 
     yarnTimer = setTimeout(
       schedule,
-      8000 + Math.random() * 12000
+      8000 + Math.random() * 5000
     );
-  }
+  };
+
+  yarnTimer = setTimeout(
+    schedule,
+    3000
+  );
+}
   /* ------------------------------------------------------------------------
      START
      ------------------------------------------------------------------------ */
