@@ -1,11 +1,15 @@
 /* ==========================================================================
    AIRSOFT MAPS — CAT THEME
-   Cute Chaos Engine
+   CAT ENGINE
    ========================================================================== */
 
 (() => {
 
   const CAT_THEME = "cat";
+
+  /* ------------------------------------------------------------------------
+     CAT MESSAGES
+     ------------------------------------------------------------------------ */
 
   const catMessages = [
     "Kočka něco shodila. Odmítá se přiznat. Zkus to znovu.",
@@ -21,19 +25,19 @@
     "Systém funguje. Kočka ne."
   ];
 
-  const pawMessages = [
-    "🐾",
-    "🐾",
-    "🐾",
-    "🐾",
-    "🐾"
-  ];
-
-  let catClickBlocked = false;
-  let meowCooldown = false;
 
   /* ------------------------------------------------------------------------
-     THEME CHECK
+     STATE
+     ------------------------------------------------------------------------ */
+
+  let meowCooldown = false;
+  let eventRunning = false;
+  let eventTimer = null;
+  let catSvgCache = null;
+
+
+  /* ------------------------------------------------------------------------
+     THEME
      ------------------------------------------------------------------------ */
 
   function isCatTheme() {
@@ -42,7 +46,20 @@
 
 
   /* ------------------------------------------------------------------------
-     CAT MESSAGE
+     RANDOM
+     ------------------------------------------------------------------------ */
+
+  function random(min, max) {
+    return Math.random() * (max - min) + min;
+  }
+
+  function randomInt(min, max) {
+    return Math.floor(random(min, max + 1));
+  }
+
+
+  /* ------------------------------------------------------------------------
+     MESSAGE
      ------------------------------------------------------------------------ */
 
   function showCatMessage(message) {
@@ -54,7 +71,6 @@
     if (!box) {
 
       box = document.createElement("div");
-
       box.id = "cat-message";
 
       document.body.appendChild(box);
@@ -77,7 +93,7 @@
 
 
   /* ------------------------------------------------------------------------
-     CAT MESSAGE STYLE
+     MESSAGE STYLE
      ------------------------------------------------------------------------ */
 
   function injectMessageStyle() {
@@ -93,6 +109,7 @@
     style.textContent = `
 
       #cat-message {
+
         position: fixed;
 
         left: 50%;
@@ -102,18 +119,22 @@
           translate(-50%, 20px)
           scale(.96);
 
-        max-width: min(520px, calc(100vw - 30px));
+        max-width:
+          min(520px, calc(100vw - 30px));
 
         padding: 12px 18px;
 
         background: rgba(18,16,13,.96);
-        border: 1px solid rgba(255,157,66,.35);
+
+        border:
+          1px solid rgba(255,157,66,.35);
 
         border-radius: 12px;
 
         color: #f1ece5;
 
         font-family: inherit;
+
         font-size: 14px;
         line-height: 1.4;
 
@@ -135,6 +156,7 @@
       }
 
       #cat-message.cat-message-show {
+
         opacity: 1;
 
         transform:
@@ -143,6 +165,7 @@
       }
 
       html[data-theme="cat"] #cat-message::before {
+
         content: "🐾";
 
         margin-right: 8px;
@@ -155,29 +178,56 @@
 
 
   /* ------------------------------------------------------------------------
-     RANDOM PAW
+     MEOW
+     ------------------------------------------------------------------------ */
+
+  function playMeow() {
+
+    if (!isCatTheme()) return;
+    if (meowCooldown) return;
+
+    meowCooldown = true;
+
+    const number =
+      randomInt(1, 5);
+
+    const audio =
+      new Audio(`meow-${number}.mp3`);
+
+    audio.volume = 0.35;
+
+    audio.play().catch(() => {});
+
+    setTimeout(() => {
+      meowCooldown = false;
+    }, 500);
+  }
+
+
+  /* ------------------------------------------------------------------------
+     PAW
      ------------------------------------------------------------------------ */
 
   function spawnPaw() {
 
     if (!isCatTheme()) return;
 
-    const paw = document.createElement("div");
+    const paw =
+      document.createElement("div");
 
-    paw.className = "cat-floating-paw";
+    paw.className =
+      "cat-floating-paw";
 
-    paw.textContent = pawMessages[
-      Math.floor(Math.random() * pawMessages.length)
-    ];
+    paw.textContent = "🐾";
 
-    const x = Math.random() * 90 + 5;
-    const y = Math.random() * 75 + 10;
+    paw.style.left =
+      `${random(5, 95)}%`;
 
-    paw.style.left = `${x}%`;
-    paw.style.top = `${y}%`;
+    paw.style.top =
+      `${random(10, 85)}%`;
 
     paw.style.transform =
-      `rotate(${Math.random() * 50 - 25}deg)`;
+      `rotate(${random(-25, 25)}deg)`;
 
     document.body.appendChild(paw);
 
@@ -187,7 +237,9 @@
 
     setTimeout(() => {
 
-      paw.classList.remove("cat-paw-visible");
+      paw.classList.remove(
+        "cat-paw-visible"
+      );
 
       setTimeout(() => {
         paw.remove();
@@ -207,13 +259,16 @@
       return;
     }
 
-    const style = document.createElement("style");
+    const style =
+      document.createElement("style");
 
-    style.id = "cat-paw-style";
+    style.id =
+      "cat-paw-style";
 
     style.textContent = `
 
       .cat-floating-paw {
+
         position: fixed;
 
         font-size: 22px;
@@ -225,7 +280,10 @@
         z-index: 9998;
 
         filter:
-          drop-shadow(0 0 6px rgba(255,157,66,.12));
+          drop-shadow(
+            0 0 6px
+            rgba(255,157,66,.12)
+          );
 
         transition:
           opacity .35s ease,
@@ -233,6 +291,7 @@
       }
 
       .cat-floating-paw.cat-paw-visible {
+
         opacity: .18;
 
         transform:
@@ -247,33 +306,80 @@
 
 
   /* ------------------------------------------------------------------------
-     MEOW
+     CAT SVG LOADER
      ------------------------------------------------------------------------ */
 
-  function playMeow() {
+  async function loadCatSvg() {
 
-    if (!isCatTheme()) return;
+    if (catSvgCache) {
+      return catSvgCache.cloneNode(true);
+    }
 
-    if (meowCooldown) return;
+    try {
 
-    meowCooldown = true;
+      const response =
+        await fetch("cat.svg");
 
-    const number =
-      Math.floor(Math.random() * 5) + 1;
+      if (!response.ok) {
+        throw new Error(
+          `cat.svg HTTP ${response.status}`
+        );
+      }
 
-    const audio = new Audio(
-      `meow-${number}.mp3`
-    );
+      const text =
+        await response.text();
 
-    audio.volume = 0.35;
+      const parser =
+        new DOMParser();
 
-    audio.play().catch(() => {
-      // Prohlížeč může zvuk zablokovat.
-    });
+      const doc =
+        parser.parseFromString(
+          text,
+          "image/svg+xml"
+        );
 
-    setTimeout(() => {
-      meowCooldown = false;
-    }, 500);
+      const svg =
+        doc.documentElement;
+
+      if (!svg || svg.tagName !== "svg") {
+        throw new Error(
+          "cat.svg není platné SVG."
+        );
+      }
+
+      catSvgCache =
+        svg.cloneNode(true);
+
+      return svg;
+
+    } catch (error) {
+
+      console.warn(
+        "AIRSOFT MAPS CAT:",
+        "Nepodařilo se načíst cat.svg.",
+        error
+      );
+
+      return null;
+    }
+  }
+
+
+  /* ------------------------------------------------------------------------
+     CAT EVENT CONTAINER
+     ------------------------------------------------------------------------ */
+
+  function createCatStage() {
+
+    const stage =
+      document.createElement("div");
+
+    stage.className =
+      "cat-event-stage";
+
+    document.body.appendChild(stage);
+
+    return stage;
   }
 
 
@@ -281,22 +387,384 @@
      RANDOM CAT EVENT
      ------------------------------------------------------------------------ */
 
-  function randomCatEvent() {
+  async function randomCatEvent() {
 
     if (!isCatTheme()) return;
+    if (eventRunning) return;
 
-    const message =
-      catMessages[
-        Math.floor(Math.random() * catMessages.length)
+    eventRunning = true;
+
+    const events = [
+
+      catWalkEvent,
+      yarnHuntEvent,
+      lazyCatEvent,
+      cursorHuntEvent
+
+    ];
+
+    const event =
+      events[
+        randomInt(0, events.length - 1)
       ];
 
-    showCatMessage(message);
+    try {
+
+      await event();
+
+    } catch (error) {
+
+      console.warn(
+        "AIRSOFT MAPS CAT EVENT ERROR:",
+        error
+      );
+
+    }
+
+    eventRunning = false;
+
+    scheduleNextCatEvent();
+  }
+
+
+  /* ------------------------------------------------------------------------
+     CAT WALK
+     ------------------------------------------------------------------------ */
+
+  async function catWalkEvent() {
+
+    const stage =
+      createCatStage();
+
+    const cat =
+      await loadCatSvg();
+
+    if (!cat) {
+      stage.remove();
+      return;
+    }
+
+    stage.appendChild(cat);
+
+    stage.classList.add(
+      "cat-event-walk"
+    );
+
+    const fromLeft =
+      Math.random() < 0.5;
+
+    stage.classList.add(
+      fromLeft
+        ? "cat-from-left"
+        : "cat-from-right"
+    );
+
+    const duration =
+      random(5000, 8500);
+
+    stage.style.setProperty(
+      "--cat-duration",
+      `${duration}ms`
+    );
+
+    await wait(duration);
+
+    stage.remove();
+  }
+
+
+  /* ------------------------------------------------------------------------
+     YARN HUNT
+     ------------------------------------------------------------------------ */
+
+  async function yarnHuntEvent() {
+
+    const stage =
+      createCatStage();
+
+    const cat =
+      await loadCatSvg();
+
+    if (!cat) {
+      stage.remove();
+      return;
+    }
+
+    const yarn =
+      document.createElement("div");
+
+    yarn.className =
+      "cat-yarn-object";
+
+    yarn.textContent =
+      "🧶";
+
+    stage.appendChild(yarn);
+    stage.appendChild(cat);
+
+    stage.classList.add(
+      "cat-event-yarn"
+    );
+
+    const left =
+      random(25, 70);
+
+    const top =
+      random(30, 65);
+
+    stage.style.setProperty(
+      "--yarn-x",
+      `${left}%`
+    );
+
+    stage.style.setProperty(
+      "--yarn-y",
+      `${top}%`
+    );
+
+    /*
+     * 1. Kočka se objeví.
+     */
+
+    await wait(900);
+
+    /*
+     * 2. Pomalu se přibližuje.
+     */
+
+    stage.classList.add(
+      "cat-yarn-stalk"
+    );
+
+    await wait(2200);
+
+    /*
+     * 3. Zastaví.
+     */
+
+    stage.classList.add(
+      "cat-yarn-stop"
+    );
+
+    await wait(1000);
+
+    /*
+     * 4. JUMP.
+     */
+
+    stage.classList.add(
+      "cat-yarn-pounce"
+    );
 
     playMeow();
 
-    if (Math.random() < 0.45) {
-      spawnPaw();
+    await wait(700);
+
+    /*
+     * 5. Klubíčko uteče.
+     */
+
+    stage.classList.add(
+      "cat-yarn-escape"
+    );
+
+    await wait(1300);
+
+    /*
+     * 6. Kočka za ním.
+     */
+
+    stage.classList.add(
+      "cat-yarn-chase"
+    );
+
+    await wait(1800);
+
+    stage.classList.add(
+      "cat-event-fade"
+    );
+
+    await wait(500);
+
+    stage.remove();
+  }
+
+
+  /* ------------------------------------------------------------------------
+     LAZY CAT
+     ------------------------------------------------------------------------ */
+
+  async function lazyCatEvent() {
+
+    const stage =
+      createCatStage();
+
+    const cat =
+      await loadCatSvg();
+
+    if (!cat) {
+      stage.remove();
+      return;
     }
+
+    stage.appendChild(cat);
+
+    stage.classList.add(
+      "cat-event-lazy"
+    );
+
+    await wait(
+      random(3500, 6000)
+    );
+
+    stage.classList.add(
+      "cat-event-fade"
+    );
+
+    await wait(600);
+
+    stage.remove();
+  }
+
+
+  /* ------------------------------------------------------------------------
+     CURSOR HUNT
+     ------------------------------------------------------------------------ */
+
+  async function cursorHuntEvent() {
+
+    const stage =
+      createCatStage();
+
+    const cat =
+      await loadCatSvg();
+
+    if (!cat) {
+      stage.remove();
+      return;
+    }
+
+    stage.appendChild(cat);
+
+    stage.classList.add(
+      "cat-event-cursor"
+    );
+
+    let mouseX =
+      window.innerWidth / 2;
+
+    let mouseY =
+      window.innerHeight / 2;
+
+    const updateMouse = e => {
+
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+
+      stage.style.setProperty(
+        "--mouse-x",
+        `${mouseX}px`
+      );
+
+      stage.style.setProperty(
+        "--mouse-y",
+        `${mouseY}px`
+      );
+    };
+
+    document.addEventListener(
+      "pointermove",
+      updateMouse
+    );
+
+    stage.classList.add(
+      "cat-cursor-search"
+    );
+
+    await wait(1600);
+
+    stage.classList.add(
+      "cat-cursor-stalk"
+    );
+
+    await wait(1700);
+
+    stage.classList.add(
+      "cat-cursor-pounce"
+    );
+
+    playMeow();
+
+    await wait(800);
+
+    document.removeEventListener(
+      "pointermove",
+      updateMouse
+    );
+
+    stage.classList.add(
+      "cat-event-fade"
+    );
+
+    await wait(500);
+
+    stage.remove();
+  }
+
+
+  /* ------------------------------------------------------------------------
+     WAIT
+     ------------------------------------------------------------------------ */
+
+  function wait(ms) {
+
+    return new Promise(
+      resolve =>
+        setTimeout(resolve, ms)
+    );
+  }
+
+
+  /* ------------------------------------------------------------------------
+     EVENT SCHEDULER
+     ------------------------------------------------------------------------ */
+
+  function scheduleNextCatEvent() {
+
+    clearTimeout(eventTimer);
+
+    if (!isCatTheme()) {
+      return;
+    }
+
+    /*
+     * Žádný pevný interval.
+     * Kočka si sama rozhoduje, kdy se jí chce.
+     */
+
+    const delay =
+      random(5000, 18000);
+
+    eventTimer =
+      setTimeout(() => {
+
+        if (!isCatTheme()) {
+          return;
+        }
+
+        /*
+         * Občas kočka prostě nic neudělá.
+         */
+
+        if (Math.random() < 0.25) {
+
+          scheduleNextCatEvent();
+          return;
+        }
+
+        randomCatEvent();
+
+      }, delay);
   }
 
 
@@ -306,295 +774,542 @@
 
   function wireBattlefields() {
 
-    document.querySelectorAll(".am-row").forEach(row => {
+    document.querySelectorAll(
+      ".am-row"
+    ).forEach(row => {
 
-      if (row.dataset.catWired === "true") {
+      if (
+        row.dataset.catWired === "true"
+      ) {
         return;
       }
 
-      row.dataset.catWired = "true";
+      row.dataset.catWired =
+        "true";
 
-      row.addEventListener("click", e => {
+      row.addEventListener(
+        "click",
+        e => {
+
+          if (!isCatTheme()) {
+            return;
+          }
+
+          if (Math.random() < 0.45) {
+
+            e.preventDefault();
+
+            e.stopImmediatePropagation();
+
+            showCatMessage(
+              catMessages[
+                randomInt(
+                  0,
+                  catMessages.length - 1
+                )
+              ]
+            );
+
+            playMeow();
+
+            if (Math.random() < 0.45) {
+              spawnPaw();
+            }
+
+            return;
+          }
+
+          playMeow();
+
+        },
+        true
+      );
+
+    });
+  }
+
+
+  /* ------------------------------------------------------------------------
+     GLOBAL CLICKS
+     ------------------------------------------------------------------------ */
+
+  function wireGlobalClicks() {
+
+    document.addEventListener(
+      "click",
+      e => {
 
         if (!isCatTheme()) {
           return;
         }
 
-        /*
-         * Jen některé kliknutí kočka sabotuje.
-         * První kliknutí má vyšší šanci na kočičí zásah.
-         */
+        if (
+          e.target.closest(".am-btn") ||
+          e.target.closest("[data-theme]") ||
+          e.target.closest(".am-dd-menu")
+        ) {
 
-        if (Math.random() < 0.45) {
+          if (Math.random() < 0.18) {
+            playMeow();
+          }
 
-          e.preventDefault();
-          e.stopImmediatePropagation();
-
-          randomCatEvent();
-
-          return;
-        }
-
-        playMeow();
-      }, true);
-
-    });
-  }
-
-
-  /* ------------------------------------------------------------------------
-     GLOBAL CLICK
-     ------------------------------------------------------------------------ */
-
-  function wireGlobalClicks() {
-
-    document.addEventListener("click", e => {
-
-      if (!isCatTheme()) return;
-
-      /*
-       * Nechceme mňoukat při každém kliknutí.
-       * Pouze občas.
-       */
-
-      if (
-        e.target.closest(".am-btn") ||
-        e.target.closest("[data-theme]") ||
-        e.target.closest(".am-dd-menu")
-      ) {
-
-        if (Math.random() < 0.18) {
-          playMeow();
         }
 
       }
-
-    });
-
+    );
   }
 
 
   /* ------------------------------------------------------------------------
-  /* ------------------------------------------------------------------------
-   THEME CHANGE OBSERVER
-   ------------------------------------------------------------------------ */
-
-function observeTheme() {
-
-  const observer = new MutationObserver(() => {
-
-    if (isCatTheme()) {
-
-      // Kočka právě nastoupila do služby.
-      startYarnScheduler();
-
-    } else {
-
-      // Opouštíme Cat Theme.
-      document
-        .querySelectorAll(".cat-floating-paw")
-        .forEach(el => el.remove());
-
-      document
-        .querySelectorAll(".cat-yarn-event")
-        .forEach(el => el.remove());
-
-      // Pokud běží scheduler, zastavíme ho.
-      if (yarnTimer) {
-        clearTimeout(yarnTimer);
-        yarnTimer = null;
-      }
-
-    }
-
-  });
-
-  observer.observe(
-    document.documentElement,
-    {
-      attributes: true,
-      attributeFilter: ["data-theme"]
-    }
-  );
-}
-
-  /* ------------------------------------------------------------------------
-     YARN BALL + RUNNING CAT
+     CAT ENGINE CSS
      ------------------------------------------------------------------------ */
 
-  let yarnTimer = null;
+  function injectCatEngineStyle() {
 
-  function spawnYarn() {
-
-    if (!isCatTheme()) return;
-
-    // Pokud už něco běží, nic dalšího nespouštíme.
-    if (document.querySelector(".cat-yarn-event")) {
+    if (
+      document.getElementById(
+        "cat-engine-style"
+      )
+    ) {
       return;
     }
 
-    const event = document.createElement("div");
-    event.className = "cat-yarn-event";
+    const style =
+      document.createElement("style");
 
-    const yarn = document.createElement("div");
-    yarn.className = "cat-yarn";
-    yarn.textContent = "🧶";
-
-    const cat = document.createElement("div");
-    cat.className = "cat-runner";
-    cat.textContent = "🐈‍⬛";
-
-    event.appendChild(yarn);
-    event.appendChild(cat);
-
-    document.body.appendChild(event);
-
-    // Náhodný směr
-    const fromLeft = Math.random() < 0.5;
-
-    if (fromLeft) {
-
-      yarn.style.left = "8%";
-      yarn.style.top =
-        `${25 + Math.random() * 50}%`;
-
-      cat.classList.add("cat-run-left");
-
-    } else {
-
-      yarn.style.right = "8%";
-      yarn.style.top =
-        `${25 + Math.random() * 50}%`;
-
-      cat.classList.add("cat-run-right");
-    }
-
-    // Kočka se po krátké chvíli rozběhne.
-    setTimeout(() => {
-
-      cat.classList.add("cat-running");
-
-    }, 700);
-
-    // Celou scénu uklidíme.
-    setTimeout(() => {
-
-      event.classList.add("cat-yarn-fade");
-
-      setTimeout(() => {
-        event.remove();
-      }, 500);
-
-    }, 4200);
-  }
-
-
-  /* ------------------------------------------------------------------------
-     YARN / CAT CSS
-     ------------------------------------------------------------------------ */
-
-  function injectYarnStyle() {
-
-    if (document.getElementById("cat-yarn-style")) {
-      return;
-    }
-
-    const style = document.createElement("style");
-
-    style.id = "cat-yarn-style";
+    style.id =
+      "cat-engine-style";
 
     style.textContent = `
 
-      .cat-yarn-event {
+      .cat-event-stage {
+
         position: fixed;
 
         inset: 0;
 
         pointer-events: none;
 
-        z-index: 9997;
-
         overflow: hidden;
 
+        z-index: 9997;
+
         opacity: 1;
-
-        transition: opacity .5s ease;
-      }
-
-      .cat-yarn-event.cat-yarn-fade {
-        opacity: 0;
-      }
-
-      .cat-yarn {
-        position: absolute;
-
-        font-size: 34px;
-
-        filter:
-          drop-shadow(
-            0 3px 8px rgba(0,0,0,.45)
-          );
-
-        animation:
-          cat-yarn-bounce
-          .8s ease-in-out infinite;
-      }
-
-      .cat-runner {
-        position: absolute;
-
-        font-size: 42px;
-
-        opacity: 0;
-
-        filter:
-          drop-shadow(
-            0 3px 8px rgba(0,0,0,.5)
-          );
 
         transition:
-          transform 2.2s cubic-bezier(.2,.8,.2,1),
-          opacity .2s ease;
+          opacity .5s ease;
       }
 
-      .cat-runner.cat-running {
-        opacity: 1;
+
+      .cat-event-stage svg {
+
+        position: absolute;
+
+        width: 150px;
+
+        height: 150px;
+
+        overflow: visible;
+
+        filter:
+          drop-shadow(
+            0 8px 12px
+            rgba(0,0,0,.35)
+          );
       }
 
-      .cat-run-left {
-        left: -80px;
+
+      .cat-event-fade {
+
+        opacity: 0;
       }
 
-      .cat-run-right {
-        right: -80px;
+
+      /* --------------------------------------------------------------
+         WALK
+         -------------------------------------------------------------- */
+
+      .cat-event-walk svg {
+
+        top: 50%;
+
+        width: 130px;
+        height: 130px;
+
+        transition:
+          transform var(--cat-duration)
+          linear;
+      }
+
+      .cat-from-left svg {
+
+        left: -160px;
+
+        transform:
+          translateX(0);
+      }
+
+      .cat-from-left.cat-event-walk svg {
+
+        transform:
+          translateX(
+            calc(100vw + 320px)
+          );
+      }
+
+      .cat-from-right svg {
+
+        right: -160px;
 
         transform:
           scaleX(-1);
       }
 
-      .cat-run-left.cat-running {
-        transform:
-          translateX(calc(100vw + 160px));
-      }
+      .cat-from-right.cat-event-walk svg {
 
-      .cat-run-right.cat-running {
         transform:
-          translateX(calc(-100vw - 160px))
+          translateX(
+            calc(-100vw - 320px)
+          )
           scaleX(-1);
       }
 
-      @keyframes cat-yarn-bounce {
+
+      /* --------------------------------------------------------------
+         LAZY CAT
+         -------------------------------------------------------------- */
+
+      .cat-event-lazy svg {
+
+        left: 50%;
+
+        top: 60%;
+
+        width: 180px;
+        height: 180px;
+
+        transform:
+          translate(-50%, -50%)
+          rotate(-3deg);
+
+        animation:
+          cat-lazy-breathe
+          2.8s ease-in-out infinite;
+      }
+
+
+      @keyframes cat-lazy-breathe {
 
         0%, 100% {
           transform:
-            translateY(0)
-            rotate(0deg);
+            translate(-50%, -50%)
+            rotate(-3deg)
+            scale(1);
         }
 
         50% {
           transform:
-            translateY(-7px)
-            rotate(18deg);
+            translate(-50%, -50%)
+            rotate(-3deg)
+            scale(1.025);
+        }
+
+      }
+
+
+      /* --------------------------------------------------------------
+         YARN
+         -------------------------------------------------------------- */
+
+      .cat-event-yarn svg {
+
+        left: -180px;
+
+        top: var(--yarn-y);
+
+        width: 145px;
+        height: 145px;
+
+        transform:
+          translateY(-50%);
+      }
+
+      .cat-yarn-object {
+
+        position: absolute;
+
+        left: var(--yarn-x);
+
+        top: var(--yarn-y);
+
+        font-size: 38px;
+
+        transform:
+          translate(-50%, -50%);
+
+        filter:
+          drop-shadow(
+            0 4px 8px
+            rgba(0,0,0,.4)
+          );
+
+        transition:
+          left 1.2s ease,
+          transform 1.2s ease;
+      }
+
+
+      .cat-yarn-stalk svg {
+
+        transition:
+          transform 2.2s
+          cubic-bezier(
+            .2,.8,.2,1
+          );
+
+        transform:
+          translateX(
+            calc(
+              var(--yarn-x) -
+              15vw
+            )
+          )
+          translateY(-50%);
+      }
+
+
+      .cat-yarn-stop svg {
+
+        transform:
+          translateX(
+            calc(
+              var(--yarn-x) -
+              15vw
+            )
+          )
+          translateY(-50%)
+          scale(.96);
+      }
+
+
+      .cat-yarn-pounce svg {
+
+        animation:
+          cat-pounce
+          .7s
+          cubic-bezier(.2,.8,.2,1);
+      }
+
+
+      @keyframes cat-pounce {
+
+        0% {
+          transform:
+            translateX(
+              calc(
+                var(--yarn-x) -
+                15vw
+              )
+            )
+            translateY(-50%)
+            scale(.96);
+        }
+
+        55% {
+          transform:
+            translateX(
+              calc(
+                var(--yarn-x) -
+                5vw
+              )
+            )
+            translateY(-65%)
+            scale(1.15);
+        }
+
+        100% {
+          transform:
+            translateX(
+              calc(
+                var(--yarn-x) +
+                5vw
+              )
+            )
+            translateY(-50%)
+            scale(1);
+        }
+
+      }
+
+
+      .cat-yarn-escape
+      .cat-yarn-object {
+
+        left:
+          calc(
+            var(--yarn-x) + 20%
+          );
+
+        transform:
+          translate(
+            -50%,
+            -50%
+          )
+          rotate(720deg);
+      }
+
+
+      .cat-yarn-chase svg {
+
+        animation:
+          cat-chase
+          1.8s
+          cubic-bezier(
+            .2,.8,.2,1
+          )
+          forwards;
+      }
+
+
+      @keyframes cat-chase {
+
+        to {
+          transform:
+            translateX(
+              100vw
+            )
+            translateY(-50%);
+        }
+
+      }
+
+
+      /* --------------------------------------------------------------
+         CURSOR HUNT
+         -------------------------------------------------------------- */
+
+      .cat-event-cursor svg {
+
+        left: 20px;
+
+        top: 20px;
+
+        width: 130px;
+        height: 130px;
+
+        transform:
+          translate(
+            0,
+            0
+          );
+      }
+
+
+      .cat-cursor-search svg {
+
+        animation:
+          cat-cursor-search
+          1.6s
+          ease-in-out
+          forwards;
+      }
+
+
+      @keyframes cat-cursor-search {
+
+        0% {
+          transform:
+            translate(
+              0,
+              0
+            )
+            rotate(0deg);
+        }
+
+        100% {
+          transform:
+            translate(
+              30vw,
+              15vh
+            )
+            rotate(8deg);
+        }
+
+      }
+
+
+      .cat-cursor-stalk svg {
+
+        animation:
+          cat-cursor-stalk
+          1.7s
+          ease-in-out
+          forwards;
+      }
+
+
+      @keyframes cat-cursor-stalk {
+
+        from {
+          transform:
+            translate(
+              30vw,
+              15vh
+            )
+            rotate(8deg);
+        }
+
+        to {
+          transform:
+            translate(
+              55vw,
+              30vh
+            )
+            rotate(-4deg);
+        }
+
+      }
+
+
+      .cat-cursor-pounce svg {
+
+        animation:
+          cat-cursor-pounce
+          .8s
+          cubic-bezier(
+            .2,.8,.2,1
+          )
+          forwards;
+      }
+
+
+      @keyframes cat-cursor-pounce {
+
+        0% {
+          transform:
+            translate(
+              55vw,
+              30vh
+            )
+            scale(1);
+        }
+
+        55% {
+          transform:
+            translate(
+              65vw,
+              40vh
+            )
+            scale(1.25);
+        }
+
+        100% {
+          transform:
+            translate(
+              70vw,
+              45vh
+            )
+            scale(.95);
         }
 
       }
@@ -606,52 +1321,78 @@ function observeTheme() {
 
 
   /* ------------------------------------------------------------------------
-     RANDOM YARN SCHEDULER
+     THEME OBSERVER
      ------------------------------------------------------------------------ */
 
-  function startYarnScheduler() {
-function startYarnScheduler() {
+  function observeTheme() {
 
-  if (yarnTimer) {
-    return;
+    const observer =
+      new MutationObserver(() => {
+
+        if (isCatTheme()) {
+
+          scheduleNextCatEvent();
+
+        } else {
+
+          clearTimeout(eventTimer);
+
+          eventTimer = null;
+
+          eventRunning = false;
+
+          document
+            .querySelectorAll(
+              ".cat-event-stage"
+            )
+            .forEach(
+              el => el.remove()
+            );
+
+          document
+            .querySelectorAll(
+              ".cat-floating-paw"
+            )
+            .forEach(
+              el => el.remove()
+            );
+        }
+
+      });
+
+    observer.observe(
+      document.documentElement,
+      {
+        attributes: true,
+        attributeFilter: [
+          "data-theme"
+        ]
+      }
+    );
   }
 
-  const schedule = () => {
 
-    if (!isCatTheme()) {
-      yarnTimer = null;
-      return;
-    }
-
-    spawnYarn();
-
-    yarnTimer = setTimeout(
-      schedule,
-      8000 + Math.random() * 5000
-    );
-  };
-
-  yarnTimer = setTimeout(
-    schedule,
-    3000
-  );
-}
   /* ------------------------------------------------------------------------
      START
      ------------------------------------------------------------------------ */
 
-    document.addEventListener("DOMContentLoaded", () => {
+  document.addEventListener(
+    "DOMContentLoaded",
+    () => {
 
-    injectMessageStyle();
-    injectPawStyle();
-    injectYarnStyle();
+      injectMessageStyle();
+      injectPawStyle();
+      injectCatEngineStyle();
 
-    wireBattlefields();
-    wireGlobalClicks();
-    observeTheme();
+      wireBattlefields();
+      wireGlobalClicks();
+      observeTheme();
 
-    startYarnScheduler();
+      if (isCatTheme()) {
+        scheduleNextCatEvent();
+      }
 
-  });
+    }
+  );
 
 })();
