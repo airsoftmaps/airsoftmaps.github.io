@@ -13,18 +13,51 @@
      ======================================================================== */
 
   const catMessages = [
-    "Kočka něco shodila. Odmítá se přiznat. Zkus to znovu.",
-    "Kočka právě sedí na tlačítku. Zkus to znovu.",
-    "Něco spadlo. Kočka tvrdí, že to bylo už rozbité.",
-    "Kočka kontroluje hřiště. Kontrola spočívá v ležení.",
-    "Moment. Kočka si lehla na mapu.",
-    "Kočka si myslí, že tohle není dobrý nápad.",
-    "Kočka rozhodla, že ještě ne.",
-    "Kočka to schválí, až se jí bude chtít.",
-    "Kočka odmítla spolupracovat.",
-    "Kočka momentálně řeší důležitější věci.",
-    "Systém funguje. Kočka ne."
-  ];
+  {
+    cs: "Kočka něco shodila. Odmítá se přiznat. Zkus to znovu.",
+    en: "The cat knocked something over. It refuses to confess. Try again."
+  },
+  {
+    cs: "Kočka právě sedí na tlačítku. Zkus to znovu.",
+    en: "The cat is currently sitting on the button. Try again."
+  },
+  {
+    cs: "Něco spadlo. Kočka tvrdí, že to bylo už rozbité.",
+    en: "Something fell. The cat claims it was already broken."
+  },
+  {
+    cs: "Kočka kontroluje hřiště. Kontrola spočívá v ležení.",
+    en: "The cat is checking the battlefield. The inspection consists of lying down."
+  },
+  {
+    cs: "Moment. Kočka si lehla na mapu.",
+    en: "Stand by. The cat has laid down on the map."
+  },
+  {
+    cs: "Kočka si myslí, že tohle není dobrý nápad.",
+    en: "The cat thinks this is not a good idea."
+  },
+  {
+    cs: "Kočka rozhodla, že ještě ne.",
+    en: "The cat has decided: not yet."
+  },
+  {
+    cs: "Kočka to schválí, až se jí bude chtít.",
+    en: "The cat will approve it when it feels like it."
+  },
+  {
+    cs: "Kočka odmítla spolupracovat.",
+    en: "The cat refused to cooperate."
+  },
+  {
+    cs: "Kočka momentálně řeší důležitější věci.",
+    en: "The cat is currently dealing with more important matters."
+  },
+  {
+    cs: "Systém funguje. Kočka ne.",
+    en: "The system works. The cat doesn't."
+  }
+];
 
 
   /* ========================================================================
@@ -1000,16 +1033,19 @@ async function randomCatEvent() {
             e.stopImmediatePropagation();
 
 
-            showCatMessage(
+            const lang = AM.getLang();
 
-              catMessages[
-                randomInt(
-                  0,
-                  catMessages.length - 1
-                )
-              ]
+const message =
+  catMessages[
+    randomInt(
+      0,
+      catMessages.length - 1
+    )
+  ];
 
-            );
+showCatMessage(
+  message[lang] || message.cs
+);
 
 
             playMeow();
