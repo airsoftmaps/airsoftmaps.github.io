@@ -279,29 +279,68 @@
 };
 const CAT_MENU_TEXTS = [
   {
-    kicker: "KOČIČÍ DATABÁZE",
-    title: "TERITORIA",
-    subtitle: "Vyber teritorium a vstup do mapy. Kočka už tam pravděpodobně byla."
+    cs: {
+      kicker: "KOČIČÍ DATABÁZE",
+      title: "TERITORIA",
+      subtitle: "Vyber teritorium a vstup do mapy. Kočka už tam pravděpodobně byla."
+    },
+    en: {
+      kicker: "FELINE DATABASE",
+      title: "TERRITORIES",
+      subtitle: "Choose a territory and enter the map. The cat has probably been there already."
+    }
   },
+
   {
-    kicker: "DATABÁZE TERITORIÍ",
-    title: "ÚZEMÍ",
-    subtitle: "Vyber území. Jeho aktuální stav kočka odmítla komentovat."
+    cs: {
+      kicker: "DATABÁZE TERITORIÍ",
+      title: "ÚZEMÍ",
+      subtitle: "Vyber území. Jeho aktuální stav kočka odmítla komentovat."
+    },
+    en: {
+      kicker: "TERRITORY DATABASE",
+      title: "TERRITORIES",
+      subtitle: "Choose a territory. The cat refused to comment on its current status."
+    }
   },
+
   {
-    kicker: "DATABÁZE TERITORIÍ",
-    title: "KOČIČÍ ÚZEMÍ",
-    subtitle: "Vyber teritorium a vstup do mapy. Respektuj místní kočku."
+    cs: {
+      kicker: "DATABÁZE TERITORIÍ",
+      title: "KOČIČÍ ÚZEMÍ",
+      subtitle: "Vyber teritorium a vstup do mapy. Respektuj místní kočku."
+    },
+    en: {
+      kicker: "TERRITORY DATABASE",
+      title: "FELINE TERRITORIES",
+      subtitle: "Choose a territory and enter the map. Respect the local cat."
+    }
   },
+
   {
-    kicker: "DATABÁZE TERITORIÍ",
-    title: "TERITORIA",
-    subtitle: "Vyber teritorium. Kočka schválila přístup. Pravděpodobně."
+    cs: {
+      kicker: "DATABÁZE TERITORIÍ",
+      title: "TERITORIA",
+      subtitle: "Vyber teritorium. Kočka schválila přístup. Pravděpodobně."
+    },
+    en: {
+      kicker: "TERRITORY DATABASE",
+      title: "TERRITORIES",
+      subtitle: "Choose a territory. The cat approved access. Probably."
+    }
   },
+
   {
-    kicker: "DATABÁZE TERITORIÍ",
-    title: "TERITORIA",
-    subtitle: "Vyber teritorium a vstup do mapy. Další instrukce kočka neposkytla."
+    cs: {
+      kicker: "DATABÁZE TERITORIÍ",
+      title: "TERITORIA",
+      subtitle: "Vyber teritorium a vstup do mapy. Další instrukce kočka neposkytla."
+    },
+    en: {
+      kicker: "TERRITORY DATABASE",
+      title: "TERRITORIES",
+      subtitle: "Choose a territory and enter the map. The cat provided no further instructions."
+    }
   }
 ];
   const rowsEl = document.getElementById("field-rows");
@@ -388,9 +427,7 @@ function applyCatMenuText() {
   activeCatMenuText =
     CAT_MENU_TEXTS[Math.floor(Math.random() * CAT_MENU_TEXTS.length)];
 
-  menuKickerEl.textContent = activeCatMenuText.kicker;
-  menuTitleEl.textContent = activeCatMenuText.title;
-  menuSubtitleEl.textContent = activeCatMenuText.subtitle;
+  keepCatMenuText();
 }
 
 function keepCatMenuText() {
@@ -400,9 +437,12 @@ function keepCatMenuText() {
     return;
   }
 
-  menuKickerEl.textContent = activeCatMenuText.kicker;
-  menuTitleEl.textContent = activeCatMenuText.title;
-  menuSubtitleEl.textContent = activeCatMenuText.subtitle;
+  const lang = AM.getLang();
+  const text = activeCatMenuText[lang] || activeCatMenuText.cs;
+
+  menuKickerEl.textContent = text.kicker;
+  menuTitleEl.textContent = text.title;
+  menuSubtitleEl.textContent = text.subtitle;
 }
 
 function restoreNormalMenuText() {
