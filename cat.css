@@ -1,0 +1,394 @@
+/* ==========================================================================
+   AIRSOFT MAPS — CAT THEME
+   Cute Chaos / Tactical Cat Edition
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   CAT VARIABLES
+   -------------------------------------------------------------------------- */
+
+html[data-theme="cat"] {
+  --bg-0: #080706;
+  --bg-1: #12100d;
+
+  --panel: #15120f;
+  --panel-2: rgba(255,255,255,.035);
+
+  --border: #393027;
+  --border-hover: #ff9d42;
+
+  --text: #f1ece5;
+  --muted: #a59b90;
+  --muted-2: #696057;
+
+  --accent: #ff9d42;
+  --accent-dim: rgba(255,157,66,.12);
+
+  --theme-glow: rgba(255,157,66,.06);
+  --theme-glow-strong: rgba(255,157,66,.13);
+}
+
+
+/* --------------------------------------------------------------------------
+   CAT ATMOSPHERE
+   -------------------------------------------------------------------------- */
+
+html[data-theme="cat"] body {
+  background:
+    radial-gradient(
+      circle at 15% 20%,
+      rgba(255,157,66,.055),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at 85% 75%,
+      rgba(255,157,66,.035),
+      transparent 30%
+    ),
+    var(--bg-0);
+
+  color: var(--text);
+}
+
+
+/* --------------------------------------------------------------------------
+   HEADER
+   -------------------------------------------------------------------------- */
+
+html[data-theme="cat"] .am-header {
+  border-bottom-color: rgba(255,157,66,.22);
+
+  box-shadow:
+    0 1px 0 rgba(255,157,66,.05),
+    0 8px 30px rgba(0,0,0,.28);
+}
+
+
+/* --------------------------------------------------------------------------
+   LOGO
+   -------------------------------------------------------------------------- */
+
+html[data-theme="cat"] .am-brand-logo {
+  filter:
+    drop-shadow(0 0 7px rgba(255,157,66,.18));
+}
+
+
+/* --------------------------------------------------------------------------
+   BUTTONS
+   -------------------------------------------------------------------------- */
+
+html[data-theme="cat"] .am-btn {
+  border-color: #393027;
+  background: rgba(21,18,15,.92);
+  color: var(--text);
+
+  transition:
+    border-color .18s ease,
+    background .18s ease,
+    transform .18s ease,
+    box-shadow .18s ease;
+}
+
+html[data-theme="cat"] .am-btn:hover {
+  border-color: var(--accent);
+  background: rgba(255,157,66,.08);
+
+  box-shadow:
+    0 0 18px rgba(255,157,66,.08);
+
+  transform: translateY(-1px);
+}
+
+
+/* --------------------------------------------------------------------------
+   DROPDOWNS
+   -------------------------------------------------------------------------- */
+
+html[data-theme="cat"] .am-dd-menu {
+  background: rgba(18,16,13,.97);
+  border-color: #393027;
+
+  box-shadow:
+    0 15px 45px rgba(0,0,0,.5),
+    0 0 20px rgba(255,157,66,.04);
+}
+
+html[data-theme="cat"] .am-dd-menu button:hover {
+  background: rgba(255,157,66,.09);
+  color: var(--accent);
+}
+
+html[data-theme="cat"] .am-dd-menu button.active {
+  color: var(--accent);
+}
+
+
+/* --------------------------------------------------------------------------
+   LINKS
+   -------------------------------------------------------------------------- */
+
+html[data-theme="cat"] a {
+  color: var(--accent);
+}
+
+html[data-theme="cat"] a:hover {
+  color: #ffc080;
+}
+
+
+/* --------------------------------------------------------------------------
+   HEADINGS
+   -------------------------------------------------------------------------- */
+
+html[data-theme="cat"] h1,
+html[data-theme="cat"] h2,
+html[data-theme="cat"] h3 {
+  text-shadow:
+    0 0 18px rgba(255,157,66,.06);
+}
+
+
+/* --------------------------------------------------------------------------
+   PANELS
+   -------------------------------------------------------------------------- */
+
+html[data-theme="cat"] .am-panel,
+html[data-theme="cat"] .am-card {
+  background: var(--panel);
+  border-color: var(--border);
+
+  box-shadow:
+    0 10px 30px rgba(0,0,0,.18);
+}
+
+
+/* --------------------------------------------------------------------------
+   SEARCH
+   -------------------------------------------------------------------------- */
+
+html[data-theme="cat"] input,
+html[data-theme="cat"] select,
+html[data-theme="cat"] textarea {
+  background: #100e0c;
+  border-color: var(--border);
+  color: var(--text);
+}
+
+html[data-theme="cat"] input:focus,
+html[data-theme="cat"] select:focus,
+html[data-theme="cat"] textarea:focus {
+  border-color: var(--accent);
+
+  box-shadow:
+    0 0 0 2px rgba(255,157,66,.08);
+}
+
+
+/* --------------------------------------------------------------------------
+   ROWS / LISTS
+   -------------------------------------------------------------------------- */
+
+html[data-theme="cat"] .am-row {
+  transition:
+    background .18s ease,
+    border-color .18s ease,
+    transform .18s ease;
+}
+
+html[data-theme="cat"] .am-row:hover {
+  background: rgba(255,157,66,.055);
+  border-color: rgba(255,157,66,.28);
+
+  transform: translateX(2px);
+}
+
+
+/* --------------------------------------------------------------------------
+   BADGES
+   -------------------------------------------------------------------------- */
+
+html[data-theme="cat"] .am-badge {
+  border-color: rgba(255,157,66,.28);
+  background: rgba(255,157,66,.08);
+  color: #ffb66d;
+}
+
+
+/* --------------------------------------------------------------------------
+   ACTIVE ELEMENTS
+   -------------------------------------------------------------------------- */
+
+html[data-theme="cat"] .active {
+  color: var(--accent);
+}
+
+
+/* --------------------------------------------------------------------------
+   MAP
+   -------------------------------------------------------------------------- */
+
+html[data-theme="cat"] .map-container,
+html[data-theme="cat"] .map-canvas {
+  background:
+    radial-gradient(
+      circle at center,
+      rgba(255,157,66,.025),
+      transparent 60%
+    ),
+    #0b0908;
+}
+
+
+/* --------------------------------------------------------------------------
+   MAP CONTROLS
+   -------------------------------------------------------------------------- */
+
+html[data-theme="cat"] .map-control,
+html[data-theme="cat"] .map-controls button {
+  border-color: var(--border);
+  background: rgba(18,16,13,.94);
+  color: var(--text);
+}
+
+html[data-theme="cat"] .map-control:hover,
+html[data-theme="cat"] .map-controls button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+
+/* --------------------------------------------------------------------------
+   GPS
+   -------------------------------------------------------------------------- */
+
+html[data-theme="cat"] .gps-marker {
+  filter:
+    drop-shadow(0 0 7px rgba(255,157,66,.5));
+}
+
+
+/* --------------------------------------------------------------------------
+   CAT PAW DECORATION
+   -------------------------------------------------------------------------- */
+
+html[data-theme="cat"] body::before {
+  content: "🐾";
+
+  position: fixed;
+  top: 84px;
+  right: 18px;
+
+  font-size: 22px;
+  opacity: .13;
+
+  pointer-events: none;
+  z-index: 999;
+
+  transform: rotate(-18deg);
+
+  animation: catPawFloat 4s ease-in-out infinite;
+}
+
+html[data-theme="cat"] body::after {
+  content: "🐾";
+
+  position: fixed;
+  bottom: 24px;
+  left: 18px;
+
+  font-size: 18px;
+  opacity: .09;
+
+  pointer-events: none;
+  z-index: 999;
+
+  transform: rotate(12deg);
+
+  animation: catPawFloat 5s ease-in-out infinite reverse;
+}
+
+@keyframes catPawFloat {
+  0%, 100% {
+    transform: translateY(0) rotate(-18deg);
+  }
+
+  50% {
+    transform: translateY(-5px) rotate(-12deg);
+  }
+}
+
+
+/* --------------------------------------------------------------------------
+   CAT THEME ACTIVE BUTTON
+   -------------------------------------------------------------------------- */
+
+html[data-theme="cat"] [data-theme="cat"].active {
+  color: var(--accent);
+
+  text-shadow:
+    0 0 10px rgba(255,157,66,.18);
+}
+
+
+/* --------------------------------------------------------------------------
+   SUBTLE CAT CURSOR FEEL
+   -------------------------------------------------------------------------- */
+
+html[data-theme="cat"] button,
+html[data-theme="cat"] a {
+  cursor: pointer;
+}
+
+
+/* --------------------------------------------------------------------------
+   SELECTION
+   -------------------------------------------------------------------------- */
+
+html[data-theme="cat"] ::selection {
+  background: rgba(255,157,66,.28);
+  color: #fff5e9;
+}
+
+
+/* --------------------------------------------------------------------------
+   SCROLLBAR
+   -------------------------------------------------------------------------- */
+
+html[data-theme="cat"] ::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+
+html[data-theme="cat"] ::-webkit-scrollbar-track {
+  background: #090807;
+}
+
+html[data-theme="cat"] ::-webkit-scrollbar-thumb {
+  background: #3a3027;
+  border-radius: 10px;
+}
+
+html[data-theme="cat"] ::-webkit-scrollbar-thumb:hover {
+  background: #ff9d42;
+}
+
+
+/* --------------------------------------------------------------------------
+   CAT MOBILE
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 700px) {
+
+  html[data-theme="cat"] body::before {
+    top: 72px;
+    right: 10px;
+    font-size: 18px;
+  }
+
+  html[data-theme="cat"] body::after {
+    bottom: 14px;
+    left: 10px;
+    font-size: 16px;
+  }
+}
