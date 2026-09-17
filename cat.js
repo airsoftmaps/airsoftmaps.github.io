@@ -528,62 +528,59 @@
      RANDOM CAT EVENT
      ======================================================================== */
 
-  async function randomCatEvent() {
+async function randomCatEvent() {
+  console.log("🐾 CAT: event start");
 
-    if (!isCatTheme()) return;
-
-    if (eventRunning) return;
-
-
-    eventRunning = true;
-
-
-    /*
-     * Cursor Hunt zde zatím není.
-     *
-     * Přidáme ho až později,
-     * protože na mobilu nemá klasický kurzor.
-     */
-
-    const events = [
-
-      catWalkEvent,
-      yarnHuntEvent,
-      lazyCatEvent
-
-    ];
-
-
-    const event =
-      events[
-        randomInt(
-          0,
-          events.length - 1
-        )
-      ];
-
-
-    try {
-
-      await event();
-
-    } catch (error) {
-
-      console.warn(
-        "AIRSOFT MAPS CAT EVENT ERROR:",
-        error
-      );
-
-    }
-
-
-    eventRunning =
-      false;
-
-
-    scheduleNextCatEvent();
-
+  if (!isCatTheme()) {
+    console.log("🐾 CAT: není cat theme");
+    return;
   }
+
+  if (eventRunning) {
+    console.log("🐾 CAT: event už běží");
+    return;
+  }
+
+  eventRunning = true;
+
+  const events = [
+    catWalkEvent,
+    yarnHuntEvent,
+    lazyCatEvent
+  ];
+
+  const index = randomInt(0, events.length - 1);
+  const event = events[index];
+
+  console.log(
+    "🐾 CAT: vybraný event:",
+    event.name
+  );
+
+  try {
+    await event();
+
+    console.log(
+      "🐾 CAT: event dokončen:",
+      event.name
+    );
+
+  } catch (error) {
+
+    console.error(
+      "🐾 CAT EVENT ERROR:",
+      error
+    );
+  }
+
+  eventRunning = false;
+
+  console.log(
+    "🐾 CAT: plánuji další event"
+  );
+
+  scheduleNextCatEvent();
+}
 
 
   /* ========================================================================
