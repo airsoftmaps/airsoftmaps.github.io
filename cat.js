@@ -474,120 +474,166 @@
 
 
   /* ------------------------------------------------------------------------
-     YARN HUNT
-     ------------------------------------------------------------------------ */
+async function yarnHuntEvent() {
 
-  async function yarnHuntEvent() {
+  const stage = createCatStage();
 
-    const stage =
-      createCatStage();
+  const cat = await loadCatSvg();
 
-    const cat =
-      await loadCatSvg();
-
-    if (!cat) {
-      stage.remove();
-      return;
-    }
-
-    const yarn =
-      document.createElement("div");
-
-    yarn.className =
-      "cat-yarn-object";
-
-    yarn.textContent =
-      "🧶";
-
-    stage.appendChild(yarn);
-    stage.appendChild(cat);
-
-    stage.classList.add(
-      "cat-event-yarn"
-    );
-
-    const left =
-      random(25, 70);
-
-    const top =
-      random(30, 65);
-
-    stage.style.setProperty(
-      "--yarn-x",
-      `${left}%`
-    );
-
-    stage.style.setProperty(
-      "--yarn-y",
-      `${top}%`
-    );
-
-    /*
-     * 1. Kočka se objeví.
-     */
-
-    await wait(900);
-
-    /*
-     * 2. Pomalu se přibližuje.
-     */
-
-    stage.classList.add(
-      "cat-yarn-stalk"
-    );
-
-    await wait(2200);
-
-    /*
-     * 3. Zastaví.
-     */
-
-    stage.classList.add(
-      "cat-yarn-stop"
-    );
-
-    await wait(1000);
-
-    /*
-     * 4. JUMP.
-     */
-
-    stage.classList.add(
-      "cat-yarn-pounce"
-    );
-
-    playMeow();
-
-    await wait(700);
-
-    /*
-     * 5. Klubíčko uteče.
-     */
-
-    stage.classList.add(
-      "cat-yarn-escape"
-    );
-
-    await wait(1300);
-
-    /*
-     * 6. Kočka za ním.
-     */
-
-    stage.classList.add(
-      "cat-yarn-chase"
-    );
-
-    await wait(1800);
-
-    stage.classList.add(
-      "cat-event-fade"
-    );
-
-    await wait(500);
-
+  if (!cat) {
     stage.remove();
+    return;
   }
+
+  /* --------------------------------------------------------------
+     KLUBÍČKO
+     -------------------------------------------------------------- */
+
+  const yarn = document.createElement("div");
+
+  yarn.className = "cat-yarn-object";
+  yarn.textContent = "🧶";
+
+  /* --------------------------------------------------------------
+     SCÉNA
+     -------------------------------------------------------------- */
+
+  stage.appendChild(yarn);
+  stage.appendChild(cat);
+
+  stage.classList.add("cat-event-yarn");
+
+  /* --------------------------------------------------------------
+     NÁHODNÁ POZICE
+     -------------------------------------------------------------- */
+
+  const yarnX = random(35, 70);
+  const yarnY = random(30, 65);
+
+  stage.style.setProperty(
+    "--yarn-x",
+    `${yarnX}%`
+  );
+
+  stage.style.setProperty(
+    "--yarn-y",
+    `${yarnY}%`
+  );
+
+  /* --------------------------------------------------------------
+     NÁHODNÁ STRANA KOČKY
+     -------------------------------------------------------------- */
+
+  const fromLeft = Math.random() < 0.5;
+
+  stage.classList.add(
+    fromLeft
+      ? "cat-yarn-from-left"
+      : "cat-yarn-from-right"
+  );
+
+  /* --------------------------------------------------------------
+     1.
+     KOČKA SE OBJEVÍ
+     -------------------------------------------------------------- */
+
+  await wait(random(500, 1000));
+
+  if (!isCatTheme()) {
+    stage.remove();
+    return;
+  }
+
+  stage.classList.add("cat-yarn-enter");
+
+  await wait(1200);
+
+
+  /* --------------------------------------------------------------
+     2.
+     KOČKA SI VŠIMNE KLUBÍČKA
+     -------------------------------------------------------------- */
+
+  stage.classList.add("cat-yarn-notice");
+
+  playMeow();
+
+  await wait(900);
+
+
+  /* --------------------------------------------------------------
+     3.
+     POMALU SE PŘIBLÍŽÍ
+     -------------------------------------------------------------- */
+
+  stage.classList.add("cat-yarn-stalk");
+
+  await wait(random(1800, 2600));
+
+
+  /* --------------------------------------------------------------
+     4.
+     ZASTAVÍ
+     -------------------------------------------------------------- */
+
+  stage.classList.add("cat-yarn-stop");
+
+  await wait(random(800, 1500));
+
+
+  /* --------------------------------------------------------------
+     5.
+     PŘIPRAVÍ SE
+     -------------------------------------------------------------- */
+
+  stage.classList.add("cat-yarn-crouch");
+
+  await wait(600);
+
+
+  /* --------------------------------------------------------------
+     6.
+     POUNCE
+     -------------------------------------------------------------- */
+
+  stage.classList.add("cat-yarn-pounce");
+
+  playMeow();
+
+  await wait(650);
+
+
+  /* --------------------------------------------------------------
+     7.
+     KLUBÍČKO SE LEKNE
+     -------------------------------------------------------------- */
+
+  stage.classList.add("cat-yarn-escape");
+
+  await wait(900);
+
+
+  /* --------------------------------------------------------------
+     8.
+     KOČKA SE ROZBĚHNE ZA NÍM
+     -------------------------------------------------------------- */
+
+  stage.classList.add("cat-yarn-chase");
+
+  await wait(1700);
+
+
+  /* --------------------------------------------------------------
+     9.
+     KONEC
+     -------------------------------------------------------------- */
+
+  stage.classList.add("cat-event-fade");
+
+  await wait(600);
+
+  stage.remove();
+}
 
 
   /* ------------------------------------------------------------------------
