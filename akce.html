@@ -18,6 +18,7 @@
 <link rel="stylesheet" href="divine.css?v=1">
 
 <link rel="stylesheet" href="common.css?v=3">
+<link rel="stylesheet" href="cat.css?v=1">
 
 <meta name="theme-color" content="#ff7a1a">
 <meta name="mobile-web-app-capable" content="yes">
@@ -200,7 +201,13 @@ html[data-theme="pubg"] .event-wallpaper {
 html[data-theme="fortnite"] .event-wallpaper {
   background-image: url("FORWAL.jpg");
 }
-
+html[data-theme="cat"] .event-wallpaper {
+  display: block;
+  background-image: url("CATWAL.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
 /* Jemný overlay pro lepší čitelnost tlačítka */
 
 .event-wallpaper::after {
@@ -1132,6 +1139,137 @@ html[data-theme="fortnite"] .event-title-art {
   visibility: hidden !important;
   pointer-events: none;
 }
+   /* =========================================================
+   CAT THEME — AIRSOFT AKCE
+   ========================================================= */
+
+html[data-theme="cat"] .am-event-stage {
+  background:
+    radial-gradient(
+      ellipse at 50% 42%,
+      rgba(255,157,66,.12),
+      transparent 52%
+    ),
+    #080706;
+}
+
+/* jemná kočičí atmosféra místo klasického sci-fi gridu */
+html[data-theme="cat"] .am-event-stage::before {
+  opacity: .18;
+
+  background-image:
+    radial-gradient(
+      circle,
+      rgba(255,157,66,.22) 1px,
+      transparent 1px
+    );
+
+  background-size: 34px 34px;
+
+  transform: none;
+  animation: catDots 18s linear infinite;
+}
+
+@keyframes catDots {
+  from {
+    transform: translate(0, 0);
+  }
+
+  to {
+    transform: translate(34px, 34px);
+  }
+}
+
+/* jemná oranžová aura */
+html[data-theme="cat"] .event-light {
+  width: 65vw;
+  height: 65vw;
+  max-width: 850px;
+  max-height: 850px;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(255,157,66,.16),
+      rgba(255,157,66,.05) 35%,
+      transparent 70%
+    );
+
+  filter: blur(90px);
+
+  animation: catAura 6s ease-in-out infinite;
+}
+
+@keyframes catAura {
+  0%, 100% {
+    opacity: .65;
+    transform: scale(.95);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+/* kočičí scanlines pryč */
+html[data-theme="cat"] .am-event-stage::after {
+  background:
+    radial-gradient(
+      ellipse at center,
+      transparent 45%,
+      rgba(0,0,0,.48) 100%
+    );
+}
+
+/* nadpis */
+html[data-theme="cat"] .event-title {
+  color: #f1ece5;
+
+  text-shadow:
+    0 0 20px rgba(255,157,66,.22),
+    0 0 60px rgba(255,157,66,.10);
+}
+
+/* oranžové akcenty */
+html[data-theme="cat"] .event-kicker,
+html[data-theme="cat"] #loading-percent {
+  color: #ff9d42;
+}
+
+html[data-theme="cat"] .loading-progress {
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      #ff9d42
+    );
+
+  box-shadow: 0 0 14px #ff9d42;
+}
+
+html[data-theme="cat"] .event-status::before {
+  background: #ff9d42;
+  box-shadow: 0 0 8px #ff9d42;
+}
+
+/* tlačítko */
+html[data-theme="cat"] .event-enter {
+  border-color: #ff9d42;
+  background: rgba(255,157,66,.10);
+}
+
+html[data-theme="cat"] .event-enter:hover {
+  background: #ff9d42;
+  color: #080706;
+  box-shadow:
+    0 0 25px rgba(255,157,66,.25);
+}
+
+/* disclaimer */
+html[data-theme="cat"] .event-disclaimer {
+  color: #696057;
+}
 </style>
 
 </head>
@@ -1163,6 +1301,7 @@ html[data-theme="fortnite"] .event-title-art {
         <button data-theme="resident-evil">Resident Evil</button>
         <button data-theme="pubg">PUBG</button>
         <button data-theme="fortnite">Fortnite</button>
+         <button data-theme="cat">🐾 Kočka</button>
       </div>
     </div>
   </div>
