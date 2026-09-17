@@ -115,19 +115,19 @@
 
 <main class="am-explorer">
 
-  <div class="am-menu-heading">
-    <div class="am-menu-kicker">
-      <span class="am-kicker-line"></span>
-      <span data-i18n="menuKicker">BATTLEFIELD DATABASE</span>
-      <span class="am-kicker-line"></span>
-    </div>
-
-    <h1 data-i18n="menuTitle">HŘIŠTĚ</h1>
-
-    <p class="am-menu-subtitle" data-i18n="menuSubtitle">
-      Vyber bojiště a vstup do mapy
-    </p>
+<div class="am-menu-heading">
+  <div class="am-menu-kicker">
+    <span class="am-kicker-line"></span>
+    <span id="menu-kicker" data-i18n="menuKicker">BATTLEFIELD DATABASE</span>
+    <span class="am-kicker-line"></span>
   </div>
+
+  <h1 id="menu-title" data-i18n="menuTitle">HŘIŠTĚ</h1>
+
+  <p id="menu-subtitle" class="am-menu-subtitle" data-i18n="menuSubtitle">
+    Vyber bojiště a vstup do mapy
+  </p>
+</div>
 
   <div class="am-toolbar-row">
 
@@ -277,7 +277,33 @@
     visits: "visits"
   }
 };
-
+const CAT_MENU_TEXTS = [
+  {
+    kicker: "KOČIČÍ DATABÁZE",
+    title: "TERITORIA",
+    subtitle: "Vyber teritorium a vstup do mapy. Kočka už tam pravděpodobně byla."
+  },
+  {
+    kicker: "DATABÁZE TERITORIÍ",
+    title: "ÚZEMÍ",
+    subtitle: "Vyber území. Jeho aktuální stav kočka odmítla komentovat."
+  },
+  {
+    kicker: "DATABÁZE TERITORIÍ",
+    title: "KOČIČÍ ÚZEMÍ",
+    subtitle: "Vyber teritorium a vstup do mapy. Respektuj místní kočku."
+  },
+  {
+    kicker: "DATABÁZE TERITORIÍ",
+    title: "TERITORIA",
+    subtitle: "Vyber teritorium. Kočka schválila přístup. Pravděpodobně."
+  },
+  {
+    kicker: "DATABÁZE TERITORIÍ",
+    title: "TERITORIA",
+    subtitle: "Vyber teritorium a vstup do mapy. Další instrukce kočka neposkytla."
+  }
+];
   const rowsEl = document.getElementById("field-rows");
   const searchEl = document.getElementById("field-search");
 
@@ -293,7 +319,9 @@
       const key = el.getAttribute("data-i18n");
       if (t[key]) el.textContent = t[key];
     });
-
+if (document.documentElement.dataset.theme === "cat") {
+  keepCatMenuText();
+}
     const filtered = BATTLEFIELDS.filter(f => (lang === "en" ? f.nameEn : f.name).toLowerCase().includes(q));
 
     filtered.sort((a, b) => {
@@ -335,7 +363,91 @@ if (countEl) {
       rowsEl.appendChild(row);
     });
   }
+const menuKickerEl = document.getElementById("menu-kicker");
+const menuTitleEl = document.getElementById("menu-title");
+const menuSubtitleEl = document.getElementById("menu-subtitle");
 
+const NORMAL_MENU_TEXT = {
+  cs: {
+    kicker: "DATABÁZE BOJIŠŤ",
+    title: "HŘIŠTĚ",
+    subtitle: "Vyber bojiště a vstup do mapy"
+  },
+
+  en: {
+    kicker: "BATTLEFIELD DATABASE",
+    title: "BATTLEFIELDS",
+    subtitle: "Select a battlefield and enter the map"
+  }
+};
+
+let activeCatMenuText = null;
+
+function applyCatMenuText() {
+
+  activeCatMenuText =
+    CAT_MENU_TEXTS[Math.floor(Math.random() * CAT_MENU_TEXTS.length)];
+
+  menuKickerEl.textContent = activeCatMenuText.kicker;
+  menuTitleEl.textContent = activeCatMenuText.title;
+  menuSubtitleEl.textContent = activeCatMenuText.subtitle;
+}
+
+function keepCatMenuText() {
+
+  if (!activeCatMenuText) {
+    applyCatMenuText();
+    return;
+  }
+
+  menuKickerEl.textContent = activeCatMenuText.kicker;
+  menuTitleEl.textContent = activeCatMenuText.title;
+  menuSubtitleEl.textContent = activeCatMenuText.subtitle;
+}
+
+function restoreNormalMenuText() {
+
+  const lang = AM.getLang();
+  const t = NORMAL_MENU_TEXT[lang] || NORMAL_MENU_TEXT.cs;
+
+  menuKickerEl.textContent = t.kicker;
+  menuTitleEl.textContent = t.title;
+  menuSubtitleEl.textContent = t.subtitle;
+
+  activeCatMenuText = null;
+}
+
+let lastMenuTheme =
+  document.documentElement.dataset.theme || "dark";
+
+const menuThemeObserver = new MutationObserver(() => {
+
+  const currentTheme =
+    document.documentElement.dataset.theme || "dark";
+
+  if (currentTheme === lastMenuTheme) return;
+
+  if (currentTheme === "cat") {
+
+    applyCatMenuText();
+
+  } else if (lastMenuTheme === "cat") {
+
+    restoreNormalMenuText();
+
+  }
+
+  lastMenuTheme = currentTheme;
+});
+
+menuThemeObserver.observe(document.documentElement, {
+  attributes: true,
+  attributeFilter: ["data-theme"]
+});
+
+if (lastMenuTheme === "cat") {
+  applyCatMenuText();
+}
   AM.wireDropdowns();
   AM.wireStyleSwitch();
   AM.wireLangSwitch(() => render(searchEl.value));
