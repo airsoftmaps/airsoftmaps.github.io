@@ -44,6 +44,7 @@ AM.applyTheme = function (theme) {
   "resident-evil",
   "pubg",
   "fortnite",
+  "cat",
   "god-mode"
 ];
 
