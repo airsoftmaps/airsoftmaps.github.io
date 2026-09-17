@@ -262,7 +262,7 @@
       Math.floor(Math.random() * 5) + 1;
 
     const audio = new Audio(
-      `sounds/meow-${number}.mp3`
+      `meow-${number}.mp3`
     );
 
     audio.volume = 0.35;
