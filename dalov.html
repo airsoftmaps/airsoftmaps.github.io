@@ -208,7 +208,10 @@ if (!hasGeo) {
         insideField = true;
       } else {
         locateBtn.classList.add("outside");
-        locateStatus.textContent = t.outside;
+       locateStatus.textContent =
+  document.documentElement.dataset.theme === "cat"
+    ? "Kočka tě nenašla, ale hledala tě... asi..."
+    : t.outside;
         engine.setPlayer(null);
         insideField = false;
       }
