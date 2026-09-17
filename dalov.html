@@ -8,7 +8,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="common.css">
- <link rel="stylesheet" href="cat.css?v=1">
 </head>
 <body>
 
@@ -209,10 +208,7 @@ if (!hasGeo) {
         insideField = true;
       } else {
         locateBtn.classList.add("outside");
-       locateStatus.textContent =
-  document.documentElement.dataset.theme === "cat"
-    ? "Kočka tě nenašla, ale hledala tě... asi..."
-    : t.outside;
+       locateStatus.textContent = t.outside;
         engine.setPlayer(null);
         insideField = false;
       }
